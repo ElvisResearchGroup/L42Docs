@@ -1,0 +1,42 @@
+\begin{MDefinition}{\Aux{downloadFromWeb}(\_)}
+\parbox{0.95\linewidth}{
+If the url is a library address, the result is the corresponding library, where members annotated as $\Terminale{'\!@}\Kw{private}$
+are renamed to others that does not sintactically occurs into the importing program.
+}
+\end{MDefinition}
+\\
+\begin{MDefinition}{\SyntaxFlow{\_}}
+
+\SyntaxFlow{\L\, \e}=\SyntaxFlow{\loopKw\,\e}=\mbox{true}\\
+
+\SyntaxFlow{\ifKw\,\_\,\e\,\elseKw\, \block}=
+\\\quad
+\SyntaxFlow{\e }\mbox{ and }\SyntaxFlow{\block }\\
+
+\SyntaxFlow{\Vd{\es_1\catch_1\ldots\es_n\catch_n}{}\e}=
+\SyntaxFlow{\catch_1}
+\\\quad
+\mbox{ and }\ldots\mbox{ and }\SyntaxFlow{\catch_n} \mbox{ and }\SyntaxFlow\e\\
+
+\SyntaxFlow{\Cb{\es_1\catch_1\ldots\es_n\catch_n}}=
+\SyntaxFlow{\catch_1}
+\\\quad
+\mbox{ and } \ldots\mbox{ and }\SyntaxFlow{\catch_n} 
+\mbox{ and }\SyntaxFlow{\es_n}\\
+
+\SyntaxFlow{\catchKw\,\L\,\x\oRound\docs
+\ons
+\defaultKw\,\e\cRound}=
+\\\quad
+\SyntaxFlow{\catchKw\,\L\,\x\oRound\docs
+\ons}\mbox{ and }\SyntaxFlow\e\\
+
+\SyntaxFlow{\catchKw\_\oRound\onKw\_\e_1\ldots \onKw\_\e_n\cRound}=
+\\\quad
+\SyntaxFlow{\e_1}\mbox{ and }\ldots\mbox{ and }\SyntaxFlow{\e_n}\\
+\SyntaxFlow{\ifKw\,\_\,\e}=\SyntaxFlow{\with\xs\es\e}=
+\\\quad
+\SyntaxFlow{\es\e}=\SyntaxFlow{\e}\\
+\SyntaxFlow\_=\mbox{false otherwise}
+
+\end{MDefinition}

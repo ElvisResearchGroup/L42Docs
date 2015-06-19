@@ -1,0 +1,293 @@
+\begin{RuleFrame}\cBox{Definitions2}%
+
+\begin{MDefinition}{\Method\p\Path{\m\oRound\xs\cRound}}
+\Method\p\Path{\m\oRound\xs\cRound}=\Norm\p{\p(\Path)(\m\oRound\xs\cRound)\From{\Path}}
+\end{MDefinition}
+\\
+\begin{MDefinition}{\Norm{\p}{\Path},\Norm{\p}{\T},\Norm{\p}{\mhT\Opt\e}}
+\Norm{\p}{
+  \Outer^{\V{i+1}} \classSep\C \Many{\classSep\C}
+  }=
+\Norm{\p}{
+  \Outer^{\V{i}} \Many{\classSep\C}
+  }
+\\\mbox{ iff }
+\p(\Outer^{\V{i+1}})=\Cb{\h\,\Many\member\,\C\colon\walkBy}^{\Opt\typeLabel}
+\quad
+\Norm{\p}{\Path}=\Path\mbox{ otherwise}\\
+%\Norm{\p}{\Type\mdf\Path\ph}=\Type\mdf{\Norm\p\Path}\ph\\
+%\Norm{\p}{\Path\Many\xs}=\Path\Many\xs\\
+%\Norm\p\Cb{
+%\h\implSign\,\Paths \Many{\member}
+%}^{\labelVar,\Paths'}=
+%\Cb{
+%\Norm\p\h
+%\implSign\,\Paths \Norm\p{\Many{\member}}
+%}^{\labelVar,\Paths'}
+%\\
+%\Norm\p{\C\colon\ct}=\C\colon\Norm{\ct\p}\ct\\
+%
+%\mbox{ and propagate over the structure for fields and method types}\\
+%\mbox{and is the identity over expressions}\\
+%\end{MDefinition}
+%\\
+%\begin{MDefinition}{\Resolve{\p}{\T_\vz}=\T_\vI}
+\Norm{\p}{\Type\mdf\Path\ph}=\Type\mdf{\Norm\p\Path}\ph
+\\
+\Norm{\p}{\Path'\mx \preApex}=\Type\mdf\Path\preApex
+\mbox{ iff }\Norm{\p}{\Path'\mx}=\Type\mdf\Path\ph
+\\
+\Norm{\p}{\Path_1\mx_1\mx_2\Many\mx}=
+\Norm{\p}{\Path_2\mx_2\Many\mx}
+\\\quad \mbox{iff }
+\Norm{\p}{\Path_1\mx_1}=
+\Type\mdf{\Path_2}\ph
+\\
+\Norm{\p}{\Path\classSep\m\oRound\xs\cRound}=\Norm{\p}{\T},\\
+\Norm{\p}{\Path\classSep\m\oRound\xs\cRound\classSep\x_i}=\Norm{\p}{\T_i}
+\\\mbox{ and }\Norm{\p}{\Path\classSep\m\oRound\xs\cRound\classSep\this}=\Type\mdf{\Outer_0}{}
+\\\quad\mbox{ iff }
+\Method\p\Path{\m\oRound\xs\cRound}=  \mhTt{\mdf}{\m}{
+\T_1\,\x_1\ldots\T_n\,\x_n
+}{\T}{\_}\\
+
+\Norm{\p}{\Path\Many\mx}
+\mbox{ is undefined}
+\mbox{ iff }\p(\Path)=\emptyset
+\mbox{ or we run into a cycle}
+%\MSComm{\mbox{consider to make it undefined}}
+\\
+
+%\Resolve{\p}{\ct}=\\
+%\Norm{\p}{\Cb{
+%\h\implSign\,\Paths \Many{\member}
+%}^{\labelVar,\Paths'}}=
+%\Cb{
+%\Norm\p\h
+%\implSign\,\Paths \Norm\p{\Many{\member}}
+%}^{\labelVar,\Paths'}
+%\\
+%\Norm\p{\C\colon\ct}=\C\colon\Norm{\ct\p}\ct\\
+
+%\Norm\p{\mhTt{\TMdf}{\m}{ \ft{}{\x_1}{\T_1} \ldots \ft{}{\x_n}{\T_n}}{\mdf\, \Outer_0}{\emptyset}
+%\fieldM}\\\quad=
+%\mhTt{\TMdf}{\m}{ \ft{}{\x_1}{\T'_1} \ldots \ft{}{\x_n}{\T'_n}}{\mdf\, \Outer_0}{\emptyset}
+%\fieldM
+%\\\mbox{ with }\T'_i=\toPh{\Norm\p{\T_i}}\\
+%\Norm\p{\mhTt{\RMdf}{\x}{}{\T}{\emptyset}\fieldM}
+%\\\quad=\mhTt{\RMdf}{\x}{}{\mutableAndLentToReadable(\Resolve\p\T)}{\emptyset}\fieldM
+%\\
+\Norm\p{\mhTt{\mdf}{\m}{ \ft{}{\x_1}{\T_1} \ldots \ft{}{\x_n}{\T_n}}{\T_0}{\Paths}\Opt\e}\\\quad=
+\mhTt{\mdf}{\m}{ \ft{}{\x_1}{\T'_1} \ldots \ft{}{\x_n}{\T'_n}}{\T'_0}{\Norm\p\Paths}\Norm\p{\Opt\e}
+\\\mbox{ with }\T'_i=\Norm\p{\T_i}
+\end{MDefinition}
+\\
+%\begin{MDefinition}{\NormOk\p{\halfType\classB}}
+%\NormOk\p{\halfType\classB}\mbox{ do not holds if }
+%\halfType\classB\mbox{ not of form }\Compiled\ct\\
+%\NormOk\p{\Compiled\ct}\mbox{ iff }
+%\Compiled\ct=\Cb{\h\,\mts}^{\Opt\typePlus,\_}
+%\mbox{ and if exists}\member\in\Norm{\Compiled\ct\p}\mts
+%\\\quad
+%\mbox{such that }
+%%\Norm{\Compiled\ct\p}
+%\member=\TMdf\,\methodKw\Type\mdf{\Outer_0}{}\,\_\oRound
+%\Type{\mdf_1}{\Path_1}{\preApex}\,\x_1
+%\ldots
+%\Type{\mdf_1}{\Path_1}{\preApex}\,\x_n
+%\cRound\fieldM
+%\\\quad\mbox{then }
+%\\\quad\quad\mbox{if exists }\mdf_i\notin\{\IMdf,\TMdf\},\mbox{ then } \mdf\notin\{\IMdf,\TMdf\}
+%\\\quad\quad\mbox{if exists }\mdf_i\in\{\LMdf,\RMdf\},\mbox{ then } \mdf\in\{\LMdf,\RMdf\}
+%\end{MDefinition}
+%\begin{MDefinition}{\p(\Path)}%CAN BE USEFUL, is the version that compact away the walkby
+%(\ct_1\ct_2\p)(\Outer_n\Many{\classSep\C})=
+%(\ct_2[\C\colon\ct_1]\p)(\Outer_{n-1}\Many{\classSep\C})
+%\mbox{ iff }\C\colon\walkBy\inside\ct_2\\
+%(\ct_1\ct_2\p)(\Outer_n\Many{\classSep\C})=
+%(\ct_2\p)(\Outer_{n-1}\Many{\classSep\C})
+%\mbox{ otherwise }\\
+%(\ct\p)(\Outer_0\classSep\C\Many{\classSep\C})=
+%(\ct(\C)\ct\ct_2\p)(\Outer_0\Many{\classSep\C})\\
+%(\ct\p)(\Outer_0)=
+%\ct\\
+%\end{MDefinition}
+
+\begin{MDefinition}{
+\StarOf\p
+\quad\!\!
+\StarOf{\p,\Path}
+\quad\!\!
+\ExeAndComplete{\p}
+\quad\!\!
+\ExeAndComplete{\p,\Path}
+\quad\!\!
+\StarOk{\p,\varEnv}
+}
+\StarOf\p=\StarOf{\p,\Outer_0}\\
+\StarOf{\p,\AnyKw},
+\StarOf{\p,\VoidKw}\mbox{ and }
+\StarOf{\p,\LibraryKw}\mbox{ holds}.\\
+\StarOf{\p,\Path}
+\mbox{ iff }
+\p(\Path)=\Compiled\classB\in\{\Cb{\_}^{\typePlus},\Cb{\_}^{\typeStar}\}\\
+\ExeAndComplete{\p\Opt\typeStar}\mbox{ iff } \Opt\typeStar=\typeStar\\
+\ExeAndComplete{\p,\Path}
+\mbox{ holds iff }
+\p(\Path)=\Compiled\classB=\Cb{\_}^{\typeStar}\\
+%\\
+%\Compiled\ct=\Cb{\h\,\mt_1\ldots\mt_n}^{\typeStar,\Paths},
+%\StarOf{\Compiled\ct\,\p,\mt_1}\ldots\StarOf{\Compiled\ct\,\p,\mt_n}\\
+%\StarOf{\p,\C\colon\ct}\mbox{ holds}\\
+%\StarOf{\p,\mhT\Opt{\Path}}\mbox{ holds if forall}
+%\Path\in\Norm\p\mhT,\StarOf{\p,\Path}\\
+%\\
+%\StarOf{\p,\mhT\Opt{\Path}\,\e}\mbox{ holds iff }
+%\StarOf{\p,\mhT\Opt{\Path}}\mbox{ holds and}
+%\Norm\p\e\mbox{ is well defined}\\
+%\StarOf{\p,\mhT\fieldM}\mbox{ if is constructor then well formed}\\
+
+\StarOk{\p,\x_1\colon\Type\_{\Path_1}\_\ldots\x_n\colon\Type\_{\Path_n}\_}
+\\
+\mbox{iff either not }
+\StarOf\p \mbox{ or }
+\forall i\in 1..n\ \StarOf{\p,\Path_i}
+
+
+\end{MDefinition}
+\\
+\begin{MDefinition}{\toPartial(\_), \toPh{\_}}
+\toPartial(\Type\mdf\Path{})=\Type\mdf\Path{\%}\\
+\toPartial(\Type\mdf\Path\ph)=\Type\mdf\Path\ph\mbox{ otherwise}\\
+\toPh{\Type\mdf\Path\_}=\Type\mdf\Path\preApex\mbox{ and }
+\toPh{\Path\Many\mx\_}=\Path\Many\mx\preApex\\
+\mbox{those notions trivially extends to $\varEnv$}\\
+\end{MDefinition}
+\\
+\begin{MDefinition}{\ThrowExtract\p\e=\L\ \val}
+\ThrowExtract\p{\L\ \val}=\L\ \val\\
+\mbox{ with $\e$ not a value, and }\ThrowExtract\p\e=\L\ \val\\
+\ThrowExtract\p{\e\Mc\m{\_}}
+\!=\!\ThrowExtract\p{\val\Mc\m{\Many{\x\colon\val}\x\colon\e\_}}
+\!=\!\ThrowExtract\p{\L\ \e}
+\!=\!\L\ \val\\
+\ThrowExtract\p{\Vd{\dvs}{}{\e}  }=\L\ \Vd\dvs{}\val
+\\
+\ThrowExtract\p{\Vd{\dvs,\dvs'\Xt{}\x\T\e\decs}{}{\e_0}  }=\L\ \Vd\dvs{}\val
+\end{MDefinition}
+\\
+\begin{MDefinition}{\UsedPath{\Compiled\classB}=\Paths\quad\UsedPathPlus{\Compiled\classB}=\Paths}
+\UsedPathPlus{\Cb{\h\implSign\Paths,\members}^{\_}}
+= \Paths\cup\UsedPathPlus{\members}\\
+ \Outer_{k}\classSep\Many\C\in\UsedPathPlus{\C\colon\Compiled\classB}\mbox{ iff } \Outer_{k+1}\classSep\Many\C\in\Compiled\classB\\
+\Path\in\UsedPathPlus{\mhT\Opt\e}\mbox{ iff }
+\Path\in\UsedPathPlus{\Opt\e}
+\mbox{ or }\Path\inside\mhT\\
+
+\Path\in\UsedPathPlus{\e}\mbox{ iff }
+\Path\singleDot\_\inside\e\\
+
+\UsedPath{\Compiled\classB}\mbox{ is defined as }\UsedPathPlus{\Compiled\ct}\mbox{ but in addition }\\
+\Path\in\UsedPath{\mh\,\e}\mbox{ iff }\!\Path\!\in\!\UsedPath{\e}\\
+ \Outer_{k}\classSep\Many\C\in\UsedPath{\e}\mbox{ iff }
+ \Outer_{k+1}\classSep\Many\C\in\UsedPath{\Compiled\classB}\mbox{ and }\!
+ \Compiled\classB\inside\e
+
+
+
+\end{MDefinition}
+%\\
+%\begin{MDefinition}{\pathsOf(\classB)=\Paths}
+%\MSComm{\mbox{may be now is enough inside?}}\\
+%
+%\Path\in\pathsOf(
+%\Cb{\_\,\implSign\_\,\Many{\Compiled\member}\C\colon\Compiled\e\_}
+%)
+%\mbox{ if }
+%\Path\inside\Compiled\e
+%\mbox{ and }\Compiled\e \mbox{ not of shape }\classB\\
+%\pathsOf(
+%\Cb{\_\,\implSign\_\,\Many{\Compiled\member}
+%\mh\,\Compiled\ctx[\classB]\,\_}
+%)\!=\!\pathsOf(\classB)\quad\mbox{ otherwise}
+%
+%\end{MDefinition}
+
+\\
+\begin{MDefinition}{\pluginApply(\p,\Path\,\m\oRound\Many{\x\colon\val}\cRound\,\e_0)=\e}
+\mbox{if }
+\plugin;\T\_=
+\PlGet{\p,\Path,\m\oRound\x_\vI\ldots\x_\vn\cRound}\\
+\mbox{with $\x$ as implicit reduction step identifier}\\
+\PlExecute{\x,\plugin,\p,\ctxVal,\val_\vI\ldots\val_\vn,\e_\vz}=\e
+\mbox{ and }\e\in\{\val,\errorKw\,\val\}\\
+\TsJ{\p;\emptyset;\emptyset;\emptyset}{\e}{\T'\leq\T}\\
+
+\mbox{either for all }\classB\inside\e
+\quad \p\vdash \classB\ReduceArrow{}\Cb{\_}^{\Paths}
+\\\mbox{or  exists }\classB\inside\val
+\mbox{ such that }
+\p\vdash \classB\ReduceArrow{}\Cb{}^{\typeLess}
+\\\mbox{or  exists }\Path\inside\val
+\mbox{ such that }
+\p(\Path)=\Cb{}^{\typeLess}\\
+\mbox{if all of the former holds, then }
+\pluginApply(\Path\,
+\m\oRound\x_\vI\colon\val_\vI\ldots\x_\vn\colon\val_\vn\cRound
+\e_0)=\e\\
+\parbox{60ex}{functions $\PlGet{\_,\_,\_}$
+ and $\_\,\PlExecute{\_,\_,\_,\_,\_,\_}$
+ are defined by the specific 42 implementation;
+ the step identifier is a fresh variable that identify unequivocally the current reduction step.}
+\end{MDefinition}
+%\\
+%\begin{MDefinition}{\p[\walkBy\!=\!\e]}
+%\halfType\classB\,\p[\walkBy\!=\!\e] \!=\!
+%\halfType\classB[\C\colon\e] \mbox{if exists }\!\C\!\mbox{ such that }\! \halfType\classB(\C)\!=\!\walkBy
+%\mbox{ otherwise }
+%\p[\walkBy\!=\!\e]\!=\!\p
+%\end{MDefinition}
+\\
+\begin{MDefinition}{\StageOf\p{\Compiled\classB,\Many\e}=\typeLabel}
+
+\StageOf\p\classB=\typeLess
+\mbox{ iff }\Many\e \!\mbox{ not of form }\!\Many{\Compiled\classB}
+\mbox{ or }\Cb{\_}^\typeLess\in\Many\e\\
+
+%do I need a norm somewhere so that I can no go for the top level one?
+\mbox{ otherwse }\StageOf\p\classB=\typePlus
+\mbox{ iff }
+\AbstractClass\p{\classB}\mbox{ or }\Cb{\_}^\typePlus\in\Many\e\\
+
+\end{MDefinition}
+\\
+\begin{MDefinition}{\SuperOf\p{\Compiled\classB}=\Paths,\members}
+
+\SuperOf\p\classB\!=\!\Paths_1\From{\Path_1}\!\cup\!\ldots\!\cup\!\Paths_n\From{\Path_n},\ \Many\mhT_1\From{\Path_1}\ldots\Many\mhT_n\From{\Path_n}\quad
+\\
+\Norm{\classB\p}{\Paths}=\{\Path_1\ldots\Path_n\},
+(\classB\p)(\Path_i)=\Cb{\interfaceKw \implSign\Paths_i\Many\mhT_i\Many{\C\colon\e}_i}^{\typeLabel}
+\\
+\mbox{all }\OriginalMeth{\classB\p}{\Paths_i\From{\Path_i},\Dom{\Many\mhT_i}}\mbox{ are disjoint},\classB=\Cb{\h\implSign\Paths\members}
+\\
+
+%\Paths'=\Paths_1\From\Path_1\cup\ldots\cup\Paths_n\From\Path_n\\
+%\members'=\Many\mhT_1\From\Path_1\ldots\Many\mhT_n\From\Path_n\\
+%\Paths,\Path,(\Paths_\vII\From{\Path})}
+%(\Cb{\h\implSign\Paths_\vI,\Path \mts}^{\Paths},\p)(\Path)=\Cb{\interfaceKw \mhT_\vI\ldots\mhT_\vn
+%\Many{\mhT \Path} \Many{\C\colon\e}}^{\Opt{\_{}^{}},\Paths_\vII}
+
+%\mts'=(\mhT_\vI \Outer_0\ldots \mhT_\vn \Outer_0 \Many{\mhT \Path})\From\Path\cup\mts
+
+\end{MDefinition}
+\\
+\begin{MDefinition}{
+\HB(\ctx),
+\FV(\e),
+\e[\x=\val]
+}
+\mbox{are they used somewhere?}
+\end{MDefinition}
+
+
+\end{RuleFrame}

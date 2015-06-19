@@ -1,0 +1,110 @@
+\begin{MDefinition}{\GuessType\varEnv\e
+\quad 
+\mbox{ note: }\!\!\GuessType\varEnv{\Cb{\es_\vI\catch_\vI\ldots\es_\vn\catch_\vn}}
+\!\mbox{ is correctly undefined}
+}
+
+\GuessType\varEnv\classB=\IMdf\,\LibraryKw,\quad
+\GuessType\varEnv\x=\varEnv(\x),\quad
+\GuessType\varEnv\Path=\TMdf\,\Path\\
+\GuessType\varEnv\voidKw=
+\GuessType\varEnv{\loopKw\,\e}=
+\\\quad
+\GuessType\varEnv{\x\, \eqOp\, \e }=
+\GuessType\varEnv{\L\, \e}=
+\GuessType\varEnv{\ifKw\,\e\,\block_\vI\, \Opt{\elseKw\, \block_\vII}}=
+\\\quad
+\GuessType\varEnv{\whileKw\, \e \, \block}=
+\GuessType\varEnv{\with\,\Opt\block}=
+\IMdf\,\VoidKw\\
+
+%\Desugar\e_{\varEnv,\Many\classB}
+
+\GuessType\varEnv{\num\e}=
+\GuessType\varEnv{\e\Mc{\pNumberParser}{\Cb{\traitKw}}   }
+\\
+\GuessType\varEnv{
+\e\Terminale{"}\_\Terminale{"}}
+=
+\GuessType\varEnv{\e\Mc{\pStringParser}{\Cb{\traitKw}}}\\
+
+\GuessType\varEnv{\unOp\, \e}=
+\GuessType\varEnv{\e\Mc{\DesugarChar\unOp}{}}
+\\
+
+\GuessType\varEnv{\e_\vI \binOp\, \e_\vII}=
+\GuessType\varEnv{\e_\vI\Mc{\DesugarChar\binOp}{\e_\vII}}
+\\
+\GuessType\varEnv{\e\oRound\ps\cRound}=
+\GuessType\varEnv{\e\Mc{\fApply}{\ps}}
+\\
+
+\GuessType\varEnv{\e\Mc\m{\ps}}=\T\m\oRound\xsOfPs(\ps)\cRound
+\mbox{ iff }
+\GuessType\varEnv{\e}=\Path\Many\mx=\T\\
+\GuessType\varEnv{\e\Mc\m{\ps}}=\Path\singleDot\m\oRound\xsOfPs(\ps)\cRound
+\mbox{ iff }\GuessType\varEnv{\e}=\mdf\,\Path\Opt\preApex\\
+\GuessType\varEnv{
+\Vd{\es_\vI}{\catch_\vI\ldots\es_\vn\catch_\vn}{\e}
+}=
+\GuessType{\varEnv'}{\e}
+\mbox{ with }\varEnv'=\GuessType\varEnv{\es_\vI\ldots\es_\vn}
+\\
+\mbox{ and }\GuessType\varEnv{}=\varEnv
+\quad
+\GuessType\varEnv{\e\,\es}=
+\GuessType\varEnv{\C\colon\e\,\es}=\GuessType\varEnv{\es}\\
+
+\quad\quad\GuessType\varEnv{ \Xt{\varOpt}{\x}{\T}{\e}\es}
+=\GuessType{\varEnv,\x\mapsto\T}{\es}
+\\\quad\quad
+\GuessType\varEnv{ \Xt{\varOpt}{\x}{}{\e}\,\es}
+=\GuessType{\varEnv,\x\mapsto\GuessType\varEnv{\e}}{\es}
+\\
+
+
+
+\GuessType\varEnv{
+\e\oSquare\ps_\vI\semicolon\ldots\,\ps_\vn\semicolon\cSquare
+}=
+\GuessType\varEnv{\e\Mc\fApply{}
+\Mc\itAdd{\ps_\vI}
+\ldots
+\Mc\itAdd{\ps_\vn}}\\
+
+\GuessType\varEnv{\e\oSquare\with\Opt\block\cSquare}=
+\GuessType\varEnv{\e\Mc\fApply{}}\\
+\GuessType\varEnv{\e\,\docs}=
+\GuessType\varEnv{\Using\Path{\Mh\m{\docs\,\ps}}\e}
+=\GuessType\varEnv{\e}\\
+\end{MDefinition}
+
+\\
+\begin{MDefinition}
+  {\CFType{\mdf\,\Mh\m{\V{\f_\vI}\ldots\V{\f_\vn}}}=\Many\mhT
+%\quad \mbox{( $\T\preApex$ requires $\preApex$ absent in $\T$ and adds it)}
+}
+\Case1\mhTt{\TMdf}{\m}{\!\toPh{\!\!\ft{}{\x_1}{\T_1} \ldots \ft{}{\x_n}{\T_n}\!\!}}{\mdf\, \Outer_\vz}{\emptyset}
+\in
+\CFType{\mdf\,\Mh\m{ \ft{\varOpt_1}{\x_1}{\T_1} \ldots \ft{\varOpt_n}{\x_n}{\T_n }}\!}
+\\
+
+  \Case{2a}\mhTt{\SMdf}{\x}{ \ft{}{\thatKw}{\mdf\, \Path} }{\IMdf\, \VoidKw}{\emptyset}\in
+ \CFType{\_\,\Mh\m{\V{\Many\f_\vI}\,\ft{\varKw}{\x}{\mdf \Path}\,\V{\Many\f_\vII}}}
+\\
+ \Case{2b}\mhTt{\SMdf}{\x}{ \ft{}{\thatKw}{\Path\Many{\mx}} }{\IMdf\, \VoidKw}{\emptyset}\in
+ \CFType{\_\,\Mh\m{\V{\Many\f_\vI}\,\ft{\varKw}{\x}{\Path\Many{\mx}}\,\V{\Many\f_\vII}}}
+\\
+
+ \Case3\mhTt{\SMdf}{\hash\x}{}{\T}{\emptyset}
+\in
+ \CFType{\_\,\Mh\m{\V{\Many\f_\vI}\,\ft{\varOpt}{\x}{\T}\,\V{\Many\f_\vII}}}
+\\
+
+ \Case4
+
+\mhTt{\RMdf}{\x}{}{\mutableAndLentToReadable(\Type\mdf\Path{})}{\emptyset}
+\in
+ \CFType{\_\,\Mh\m{\Many\f_\vI\,\ft{\varOpt}{\x}{\Type\mdf\Path{}}\,\Many\f_\vII}}
+\end{MDefinition}
+

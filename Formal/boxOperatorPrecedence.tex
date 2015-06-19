@@ -1,0 +1,11 @@
+\parbox{\linewidth}{
+\textbf{Operator precedence}
+\small\\*
+Postfix unary operators (as method calls)
+have the strongest precedence of all,
+then prefix unary operators and finally binary operators.
+A sequence of identical binary operators associate from left to right,
+so that \Q@a+b+c@ is equivalent to \Q@(a+b)+c@,
+but sequences of different operators with the same precedences, like \Q@a+b*c@, are not well formed.
+}
+ 

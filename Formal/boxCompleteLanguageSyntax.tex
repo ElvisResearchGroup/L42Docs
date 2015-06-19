@@ -1,0 +1,126 @@
+%####----Syntax L42 -----------------------------
+%\mbox{\textbf{Complete language syntax}}\\
+\mbox{\begin{grammatica}
+
+\produzione\e{
+%Constant terms
+\classB \mid \x \mid \Path \mid\voidKw
+\mid \num\,\Many\num\e
+\mid\e\Terminale{"}\V{\NonTerminale{string}}\Terminale{"}
+\mid \L\, \e %\mbox{<$\L\neq\xMany$>}
+%binary op
+\mid \x\, \eqOp\, \e 
+\mid \unOp\, \e
+}{expression}\\\seguitoProduzione{
+\mid\block
+\mid \e_\vI \binOp\, \e_\vII 
+\mid\e\oRound\docs\,\ps\cRound
+\mid\ifKw\,\e
+\, \block\, \Opt{\elseKw\, \V{\e\vT}}
+%\mid \loopKw\, \block 
+\mid\whileKw\, \e \, \block
+\mid \with
+%}{}\\\seguitoProduzione{
+
+
+%}{}\\\seguitoProduzione{
+
+\mid \e\Mc\m{\docs\,\ps}
+}{}\\\seguitoProduzione{
+\mid \e
+%\singleDot\m
+\oSquare\docs\,\ps_\vI\semicolon\docs_\vI\ldots\,\ps_\vn\semicolon\docs_\vn\cSquare
+| \e
+%\singleDot\m
+\oSquare\docs\,\with\cSquare
+\mid\e\,\docs
+\mid\loopKw\,\e\mid
+ \singleDot\singleDot\singleDot
+}{}\\\seguitoProduzione{
+%
+%control flow stuff
+%\mid \Opt{\onKw\, \x\,\isKw\Path\,\Many{\x\,\isKw\Path}}\Opt{\ifKw\,\e}\,\block
+
+%}{}\\\seguitoProduzione{
+
+\mid\Using\Path{\Mh\m{\docs\,\ps}}\e
+}{}\\
+
+
+\produzione\block{
+%\mid
+\Vd{\docs\,\V{\es_\vI}}{\V{\catch_\vI}\ldots\V{\es_\vn}\V{\catch_\vn}\,\e}{}
+\mid \Cb{\docs\,
+\V{\es_\vI}\V{\catch_\vI}\ldots\V{\es_\vn}\V{\catch_\vn}}
+}{expr-block}\\
+\produzione\catch{\catchKw\,\L\,\x\oRound\docs
+\ons
+\Opt{\defaultKw\,\e}\cRound
+}{catch-match}\\
+%\end{grammatica}} 
+%\\
+%\mbox{\begin{grammatica}
+
+%----------------------------
+\produzione\X{
+ \Xt{\varOpt}{\x}{\TOpt}{\e}
+ \mid \e \mbox{<$\e\neq\x$>}
+%not x to avoid ambiguity in {(x T)}, that should be a concrete class
+\mid\C\colon\e
+}{statement}\\
+
+
+%-----------
+\produzione{\with}{
+%\Opt\onStart\,
+\withKw\,\xs\,\is\,\es\,
+\oRound\Many\onWith\Opt{\defaultKw\,\e}\cRound
+|
+\withKw\,\is\,\block\!
+}{with}\\
+%\produzione{\onStart}{\onKw\,\startKw\,\block}{}\\
+%|\onKw\,\Path_\vI\docs_\vI\Path_\vII\docs_\vII\ifKw\Mc\m{\!\Many{\docs\,\x\colon\e}}\docs\,\block
+
+\produzione\onWith{
+\onKw\,\Many\T \e
+\mid
+\onKw\,\Many\T \caseKw\,\e\,\block
+\mid \caseKw\,\e\,\block
+}{type-case}\\
+
+%\produzione\ons{\on_\vz\, \on_\vI\ldots\on_\vn}{result matches}\\
+
+\produzione\h{
+ \Mh{\m}{\Many\f} \mid \interfaceKw\mid \traitKw
+}{lib. node h.}\\
+%-------------------------
+\produzione\Path{\C\Many{\classSep\C}| \Outer^\vn\Many{\classSep\C} |\AnyKw| \VoidKw|\LibraryKw}{node path }\\
+%#Paths::=Path1,...,Pathn
+%\produzione\Paths{\Path_\vI\cLdots\Path_\vn}{}\\
+%#classB::= {docs[h] members}
+\produzione\classB{
+  \Cb{\docs\,\h\,\implSign \Paths \members}
+  | \Cb{
+    \reuseKw\,\V{\NonTerminale{url}}\,\EOL\,
+    \members\ 
+%    \docs\,\es_\vI\catch_\vI\ldots\es_\vn\catch_\vn
+  }
+}{library literal}\\
+
+%\produzione\member{\mhT\mid \mH \e\mid\C\colon\docs\ \e}{node members}\\
+%\produzione\mhT{  \mhTt{\mdf}{\m}{\Many{\ft{}{\x}{\T}}}{\docs\T}{\Paths}}{typed meth. h.} \\
+%\produzione\mhS{  \mhSt{\docs\,\m}{\xs}}{meth. selector} \\
+\produzione\ps{
+\Opt\e\,\Many{\x\colon\e}
+}{parameters}\\
+\produzione\iterDeclaration{
+  \ft{\varOpt}{\x}{}\,\inKw\,\e
+}{iterator decl.}\\
+\produzione\on{
+\onKw\,\T\,\e
+\mid
+\onKw\,\T\,\caseKw\,\e\,\block
+}{signal handler}\\
+
+\end{grammatica}}
+

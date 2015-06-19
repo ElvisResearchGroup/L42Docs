@@ -1,0 +1,239 @@
+\begin{RuleFrame}\pBox{Extraction of types}
+\vspace{-5ex}\\
+%\vspace{-5ex}\\
+
+\begin{MetaRule}{et-+}
+\begin{premise}
+\classB_\vI
+\xrightarrow{\p}\ldots\xrightarrow{\p}
+\classB_\vII
+\\
+\classB_\vII\not\xrightarrow{\p}\_
+\end{premise}
+\begin{consequence}
+\ExtractTMax{\p}{
+\classB_\vI
+}{
+\classB_\vII
+}
+\end{consequence}
+\end{MetaRule}
+
+\!\!\!\!\!\!\!\!
+
+\begin{MetaRule}{et-deep}
+\begin{premise}
+\ExtractT{\classB
+%[\C\colon\walkBy]
+,\p}{\classB_1}{\classB_2}
+\end{premise}
+\begin{consequence}
+\ExtractT{\p}{
+\classB
+}{
+\classB[\C\colon\classB_2]
+}
+\end{consequence}
+\begin{sideCondition}
+\classB=\Cb{\h\_ \members\C\colon\classB_1}\\
+%\p'=\ct^+[\C\colon\walkBy],\p
+\end{sideCondition}
+\end{MetaRule}
+
+\!\!\!\!\!\!\!\!
+
+%\vspace{-2ex}
+
+\begin{MetaRule}{et-sub}
+\begin{consequence}
+\ExtractT{\p}{
+\classB
+}{
+\Cb{
+\h\implSign\Paths\cup\Paths'
+\Many\mhT\cup\members}^\typeStar
+}
+\end{consequence}
+\begin{sideCondition}
+\classB=\Cb{\h\implSign\Paths \members}\\
+\SuperOf\p\classB=\Paths',\ \Many\mhT\\
+\Many\mhT\cup\members\mbox{ not have untyped headers}\\
+\end{sideCondition}
+\end{MetaRule}
+
+
+
+%\begin{MetaRule}{et-stage}
+%\begin{consequence}
+%\ExtractT{\Paths_\vz,\p}{
+%\Cb{\h \mts}^{\Paths}
+%}{
+%\Cb{\h \mts}^{\Opt\typeStar,\Paths}
+%}
+%\end{consequence}
+%\begin{sideCondition}
+%\mbox{if }\h\mbox{ of form }\Mh\m{\Many\f}
+%\mbox{ then }\mhT\fieldM\in\mts\\
+%
+%\mbox{ if }
+%\Outer_i\in\Paths_\vz
+%\mbox{ then }\Opt\typeStar=\typeStar\\
+%\mbox{otherwise }
+%\Opt\typeStar=\emptyset\\
+%\end{sideCondition}
+%\end{MetaRule}
+
+%\begin{MetaRule}{et-H}
+%\begin{consequence}
+%\ExtractT{\p}{
+%\Cb{\Mh\m{\Many\f} \mts}^{\Paths}
+%}{
+%\Cb{
+%\Mh\m{\Many\f}
+%\mts'
+%}^{\Paths}
+%}
+%\end{consequence}
+%\begin{sideCondition}
+%\mts'=\CFType{\Mh\m{\Many\f}}\mts %it is correct to not do cup
+%\end{sideCondition}
+%\end{MetaRule}
+%
+%\!\!\!\!\!\!\!\!
+%
+%
+%\begin{MetaRule}{et-less}
+%\begin{consequence}
+%\ExtractT{\p}{
+%\Cb{\h \mts}^{\Opt\typePlus,\Paths}
+%}{
+%\Cb{\h \mts}^{\typeLess,\Paths}
+%}
+%\end{consequence}
+%\begin{sideCondition}
+%\Cb{\h \mts}^{\Opt\typePlus,\Paths}=\Compiled\ct,\ 
+%\Path\in\UsedPath{\Compiled\ct}\From{\Outer_1}\\
+%\mbox{ either }(\Compiled\ct\p)(\Path)=\Cb{\_\,\_}^{\typeLess,\_}\\
+%\mbox{or }\Path=\Path'\classSep\_,
+%(\Compiled\ct\p)(\Path')=\e \mbox{ not of form }\Compiled{\halfType\classB}\\
+%%thus is not typeLess if we encounter a walkby!
+%
+%\end{sideCondition}
+%\end{MetaRule}
+\!\!\!\!\!\!\!\!
+
+\begin{MetaRule}{et-label}
+\begin{consequence}
+\ExtractT{\p}{
+\classB
+}{
+\Cb{\h \members}^{\StageOf\p{\classB,\Many\e}}
+}
+\end{consequence}
+\begin{sideCondition}
+\classB=\Cb{\h \members}^{\typeStar}\\
+\Many\e=\{(\classB\p)(\Path)|
+ \Path\in\UsedPathPlus{\classB}\}\setminus\walkBy\\
+\quad\cup\{\classB(\Many{\classSep\C})|\Many{\classSep\C}\in\Dom\classB\}\\
+\forall\Compiled\classB\in\e,\Compiled\classB=\Cb{}^\typeLabel\\
+%\forall\Many{\classSep\C}_i\!\mbox{ such that }\!\Cb{\h \members}^{\typeStar}(\Many{\classSep\C}_i)=\classB_i,
+%\\\quad\classB_i=\Cb{\_}^\typeLabel\\
+
+\end{sideCondition}
+\end{MetaRule}
+
+
+
+%\vspace{-1ex}
+\\
+\begin{MetaRule}{p-ok}
+\begin{premise}
+\TypeJ{}{\p}{\mbox{ok}}\ \mbox{if}\p\neq\emptyset\\
+\TypeJ{\p}{\halfType\classB_0}{\mbox{ok}}
+%\TypeJ{\p}{\halfType\classB}{\mbox{ok}}
+\end{premise}
+\begin{consequence}
+\TypeJ{}{\halfType\classB\p}{\mbox{ok}}
+%\TypeJ{}{\p_0}{\mbox{ok}}
+\end{consequence}
+\begin{sideCondition}
+\halfType\classB_0=\halfType\classB[\C\colon\errorKw\,\voidKw] \\\quad\mbox{if exists }\C\mbox{ such that } \halfType\classB(\C)=\walkBy\\
+\mbox{otherwise }\halfType\classB_0=\halfType\classB\\
+%\halfType\classB\,\p_1=\p_0[\walkBy=\errorKw\,\voidKw]\\
+%\p=\p_1[\walkBy=\halfType\classB]
+\end{sideCondition}
+\end{MetaRule}
+
+
+
+\!\!\!\!\!\!\!\!\!\!\!
+\begin{MetaRule}{meth-t-def}
+\begin{premise}
+\TsJ{\p;\varEnv;\sealEnv;\emptyset;\Paths}
+{\e}{\T'\leq\T}\  \mbox{if }\Opt\e=\e
+\end{premise}
+\begin{consequence}
+\TypeJ{\p}{\member}{\mbox{ok}}
+\end{consequence}
+\begin{sideCondition}
+\Norm{\p}{\member}=\mhT\Opt\e\mbox{ fully normalized}\\
+\mhT\!=\!\mhTt{\mdf}{\m}{\!\T_1\ \x_1\ldots\T_n\x_n\!}{\T}{\Paths}
+\\
+\varEnv\!=\!\x_1:\T_1\ldots\x_n:\T_n,\this:\Type{\mdf}{\Outer_0}{}
+\\
+\sealEnv=\emptyset;\emptyset;\this,\x_1,\ldots,\x_n\\
+\StarOk{\p,\varEnv}
+\end{sideCondition}
+\end{MetaRule}
+
+
+
+
+
+\!\!\!\!
+\begin{array}{l}
+\begin{MetaRule}{check-ct1}
+\begin{premise}
+\TypeJ{\classB[\C\colon\walkBy],\p}{\classB'}{\mbox{ ok}}
+\ \forall \C\colon\classB', \classB(\C)=\C\colon\classB'
+\end{premise}
+\begin{consequence}
+\TypeJ{\p}{ \classB}{\mbox{ok}}
+\end{consequence}
+\begin{sideCondition}
+% \classB\mbox{ is not of form }\Compiled\classB\mbox{ or }
+\classB\notin\{\Cb{\_}^{\typePlus},\Cb{\_}^{\typeStar}\}\\
+%\mbox{ or } \halfType\classB\mbox{ not fully normalized/able}\\
+
+%\mbox{not }
+%\StarOf{\halfType\classB}
+%\mbox{ and not }
+%\NormOk{\p}{\halfType\classB}
+\end{sideCondition}
+\end{MetaRule}
+
+\\
+\begin{MetaRule}{check-ct2}
+\begin{premise}
+\TypeJ{\Compiled\ct[\C\colon\walkBy],\p}{\classB'}{\mbox{ ok}}
+\ \forall \C\colon\Compiled\classB', \Compiled\classB(\C)=\C\colon\Compiled\classB\\
+\TypeJ{ \Compiled\classB,\p}{\mhT\Opt\e}{ \mbox{ok}}
+\forall \mhT\Opt\e, \Compiled\classB(\mhT)=\mhT\Opt\e\\
+\end{premise}
+\begin{consequence}
+\TypeJ{\p}{\Compiled\classB}{\mbox{ok}}
+\end{consequence}
+\begin{sideCondition}
+\Compiled\classB\in\{\Cb{\_}^{\typePlus},\Cb{\_}^{\typeStar}\}\\
+\mbox{\MSComm{by being at least plus,
+$\Compiled\classB$ is fully normalized/able}}
+%\NormOk{\p}{\Compiled\ct}
+%\mbox{\MS{normOK, no need star}}
+\end{sideCondition}
+\end{MetaRule}
+\end{array}
+
+
+
+
+\end{RuleFrame}

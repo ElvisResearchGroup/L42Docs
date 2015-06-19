@@ -1,0 +1,18 @@
+\parbox{\linewidth}{
+\textbf{Desugering and compilation process}\small\\*
+With $\classB$  as a source in the sugared language 
+$\DesugarW{\Desugar{\classB}_{\emptyset;\Type\IMdf\VoidKw{};\emptyset}}$  is the corresponding desugared term.
+An \textbf{execution process} is a sequence $\classB_\vz\ldots\classB_\vn$ such that\\*
+$
+\emptyset|\classB_\vz
+\xrightarrow{}
+\emptyset|\ldots
+\xrightarrow{}
+\emptyset|\classB_\vn
+$.\\*
+Normal forms are results: either library literals well-typed in $\typeStar$ or representations of an error.
+\textbf{Plugins} 
+are obtained ($\PlGet{\pt,\Path,\Mc\m{\Many{\x}}}$) from library types (often containing an url $\docs$) extracted from a program type $\pt$. Plugins monitor execution of code $\e$ ($\PlExecute{\plugin,\p,\runEnv,\es,\Many\val,\e}$).
+\textbf{Semantic extensions} are defined by providing different plug-ins implementations through some urls.
+}
+ 

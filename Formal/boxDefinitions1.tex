@@ -1,0 +1,233 @@
+\begin{RuleFrame}\cBox{Definitions1}%
+\begin{MDefinition}{\complete(\varEnv),
+\mutableVars(\varEnv),\mutableSuper(\varEnv),\mutableToLent(\T)}
+\complete(\varEnv)=\{\x:\Type\mdf\Path{}|\varEnv(\x)=\Type\mdf\Path{}\}\\
+\mutableVars(\varEnv)=
+\{\x:\Type\SMdf\Path\ph|\varEnv(\x)=\Type\SMdf\Path\ph\}\\
+\mutableSuper(\varEnv)=
+\{\x:\Type\mdf\Path\ph|\varEnv(\x)=\Type\mdf\Path\ph,\SMdf\leq\mdf\}\\
+\mutableToLent(\Type\SMdf\Path\ph)=\Type\LMdf\Path\ph\\
+\mutableToLent(\Type\mdf\Path\ph)=\Type\mdf\Path\ph\mbox{ otherwise}\\
+\mutableAndLentToReadable(\Type\SMdf\Path\ph)=
+\mutableAndLentToReadable(\Type\LMdf\Path\ph)=
+\Type\RMdf\Path\ph\\
+\mutableAndLentToReadable(\Type\mdf\Path\ph)=\Type\mdf\Path\ph\mbox{ otherwise}\\
+\end{MDefinition}
+
+%\\
+%\begin{MDefinition}{
+%\move_\p(\!\dvs_1,\ctxVal_1,\x\Mc\m{\thatKw\colon\atom})\!=\!\Pair{\ctxVal_2}{\dvs_2}
+%}
+%\move_\p(\!\dvs_1,\ctxVal_1,\x\Mc\m{\thatKw\colon\atom})
+%\mbox{ is defined only if }
+%\x\not\in\HB(\ctxVal_1),\\
+%\dvs(\x)=\Dec{\Type{\mdf}{\Path}{}}{\x}{\_},
+%\mdf\in\{\SMdf,\LMdf\}
+%\\\quad\mbox{and }
+%\p(\Path)(\m\oRound\thatKw\cRound)=
+%\mhTt{\mdf}{\m}{}{\_}
+%{\emptyset}\fieldM
+%\\
+%\mbox{if }\atom\mbox{ is not a variable, then }
+%\move_\p(\!\dvs_1,\ctxVal_1,\x\Mc\m{\thatKw\colon\atom})=\Pair{\ctxVal_1}{\emptyset}
+%\\\quad\mbox{otherwise }
+%\move_\p(\!\dvs_1,\ctxVal_1,\x\Mc\m{\thatKw\colon\y})=\move(\ctxVal_1,\y)
+%\\
+%\end{MDefinition}
+%
+\\
+\begin{MDefinition}{
+\Move{\ctxVal}{\xs}\!=\!\Pair{\ctxVal'}{\dvs'}
+}
+
+\Move{\hole}{\xs}=\Pair{\hole}{\emptyset}\\
+\mbox{assuming }\Move{\ctxVal}{\xs}=\Pair{\ctxVal'}{\dvs'}, \mbox{ then}\\
+
+\Move{\Vd{\dvs\ \Dec\T\y\ctxVal\decs}{\Opt\catch}{\e}}\xs
+=\Pair{
+\Vd{\dvs\,\dvs' \Dec\T\y\ctxVal'\decs}{\Opt\catch}{\e}
+}\emptyset
+\\
+\mbox{ and }
+\Move{\Vd{\dvs}{}{\ctxVal}}{\xs}
+=\Pair{\Vd{\dvs\,\dvs'}{}{\ctxVal'}}\emptyset\mbox{ with }\xs\subseteq\Dom\dvs\\
+
+
+\Move{\MethCall\ctxVal\m{\Many{\x\colon\e}}}{\xs}=\Pair{\MethCall{\ctxVal'}\m{\Many{\x\colon\e}}}{\dvs'}\\
+\Move{\MethCall\val\m{\Many{\x\colon\val}, \y\colon{\ctxVal},\Many{\x\colon\e}}}{\xs}=
+\Pair{\MethCall{\val}\m{\Many{\x\colon\val}, \y\colon\ctxVal',{\Many{\x\colon\e}}}}{\dvs'}\\
+%\mbox{assuming }\Move{\ctxVal}{\xs\cup\FV(\dvs_1)}=\Pair{\ctxVal'}{\dvs'}, \mbox{ then}\\
+\Move{\Vd{\dvs}{}{\ctxVal}}{\xs}
+=\Pair{\Vd{\dvs_2}{}{\ctxVal'}}{\dvs'\ \dvs_1}\\
+\Move{\Vd{\dvs\ \Dec\T\y\ctxVal\decs}{\Opt\catch}{\e}}{\xs}=\Pair{ \Vd{\dvs_2\ \Dec\T\y{\ctxVal'}\decs}{\Opt\catch}{\e}}{\dvs\MS{'}\ \dvs_1}\\
+
+\dvs=\dvs_1\ \dvs_2\mbox{ with } \dvs_1 \mbox{ inductively defined by }\\
+\x\in\Dom{\dvs_1} \mbox{ iff }
+\x\in\Dom{\dvs} \mbox{ and } \x\in\xs\cup\FV(\dvs')\\
+%\x\in\dom{\dvs}, \x\in\xs\ \mbox{implies}\ \x\in\dom{\dvs_1} \\
+\x\in\Dom{\dvs_1}\mbox{ iff }
+\x\in\Dom{\dvs}, \dvs_1(\_) = \val \mbox{ and }\x\in\FV(\val)
+%\dvs_1(\_) = \val, \x\in\dom{\dvs},\x\in\FV{\val}\ \mbox{implies}\ \x\in\dom{\dvs_1}
+
+\end{MDefinition}
+\\
+\begin{MDefinition}{\extractDec(\ctxVal,\x)}
+\extractDec(\ctxVal'[
+\Vd{\dvs}{}{\ctxVal}],\x)=
+\extractDec(\ctxVal'[\Vd{\dvs\ \Dec{\T}{\y}{\ctxVal}\ \decs}{\Opt\catch}{\e}],\x)
+=\dvs(\x)\\
+\mbox{ if }\x\in\Dom\dvs\\
+
+%\extractDec(\hole,\x)\ \mbox{is undefined}\\
+%\extractDec(\MethCall\ctxVal\m{\Many{\x\colon\e}},\x)=\extractDec(\MethCall\val\m{\Many{\x\colon\e}, \y\colon\ctxVal,\Many{\x\colon\e}},\x)\\\quad=\extractDec(\ctxVal,\x)\\
+%\extractDec(\Vd{}{\dvs}{\ctxVal},\x)=\extractDec(\Vd{}{\dvs\ \Dec{\T}{\y}{\ctxVal}\ \decs}{\e},\x)\\
+%\quad=\begin{cases}
+%\extractDec(\ctxVal,\x)& \mbox{if}\ \extractDec(\ctxVal,\x)\ \mbox{is defined}\\
+%\dvs(\x)&\mbox{otherwise}
+%\end{cases}
+\end{MDefinition}
+\\
+\begin{MDefinition}{\class(\ctxVal,\val)}
+\class(\ctxVal,\x)=\C\ \mbox{if}\ \extractDec(\ctxVal,\x)=\Dec{\_}{\x}{\MethCall{\C}\m{\_}}\\
+\class(\ctxVal,\x)=\class(\ctxVal,\Vd{}{\dvs}{\val})
+\\\quad \mbox{if}\ \extractDec(\ctxVal,\x)=\Dec{\Type{\IMdf}{\_}{\_}}{\x}{\Vd{}{\dvs}{\val}}\\
+\class(\ctxVal,\Path)=\Path\\
+\class(\ctxVal,\voidKw)=\VoidKw,
+\class(\ctxVal,\classB)=\LibraryKw\\
+\class(\ctxVal,\Vd{}\dvs\val)=\class(\ctxVal[\Vd{}{\dvs}{\hole}],\val)\\
+\end{MDefinition}
+\\
+\begin{MDefinition}{\dvs[\x.\m=\atom]=\dvs'}
+\dvs \Dec\T\x\Path\Mc\m{
+  \Many{\x\colon\atom}
+  \y\colon\_
+  \Many{\x\colon\atom}'
+  }[\x.\Opt{\,\hash\,}\y=\atom]
+\!=\!
+\dvs \Dec\T\x\Path\Mc\m{
+  \Many{\x\colon\atom}
+  \y\colon\atom
+  \Many{\x\colon\atom}'}
+\\
+\end{MDefinition}
+\\
+\begin{MDefinition}{\AbstractClass\p{\classB},\ \Coherent\p{\classB}}
+\AbstractClass\p{\classB}\mbox{ holds if not }\Coherent\p{\classB}\\
+\mbox{or } \classB\mbox{ has a nested class }\C\colon\classB' \mbox{ such that }
+\AbstractClass\p{\classB'}
+\\
+\Coherent\p{\Cb{\interfaceKw\_}^{\Opt\typeLabel}}\mbox{ holds}\\
+\Coherent\p{
+\Cb{\h\implSign\, \Many{\Path}\vT\,\Many\mhT\, \members}^{\Opt\typeLabel}
+}\mbox{ if no element of for }\mhT\in \members \mbox{ and either}\\
+\Many\mhT=\emptyset\mbox{ or }
+\mhTt{\TMdf}{\m}{\Many{\ft{}{\x}{\T}}}{\mdf\,\Outer_0}{\_}\in\Many\mhT\\
+\mbox{and for every other }\mhT\in\Many\mhT,
+\Coherent\p{\mdf,\Many{\ft{}{\x}{\T}},\mhT}\mbox{ holds}\\
+\Coherent\p{\mdf,\Many{\ft{}{\x}{\T}},\mhT}=
+\Coherent\p{\mdf,\Norm\p{\Many{\ft{}{\x}{\T}}},\mhT}\\
+
+
+%\Coherent\p{\mdf,
+%\ft{}{\x_1}{\Type{\mdf_1\!}{\Path_1}{\!\Opt\preApex_1}}
+%\ldots\!
+%\ft{}{\x_n}{\Type{\mdf_n\!}{\Path_n}{\!\Opt\preApex_n}}
+%,\mhT\!}=\\\quad
+%\Coherent\p{\mdf,
+%\ft{}{\x_1}{\Type{\mdf_1\!}{\Path_1}{}}
+%\ldots\!
+%\ft{}{\x_n}{\Type{\mdf_n\!}{\Path_n}{}}
+%,\mhT\!}\\
+\Coherent\p{\mdf,
+\ft{}{\x_1}{\Type{\mdf_1}{\Path_1}{\preApex}}
+\ldots
+\ft{}{\x_1}{\Type{\mdf_n}{\Path_n}{\preApex}}
+,\mhT}
+\mbox{ iff }\\
+\mbox{ exists } i\mbox{ such that }
+\Coherent\p{\ft{}{\x_i}{\Type{\mdf_i}{\Path_i}{}},\mhT}\mbox{ holds, and }\\
+\mdf\neq\TMdf,\ \mdf\in\{\RMdf,\LMdf\}\mbox{ if } \RMdf\mbox{ or }\LMdf\in \{\mdf_1\ldots\mdf_n\},\\
+\mdf\in\{\CMdf,\IMdf\}\mbox{ iff }\{\mdf_1\ldots\mdf_n\}=\{\IMdf,\CMdf\}
+\\%, \ \CMdf\notin\{\mdf_1\ldots\mdf_n\}\\
+
+
+\\
+%CASES Methods
+%Case get/exposer/setter for type, imm, and read
+\mbox{with }\mdf\in\{\TMdf,\IMdf,\RMdf\}, \mdf'\neq\TMdf,\mdf''\in\{\SMdf,\LMdf\},
+\Norm\p{\T'}=\VoidKw
+\\
+%Get/exposer
+\Case{a}\Coherent\p{\ft{}{\x}{\Type\mdf\Path{}},
+\mhTt{\mdf'}{\Opt{\,\hash\,}\x}{}{\T}{\_}
+} \mbox{ iff } 
+\SubT{\p}{}{\Type\mdf\Path{}}{\Norm\p\T}\\
+%setter
+\Case{b}\Coherent\p{\ft{}{\x}{\Type\mdf\Path{}},
+\mhTt{\mdf''}{\Opt{\,\hash\,}\x}{\ft{}\thatKw\T}{\T'}{\_}
+} \mbox{ iff } 
+\SubT{\p}{}{\Norm\p\T}{\Type\mdf\Path{}}\\
+\\
+%Case get/exposer/setter for mut and lent
+\mbox{with }\mdf\in\{\SMdf,\LMdf\}, \mdf'\notin\{\TMdf,\SMdf\},
+\Norm\p{\T'}=\VoidKw\\
+
+%get/exposer
+\Case{c}\Coherent\p{\ft{}{\x}{\Type\mdf\Path{}},
+\mhTt{\SMdf}{\Opt{\,\hash\,}\x}{}{\T}{\_}
+} \mbox{ iff } 
+\SubT{\p}{}{\Type\mdf\Path{}}{\Norm\p\T}\\
+\Case{d}\Coherent\p{\ft{}{\x}{\Type\mdf\Path{}},
+\mhTt{\mdf'}{\Opt{\,\hash\,}\x}{}{\T}{\_}
+} \mbox{ iff } 
+\SubT{\p}{}{\Type{\mdf'}\Path{}}{\Norm\p\T}\\
+%setter
+\Case{e}\Coherent\p{\ft{}{\x}{\Type\mdf\Path{}},
+\mhTt{\SMdf}{\Opt{\,\hash\,}\x}{\ft{}\thatKw\T}{\T'}{\_}
+}
+\\\quad \mbox{ iff } 
+\SubT{\p}{}{\Norm\p\T}{\Type\mdf\Path{}}\\
+\Case{f}\Coherent\p{\ft{}{\x}{\Type\mdf\Path{}},
+\mhTt{\LMdf}{\Opt{\,\hash\,}\x}{\ft{}\thatKw\T}{\T'}{\_}
+}
+\\\quad \mbox{ iff } 
+\SubT{\p}{}{\Norm\p\T}{\Type\CMdf\Path{}}\\
+\\
+
+
+%Case get/exposer/setter for mut and lent
+\mbox{with } \mdf'\neq\TMdf,\Norm\p{\T'}=\VoidKw\\
+%get/exposer
+\Case{g}\Coherent\p{\ft{}{\x}{\Type\CMdf\Path{}},
+\mhTt{\mdf'}{\Opt{\,\hash\,}\x}{}{\T}{\_}
+}
+\\\quad \mbox{ iff } 
+\SubT{\p}{}{\Type{\mdf'}\Path{}}{\Norm\p\T}\\
+\Case{h}\Coherent\p{\ft{}{\x}{\Type\CMdf\Path{}},
+\mhTt{\SMdf}{\Opt{\,\hash\,}\x}{\ft{}\thatKw\T}{\T'}{\_}
+}
+\\\quad \mbox{ iff } 
+\SubT{\p}{}{\Norm\p\T}{\Type\SMdf\Path{}}\\
+
+
+
+%\Type{\mdf'}{\Path}{}
+
+%\Coherent\p{\_\ft{}{\x}{\Type\mdf\Path\preApex}\_,\mhT}
+%\mbox{ iff }\Coherent{\mdf',\_\ft{}{\x}{\Type\mdf\Path{}}\_,\mhT}
+%\\
+%\Coherent{\mdf,\_\ft{}{\x}{\T}\_,\mhT}
+%\mbox{ iff }\\
+%\mhT=\mhTt{\RMdf}{\x}{}{\T}{\_}
+\end{MDefinition}
+\\
+\begin{MDefinition}{\OriginalMeth\p{\Path_1\ldots\Path_n,\Many\mx_0}=\Many\mx}
+\OriginalMeth\p{\classB_0}=
+\Many\mx_0\setminus\ldots\setminus\Many\mx_n
+\quad \mbox{with }\classB_0=\Cb{\h\implSign\Path_1\ldots\Path_n\members},\\
+\quad\classB_1=\p(\Path_1)\ldots\classB_n=\p(\Path_n), 
+\Dom{\classB_i}=\Many\mx_i\Many\C_i
+
+
+\end{MDefinition}
+\end{RuleFrame}

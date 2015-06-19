@@ -1,0 +1,482 @@
+\begin{RuleFrame}\pBox{Reduction rules}
+ 
+%\begin{MetaRule}{capsule}
+%\begin{consequence}
+%\ReduceE{
+%\ctxVal'[\Vd{\dvs\Dec{\Type{\CMdf}{\_}{}}{\x}{\val}\ \decs}{\Opt\catch}{\e}]
+%}{
+%\ctxVal'[\ctxVal[\val]]
+%}
+%\end{consequence}
+%\begin{sideCondition}
+%\Vd{\dvs\ \decs}{\Opt\catch}{\e}=\ctxVal[\x]
+%\end{sideCondition}
+%\end{MetaRule}
+
+%\!
+
+\begin{MetaRule}{garbage}
+\begin{consequence}
+\ReduceE{
+\ctxVal[\Vd{\dvs\ \decs}{\Opt\catch}{\e}]
+}{
+\ctxVal[\Vd{\decs}{\Opt\catch}{\e}]
+}
+\end{consequence}
+\begin{sideCondition}
+\dvs\neq\emptyset\\
+\FV(\Vd{\decs}{\e})\cap\dom(\dvs) = \emptyset
+\end{sideCondition}
+\end{MetaRule}
+
+\begin{MetaRule}{methCall}
+\begin{consequence}
+\ReduceE{
+\ctxVal[\MethCall{\val}{\m}{\x_1\colon\val_1\ldots\x_n\colon\val_n}]
+}{
+\ctxVal[\Vd{\Dec{\Type{\mdf_0}{\Path}{}}{\this}{\val}\ \Dec{\T_1}{\x_1}{\val_1}\ldots\Dec{\T_n}{\x_n}{\val_n}}{}{\e}]
+}
+\end{consequence}
+\begin{sideCondition}
+\class(\ctxVal,\val)=\Path\\
+\Method\p\Path{\m\oRound\x_1\ldots\x_n\cRound}=
+
+\mhTt{\mdf_0}{\m}{\T_1\ \x_1\ldots\T_n\ \x_n}{\T}
+{\_}\ \e
+
+\end{sideCondition}
+\end{MetaRule}
+ 
+\\[6ex]
+
+
+\begin{MetaRule}{primCallRec}
+\begin{consequence}
+\ReduceE{\!\!
+\ctxVal[\MethCall{\val}{\m}{\x_1\colon\val_1\ldots\x_n\colon\val_n}]
+}{
+\ctxVal[\Vd{\Dec{\Type{\mdf}{\Path}{}}{\z}{\val}
+}{}{
+\MethCall{\z}{\m}{\x_1\colon\val_1\ldots\x_n\colon\val_n}}]
+\!\!}
+\end{consequence}
+\begin{sideCondition}
+\class(\ctxVal,\val)=\Path\\
+\Method\p\Path{\m\oRound\x_1\ldots\x_n\cRound}=
+\mhTt{\mdf}{\m}{\T_1\ \x_1\ldots\T_n\ \x_n}{\T}
+{\_}\\
+%\method(\C,\m,\x_1\ldots\x_n)=\Method{\mu}{\_}{\_}{\fieldE}\\
+\val\ \mbox{is a block}\\
+\end{sideCondition}
+\end{MetaRule}
+\!\!\!\!\!\!
+
+
+
+\begin{MetaRule}{primCallArg}
+\begin{consequence}
+\ReduceE{\!\!
+\ctxVal[
+  \MethCall{\val_0}{\m}{
+    \Many{\x\colon\atom}\x_i\colon\val\Many{\x\colon\val}}
+  ]
+}{
+\ctxVal[
+  \Vd{\Dec{\T'_i}{\z}{\val_i}}{}{
+  \MethCall{\val_0}{\m}{
+    \Many{\x\colon\atom}\x_i\colon\z\Many{\x\colon\val}}
+  }]
+\!\!}
+\end{consequence}
+\begin{sideCondition}
+\val\ \mbox{is a block}\\
+\class(\ctxVal,\val_0)=\Path\\
+\x_1\colon\_\ldots\x_n\colon\_=\Many{\x\colon\atom}\x_i\colon\val\Many{\x\colon\val}\\
+\Method\p\Path{\m\oRound\x_1\ldots\x_n\cRound}\!=\!
+\mhTt{\mdf}{\m}{\T_1\, \x_1\ldots\T_n\, \x_n}{\T}
+{\_}\\
+\T'_i=\Type{\mdf_i}{\Path_i}{}\mbox{ and }\T_i=\Type{\mdf_i}{\Path_i}{\_}
+\end{sideCondition}
+\end{MetaRule}
+
+\\[6ex]
+
+
+\begin{MetaRule}{fieldAObj}
+\begin{consequence}
+\ReduceE{\ctxVal[
+\MethCall{\x}{\m}{}]
+}{
+\ctxVal[\atom_i]}
+\end{consequence}
+\begin{sideCondition}
+\extractDec(\ctxVal,\x)\! =\! \Dec{\_}{\x}{\MethCall{\Path}{\m'}{\x_1\colon\atom_1\ldots\x_n\colon\atom_n}}\\
+\m=\x_i\ \mbox{or}\ \m=\hash\x_i\\
+\Method\p\Path{\!\m\!\oRound\cRound\!\!}\!=\!
+\mhTt{\mdf}{\m}{}{\!\T\!}
+{\_}\\
+\end{sideCondition}
+\end{MetaRule}
+
+\begin{MetaRule}{fieldABlock}
+\begin{consequence}
+\ReduceE{
+  \ctxVal[\MethCall{\x}{\m}{}]
+}{
+  \ctxVal[
+  \Vd{\Dec{\Type{\IMdf}{\Path'}{}}{\z}{
+    \Vd{\dvs}{}{\MethCall{\val}{\m}{}}}}{}{\z}
+    ]}
+\end{consequence}
+\begin{sideCondition}
+\extractDec(\ctxVal,\x) = \Dec{\Type{\IMdf}{\Path}{\_}}{\x}{
+  \Vd{\dvs}{}{\val}}\\
+\Method\p\Path{\!\m\!\oRound\cRound\!\!}=
+\mhTt{\mdf}{\m}{}{\Type{\_}{\Path'}{}}
+{\_}\\
+\end{sideCondition}
+\end{MetaRule}
+
+
+\begin{MetaRule}{loop}
+\begin{consequence}
+\ReduceE{
+  \ctxVal[ \loopKw\,\e  ]
+}{
+  \ctxVal[ \e' ]
+}
+\end{consequence}
+\begin{sideCondition}
+\e'= \Vd{\Xt{}\x{\Type\IMdf\VoidKw{}}{\e}}{\\\quad\quad\quad }{\loopKw\,\e}
+\end{sideCondition}
+\end{MetaRule}
+
+
+\\[6ex]
+
+\begin{MetaRule}{blockElim}
+\begin{consequence}
+\!\ReduceE{
+\ctxVal[\Vd{\dvs'\Dec{\Type{\mdf}{\Path}{\ph}}{\x}{\Vd{\dvs}{}{\val}}\ \decs}{\Opt\catch}{\e}]
+}{
+\ctxVal[\Vd{\dvs'\dvs\ \Dec{\Type{\mdf}{\Path}{\ph}}{\x}{\val}\ \decs}{\Opt\catch}{\e}]
+}\!\!
+\end{consequence}
+\begin{sideCondition}
+\mdf \geq \SMdf
+\end{sideCondition}
+\end{MetaRule}
+
+
+
+
+
+
+\begin{MetaRule}{subst}
+\begin{consequence}
+\ReduceE{
+  \ctxVal[\Vd{\dvs'\,\Dec{\Type\mdf\Path{}}\x\val\ \decs}{\Opt\catch}{\e}]
+}{
+  \ctxVal[\Vd{\dvs'\,\decs }{\Opt\catch}{\e}[\x=\val]]
+}
+\end{consequence}
+\begin{sideCondition}
+%\RefToRule{r-capsule} \mbox{ or }
+\mbox{either }\val=\atom\mbox{ or }\mdf=\CMdf
+%\RefToRule{r-ph}\mbox{ not applicable}
+\end{sideCondition}
+\end{MetaRule}
+
+\\
+
+\begin{MetaRule}{normalDec}
+\begin{consequence}
+\ReduceE{
+\ctxVal[\Vd{\dvs'\,\Dec{\Type\mdf\Path{\ph}}\x{\e'}\ \decs}{}{\e}]
+}{
+\ctxVal[\Vd{\dvs'\,\dv\ \decs}{}{\e}]
+}
+\end{consequence}
+\begin{sideCondition}
+\class(\ctxVal,\e')=\Path'\\
+\dv=\Dec{\Type\mdf{\Path'}{}}\x{\e'}\mbox{\MSComm{$\dv$ is important}}
+\\
+\mbox{either }\ph\neq\emptyset\mbox{ or }\Path'\neq\Path
+\end{sideCondition}
+\end{MetaRule}
+
+
+\begin{MetaRule}{new}
+\begin{consequence}
+\ReduceE{
+  \ctxVal[
+    \MethCall\Path{\m}{\x_1\colon\atom_1\ldots\x_n\colon\atom_n}
+    ]
+}{
+  \ctxVal[
+    \Vd{\Dec{\Type{\mdf}{\Path}{}}{\z}{
+    \MethCall\Path{\m}{\x_1\colon\atom_1\ldots\x_n\colon\atom_n}
+    }}{}{\z}]
+}
+\end{consequence}
+\begin{sideCondition}
+\Method\p\Path{\m\oRound\x_1\ldots\x_n\cRound}=
+\mhTt{\TMdf}{\m}{\_}{\Type{\mdf}{\Path}{}}
+{\_}\\
+\end{sideCondition}
+\end{MetaRule}
+
+
+\\
+
+\begin{MetaRule}{fieldU}
+\begin{consequence}
+\ReduceE{
+  \ctxVal[ \ctxVal_1[\MethCall{\x}{\m}{\thatKw\colon\atom}] ]
+    }{
+  \ctxVal[\Vd{\decs[\x.\m=\atom]}{\Opt\catch}{\e}]}
+\end{consequence}
+\begin{sideCondition}
+%\x\not\in\HB(\ctxVal),\\qui non si riesce a dire, per fortuna non ho shadowing
+\move_\p(\ctxVal_1,\FV(\atom))=\Pair{\ctxVal_2}{\emptyset}\\
+\ctxVal_2[\voidKw]=\Vd{\decs}{\Opt\catch}{\e}\\
+
+\ctxVal_1=\Vd\dvs\_\_,
+\dvs(\x)=\Dec{\Type{\mdf}{\Path}{}}{\x}{\_} \mbox{ and }
+\mdf\in\{\SMdf,\LMdf\}\\
+
+\class(\ctxVal_1,\x)=\Path\\
+\Method\p\Path{\m\oRound\thatKw\cRound}=\mhTt{\_}{\m}{}{\_}
+{\_}\\
+\end{sideCondition}
+
+\end{MetaRule}
+
+\begin{MetaRule}{r-using}
+\begin{consequence}
+\ReduceE{
+\ctxVal[\e_0]
+}{
+\ctxVal[\e_1]
+}
+\end{consequence}
+\begin{sideCondition}
+\e_0=\Using\Path{\m\oRound\Many{\x\colon\val}\cRound}{\e}\\
+\e_1=\pluginApply(\p,\Path\,\m\oRound\Many{\x\colon\val}\cRound\,\e)\\
+%\mbox{if }
+%\plugin;\T\_=
+%\PlGet{\p,\Path,\m\oRound\!{\x_\vI\ldots\x_\vn\cRound}}\\
+%\e=\PlExecute{\plugin,\p,\ctxVal,\val_\vI\ldots\val_\vn,\e_\vz}
+%\mbox{ and }\e\in\{\val,\errorKw\,\val\}\\
+%\TsJ{\p;\emptyset;\emptyset;\emptyset}{\e}{\T'\leq\T}\\
+%
+%\mbox{if exists }\classB\mbox{ such that }
+%\val=\ctxFull[\classB],
+%\typeStar;\p;\emptyset\vdash \classB\ReduceArrow{}\ct
+%\mbox{ and not }
+%\p\vdash \ct:\mbox{ok}\\
+%\mbox{then exists }\val_i\mbox{ such that }
+%\typeStar;\p;\emptyset\vdash \val_i\ReduceArrow{}\ct_i
+%\mbox{ and not }
+%\p\vdash \ct_i:\mbox{ok}
+%\\
+%\pluginApply(\Path\,
+%\m\oRound\x_\vI\colon\val_\vI\ldots\x_\vn\colon\val_\vn\cRound
+%\e_0)=\e\mbox{ and }\e\in\{\val,\errorKw\,\val\}\\
+%
+\end{sideCondition}
+\end{MetaRule}
+
+
+%\begin{MetaRule}{fieldU1}
+%\begin{consequence}
+%\ReduceE{
+%  \ctxVal[ \Vd{\dvs_1}{}{\ctxVal_1[\MethCall{\x}{\m}{\thatKw\colon\atom}]} ]
+%    }{
+%  \ctxVal[ \Vd{\dvs_1[\x.\m=\atom]\ \dvs_2}{}{\ctxVal_2[\voidKw]}}  ]
+%\end{consequence}
+%\begin{sideCondition}
+%\move_\p(\dvs_1,\ctxVal_1,\MethCall{\x}{\m}{\thatKw\colon\atom})=\Pair{\ctxVal_2}{\dvs_2}
+%\end{sideCondition}
+%
+%\end{MetaRule}
+%
+%\\
+%
+%\begin{MetaRule}{fieldU2}
+%\begin{consequence}
+%\ReduceE{
+%  \ctxVal[
+%  \Vd{\dvs_1 \Dec\T\y{\ctxVal_1[
+%    \MethCall{\x}{\m}{\thatKw\colon\atom}]}\decs
+%    }{}\e]
+%    }{
+%\ctxVal[
+%  \Vd{\dvs_1[\x.\m=\atom]\ \dvs_2\Dec\T\y{\ctxVal_2[\voidKw]}\decs}{}\e
+%    ]}
+%\end{consequence}
+%\begin{sideCondition}
+%\move_\p(\dvs_1,\ctxVal_1,\MethCall{\x}{\m}{\thatKw\colon\atom})=\Pair{\ctxVal_2}{\dvs_2}
+%\end{sideCondition}
+%\end{MetaRule}
+
+
+
+\begin{MetaRule}{r-using-out}
+\begin{consequence}
+\ReduceE{
+\ctxVal[\Using\Path{\m\oRound\Many{\x\colon\val}\cRound}{\e}]
+}{
+\ctxVal[\e]
+}
+\end{consequence}
+\begin{sideCondition}
+\pluginApply(\p,\Path\,\m\oRound\Many{\x\colon\val}\cRound\,\e)
+\mbox{ undefined}\\
+%\RefToRule{r-using}\mbox{ not applicable}\\
+\mbox{either }\e\mbox{ is a }\val \mbox{ or }\ThrowExtract\p{\e}=\L\,\val\\
+
+\end{sideCondition}
+\end{MetaRule}
+
+
+%
+%
+%\begin{MetaRule}{r-using2}
+%\begin{premise}
+%\ReduceE{
+%\ctxVal_1[\e_1]
+%}{
+%\ctxVal_2[\e_2]
+%}
+%\end{premise}
+%\begin{consequence}
+%\ReduceE{
+%\ctxVal_1[\Using\Path{\m\oRound\Many{\x\colon\val}\cRound}{\e_1}]
+%}{
+%\ctxVal_2[\Using\Path{\m\oRound\Many{\x\colon\val}\cRound}{\e_2}]
+%}
+%\end{consequence}
+%\begin{sideCondition}
+%\RefToRule{r-using}\mbox{ not applicable}\\
+%\end{sideCondition}
+%\end{MetaRule}
+%
+\\
+
+
+
+\begin{MetaRule}{r-meta}
+\begin{premise}
+\ReduceEP{\e_1
+}{
+\e_2
+}{\p'}\\
+\ExtractTMax\p\classB\classB'
+\\
+\TypeJ{}{
+%\ct
+%\Cb{\h\,\Many{\mt^+}}^{\typeMeta,\Paths}
+\p'
+}{\mbox{ok}}\\
+\TypeJ{\p'\typeStar;\emptyset;\emptyset;\emptyset}{\e_1}
+{\LibraryKw}
+\end{premise}
+\begin{consequence}
+\ReduceE{\ctxVal[\classB]
+}{
+\ctxVal[\classB[\C\colon\e_2]]
+}
+\end{consequence}
+\begin{sideCondition}
+\classB=\Cb{\_\,\implSign\_\,\Many{\Compiled\member}\C\colon\Compiled\e\_}\\
+\p'=\classB'^\typeLess[\C:\walkBy]\ \p\\
+\e_1=\Norm{\p'}{\Compiled\e}\\
+%\forall \Path\inside\e_1\ExeAndComplete{\p',\Path}\\
+%Not any more, replaced by using typeStar in last premise
+\end{sideCondition}
+\end{MetaRule}
+
+\begin{MetaRule}{r-meta-method}
+\begin{premise}
+\ReduceEP{
+\classB_1
+}{
+\classB_2
+}{\p'}\\
+\ExtractTMax\p\classB\classB'
+%\Cb{\h\,\Many{\halfType\member}}^{\typeMeta,\Paths}
+\\
+%\TypeJ\p{  \Cb{\h\,\Many{\mt^+}}^{\typeMeta,\Paths} }{\mbox{ok}}\\
+\end{premise}
+\begin{consequence}
+\ReduceE{\ctxVal[\classB]
+}{
+\ctxVal[\classB[\mh\,\Compiled\ctx{[\classB_2]}]]
+}
+\end{consequence}
+\begin{sideCondition}
+\classB=\Cb{\_\,\implSign\_\,\Many{\Compiled\member}
+\mh\,\Compiled\ctx{[\classB_1]}
+\_}\\
+\p'=\classB'\ \p
+%\Cb{\h\,\Many{\halfType\member}}^{\typeMeta,\Paths}
+\end{sideCondition}
+\end{MetaRule}
+
+
+\\
+
+\begin{MetaRule}{r-capture}
+\begin{consequence}
+\ReduceE{
+\ctxVal[\e_1]}{
+\ctxVal[\Vd{\dvs\,\Xt{}{\z}{\Type\mdf\Path{}}{\val}\ }{}{\e}]
+}
+\end{consequence}
+\begin{sideCondition}
+\e_1\!=\!\Vd{\dvs\,\dvs'\Xt{}{\x}{\T'}{\e'}\ \es}{\catchKw\,\L\,\z\,
+\onKw\,\T\,\e\, \ons}{\e_0}\\
+\ThrowExtract\p{\e'}=\L\,\val\\
+\Type\mdf\Path{}=\Norm\p\T\\
+\SubTypeJ\p{\class(\ctxVal[\Vd{\dvs}{}{\hole}],\val)}{\Path}\\
+%\vs\vT=\vs\setminus\GarbageOf{\Vd{\vs}{\,}{\val}}
+%no need for explicit garbage, if ill formed do not reduce, we can choose dvs' to make it right.
+\end{sideCondition}
+\end{MetaRule}
+\!\!\!\!\!\!\!
+\begin{MetaRule}{r-onMiss}
+\begin{consequence}
+\ReduceE{
+\ctxVal[\e_1]
+}{
+\ctxVal[\Vd{\dvs\Xt{}{\x}{\T'}{\L\,\val}}{\catchKw\,\L\,\z\,
+\ons}{\e_0}]
+}
+\end{consequence}
+\begin{sideCondition}
+\e_1\!=\!\Vd{\dvs\,\dvs'\Xt{}{\x}{\T'}{\e'}\ \es}{\catchKw\,\L\,\z\,
+\onKw\,\T\,\e\, \ons}{\e_0}\\
+\ThrowExtract\p{\e'}=\L'\,\val\\
+\Type\mdf\Path{}=\Norm\p\T\\
+\mbox{either }\L\neq\L'\mbox{ or not }\SubTypeJ\p{\class(\ctxVal[\Vd{\dvs}{}{\hole}],\val)}{\Path}\\
+%\vs\vT=\vs\setminus\GarbageOf{\Vd{\vs}{\,}{\val}}
+%no need for explicit garbage, if ill formed do not reduce, we can choose dvs' to make it right.
+\end{sideCondition}
+\end{MetaRule}
+
+\!\!\!\!\!\!\!\!\!\!
+
+\begin{MetaRule}{r-kOut}
+\begin{consequence}
+\ReduceE{
+\ctxVal[\Vd{\dvs}{\catch}{\e}]
+}{
+\ctxVal[\Vd{\dvs}{}{\e}]
+}
+\end{consequence}
+\end{MetaRule}
+
+
+
+\end{RuleFrame}

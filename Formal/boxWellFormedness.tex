@@ -1,0 +1,33 @@
+\parbox{\linewidth}{
+%#Note that field types are the only that can be owned, and the only that  can not be capsule.
+\textbf{Well formedness}\small\\*
+All the well formedness restriction of the core syntax applies here.
+Moreover in a $\block$ all $\es_\vi$ except the first are not empty and only the last $\catch_\vi$ can be omitted (having an empty $\ons$).
+A $\block$ can not be empty.
+%The last semicolon before (\Q@]@) can be omitted
+$\withKw\, \emptyset\,\emptyset\, \emptyset\,\_$ is not well formed;
+$\withKw\,\xs\,\is\,\es\, %\Opt\onStart\,
+\oRound\Many\onWith\Opt\block\cRound$
+is well formed if the number of types $\T_\vI\ldots\T_\vn$ in each $\onKw$ is the same of the sum of the cardinalities of $\xs$, $\is$ and $\es$.
+In a $\onWith$ body, variables whose type have been made more specific can still beeing updated using the more general type, thus 
+a well formed $\onWith$ body can not read a variable after updating it.
+In a $\withKw$, variables introduces in the $\is$ can be updated only if they are declared \Q@var@.
+
+%Moreover, $\xs$ must be empty if  $\Many{\onWith}$ is empty.
+%$\Opt\block$ is not empty if  $\Many{\onWith}$ is empty.
+
+%There must not be any whitespace preceding the symbol `$\oRound$' in a method call of an empty method name.
+There must not be any whitespace preceding the symbol `$\Terminale{"}$' in string expressions or $\Path$ in number expression.
+%Terms
+%$\es_\vI\catch_\vI\ldots\es_\vn\catch_\vn$ a top level inside a $\classB$ must not use keywords of form $\Outer^\vn$.
+
+For all blocks of form
+$\oCurly\es_\vI\catch_\vI\ldots\es_\vn\catch_\vn\cCurly$,
+$
+\SyntaxFlow{\oCurly\es_\vI\catch_\vI\ldots\es_\vn\catch_\vn\cCurly}
+$
+holds.
+Method names in method calls (using the dot) must be of form $\x$ or $\hash\x$.
+
+The \Q@return@ keyword can not be used inside any \Q@if@,\Q@case@ or \Q@while@ condition or inside the expression of a $\x$\Q@in@$\e$.
+}

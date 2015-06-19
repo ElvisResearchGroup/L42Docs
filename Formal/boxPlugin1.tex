@@ -1,0 +1,334 @@
+\begin{RuleFrame}\cBox{Plugin auxiliary definitions}
+\begin{MDefinition}{\classB_1\oplus\classB_2=\classB}
+\!\Cb{\h_1\implSign\, \Many{\Path}_1 \members_1}
+\oplus
+\Cb{\h_2\implSign\, \Many{\Path}_2 \members_2}
+\!=\!
+\Cb{\h_1\oplus\h_2\implSign\, \Many{\Path}_1\Many{\Path}_2 \members_1\oplus\members_2}\\
+\traitKw \oplus \h= \h \oplus \traitKw=\h\\
+\interfaceKw\oplus\interfaceKw=\interfaceKw\\
+\members_1\member\oplus\members_2=
+\members_1\oplus(\member\oplus\members_2)\\
+\emptyset\oplus\members=\members\\
+
+\member\oplus\members=\member\members\mbox{ if }
+\Cb{\member\members}\mbox{ is well formed, otherwise}\\
+\C\colon\docs_1\classB_1\oplus\C\colon\docs_2\classB_2\members
+=
+\C\colon(\docs_1\oplus\docs_2\classB_1\oplus\classB_2)\members\\
+\mhT_1\Opt\e\oplus\mhT_2\members=
+\mhT_1\oplus\mhT_2\Opt\e\members=(\mhT_1\oplus\mhT_2)\Opt\e\members\\
+\mbox{ where }\mhT_1,\mhT_2\mbox{ differs only for the documentation}\\
+
+\methodKw\docs\mx\e\oplus\mhT\members=
+\mhT\oplus\methodKw\docs\mx\e\members=
+\\\quad
+\methodKw(\Aux{docsOf}(\mhT)\oplus\docs)\mx\e\members\mbox{ \MS{fix in the code}}\\
+
+\end{MDefinition}
+\\
+
+\begin{MDefinition}{\p\vdash\classB_1\rtimes\classB_2=\classB}
+\classB_1\rtimes\classB_2=
+\classB_1[_\p\Aux{mapMx}(\classB_2)][_\p\Aux{mapC}(\classB_2)]\\
+\Path_1\mapsto\Path_2\From{\Path_1}\in\Aux{mapC}(\classB)
+\mbox{ iff }
+\classB(\Path_1)=\Cb{\oRound  \Path_2\thatKw  \cRound\_}
+\\
+\Path
+\m\oRound\x_1\ldots\x_n\cRound\mapsto
+\m'\oRound\x'_1\ldots\x'_n\cRound
+\in\Aux{mapMx}(\classB)
+\mbox{ iff }
+\classB(\Path)=
+\\\quad\Cb{\h\members_1
+\methodKw\,\VoidKw\,\m\oRound\VoidKw\,\x_1\ldots\VoidKw\,\x_n\cRound
+\oRound\!\this\singleDot\m'\!\oRound\x'_1\colon\x_1\ldots\x'_n\colon\x_n\cRound  \cRound \members_2  }
+\end{MDefinition}
+\\
+
+\begin{MDefinition}{\classB[_\p\Many{\Path\singleDot\mx\mapsto\mx'}]=\classB'}
+\classB[_\p
+  \Path_1\singleDot\mx_1\mapsto\mx'_1
+  \ldots
+  \Path_n\singleDot\mx_n\mapsto\mx'_n
+  ]
+=\classB_0\oplus\ldots\oplus\classB_n\\
+\mbox{where:}\\
+\p'=\Aux{removeTopLevel}\walkBy(\p)\\
+\classB'=\classB
+\RenameUsage{\p'}{\Many{\Path\singleDot\mx\mapsto\mx'}}\\
+%\ldots
+%\RenameUsage{\p'}{\Path_n\singleDot\mx_n}{\mx'_n}\\
+\classB_0=\classB'
+\Remove{\Path_1\singleDot\mx_1}
+\ldots
+\Remove{\Path_n\singleDot\mx_n}\\
+\classB_i=\classB'\RetainOnly{}{\Path_i\singleDot\mx_i}{\mx'_i}\\
+\mbox{\MS{on purpose not put $\walkBy$ when composing }}\classB\p\\
+\mbox{\MS{to stop normalization scope}}
+\end{MDefinition}
+\\
+\begin{MDefinition}{\classB
+\RenameUsage{\p}{\Many{\Path\singleDot\mx\mapsto\mx'}}=\classB'}
+\classB
+\RenameUsage{\p}{\Many{\Path\singleDot\mx\mapsto\mx'}}
+\mbox{ and }
+\e
+\RenameUsage{\varEnv,\p}{\Many{\Path\singleDot\mx\mapsto\mx'}}
+\\\mbox{ propagate on the subterms, but}\\
+
+(\C\colon\e)\RenameUsage{\halfType\classB\p}{\Many{\Path\singleDot\mx\mapsto\mx'}}
+=\\\quad
+\C\colon(\e
+\RenameUsage{\halfType\classB[\C\colon\walkBy]\p}{\Many{\Path\singleDot\mx\mapsto\mx'}}),\\
+
+\Cb{\h\members}\RenameUsage{\p}{\Many{\Path\singleDot\mx\mapsto\mx'}}
+\!=\!
+%\\\quad
+\Cb{\!
+\h\RenameUsage{\ct\p}{
+\Many{\Outer_1\classSep\Path\singleDot\mx\mapsto\mx'}
+}
+\\\quad
+\members\RenameUsage{\ct\p}{
+\Many{\Outer_1\classSep\Path\singleDot\mx\mapsto\mx'}
+}
+} \mbox{(first time not add outer1)}
+\\\quad\mbox{with }
+\p;\emptyset\vdash \Cb{\h\members}\ReduceArrow{}\ct
+
+\mbox{ and }
+\\\quad
+\e\Mc{\m}{\x_1\colon\e_1\ldots\x_n\colon\e_n}\RenameUsage{\varEnv,\p}{
+\Many{\Path\singleDot\mx\mapsto\mx'}
+}
+=\\\quad
+\e\Mc{\m'}{\x'_1\colon\e_1\ldots\x'_n\colon\e_n}\RenameUsage{\varEnv,\p}{
+\Many{\Path\singleDot\mx\mapsto\mx'}
+}
+\\\mbox{iff }
+\Path\singleDot\m\oRound\x_1\ldots\x_n\cRound\mapsto\m'\oRound\x'_1\ldots\x'_n\cRound\in \Many{\Path\singleDot\mx\mapsto\mx'}\\
+\Norm\p{\GuessType{\varEnv}{\e}}=\Type\_\Path'\_
+\mbox{ and }\Norm\p{\Path}=\Path'\\
+\mbox{\MS{Actually, smarter way for block is used, looking in catches}}
+
+
+\end{MDefinition}
+\\
+\begin{MDefinition}{\classB[_\p\Many{\Path\mapsto\Path'}]=\classB'}
+\classB[_\p
+  \Many{\Path\mapsto\Path'}
+  ]
+=\classB_0\oplus\ldots\oplus\classB_n\\
+\mbox{where:}\\
+\p'=\Aux{removeTopLevel}\walkBy(\p)\\
+\classB'=\classB
+\RenameUsage{\p'}{  \Many{\Path\mapsto\Path'}}
+\\
+\classB_0=\classB'
+\Remove{\Path_1}
+\ldots
+\Remove{\Path_n}\\
+\classB_i=\classB'\RedirectDefinition{}{\Path_i}{\Path'_i}\\
+
+\end{MDefinition}
+\\
+\begin{MDefinition}{\classB\RedirectDefinition{}{\Path}{\Path'}=\classB'}
+\classB\RedirectDefinition{}{\Path}{\LibraryKw}=
+\classB\RedirectDefinition{}{\Path}{\VoidKw}=
+\\\quad
+\classB\RedirectDefinition{}{\Path}{\AnyKw}\!=\!
+%\Cb{}\\
+\classB\RedirectDefinition{}{\Path}{\Outer_{n+1}\classSep\_}\!=\!\Cb{}\\
+
+\classB\RedirectDefinition{}{\Outer_0\classSep\Many\C_0}{\Outer_0\classSep\Many\C_1}=
+
+\\\quad\classB(\Many\C_0)
+\From{\Many\C_0\Path'}\EncapsulateIn{\Many\C_1}
+\mbox{ iff }\SquareTo{\Many\C_1}=\Outer_1\classSep\Path'\classSep\C'\\
+\mbox{ otherwise }
+\classB\RedirectDefinition{}{\Outer_0\classSep\Many\C_0}{\Outer_0\classSep\Many\C_1}=
+\\\quad\classB(\Many\C_0)
+[\Aux{remove n outers}]\EncapsulateIn{\Many\C_1}
+\!\mbox{ if }\!\SquareTo{\Many\C_1}\!=\!\Outer_0\!\classSep\!\C_1\!\classSep\!\ldots\!\classSep\!\C_n\\
+
+
+\end{MDefinition}
+\\
+\begin{MDefinition}{\Many\C_0\SquareTo{\Many\C_1}=\Path}
+\Many\C_0\SquareTo{\emptyset}=\Outer_0\classSep\Many\C_0\\
+\C\classSep\Many\C_0\SquareTo{\C\classSep\Many\C_0}
+=\Many\C_0\SquareTo{\Many\C_0}\\
+\mbox{otherwise }
+\Many\C_0\SquareTo{\C_1\classSep\ldots\classSep\C_n}=\Outer_n\classSep\Many\C_0
+\end{MDefinition}
+\\
+\begin{MDefinition}{\classB
+\RenameUsage{\p}{\Path_1}{\Path'_1}=\classB'}
+
+\classB\RenameUsage{\p}{\Path}{\Path'}
+\mbox{ and }
+\e\RenameUsage{\p}{\Path}{\Path'}
+\\\mbox{ propagate on the subterms, but}\\
+(\C\colon\e)\RenameUsage{\halfType\classB\p}{\Path}{\Path'}
+=\\\quad
+\C\colon(\e
+\RenameUsage{\halfType\classB[\C\colon\walkBy]\p}{\Path}{\Path'}),\\
+
+\Cb{\h\members}\RenameUsage{\p}{\Path}{\Path'}
+\!=\!
+\Cb{\!
+\h\RenameUsage{\ct\p}{\Outer_1\classSep\Path}{\Outer_1\classSep\Path'}
+\\\quad
+\members\RenameUsage{\ct\p}{\Outer_1\classSep\Path}{\Outer_1\classSep\Path'}
+} \mbox{(first time not add outer1)}
+\\\quad\mbox{with }
+\p;\emptyset\vdash \Cb{\h\members}\ReduceArrow{}\ct
+\\
+\mbox{ and }
+
+\Path_0\RenameUsage{\p}{\Path}{\Path'}
+=\Norm\p{\Path'}
+\mbox{ iff }
+\Norm\p{\Path_0}=\Norm\p{\Path}
+
+
+
+\end{MDefinition}
+\\
+%strings to access introspection on class:
+%using Introspection check(queryString in:class) else ifquery fails...
+% paths pointing to external paths use @ to be able to move with the from!
+%NO! put them in classAdaptForm!!
+
+%all duplicated as (class:type Any ... instead of that:ClassB
+%getOrElse? where the # goes?
+%3
+% 1-get(that:ClassB in:Path)  -> String repr
+% 2-get(that:ClassB  interfaceNum:num node:Path )  -> ClassAdaptForm
+% 3-get(that:ClassB  methodNum:num exceptionNum:num node:Path)  -> ClassAdaptForm
+
+%9
+% -getXXX(that:ClassB methodNum:num node:Path )
+%[9]NameSuffixesMethod:{}/Name/Mdf/Type/TypePath/TypeMdf/TypePh/Doc/DocExceptions
+
+%8
+% -getXXX(that:ClassB methodNum:num paramNum:num node:Path )
+%[8]NameSuffixesMethodParameter:{}/Name/Mdf/Type/TypePath/TypeMdf/TypePh/Doc
+
+%5
+% -getHeaderXXX(that:ClassB node:Path) -> String repr or NameAdaptForm
+%[5]NameSuffixesConstructor: {}/Name/Mdf/Doc/DocInterfaces
+
+%7
+% -getHeaderXXX(that:ClassB fieldNum:num node:Path )  -> String repr or NameAdaptForm or ClassAdaptForm
+%[7]NameSuffixesConstructorField:{}/Name/Mdf/Type/TypePath/TypeMdf/Doc
+
+%3+9+8+5+7=32
+
+%----------------After first introspection implementation
+
+(paths are returned as type adapter)
+(types are returned as string??)
+get all code of a node			get£that£node
+get implemented interface n  	getOrElse£that£interfaceNum£node
+
+get method code				getOrElse£that£methodNum£node
+get method name				getNameOrElse£that£methodNum£node
+get method mdf				getMdfOrElse£that£methodNum£node
+get method ret type			getTypeOrElse£that£methodNum£node
+get path method ret type		getTypePathOrElse£that£methodNum£node
+get exception n 				getOrElse£that£methodNum£exceptionNum£node
+
+get parameter code			getOrElse£that£methodNum£parameterNum£node
+get parameter name			getNameOrElse£that£methodNum£parameterNum£node
+get parameter type				getTypeOrElse£that£methodNum£parameterNum£node
+get parameter path				getTypePathOrElse£that£methodNum£parameterNum£node
+get parameter mdf				getTypeMdfOrElse£that£methodNum£parameterNum£node
+get parameter doc				getDocOrElse£that£methodNum£parameterNum£node
+get ph parameter				ifTypePhDo£that£methodNum£parameterNum£node
+
+get isField	genrated			ifIsFieldDo£that£methodNum£node
+%----------------------------------------------------
+%proposta sotto non mi convince, mette meno metodi nel plugin, but is less "typed"
+get docLine n as string
+get docPath num from line n
+get (from something with the doc)doc as a class with only doc 
+
+getDocLine
+getDocLine pathNum
+getMethod:
+'mdf @RetPath ph
+'mName
+'mdf1 @ParPath1 ph1 name1
+'...
+'mdf1 @ParPath1 ph1 name1
+'exceptions
+@ExcPath1
+...
+@ExcPathn
+
+get all code of a node			get£that£node
+get implemented interface n  	getOrElse£that£interfaceNum£node
+
+get method code				getOrElse£that£methodNum£node
+get method name				getNameOrElse£that£methodNum£node
+get method mdf				getMdfOrElse£that£methodNum£node
+get method ret type			getTypeOrElse£that£methodNum£node
+get path method ret type		getTypePathOrElse£that£methodNum£node
+get exception n 				getOrElse£that£methodNum£exceptionNum£node
+
+get parameter code			getOrElse£that£methodNum£parameterNum£node
+get parameter name			getNameOrElse£that£methodNum£parameterNum£node
+get parameter type				getTypeOrElse£that£methodNum£parameterNum£node
+get parameter path				getTypePathOrElse£that£methodNum£parameterNum£node
+get parameter mdf				getTypeMdfOrElse£that£methodNum£parameterNum£node
+get parameter doc				getDocOrElse£that£methodNum£parameterNum£node
+get ph parameter				ifTypePhDo£that£methodNum£parameterNum£node
+
+get isField	genrated			ifIsFieldDo£that£methodNum£node
+
+%------------
+
+ 
+
+%string-> adapter: lowercase (x1.. xn) or equivalent +/-/*... turn in
+% { __T:{ method Void lowercase(Void x1 ... Void xn)
+  %method Void #__m(Void p1...Void pn) (this.lowercase(x1:p1.. xn:pn)}}
+
+%string-> adapter: C1::...::Cn  turn in {  __T: {(C1::Cn that)}   C1:{ ...{ .. .Cn:{} }}}
+
+%Path: type Any -> adapter turn in {  __T: {(Path that)}  }
+
+%3
+
+%=35
+
+%int ->string (I have string->int already)
+% string num ->charAt?
+% string equal?
+%3
+
+\end{RuleFrame}
+
+%assuming to work on ct
+% 2
+%#% -getOrElse(that:ClassB  interfaceNum:num node:Path )  -> ClassAdaptForm
+%#% -getOrElse(that:ClassB  methodNum:num exceptionNum:num node:Path)  -> ClassAdaptForm
+
+%9+1
+% -getXXXOrElse(that:ClassB methodNum:num node:Path )
+%[9]NameSuffixesMethod:{}/Name/Mdf/Type/TypePath/TypeMdf/TypePh/Doc/DocExceptions/isField
+
+%7
+% -getXXXOrElse(that:ClassB methodNum:num paramNum:num node:Path )
+%[7]NameSuffixesMethodParameter:{}/Name/Type/TypePath/TypeMdf/TypePh/Doc
+
+
+%#% 1-get(that:ClassB node:Path)  -> String repr
+%3
+% -getHeaderXXX(that:ClassB node:Path) -> String repr 
+%[3]NameSuffixesConstructor: {}/Doc/DocInterfaces
+
+%=23

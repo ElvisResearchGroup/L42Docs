@@ -1,0 +1,174 @@
+ 
+%--------------marco specific
+\newcommand\cBox{61ex}
+\newcommand\pBox{125ex}
+\newcommand\csBox{44ex}
+\newcommand\clBox{78ex}
+
+%!!!!!!!!!!
+
+
+\newcommand\PageRow[2]{%
+\!\!\!\begin{array}[t]{ll}%
+\!\!\!\begin{array}[c]{l}%
+#1%
+\end{array}%
+\!\!\!&\!\!\!%
+\!\!\!\begin{array}[c]{l}%
+#2%
+\end{array}%
+\end{array}%
+}
+
+\newenvironment{fullPage}{
+\begin{math}
+\!\!\!\begin{array}[t]{l}
+}{
+\end{array}
+\end{math}
+}
+%---------------------------------------------------
+
+\newcommand\pageSugar{
+\begin{fullPage}
+\PageRow{
+\begin{RedArray}\csBox\input{boxMainProcess}\end{RedArray}
+\\
+\begin{BlueArray}\csBox
+\begin{Array}\csBox\input{boxConcreteSyntax}\end{Array}
+\vspace {1ex}\\
+\begin{Array}\csBox\input{boxWellFormedness}\end{Array}
+\vspace {1ex}\\
+\begin{Array}\csBox\input{boxOperatorPrecedence}\end{Array}
+\end{BlueArray}
+\\
+\begin{BlueArray}\csBox\input{boxDefinitionSugarTrivial}\end{BlueArray}
+}{
+\begin{RuleFrame}\clBox{Atomic Language Terms}
+\input{boxAtomicLanguageTerms}\end{RuleFrame}
+\\
+\begin{RuleFrame}\clBox{Complete Language Syntax}
+\vspace {-2ex}\\
+\input{boxCompleteLanguageSyntax}\end{RuleFrame}
+\\
+\begin{BlueArray}\clBox\input{boxReductionDefinitions}\end{BlueArray}
+}
+\end{fullPage}
+}
+%
+\newcommand\pageDesugar{
+%\begin{Scaled}{0.87}{0.87}
+\begin{fullPage}
+\PageRow{
+\begin{BlueArray}\clBox\input{boxSugarWith}\end{BlueArray}
+}{
+\begin{BlueArray}\csBox\input{boxDefinitionSugar1}\end{BlueArray}
+}
+\end{fullPage}
+%\end{Scaled}
+}
+
+\newcommand\pageNotations{
+\begin{fullPage}
+\PageRow{%
+\begin{RedArray}\cBox\input{boxLogo}\end{RedArray}%
+\\
+\input{boxSyntax}
+}{
+\input{boxSyntaxNotations}
+}%
+\end{fullPage}%
+}
+\newcommand\pageNotationsB{
+\begin{fullPage}
+\PageRow{%
+\input{boxDefinitions1}
+}{
+\input{boxDefinitions2}
+}%
+\end{fullPage}%
+}
+
+\newcommand\pageType{
+\begin{fullPage}
+\input{boxExtraction}\\
+\input{boxExpressionType}\\
+\end{fullPage}%
+}
+
+\newcommand\pageReduction{
+\begin{fullPage}
+\input{boxReduction}\\
+\end{fullPage}%
+}
+
+\newcommand\pagePlugins{
+\begin{fullPage}
+\PageRow{%
+\input{boxPlugin1}
+}{
+\input{boxPlugin1}
+}%
+\end{fullPage}%
+}
+
+%
+%\newcommand\pageExpressionTyping{
+%\begin{fullPage}
+%\begin{RuleFrame}\pBox{$\TsJ\typeEnv\e\T$}
+%\\[-5ex]
+%\input{boxExpressionType}\end{RuleFrame}
+%\\
+%\begin{RuleFrame}\pBox{$
+%\TsJ{\typeEnv}{\es}{\varEnv_\vz \mid \varEnv},\quad
+%\TsJ{\typeEnv}{
+%\catch}{\T\mid\TOpt;\!\Paths},\quad
+%\TsJ{\typeEnv}{\x\,\on}{\T\mid\TOpt;\!\Paths}
+%$}\input{boxTypeWith}\end{RuleFrame}
+%\\
+%\begin{RuleFrame}\pBox{
+%$\TypeJ{\pt}\classB\ct,\quad
+%\TypeJ{\pt}{\h_\vz \Many{\member}}{\h_\vI\Many{\mhT}},\quad
+%\TypeJ{\pt}\member\mt
+%$
+%}\input{boxClassType}\end{RuleFrame}
+%\end{fullPage}
+%}
+%
+%
+%
+%\newcommand\pageMoreDefinitions{
+%  \begin{fullPage}
+%%\begin{RuleFrame}\pBox{$\SubTypeJ{\pt}{\Path_\vz}
+%%{\Path_\vI}$}\input{boxSubtype}\end{RuleFrame}
+%\\
+%\begin{BlueArray}\pBox\input{boxShort2}\end{BlueArray}
+%\\
+%    \PageRow{
+%      \begin{BlueArray}\cBox
+%      \input{boxRunEnvDef2}\\
+%      \input{boxRunEnvDef1}\end{BlueArray}
+%      \\
+%      \begin{BlueArray}\cBox\input{boxReductionAux}\end{BlueArray}
+%      }{
+%      \begin{BlueArray}\cBox\input{boxTypeSystemDefinitions}\end{BlueArray}
+%      \\
+%      \begin{BlueArray}\cBox\input{boxInterfaceTypeDefinitions}\end{BlueArray}
+%      }
+%  \end{fullPage}
+%}
+%
+%\newcommand\pageReduction{
+%  \begin{fullPage}%
+%    \begin{RuleFrame}\pBox{%
+%      $\ReduceP{\runEnv_\vI|\e_\vI}{\runEnv_\vII|\e_\vII}$}%
+%      \\[-3ex]%
+%      \input{boxReduction}%
+%      \\%
+%      \input{boxClassReduction}%
+%    \end{RuleFrame}%
+%%
+%    \end{fullPage}%
+%}
+%
+

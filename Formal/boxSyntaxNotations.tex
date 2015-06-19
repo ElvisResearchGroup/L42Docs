@@ -1,0 +1,156 @@
+\begin{RuleFrame}\cBox{Notations}%
+ 
+\parbox{\linewidth}{
+\vspace{1ex}
+\textbf{Symbols}\\
+We represent with $\emptyset$ both the set of empty characters and empty lists and maps.
+$\x,\y$ and $\z$ metavariables denote lower case identifiers, while $\C$ denotes upper case ones.
+We use $\Opt{\vphantom{X}\_}$ to denote optionality; for example $\TOpt$ and $\varOpt$  denote metavariables that can be either the empty string $\emptyset$ or in the form of the corresponding terms.  In the same way, we use $\Many{\vphantom{X}\_}$ to denote multiplicity.
+We consider terms $\oRound\e\cRound$ and $\e$ to be equivalent, and from now on we omit documentations $\docs$ when is not relevant.
+We consider terms of the form $\oRound\e\cRound$ to be equivalent to the corresponding 
+$\e$ and terms of the form $\Vd{\dvs}{\catchKw\,\L\,\x\oRound\cRound}{\e}$ to be equivalent to the corresponding 
+$\Vd{\dvs}{}{\e}$. Also, values of form $\Vd{\Xt{}{\x}{\T}{\Vd{\Xt{}\y\T\e}{}{\y}}}{}{\x}$ are equivalent to the corresponding $\Vd{\Xt{}\y\T\e}{}{\y}$ if $\x\notin\FV(\e)$.
+In any moment a type of form $\Path\Many\mx$ is considered in the context  of a program $\p$, we consider it equivalent to the corresponding resolved type $\Norm{\p}{\Path\Many\mx}$.
+
+The  following symbols $\typeLess\ \typePlus\ \typeStar\ \walkBy\  \%$ are used only internally in the formalism, and are not present in the source code.
+} 
+\\
+\parbox{\linewidth}{
+\vspace{1ex}
+\textbf{Syntax well formedness}\\
+All parameter names declared within a given method header must be unique.
+Local names do not hide each others: any method body/expression declaring a name already in scope is not well formed.
+All methods in a given class must be uniquely identified by their name $\m$ and the sequence of their parameter names $\xMany$.
+All nested class names $\C$ in a class must be unique.
+All fields names in a given header must be unique.
+\Q@this@ is not a valid field or parameter name.
+%To avoid syntactic ambiguities, 
+%method bodies and expressions in the body of an $\usingKw$ 
+%are of form $\oRound\_\cRound$.
+
+%The $\mdf$ in the concrete class header is never $\TMdf$ and can be  $\IMdf$
+%only if all the fields are non variable.
+${}_{}$\\
+$\ctxVal[\e]$
+is ill formed if
+$\ctxVal=\ctxVal'[\Using\Path{
+  \Mc\m{
+    \Many{\x\colon\val}
+    }
+  }\ctxVal'']$ and
+$\pluginApply(\Path\,\m\oRound\Many{\x\colon\val}\cRound\,\ctxVal''[\e])$ is well defined.
+
+
+}
+%\end{RuleFrame}%
+
+%\\
+%\begin{RuleFrame}\cBox{}%
+\\
+\begin{MDefinition}{\V{\Path_\vz}\From{\V{\Path_\vI}} = \V{\Path_\vII}}
+\Outer^{\V{n}}\Many{\classSep\C}\From{\Outer^{\V{m}}\V{\classSep\C_\vI}\ldots{\V{\classSep\C_\vk}}}=
+  \Outer^{\V{m}}{\V{\classSep\C_\vI}}\ldots{\V{\classSep\C_{k-n}}}\Many{\classSep\C}
+\mbox{  if } \V{n} \leq \V{k}\\
+\Outer^{\V{n}}\Many{\classSep\C}\From{\Outer^{\V{m}}\V{\classSep\C_\vI}\ldots{\V{\classSep\C_\vk}}}=
+  \Outer^{\V{m}+\V{n}-\V{k}}\Many{\classSep\C} \mbox{ if } \V{n}>\V{k}\\
+\AnyKw\From\_=\AnyKw\quad
+\LibraryKw\From\_=\LibraryKw\quad
+\VoidKw\From\_=\VoidKw\\
+\end{MDefinition}
+\\
+\begin{MDefinition}{\e_0\From\Path =\e_1,\ \V{\e_\vz}\From\Path_\V{n} = \V{\e_\vI}}
+\e\From\Path\mbox{ propagate on the structure, and }
+\classB\From\Path = \classB\From\Path_\vz\\
+\Cb{\h \members}\From\Path_\V{j} = \Cb{\h\From\Path_{\V j+1} \members\From\Path_{\V j+1}}\\
+\Outer^{\V j + \V n}\V{\Many{\classSep\C}_\vz}\!\From\Path_\V{j} \!=\!\Outer^{\V{j}+\V{k}}\V{\Many{\classSep\C}_\vI}\!
+\!\mbox{ with }\!\Outer^\V{n}\V{\Many{\classSep\C}_\vz}\!\From\Path\!\!=\!\Outer^\V{k}\V{\Many{\classSep\C}_\vI}\\
+\Outer^{\V n}\Many{\classSep\C}\!\From\Path_\V{j}=\Outer^{\V n}\Many{\classSep\C}
+\quad\mbox{with } \V n < \V j
+\\
+\!\docs\From\Path_\vj
+\!\mbox{ replaces all substrings of the form }\Terminale{@}\Path_\vz
+\!\mbox{ and }\! \Terminale{@}\Vd{}{}{\e}
+\\\mbox{ with }\!
+\Terminale{@}\Path_\vz\From\Path_\vj
+\!\mbox{ and }\!\Terminale{@}\Vd{}{}{\e_\vz\From\Path_\vj}
+\\
+\mbox{All cases for other expressions/terms propagate to submembers}
+\end{MDefinition}
+\\
+
+\begin{MDefinition}{\varEnv[\Opt\catch,\sealEnv]=\varEnv'}
+\mbox{with }\Opt\catch=\catchKw\ \errorKw \x\ \ons\mbox{ and }\sealEnv=\_;\_;\xs_1\ldots\xs_n\\
+\quad\quad\varEnv'(\x)=\varEnv(\x)
+\mbox{ iff }\forall\xs_i\mbox{such that }\x\in\xs_i,\xs\cap\FV(\Opt\catch)=\emptyset\\
+\quad\quad\varEnv'(\x)=\Aux{mutableLentToReadable}(\varEnv(\x))\mbox{ otherwise}\\
+
+\mbox{otherwise }\varEnv'=\varEnv
+\end{MDefinition}
+\\
+\begin{MDefinition}{\throwEnv[\Opt\catch]}
+\TMany;\Paths[\catchKw\,\returnKw\,\on_1\ldots\on_n]
+=
+\TMany[\on_1]\ldots[\on_n];\Paths\\
+\mdf{\Path_1}{}\ldots\Type\mdf{\Path_n}{}
+[\onKw\,\Type{\mdf'}{\Path_0}{}\_]
+=
+\Type{\mdf'}{\Path_0}{}\ldots\Type{\mdf'}{\Path_n}{}
+\mbox{ if }\mdf\leq\mdf'
+\\
+\mbox{otherwise }
+\mdf{\Path_1}{}\ldots\Type\mdf{\Path_n}{}
+[\onKw\,\Type{\mdf'}{\Path_0}{}\_]
+=\Type{\mdf'}{\Path_0}{}\\
+
+\TMany;\Paths%
+[\catchKw\,\exceptionKw\,\x\onKw\,\Type\IMdf{\Path_1}{}\_\ldots\onKw\,\Type\IMdf{\Path_n}{}\_]
+\!=\!\!
+\TMany;\Paths,\Path_1\ldots\Path_n\!\setminus\!\AnyKw\\
+\mbox{otherwise }\throwEnv[\Opt\catch]=\throwEnv\\
+\end{MDefinition}
+\\
+\begin{MDefinition}{\p\vdash\Paths\leq\throwEnv}
+\p\vdash\Paths_1\leq\TMany;\Paths_2
+\mbox{ iff }
+\forall \Path_1\in\Paths_1.\exists\Path_2\in\Paths_2\mbox{ such that }
+\p\vdash\Path_1\leq\Path_2
+\end{MDefinition}
+\\
+\begin{MDefinition}{\TypeJ{\typeEnv}{\e}{\T\leq\T'}, \SubT{\p}{}{\T}{\T'},\SubT{\p}{}{\Path}{\Path'}}
+\TypeJ{\p;\varEnv;\sealEnv;\throwEnv}{\e}{\T\leq\T'} \mbox{ iff }
+\TypeJ{\p;\varEnv;\sealEnv;\throwEnv}{\e}{\T}\mbox{ and }
+\SubT{\p}{}{\T}{\T'}\\
+
+\SubT{\p}{}{\Type{\mdf}{\Path}{\ph}}{\Type{\mdf'}{\Path'}{\ph'}}
+\mbox{ iff }\mdf\leq\mdf',\ph\leq\ph' \mbox{ and }
+\SubT{\p}{}{\Path}{\Path'}\\
+\SubT{\p}{}{\Path}{\Path'}\mbox{ iff } \Norm{\p}{\Path'}\in\Norm{\p}{\Paths\From{\Path}\cup\Path}\cup\AnyKw
+\\\quad\mbox{ with }\p(\Path)=\Cb{\_}^{\_;\Paths}
+\\
+\CMdf\leq\SMdf\leq\LMdf\leq\RMdf,\ \  
+\CMdf\leq\IMdf\leq\RMdf\ \ \mbox{ and }\ \ 
+\emptyset\leq\%\leq\preApex\\
+
+\end{MDefinition}
+\\
+\begin{MDefinition}{\Many{\mhT}\cup\members}
+\mhT_\vI\ldots\mhT_\vn\cup\members=
+\mhT_\vI\cup(\ldots\cup(\mhT_\vn\cup\members))\\
+\mhT\cup\members=\mhT \members\mbox{ iff }
+\Dom{\mhT}\mbox{ disjoint }\Dom{\members}
+\\
+%\mhT\Path\cup
+%\mhT\fieldM\Many\mt=
+%\mhT\Path\fieldM\Many\mt\\
+\mhT\Path\cup
+\mhS\e\members=
+\mhT\Path\e\members
+\mbox{ iff }\Dom{\mhT}=\Dom{\mhS\e}
+\\
+\mhT\Path\cup\mhT\members=\mhT\members
+\end{MDefinition}
+
+\end{RuleFrame}
+
+
+

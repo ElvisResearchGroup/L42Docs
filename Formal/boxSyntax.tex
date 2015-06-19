@@ -1,0 +1,373 @@
+\begin{RuleFrame}\cBox{Core Language Syntax}%
+$\begin{grammatica}
+\produzione\classB{
+\Cb{\docs\,\h\implSign\, \Many{\Path}\,\docs\vT\, \members}^{\Opt\typeLabel}
+\mid \walkBy
+}{library literal}\\
+\produzione\member{
+%\C\colon\,\docs\,\e
+\mhT
+\mid\mh\,\e
+
+}{class member}\\
+
+\produzione\h{
+% \mdf  \Mh{\m}{\Many\f}
+%\mid
+\interfaceKw
+\mid
+\emptyset
+% \traitKw
+}{class header}\\
+%\produzione\f{
+%\T\,\x\,\docs
+%\mid
+%\varKw\,\T\,\x\,\docs
+%}{field}\\
+
+\produzione\e{
+\atom\mid\loopKw\,\e\mid \e\Mc\m{\docs\,\Many{\x\colon\e}}
+\mid \Vd{\docs\,\decs}{}{\e}
+}{expression}\\
+\seguitoProduzione{
+\quad \mid
+\Vd{\docs\,\decs}{\catch}{\e}
+| \L\, \e 
+\mid\Using\Path{\Mh\m{\docs\,\Many{\x\colon\e}}}\e
+}{expression}\\
+\produzione{\atom}{\x\mid\Path\mid\voidKw
+\mid\classB }{atomic value}\\
+
+%\produzione\xe{\x\colon\e}{parameter}\\
+\produzione\L{
+\exceptionKw\mid \errorKw\mid\returnKw 
+}{signal}\\
+\produzione\dec{\Xt{}{\x\docs}{\T}{\e}
+}{binding def.}\\
+\produzione\catch{\catchKw\,\L\,\x\oRound\docs
+\ons\cRound
+}{catch-match}\\
+\produzione\on{\,\onKw\T\docs\,\e}{on-case}\\
+\produzione\mhT{
+  \mhTt{\mdf}{\m}{\Many{\ft{}{\x\,\docs}{\T}}}{\docs\,\T\,\docs\vT}{\Many{\Path}\,\docs\vT}
+}{typed m. header}\\
+\produzione\mh{
+  \mhT
+  \mid
+  \methodKw\ \docs\ \m\oRound\xs\cRound
+  \mid \C\colon\docs
+
+}{member header} \\
+\produzione\m{
+\x
+\mid
+\hash\x
+}
+{method name}\\
+\produzione\Path{\Outer^\V{n}\Many{\classSep\C} \mid\AnyKw\mid\VoidKw\mid \LibraryKw
+}{path}\\
+\produzione\ph{\emptyset\mid\preApex\mid\%}{ph annotation}\\
+\produzione\T{
+\mdf\,\Path\,\ph\mid\Path\Many{\mx}\ph
+}{type annotation}\\
+\produzione\mx{
+ \classSep\Mh{\m}{\xs}\Opt{\classSep\x}
+}{typeLink}\\
+
+\produzione\mdf{
+\IMdf
+\mid\SMdf
+\mid\RMdf
+\mid\LMdf
+\mid\CMdf
+\mid\TMdf
+}{modifiers}\\
+\produzione\typeLabel{
+%\emptyset\mid
+\typeLess
+%\mid\typeMeta
+\mid\typePlus
+\mid\typeStar
+}{stage}\\
+\end{grammatica}$
+
+\end{RuleFrame}%
+\\
+\begin{RuleFrame}\cBox{Auxiliary syntax}%
+%$\begin{grammatica}
+%\produzione{\Compiled\classB}{
+%\Cb{\h\implSign\,\Paths \Many{\Compiled\member}}
+%}{}\\
+%
+%\produzione{\Compiled\e}{{\Compiled\classB} | \x
+%| \Path | \voidKw|\loopKw\,\Compiled\e
+%%}{}\\\seguitoProduzione{
+%| {\Compiled\e}\Mc\m{\Many{\x\colon\Compiled\e\!}}
+%| \Vd{\!\Many{\Compiled\dec}}{\Opt{\Compiled\catch}}{\Compiled\e\!}
+%| \L\, {\!\Compiled\e\!}
+%| \Using{\!\Path\!}{\!\Mc\m{\Many{\!\Compiled\e}\!}}{\!\Compiled\e}
+%}{}\\
+%%\produzione{\Compiled\xe}{\x\colon\Compiled\e}{}\\
+%%\end{grammatica}$
+%%\\
+%%$\begin{grammatica}
+%\produzione{\Compiled\X}{\Xt{}{\x}{\T}{\Compiled\e}}{}\\
+%\produzione{\Compiled\catch}{\catchKw\,\L\,\x\,
+%\onKw\,\T\,{\Compiled\e}
+%}{}\\
+%\produzione{\Compiled\member}{
+%\C\colon\Compiled\classB
+%\mid
+%\mhT\Opt{\Compiled\e}
+%\mid\methodKw\ \m\oRound\xs\cRound\Compiled\e
+%}{}\\
+%
+%\end{grammatica}$
+%\\
+$\begin{grammatica}
+\produzione{\Compiled\ctx}{
+  \hole\mid
+  \Compiled\ctx\Mc\m{\Many{\x\colon\e}}
+%}{}\\\seguitoProduzione{
+ \mid \Compiled{\V{\e_\vz}}\Mc\m{
+ \Many{\x\colon\Compiled\e}_\vI
+ \x\colon\Compiled\ctx
+ \Many{\x\colon\e}_\vII
+ }
+%}{}\\\seguitoProduzione{
+\mid\loopKw\,\Compiled\ctx 
+%\mid\x\equalSign\Compiled\ctx
+\mid \L\ \Compiled\ctx
+}{}\\\seguitoProduzione{
+  |\Vd{\Many{\Compiled\X}_\vI\,\Xt{}{\x}{\T}{\Compiled\ctx}\,\es_\vII}{\Opt\catch\,}{\e}
+%}{}\\\seguitoProduzione{
+|\Vd{\Many{\Compiled\X}}{
+\catchKw\,\L\,\x\,\onKw\,\T\,\Compiled\ctx}{
+\e}
+%}{}\\\seguitoProduzione{
+|\Vd{\Many{\Compiled\X}}{\Opt{\Compiled\catch}}{\Compiled\ctx}
+}{}\\\seguitoProduzione{
+\Using\Path{
+  \Mc\m{
+  \Many{\Compiled\e}_\vI
+  \Compiled\ctx
+  \Many{\e}_\vII}
+  }\e
+\mid
+\Using\Path{
+  \Mc\m{\Many{\Compiled\e}}}
+  \Compiled\ctx
+}{}\\
+
+%--------------------------------
+
+\produzione\ctxStar{
+  \hole\mid
+  \ctxStar\Mc\m{\Many{\e}}
+  \mid \V{\e_\vz}\Mc\m{
+  \Many{\x\colon\e}_\vI
+  \x\colon\ctxStar
+  \Many{\x\colon\e}_\vII
+  }
+\mid\loopKw\,\ctxStar
+% |\x\equalSign\ctxStar|
+\mid \L\ \ctxStar
+}{}\\\seguitoProduzione{
+  |\Vd{\es_\vI\,\Xt{}{\x}{\T}{\ctxStar}\,\V{\es_\vII}}{\Opt\catch\,}{\e}
+|\Vd{\es}{
+\catchKw\,\L\,\x\,\onKw\,\T\, \ctxStar}{
+\e}
+|\Vd{\es}{\Opt\catch}{\ctxStar}
+}{}\\\seguitoProduzione{
+\Using\Path{
+  \Mc\m{
+  \Many{\x\colon\e}_\vz
+  \x\colon\ctxStar
+  \Many{\x\colon\e}_\vI}
+  }\e
+\mid
+\Using\Path{
+  \Mc\m{\x\colon\V{\Many{\val}}}
+  }\ctxStar
+}{}\\
+%\end{grammatica}$
+%\\
+%$\begin{grammatica}
+
+\produzione{\val^\p}{\atom\mid\Vd{\dvs^\p}{}{\val^\p}}{value}\\
+\produzione{\dv^\p}{
+\Dec{\Type\mdf{\Path'}{}}{\x}{
+\MethCall{\Path}{\m}{\x_1\colon\atom_1\ldots\x_n\colon\atom_n}
+  }
+\mid\Dec{\Type\IMdf\Path{}}{\x}{\Vd{\dvs^\p}{}{\val^\p}}
+}{}\\
+\seguitoProduzione{
+\mbox{<if $\Method\p\Path{\m\oRound\x_1\ldots\x_n\cRound}=
+\mhT\ \fieldM,$
+}}{}\\
+\seguitoProduzione{
+\quad\mbox{$\mdf\neq\CMdf$ and $\p(\Path')$ not interface>
+}}{}\\
+
+
+
+
+
+%-------------
+
+
+\produzione{\ctxVal}{\hole\mid
+  \Vd{\dvs\ \Dec{\T}{\x}{\ctxVal}\ \decs}{\Opt\catch}{\e}\mid
+  \Vd{\dvs}{}{\ctxVal}
+\mid \L\ \ctxVal
+\mid
+  \ctxVal\Mc\m{\Many{\x\colon\e}}
+}{}\\\seguitoProduzione{
+ \mid 
+ \V{\val_\vz}\Mc\m{
+    \Many{\x\colon\val}\,
+    \x\colon\ctxVal\,
+    \Many{\x\colon\e}
+    }
+\mid
+\Using\Path{
+  \Mc\m{
+    \Many{\x\colon\val}
+    \x\colon\ctxVal
+    \Many{\x\colon\e}
+    }
+  }\e
+}{}\\\seguitoProduzione{
+\mid
+\Using\Path{
+  \Mc\m{
+    \Many{\x\colon\val}
+    }
+  }\ctxVal
+}{}\\
+%-------------
+\end{grammatica}$
+\\
+$
+\begin{grammatica}
+
+\produzione\p{
+\V{\classB_\vz},\ldots,\V{\classB_\vn}
+\Opt\typeStar
+}{program type}
+\\
+\produzione\varEnv{
+\Many{\x:\T}
+}{}\\
+\produzione\sealEnv{\xs;\xs_1\ldots\xs_n;\xs'_1\ldots\xs'_k}{seal env}\\
+\produzione\throwEnv{\TMany;\Paths}{throw env}\\
+%\produzione\typeEnv{
+%\p;\varEnv;
+%\sealEnv;\throwEnv
+%}{typing env}\\
+%\produzione\ct{\Cb{\h\,\mts}^{\typeLabel,\Paths}\mid \walkBy}{class type}\\
+%\produzione{\halfType\classB}{\Cb{\h\,\Paths\vT\,\Many{\halfType\member}}^{\typeLabel,\Paths}\mid \walkBy}{class type+}\\
+%\produzione\mt{
+%\mid\mhT\Opt{\Path}\,\Opt\e\mid
+%\mhT\fieldM
+%}{}\\\seguitoProduzione{
+%\mid\C\colon\e
+%\mid\C\colon\ct
+%}{}\\
+%\produzione{\halfType\member}{
+%\mhT\Opt{\Path}\,\Opt\e\mid
+%\mhT\fieldM
+%}{}\\\seguitoProduzione{
+%\mid\C\colon\e \mid
+%\C\colon{\halfType\classB}\mid
+%\methodKw\ \m\oRound\xs\cRound\e
+%}{}\\
+\end{grammatica}
+$
+\\
+\begin{MDefinition}{\CompiledLong\_}
+\CompiledLong\e\mbox{ iff }\CompiledLong\classB
+\mbox{ holds } \forall\classB\inside\e\\
+\CompiledLong{\Cb{\h\implSign\, \Many{\Path} \Many{\member}}^{\Opt\typeLabel}}
+\mbox{ iff }\CompiledLong{\member} \forall
+\member\in\Many{\member}\\
+
+
+\CompiledLong{\mhT}\\
+\CompiledLong{\C\colon\classB}\mbox{ iff }
+\CompiledLong{\classB}\\
+\CompiledLong{\mh\e}\mbox{ iff }
+\CompiledLong{\e}\\
+\parbox{0.9\linewidth}{
+We write $\Compiled\e$ as a metavariable to represent an $\e$ where $\CompiledLong\e$ holds.
+Same notation is used for $\Compiled{\classB}$ and 
+$\Compiled{\member}$.
+}
+\end{MDefinition}
+\\
+\begin{MDefinition}{
+\varEnv(\x),\quad\es(\x),\quad
+\classB(\C),\quad\classB(\mx),\quad\p(\Path)
+}
+{}_{}\!\!\!\!\begin{array}{r l}
+\varEnv(\x):&\!\! (\_,\x :\T,\_)(\x)=\T\\
+\es(\x):
+&\!\!(\V{\es_\vI}\,\Xt{}{\x}{\TOpt}{\e}\,\V{\es_\vII})
+(\x)=\e\\
+
+%\halfType\classB(\C):\\
+\classB(\_):&\!\!
+\mbox{extract the corresponding element in }\!\classB\\
+\p(\Path):&\!\!(\classB_0\ldots\classB_n)(\Path)
+=\classB_i(\Many{\classSep\C})
+\mbox{ if } \Norm\p\Path=\Outer_i\Many{\classSep\C}
+\\
+\classB(\Many{\classSep\C}):&\!\!
+\classB(\classSep\C_1\ldots\classSep\C_n)\!=\!
+\classB(\C_1)\ldots(\C_n)\!\mbox{ where }\!\e(\!\C\!)\!=\!\e\!\mbox{ iff }\!\e\! \mbox{ not }\!\classB\\
+\end{array}
+\\
+\parbox{60ex}{
+$(\varEnv;\xs;\xs_1\ldots\xs_n)$, $\dvs$ and $\Compiled\members$  are  maps, thus  order is irrelevant.
+
+The above function notations $\_(\_)$ each implicitly defines a domain $\Dom\_$ as the set of all inputs for which the function is defined}
+\end{MDefinition}
+\\
+
+\begin{MDefinition}{\classB[\member]  }
+
+\Cb{\h\,\Paths\vT\,\Many{\member}\C\colon\_}^{\Opt\typeLabel}[\C\colon\classB]=
+\Cb{\h\,\Paths\vT\,\Many{\member}\C\colon\classB}^{\Opt\typeLabel}
+\\
+\Cb{\h\,\Paths\vT\,\Many{\member}\mh\,\e_\vI}^{\Opt\typeLabel}[\mh\,\e_\vII]=
+\Cb{\h\,\Paths\vT\,\Many{\member}\mh\,\e_\vII}^{\Opt\typeLabel}
+\end{MDefinition}
+
+\\
+
+\begin{MDefinition}{\_\inside\_}
+%\preApex\inside\varEnv \mbox{ holds iff }\varEnv(\_)=\_\preApex\\
+%\mdf\inside\V{\T_\vI}\ldots\V{\T_\vn}\mbox{ holds iff }
+%\mdf\,\_\in\V{\T_\vI}\ldots\V{\T_\vn}
+%\mbox{ or }\mdf\,\_\preApex\in\V{\T_\vI}\ldots\V{\T_\vn}
+%\\
+%\mdf\inside\varEnv \mbox{ holds iff }\varEnv(\_)=\mdf\,\_\mbox{ or }
+%\varEnv(\_)=\mdf\,\_\preApex\\
+%\mdf\inside(\varEnv;\_;\_;\_) \mbox{ holds iff }\mdf\inside\varEnv\\
+%\x\inside\Cb{\h\_\C\colon,\e\_},\p\mbox{ iff }
+%\Xt{}{\x}{\TOpt}{\_}
+%\inside\e\\
+
+%\X\inside(\V{\vs_\vI},\ldots,\V{\vs_\vn})\mbox{ iff }
+%\X\in\V{\vs_\vi}\!\mbox{ with }\V{i}\in1..\V{n}\\
+%\X\inside\e\mbox{ iff }
+%\e=\CtxStar{\Vd{\es_\vz\X\es_\vI}{\catch}{\e_\vz}}
+%\\
+
+\V{\e_\vz}\inside\V{\e_\vI}\!\mbox{ holds iff }\!\V{\e_\vI}=\CtxStar{\V{\e_\vz}}
+%\\\quad
+%\mbox{or } \V{\e_\vI}=\CtxStar{\Vd{\es}{\catchKw\,\y\V{\ons_\vI}\onKw\,\Path_\vI\,\Path_\vII\,\x\V{\e_\vII}\V{\ons_\vII}}{\V{\e_\vIII}}}\mbox{ and }
+%\V{\e_\vz}=\x
+\end{MDefinition}
+
+\end{RuleFrame}%

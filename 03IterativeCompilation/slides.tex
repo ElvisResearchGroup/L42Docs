@@ -1,0 +1,509 @@
+
+
+
+\begin{frame}[fragile]
+\frametitle{Flattening}
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+A:{ 'a class with ``m'' returning a class with ``foo''
+  type method Library m() { N foo() 42N }
+  'in Java this would look like 
+  'static Library m()\{return \{ int foo()\{return 42;\}\};\}
+  }
+B: A.m() 'a class generated using library A
+\end{lstlisting}
+\end{NiceCode}
+rewrites to 
+
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+A:{ 'a class with ``m'' returning a class with ``foo''
+  type method Library m() { N foo() 42N }
+  }
+B:{ N foo() 42N }'a class 
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+\newcommand\mini{\begin{NiceCode}{12.55ex}{0.73}}
+\newcommand\G{\color{green}{\blacksquare}}
+\newcommand\R{\color{red}{\blacksquare}}
+\newcommand\Y{\color{darkYellow}{\blacksquare}}
+\newcommand\GG{\color{black}{\blacksquare}}
+\definecolor{darkYellow}{rgb}{0.94, 0.88, 0.19}
+\begin{frame}[fragile]
+\frametitle{Flattening}
+\mini
+\begin{lstlisting}
+$\R$N:{..}'number
+$\R$S:{..}'string
+$\R$A:{.. }'uses N,S
+$\Y$B: A.m()'uses A
+$\R$D:{..E..}
+$\R$C: B.m({..D..})
+$\R$E: ..
+\end{lstlisting}
+\end{NiceCode}
+\mini
+\begin{lstlisting}
+$\G$N:{..}'number
+$\G$S:{..}'string
+$\G$A:{.. }'uses N,S
+$\Y$B: A.m()' A,N,S
+$\R$D:{..E..}
+$\R$C: B.m({..D..})
+$\R$E: ..
+\end{lstlisting}
+\end{NiceCode}
+\mini
+\begin{lstlisting}
+$\G$N:{..}'number
+$\G$S:{..}'string
+$\G$A:{.. }'uses N,S
+$\G$B: A.m()' ok
+$\R$D:{..E..}
+$\R$C: B.m({..D..})
+$\R$E: ..
+\end{lstlisting}
+\end{NiceCode}
+\mini
+\begin{lstlisting}
+$\G$N:{..}'number
+$\G$S:{..}'string
+$\G$A:{.. }'uses N,S
+$\G$B:{..}'uses A,N,S
+$\R$D:{..E..}
+$\R$C: B.m({..D..})
+$\R$E: ..
+\end{lstlisting}
+\end{NiceCode}
+\small
+\begin{itemize}
+\item[$\Y$]
+find the first class that requires meta execution.
+\item[$\G$]
+type-check all the (transitively) used classes, starting from the $\Y$ expression.
+\item[$\G$]
+type-check the yellow expression. We have enough type information now.
+\item[$\G$]
+execute the well typed expression. Now we get a class.
+By construction, this class can only refer to the types collected before.
+Does it means it is already guaranteed to be well-typed?
+\end{itemize}
+Type-check steps can end the execution with a type error,
+while the execution step can end the execution with an exception.
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\mini
+\begin{lstlisting}
+$\G$N:{..}'number
+$\G$S:{..}'string
+$\G$A:{.. }'uses N,S
+$\G$B:{..}'uses A,N,S
+$\R$D:{..E..}
+$\Y$C: B.m({..D..})
+$\R$E: ..
+\end{lstlisting}
+\end{NiceCode}
+\mini
+\begin{lstlisting}
+$\G$N:{..}'number
+$\G$S:{..}'string
+$\G$A:{.. }'uses N,S
+$\G$B:{..}'uses A,N,S
+$\GG$D:{..E..}'uses E
+$\Y$C: B.m({..D..})
+$\R$E: ..'hello?
+\end{lstlisting}
+\end{NiceCode}
+\mini
+\begin{lstlisting}
+$\G$N:{..}'number
+$\G$S:{..}'string
+$\G$A:{.. }'uses N,S
+$\G$B:{..}'uses A,N,S
+$\GG$D:{..E..}'uses E
+$\G$C: B.m({..D..})
+$\R$E: ..'hello?
+\end{lstlisting}
+\end{NiceCode}
+\mini
+\begin{lstlisting}
+$\G$N:{..}'number
+$\G$S:{..}'string
+$\G$A:{.. }'uses N,S
+$\G$B:{..}'uses A,N,S
+$\R$D:{..E..}
+$\R$C:{..}'uses?
+$\R$E: ..
+\end{lstlisting}
+\end{NiceCode}
+
+%new line
+\small
+\begin{itemize}
+\item[$\Y$]
+find the first class that requires meta execution.
+\item[$\G$]
+type-check the used classes.
+This time, we have a class literal that uses \Q@D@ (that uses \Q@E@).
+What happens here?
+\item[$\G$]
+type-check the yellow expression. We have enough type information now.
+\end{itemize}
+Can we proceed without verifying \Q@{..D..}@?
+How the decorators/composition operators are going to work over 
+a non verified \Q@{..D..}@?
+
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+
+%new line
+
+\mini
+\begin{lstlisting}
+$\G$N:{..}'number
+$\G$S:{..}'string
+$\G$A:{.. }'uses N,S
+$\G$B:{..}'uses A,N,S
+$\R$D:{..E..}
+$\R$C:{..}'uses E
+$\R$E: ..
+\end{lstlisting}
+\end{NiceCode}
+\mini
+\begin{lstlisting}
+  =====>
+
+  =====>
+
+  =====>
+
+  =====>
+\end{lstlisting}
+\end{NiceCode}
+\mini
+\begin{lstlisting}
+$\G$N:{..}'number
+$\G$S:{..}'string
+$\G$A:{.. }'uses N,S
+$\G$B:{..}'uses A,N,S
+$\R$D:{..E..}
+$\R$C:{..}'uses E
+$\R$E:{..}
+\end{lstlisting}
+\end{NiceCode}
+\mini
+\begin{lstlisting}
+$\G$N:{..}'number
+$\G$S:{..}'string
+$\G$A:{.. }'uses N,S
+$\G$B:{..}'uses A,N,S
+$\G$D:{..E..}
+$\G$C:{..}'uses E
+$\G$E: ..
+\end{lstlisting}
+\end{NiceCode}
+\small
+\begin{itemize}
+\item[$\R$]
+Eventually, we resolve also E.
+\item[$\R$]
+Finally, some class may still be not type-checked
+\item[$\G$]
+As a last step, we verify all those classes.
+\end{itemize}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Flattening}
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+I: {interface
+  method N m()   }
+C:{  
+  type method Library myReusableCode() {<: I
+    method m() 42N
+    }
+  }
+D:C.myReusableCode()
+\end{lstlisting}
+\end{NiceCode}
+rewrites to 
+
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+I: {interface
+  method N m()   }
+C: ...
+D:{<: I 'note, there is no relation between D and C
+    method m() 42N
+    }
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+C:{  
+  type method Library a() {
+    method N m1(N that) that+1N
+    }
+  type method Library b() {
+    method N m1(N that)   'this is an abstract method
+    method N m2(N that) this.m1(that)+1N
+    }         ' "this" is of type Outer0, no relation with C
+  }
+D:Use[ C.a() ] < C.b()' the result (if any) will be well typed
+\end{lstlisting}
+\end{NiceCode}
+rewrites to 
+
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+C:{
+  type method Library a() {
+    method N m1(N that) { return that+1N; }
+    }
+  type method Library b() {
+    method N m1(N that)  
+    method N m2(N that) this.m1(that)+1N
+    }         ' "this" is of type Outer0, no relation with C
+  }
+D:{'this code is well typed by construction
+  method N m1(N that) that+1N
+  method N m2(N that) this.m1(that)+1N
+  }         ' "this" is of type Outer0  *and* Outer1::D
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+C:{    'this code is required to be completely well typed 
+         'before D can be generated
+  type method Library a() {
+    method N m1(N that) that+1N
+    }
+  }
+D:Use[ C.a() ] < {       'the result (if any) will be well typed
+  method N m1(N that)  ' if this code is correct
+  method N m2(N that) this.m1(that)+1N
+  }         ' "this" is of type Outer0, is it also  Outer1::D
+\end{lstlisting}
+\end{NiceCode}
+rewrites to 
+
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+C:{  
+  type method Library a() {
+    method N m1(N that) that+1N
+    }
+  }
+D:{
+  method N m1(N that) that+1N
+  method N m2(N that) this.m1(that)+1N
+  }         ' "this" is of type Outer0  *and* Outer1::D
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+\begin{frame}[fragile]
+Sometimes, we need to delay type checking for code in class literals.
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+A:Data[] < {'the result well-typedness depends from the
+            ' code in the dots
+  method B playWithB(B that) .. that.fooB() .. 
+  ..
+  }         
+B:Data[] < {'the result well-typedness depends from the
+            ' code in the dots
+  method A playWithA(A that) .. that.fooA() ..  
+  ..
+  }         
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+\begin{frame}[fragile]
+By using \Q@D@ I can refer to the type "after" the composition
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+C:{    'this code is required to be completely well typed 
+         'before D can be generated
+  type method Library a() {
+    method N m1(N that) that+1N
+    }
+  }
+D:Use[ C.a() ] < {'code not required to be checked at this stage.
+  method N m2(N that, D other) other.m1(that)+1N
+  } 'note, no declaration for m1!
+\end{lstlisting}
+\end{NiceCode}
+rewrites to 
+
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+C:{
+  type method Library a() {
+    method N m1(N that) that+1N
+    }
+  }
+D:{'the code will be checked to be well typed now!
+  method N m1(N that) that+1N
+  method N m2(N that, D other) other.m1(that)+1N
+  }   
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+\begin{frame}[fragile]
+Is this code still ok? why or why not?
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+C:{    'this code is required to be completely well typed 
+         'before D can be generated
+  type method Library a() {
+    method N m1(N that) that+1N
+    }
+  }
+D:Use[ C.a() ] < {'code not required to be checked at this stage.
+  method N m2(N that, D other) this.m1(that)+1N
+  } 'note, no declaration for m1!
+\end{lstlisting}
+\end{NiceCode}
+rewrites to 
+
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+C:{
+  type method Library a() {
+    method N m1(N that) that+1N
+    }
+  }
+D:{'this code is now available to type-check
+  method N m1(N that) that+1N
+  method N m2(N that, D other) this.m1(that)+1N
+  }   
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+\begin{frame}[fragile]
+What happens here?
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+D:Use[{  method T foo()...}]<<Adapt[ Name"foo()" into: Name"bar()" ] < {
+    method D foo() this
+    method Any m1() this.foo().foo()
+    }
+\end{lstlisting}
+\end{NiceCode}
+rewrites to 
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+D:Use[{  method T foo()...}]< {
+    method D bar() this
+    method Any m1() this.bar().foo()
+    }
+\end{lstlisting}
+\end{NiceCode}
+rewrites to 
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+D:{
+  method T foo() ...
+  method D bar() this
+  method Any m1() this.bar().foo()
+  }
+\end{lstlisting}
+\end{NiceCode}
+Here \Q@this.foo()@ returns \Q@D@, and we do not know what methods
+\Q@D@ will have.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+Sometimes "typish" information is needed for the operators to work
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+D:Adapt[ Name"m()" into Name"k()" ] < {
+  method Outer0 m() this.m()
+  method D toD() this
+  method Outer0 m0() Foo().m()
+  method Outer0 m1() this.m().m()
+  method Outer0 m2() this.toD().m()
+  Nested:{  type method Outer1 id(Outer1 that) that
+            type method D toD(Outer1 that) that  }
+  method Outer0 m3() Nested.id(this).m()
+  method Outer0 m4() Nested.toD(this).m()
+  }
+\end{lstlisting}
+\end{NiceCode}
+rewrites to 
+
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+D:{
+  method Outer0 k() this.k()'renamed 2 times
+  method D toD() this
+  method Outer0 m0() Foo().m()
+  method Outer0 m1() this.k().k()'renamed 2 times
+  method Outer0 m2() this.toD().m()
+  Nested:{  type method Outer1 id(Outer1 that) that 
+            type method D toD(Outer1 that)that     }
+  method Outer0 m3() Nested.id(this).k()'renamed
+  method Outer0 m4() Nested.toD(this).m()
+  }
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+\begin{frame}[fragile]
+What happens here?
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+D:Adapt[ Name"m()" into Name"k()" ] < {
+  method Outer0 m1() this.m().m()
+  }
+\end{lstlisting}
+\end{NiceCode}
+
+If \Q@this.m()@ returns \Q@Outer0@ I have to rename both calls,
+otherwise only the first one.
+But there is no \Q@method Outer0 m()@
+in the code.
+
+Should be an error/exception trying to rename
+a method that is not declared?
+
+\end{frame}
+
+
+

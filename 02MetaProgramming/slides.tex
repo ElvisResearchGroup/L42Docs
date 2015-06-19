@@ -1,0 +1,1081 @@
+
+\begin{frame}[fragile]
+\frametitle{Motivation}
+
+Libraries:
+\begin{itemize}
+\item collections of data and behavior
+\item have well-defined interfaces 
+\item suitable to be used by multiple independent programs.
+\end{itemize}
+${}$\\
+  Library usage dramatically increase programmers' productivity.
+\\${}$\\
+Today a well-designed program can use up to 10 third-party libraries. However, when more than 10 libraries are used keeping trace of the issues arising from those libraries and their interplay become very difficult.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Today, a goal for tomorrow}
+
+Today a programmer can use a library containing \alert{millions of instructions} without the need to understand each instruction individually, and instead can rely on the library interface.
+\\${}$\\
+ With 42, a programmer will be able to use 
+ \alert{millions of libraries} without the need to understand each library individually, and may rely on libraries managing and organizing other libraries.
+\\${}$\\
+This would alter the perception of what programming is: 
+Normally the programming language is considered 
+``the thing the programmers use to code''.
+The philosophy of 42 is different: the language  provides the foundation for libraries, and libraries is what programmers use to code.
+ 
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Smaller libraries}
+
+Today libraries tends to be massive chunks of code with
+tons of functionalities packed into.
+\\${}$\\
+This is because importing and managing libraries is hard,
+so is convenient for libraries to "expand" their domain
+in related areas.
+\\${}$\\
+With easy - transparent - libraries,
+There will be no reason to have so many functionalities packed
+all together.
+\\${}$\\
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Purpose}
+In 42 a \emph{library} is a self-contained piece of code that is released
+by other programmers.
+A good library has a modularized documentation and 
+contains a significant amount of code dedicated to try and
+deliver good error messages when used incorrectly with links to the relevant documentation section.
+\\${}_{}$\\
+In 42 an \emph{active library} is a library offering methods that generate other libraries.
+Such methods can compose code (other libraries) to obtain highly personalized libraries that can provide a clear dedicated semantic to the programmer.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Purpose: Primary features}
+\begin{itemize}
+\item  using (active) libraries is simple;
+
+\item  developing/deploy (active) libraries is simple;
+
+\item  using good (active) libraries produces good error messages;
+
+\item  the language semantics/typing  helps to isolate erroneous (and even bad) libraries;
+
+\end{itemize}
+\begin{Scaled}{0.8}{0.8}
+\parbox{\linewidth}{
+Non-goals: trying to accomplish this goals would harm our core goals:
+size of the binary,
+memory footprint of the objects and performance predictability.}
+\end{Scaled}
+\end{frame}
+
+%\fullPageImage{marvin1}
+
+%\begin{frame}[fragile]
+%\frametitle{Overview of the talk}
+%\begin{itemize}
+%\item Language features and syntax
+%\item Getting started with Active Libraries
+%\item Type system of 42
+%\end{itemize}
+%\end{frame}
+
+%\fullPageImage{typing1}
+
+%\begin{frame}[fragile]
+%\frametitle{Minimal OO capabilities}
+
+%\begin{itemize}
+%\item (final static inner) classes with state (constructor composed by fields) and behaviour;
+%\item single dispatch method call, with nominal method selectors;
+%\item interfaces as the only way to induce subtyping; that is, all class types are exact types.
+%\end{itemize}
+%\begin{NiceCode}{59ex}{0.70}
+%\begin{lstlisting}
+%{
+%A: {()}$\Comment{A is an empty class}$
+%B: {(A fieldName)
+%  C: {(A f1 B f2)
+%    method C foo(C c1 C c2) {
+%      return C(f1:c1.f1(), f2:c2.f2())
+%      $\Comment{a new C using parameters as fields}$
+%      }   }
+%  method C (C c) {
+%    return C.foo(c1:c, c2:c)  $\Comment{method selector are composed by}$
+%    $\Comment{method name+parameter names. Method name can be empty.}$
+%    $\Comment{see how C(f1, f2) used in foo is a normal method call}$
+%    }    }  }
+%\end{lstlisting}
+%\end{NiceCode}
+%Since there is no ``extends'' code reuse is obtained with active libraries.
+%\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Decorators}
+
+Library composition is obtained using decorators, that are build upon 
+basic decorators \Q@Use@ and \Q@Adapt@.\\*
+${}_{}$\\*
+Composing classes ``as modules'',\\*
+\pause with a associative and commutative use/merge/sum
+operation:\\*
+\begin{itemize}
+\pause\item nested classes with same name are recursively merged;\\*
+\pause\item the set of implemented interfaces is merged;\\*
+\pause\item methods with same name are merged,\pause and conflict arises if both version have an implementation or if the headers are not compatible.\\*
+\end{itemize}
+${}_{}$\\*
+\pause Good, but... how to merge fields/constructors?
+
+\end{frame}
+
+
+%where should this go?
+\begin{frame}[fragile]
+\frametitle{Constructors and fields}
+
+%  type method Library point()Export"Point"<{
+%    Point:Data[abstract:#]<{(N x, N y)
+%      
+%      }
+%    }
+
+\pause What is exactly a field/constructor in 42,
+${}_{}$\\*
+\pause since I can only
+access them as getters/setters/factories?
+${}_{}$\\*
+\pause What is the exact meaning of writing
+\Q@Point:{(N x, N y)}@?
+${}_{}$\\*
+\pause
+It is just sugar for 
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+Point:{ $\Comment{(N x, N y) desugar into}$
+  type method Outer0 (N^ x, N^ y)
+  method N x()
+  method N y()
+  }
+\end{lstlisting}
+\end{NiceCode}
+
+That is, a class with just abstract methods.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+Point:{ $\Comment{(N x, N y) desugar into}$
+  type method Outer0 (N^ x, N^ y)
+  method N x()
+  method N y()
+  }
+\end{lstlisting}
+\end{NiceCode}
+\pause In many languages, a concrete class have no abstract methods;
+In 42, a concrete class have a \alert{coherent set} of abstract methods:
+\begin{itemize}
+\pause\item A class with no abstract methods is concrete {\small(as {\texttt{java.lang.Math}})}
+\pause\item A class with a single abstract \Q@type@ method returning \Q@Outer0@
+whose parameters are all of placeholder type (as \Q@N^ x@) is concrete.
+\pause\item If such abstract \Q@type@ method is present, then, for each parameter,
+it is allowed to have abstract getters and setters,
+where the name maps back to the parameter name.
+\end{itemize}
+\pause
+Take a deep breath, to me this is game changing and mind blowing.
+There are only methods. The constructor/getter implementation is not
+protected/hidden/secret/native. It is just \alert{not there}.
+\pause The whole formal model works without requiring any difference between abstract methods
+and getters/setters/constructors.
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Composing Constructors and fields}
+
+
+\begin{NiceCode}{59ex}{0.9}
+\begin{lstlisting}
+C:{
+  type method Library point(){(N x, N y)
+    method N distance(Outer0 that){
+      x=this.x()-that.x()
+      y=this.y()-that.y()
+      return (x*x+y*y).sqrt()
+      }
+
+    }
+  }
+ColPoint:Use[C.point()]<{(N x, N y, Color color)
+  type method Outer0 (N^ x,N^ y)
+    Outer0(x:x,y:y,color:Color.black())
+  }
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Composing Constructors and fields}
+\addtocounter{framenumber}{-1}
+
+\begin{NiceCode}{59ex}{0.9}
+\begin{lstlisting}
+C:{
+  type method Library point(){(N x, N y)
+    method N distance(Outer0 that){
+      x=this.x()-that.x()
+      y=this.y()-that.y()
+      return (x*x+y*y).sqrt()
+      }
+    method Outer0 clone(N x) Outer0(x:x,y:this.y())
+    }
+  }
+ColPoint:Use[C.point()]<{(N x, N y, Color color)
+  type method Outer0 (N^ x,N^ y)
+    Outer0(x:x,y:y,color:Color.black())
+  }$\Comment{now with sets the color to black :-(}$
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Composing Constructors and fields}
+\addtocounter{framenumber}{-1}
+
+\begin{NiceCode}{59ex}{0.9}
+\begin{lstlisting}
+C:{
+  type method Library point(){(N x, N y)
+    method N distance(Outer0 that){
+      x=this.x()-that.x()
+      y=this.y()-that.y()
+      return (x*x+y*y).sqrt()
+      }
+    method Outer0 clone(N x)
+    }
+  }
+ColPoint:Data[]<<Use[C.point()]<{(N x, N y, Color color)
+  type method Outer0 (N^ x,N^ y)
+    Outer0(x:x,y:y,color:Color.black())
+  }$\Comment{let data do its job}$
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Traits, trivially}
+Traits are just groups of methods
+\\*
+(and they can implement interfaces)
+\\*
+\Q@{<:Foo,Bar ..method T x().. method Void foo().. }@
+\\*
+Just add traits together to get other threads.
+\\*
+\Q@Use[Lib.a();Lib.b();..]@
+\\*
+Sum a trait to a (concrete) class and get
+as a result a better (concrete) class, if such class offers all
+the methods required (i.e. abstract) in the thread.
+\\*
+\Q@Use[Lib.a();Lib.b();..]<{..}@
+\\*
+
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Expression problem as matrix}
+
+\renewcommand{\arraystretch}{2}
+\newcommand\open{
+\begin{NiceCode}{30ex}{0.85}
+}
+
+\newcommand\close{
+\end{NiceCode}
+}
+
+$$ 
+\begin{Scaled}{0.75}{0.75}
+\begin{tabular}[t]{ c | c | c |}
+              & \texttt{toString} &\texttt{eval}\\\cline{1-3}
+
+\texttt{Num}\!\!\!&
+\open\begin{lstlisting}
+{
+Exp:{interface<:HasToString }
+Num:{(N that)<: Exp
+  method toString()
+    S""++this.that()
+  }}
+\end{lstlisting}\close
+
+%numString
+%\LocalTableCell{\expToStringNumA}{8ex}
+&
+\open\begin{lstlisting}
+{
+Exp:{interface<:HasEval }
+Num:{(N that)<: Exp
+  method eval()
+    this.that()
+  }}
+\end{lstlisting}\close
+
+%numEval
+%\LocalTableCell{\expEvalNumA}{8ex}
+\\\cline{1-3}
+\texttt{Sum}\!\!\!&
+\open\begin{lstlisting}
+{
+Exp:{interface<:HasToString }
+Sum:{(Exp left, Expr right)<: Exp
+  method toString()
+    this.left().toString()
+    ++this.right().toString()
+  }}
+\end{lstlisting}\close
+
+%sumString
+%\LocalTableCell{\expToStringSumA}{11ex}
+&
+\open\begin{lstlisting}
+{
+Exp:{interface<:HasEval }
+Sum:{(Exp left, Expr right)<: Exp
+  method eval()
+    this.left().eval()
+    ++this.right().eval()
+  }}
+\end{lstlisting}\close
+
+%sumEval
+%\LocalTableCell{\expEvalSumA}{11ex}
+\\\cline{1-3}
+\texttt{UMinus}\!\!\!&
+\open\begin{lstlisting}
+{
+Exp:{interface<:HasToString }
+UMinus:{(Exp that)<: Exp
+  method toString()
+    S"-"++this.that().toString()
+  }}
+\end{lstlisting}\close
+
+%umString
+%\LocalTableCell{\expToStringUMinusA}{8ex}
+&
+\open\begin{lstlisting}
+{
+Exp:{interface<:HasEval }
+UMinus:{(Exp that)<: Exp
+  method eval()
+    this.that().eval()*-1N
+  }}
+\end{lstlisting}\close
+
+%umEval
+%\LocalTableCell{\expEvalUMinusA}{8ex}
+ \\\cline{1-3}
+\end{tabular}
+\end{Scaled}
+$$
+
+\renewcommand{\arraystretch}{1}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Expression problem as matrix}
+Just sum the desired line/rows together
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+MySolution:ExprProblem(
+  useRows:SList[S"uMinus";S"sum"]
+  useColums:SList[S"eval";S"toString"]
+  )
+\end{lstlisting}
+\end{NiceCode}
+
+
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Adapt}
+Ok, \Q@Use@ is cool.
+What about \Q@Adapt@?
+It can rename methods, nested classes, and can set members private.
+More than that, \Q@Adapt@ is cool since it can apply \Q@Use@ internally.
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+D:Adapt[Name"C" into: Name"K";Name"A" into: Name"K"]<{
+  C:{method N c()}
+  A:{method N a()}
+  method C m(A a)
+  }
+\end{lstlisting}
+\end{NiceCode}
+rewrites to 
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+D:{
+  K:{method N c() method N a()}
+  method K m(K a)
+  }
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{NiceCode}{59ex}{0.8}
+\frametitle{Adapt}
+\begin{lstlisting}
+D:Adapt[ Name"C::A" into Name"Outer0" ] < {
+  method N top()
+  C:{method N c()
+    A:{ method N a() }
+    }
+  }
+\end{lstlisting}
+\end{NiceCode}
+rewrites to 
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+D:{
+  method N top()
+  method N a()
+  C:{method N c() }
+  }
+\end{lstlisting}
+\end{NiceCode}
+Should this be called \Q@Move@ instead of \Q@Adapt@?
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Adapt}
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+D:Adapt[ Name"Outer0" into Name"C::A" ] < {..}
+\end{lstlisting}
+\end{NiceCode}
+rewrites to 
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+D:{ C:{ A:{..}}}
+$\Comment{or D:\{interface C:\{interface A:\{..\}\}\}}$
+\end{lstlisting}
+\end{NiceCode}
+Should this be called \Q@Move@ instead of \Q@Adapt@?
+And finally,
+
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+D:Adapt[ Name"C" into Name(S) ] < {
+  C:{.. B:{..}}
+  method C m(C::B x)
+  }
+\end{lstlisting}
+\end{NiceCode}
+rewrites to 
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+D:{
+  method S m(S::B x)
+  }
+\end{lstlisting}
+\end{NiceCode}
+This last operation requires to check the structural type of
+\Q@S@ and \Q@S::B@ to be compatible with \Q@C@ and \Q@C::B@.
+Should this be called \Q@Replace@ instead of \Q@Adapt@?
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Towel Intro}
+A towel is about the most massively useful thing a programmer can have.
+A towel has immense psychological value, and you should always know where your towel is.
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+{reuse $\ReuseUrl{L42.is/BasicTowel}$
+Main:{
+  Debug(S"Hello world")
+  return ExitCode.normal()
+  }
+}
+\end{lstlisting}
+\end{NiceCode}
+Here \Q@Debug@, \Q@S@ and \Q@ExitCode@ are classes defined inside the towel
+BasicTowel.
+You can code without a towel, but this means starting from first principles,
+witch could be quite unpleasant; especially since the only
+primitive things that 42 offers are Library literals
+(code as first class entities), the constant \Q@void@,
+and the types \Q@Library@, \Q@Void@ and \Q@Any@.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Towel Intro}
+The header reuse L42.is/BasicTowel imports the code from 
+the URL L42.is/BasicTowel and places it at the start of the class.
+Code is(=will be) downloaded/updated from the Internet automatically.
+We generally call towels libraries that are expected to provide standard
+functionalities and types, such as numbers N, booleans Bool,
+strings S and various kinds of system errors
+(and Load, as discussed later).
+However, we do not expect all L42 programs to reuse the same towel.
+For hygienic reasons, in real life everyone tends to use their own towel.
+For similar reasons, any 42 program will use its own towel.
+We expect different programs to use massively different libraries for
+what in other languages is the standard library.
+That is, there is no such thing as ''the L42 standard library''
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Towel Load}
+
+
+Most L42 libraries are not towels.
+All 42 libraries are closed code.
+\\*
+Thus, all non-towel 42 library is generic
+(have abstract classes/methods)
+
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+{reuse $\ReuseUrl{L42.is/BasicTowel}$
+Gui:Load[]<{reuse $\ReuseUrl{L42.is/2dGui}$}
+Main:{
+  Gui.alert(S"Hello world")
+  return ExitCode.normal()
+}
+\end{lstlisting}
+\end{NiceCode}
+\Q@Load[]<{..}@
+would intuitively behave like 
+\Q@Adapt[Name"N" into:Name(N);Name"S" into:Name(S);...]<{..}@\\*
+\Q@Load@ uses \Q@Adapt@ to redirect such abstract classes to their incarnation in BasicTowel,
+assuming they respect some structural interface.
+
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Towel Multiple Towels}
+
+Towels shines when multiple towels are used at the same time.
+
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+{reuse $\ReuseUrl{L42.is/AdamsTowel}$
+$\Comment{ here you can access to lots of}$
+$\Comment{ utility classes declared inside the towel}$
+$\Comment{ including numbers, strings and so on.}$
+C:{reuse $\ReuseUrl{L42.is/FordTowel}$
+  $\Comment{here you can access a different set of classes.}$
+  $\Comment{For example, N would refer to the number in FordTowel}$
+  $\Comment{and to see the number declared in AdamTowel}$
+  $\Comment{you have to write Outer1::N}$
+  }
+}
+\end{lstlisting}
+\end{NiceCode}
+
+Different code parts reason about different set of classes;
+including those predefined in other languages.
+
+Useful for code that reasons on code; that is a very common task
+in L42. 
+
+
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Towel Multiple Towels}
+
+Define and deploy our own towel: like BasicTowel, with Gui as before.
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+{reuse $\ReuseUrl{L42.is/DeploymentTowel}$
+Main:Deploy[URL".../GuiTowel";permissions:S"..."]<{
+  reuse $\ReuseUrl{L42.is/BasicTowel}$
+  Gui:Load[]<{reuse $\ReuseUrl{L42.is/2dGui}$}
+  }
+}
+\end{lstlisting}
+\end{NiceCode}
+DeploymentTowel is just some variation of BasicTowel, with Deployment
+functionalities already included.
+Here \Q@Load@ comes from BasicTowel, and the nested code literal
+results in closed code, thus \Q@Deploy@ will be able to correctly
+export it and save it in the provided URL, if we have permission.
+
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Towel Embroidery}
+We can mix and match different implementations for numbers and strings (as an example).
+This requires some special care:
+\begin{itemize}
+\item strings should know their length (as a number)
+\item numbers should be comparable (into true/false booleans)
+\item booleans (and numbers) should be representable (as strings)
+\end{itemize}
+\begin{NiceCode}{59ex}{0.9}
+\begin{lstlisting}
+{reuse $\ReuseUrl{L42.is/DeploymentTowel}$
+Main:
+  Deploy[URL".../MyTowel";permissions:S"..."]<<
+  Adapt[Name"NAlt" into:Name"N"; Name"SAlt" into:Name"S"]<<
+  Abstract[Name"N";Name"S"]<$\Comment{now N and S are abstract}$
+    {$\Comment{code with alternative versions for N and S}$
+    reuse $\ReuseUrl{L42.is/BasicTowel}$
+    NAlt:Load[]<{reuse $\ReuseUrl{L42.is/InfinitePrecisionNatural}$}
+    SAlt:Load[]<{reuse $\ReuseUrl{L42.is/UTF8Strings}$}
+    }
+\end{lstlisting}
+\end{NiceCode}
+
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Library Deployment}
+
+Non-towel libraries can also be deployed in a similar way:
+\begin{NiceCode}{59ex}{0.9}
+\begin{lstlisting}
+{reuse $\ReuseUrl{L42.is/DeploymentTowel}$
+Main:
+  Deploy[URL"../MyTowel";permissions:S".."]<<
+  Optimize::RemoveUnreachableCode[]<<
+  ExposeAsLibrary[Name"MyLib"]<{
+    reuse  $\ReuseUrl{L42.is/BasicTowel}$
+    MyLib:... $\Comment{this refers to the file MyLib.L42}$
+    } }
+\end{lstlisting}
+\end{NiceCode}
+
+
+Where \Q@ExposeAsLibrary[Name"MyLib"]<{..}@
+could be:
+\begin{NiceCode}{59ex}{0.9}
+\begin{lstlisting}
+  Adapt[makePrivate:Name"PrImpl"]<<
+  Adapt[Name"PrImpl::N" into:Name"N";Name"PrImpl::S" into:..]<<
+  Adapt[Name"PrImpl::MyLib" into:Name"Outer0"]<<
+  Adapt[Name"Outer0" into:PrImpl]<<
+  Abstract[Name"N";Name"S";Name"Bool";..]<{..}
+\end{lstlisting}
+\end{NiceCode}
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+%\addtocounter{framenumber}{-1}
+\frametitle{Support for decent size applications}
+
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+{reuse $\ReuseUrl{L42.is/AnotherDeploymentTowel}$
+Local:UrlData.readOnly(prefix:URL"file:///../myProjects/")
+Remote:UrlData.writeOnly(prefix:URL"L42.is/byMarco/",permission:S"..")
+Web:UrlData.writeOnly(prefix:URL"www.myWebsite.com/",permission:S"..")
+Header:Deployer[]<{()
+    method DeployResult() {
+      var acc=Project(Local"header")
+      b= Benchmark(Local"headerBenchmark")
+      acc :=b.optimize(acc, inlining:10Minute)
+      acc :=b.optimize(acc, parallel:1Minute)
+      return acc.deploy(Remote"header")
+      }
+  }
+GraphicEngine:Deployer[]<{(Header h)
+  method DeployResult() {
+    var acc=Project(Local"graphicEngine")
+      $\Comment{inside reuse L42.is/byMarco/header}$
+    b1=Benchmark(Local"graphicEngineBenchmark1")
+    b2=Benchmark(Local"graphicEngineBenchmark2")
+    acc =b1.optimize(acc, inlining:10Minute)
+    acc =b2.optimize(acc, parallel:10Minute)
+    return acc.deploy(Remote"graphicEngine")
+   }
+ }
+..
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+\begin{frame}[fragile]
+%\addtocounter{framenumber}{-1}
+\frametitle{Support for decent size applications}
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+MyGame:Deployer[]<{(Header h GraphicEngine e)
+  method DeployResult() {
+    var acc=Project(Local"myGame")
+    b=Benchmark(Local"myGameBenchmark")
+    acc =b.optimize(acc, inlining:10Minute)
+    acc =b.optimize(acc, parallel:10Minute)
+    return acc.deploylist()[
+        windowsExe: acc Web"myGame.exe";
+        linuxExe: acc   Web"myGame";
+        javaExeJar: acc Web"myName.jar";
+        htmlPage: Local"index.html".asText())
+          name: Web"index.html";
+      
+      ]
+    }
+  }
+Main:Build(MyGame)$\Comment{Build compute dependency graph and check for changes}$
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+
+
+
+
+%
+%\begin{frame}[fragile]
+%\frametitle{Getting started}
+%\begin{NiceCode}{59ex}{1}
+%\begin{lstlisting}
+%reuse $\ReuseUrl{L42.is/base}$                                       
+%Main:{
+%  Gui::Alert(S"hello world")
+%  Gui::Alert(S"hello world",  title:S"Dialog Title")
+%  Gui::Alert(S"today is "+Date.today().asText())
+%  return ExitCode.normal()
+%  }
+%\end{lstlisting}
+%\end{NiceCode}
+%
+%Here, \Q@reuse@ is importing code from a pre-existing library.
+%No need for library installation.
+%
+%Note: the only primitive types are \Q@Any@, \Q@Void@ and \Q@Library@, thus any other class is implemented \emph{in} the language, as a library.
+%%This includes strings \Q@S@, numbers \Q@N@ and the class decorator \Q@Data@.
+%\end{frame}
+
+%\fullPageImage{hand1}
+
+%\begin{frame}[fragile]
+%\frametitle{Getting started with Active Libraries}
+%How an Active Library looks like? 
+%\\*${}_{}$
+%\\*
+%Minimal Active Library
+%
+%\begin{NiceCode}{59ex}{1}
+%\begin{lstlisting}
+%A:{() $\Comment{a class with a method m returning the empty class}$
+%  method Library m() {return {()}}
+%  }
+%B: A().m() $\Comment{an empty class generated using library A}$
+%\end{lstlisting}
+%\end{NiceCode}
+%rewrites to 
+%
+%\begin{NiceCode}{59ex}{1}
+%\begin{lstlisting}
+%A:{() $\Comment{a class with a method m returning the empty class}$
+%  method Library m() {return {()}}
+%  }
+%B:{()} $\Comment{the empty class}$
+%\end{lstlisting}
+%\end{NiceCode}
+%
+%\end{frame}
+%
+%\begin{frame}[fragile]
+%\frametitle{Incremental compilation}
+%{\small Like compile time execution in C++, template haskell and others.
+%First class code literals, called \Q@Librar@ies allows classes
+% to be created, from top to bottom, using formerly defined classes.
+%In the end, the execution process itself is the production of all the classes.}
+%
+%\begin{NiceCode}{59ex}{0.8}
+%\begin{lstlisting}
+%$\Comment{(STEP0)}$
+%A:{()$\Comment{a class with a method k producing an A}$
+%  method Library m() {$\Comment{m just returns a class with a method k}$
+%    return {() method A k(){return A()}} $\Comment{ returning an A instance}$
+%  }}
+%B:A().m()
+%C:B().k().m()
+%\end{lstlisting}
+%\end{NiceCode}
+%
+%$\begin{array}{l | l}
+%\mbox{During execution becomes} & \mbox{and finally}\\
+%\!\!\begin{NiceCode}{25ex}{0.8}
+%\begin{lstlisting}
+%$\Comment{(STEP1)}$
+%A: ... $\Comment{as before}$
+%B:{() method A k(){return A()}}
+%C:B().k().m()
+%\end{lstlisting}
+%\end{NiceCode}
+%&
+%
+%\begin{NiceCode}{25ex}{0.8}
+%\begin{lstlisting}
+%$\Comment{(STEP2)}$
+%A: ... $\Comment{as before}$
+%B:{() method A k(){return A()}}
+%C:{() method A k(){return A()}}
+%\end{lstlisting}
+%\end{NiceCode}
+%\end{array}$
+%
+%{\small
+%that is the result of the execution of the original 
+%program.}
+%\end{frame}
+%
+
+\begin{frame}[fragile]
+\frametitle{Getting started with Active Libraries}
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+reuse $\ReuseUrl{L42.is/AdamsTowel}$                                       
+AgeInput: Gui.input(receive:N, request:S"insert age")
+$\Comment{class AgeInput is the first class we declare!}$
+$\Comment{is generated by method "Gui.input"}$
+Main:{
+  Gui::Alert(S"your age is "+AgeInput().asText())
+  $\Comment{class AgeInput principal method (the one with no name)}$
+  $\Comment{ask the user to insert a number N}$
+  return ExitCode.normal()
+  }
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Getting started with Active Libraries}
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+reuse  $\ReuseUrl{L42.is/base}$
+BirthInput: Gui.input(
+  title:S"Date of birth"
+  receive:Date $\Comment{we ask a widgets for the type Date}$
+  request:S"insert your date of birth")
+Main:{
+  Date userDate= BirthInput()
+  Gui::Alert(S"your date of birth is "+userDate.asText())
+  return ExitCode.normal()
+  }
+\end{lstlisting}
+\end{NiceCode}
+\Q@Gui.input@ can generate widgets for each type.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Getting started with Active Libraries}
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+reuse  $\ReuseUrl{L42.is/base}$
+Tables: DB(connection:DBConnection"....")
+  $\Comment{create a class with a nested for each db table}$
+  $\Comment{plus utility features to connect with the db}$
+...
+me=Tables::Student(id:....)
+  $\Comment{get student from id, queries also available.}$
+....me.name()....
+\end{lstlisting}
+\end{NiceCode}
+
+\Q@DB@ turns a db into classes.
+If the db is updated, and \texttt{name} is
+renamed in \texttt{fullName},
+42 will point to the error place and we will be guided into
+correspondingly updating our program.
+
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+reuse  $\ReuseUrl{L42.is/base}$
+Tables: DB(connection:....)$\Comment{ with the updated db-schema}$
+...
+me=Tables::Student(id:....)
+....me.name()....$\Comment{now I get a red sign here!}$
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+%\begin{frame}[fragile]
+%\frametitle{Getting started}
+%\begin{NiceCode}{59ex}{1}
+%\begin{lstlisting}
+%reuse  $\ReuseUrl{L42.is/base}$
+%BirthInput: Gui.input(
+%  title:S"Date of birth"
+%  receive:Date $\Comment{input produce widgets for any type}$
+%  request:S"insert your date of birth")
+%Date userDate= BirthInput()
+%$\pause$Second userS= Date.today() - userDate
+%years= (userS/Seconds.year().asNumber()).floor()
+%Gui::Alert(S"you are "+years.asText()+S" years old")
+%myBirth=Date.gregorian(
+%  year:1981N
+%  month:Month::April
+%  day:21N)
+%if myBirth<userDate (
+%  Gui::Alert(S"
+%    $\Comment{I'm younger that you}$
+%    $\Comment{       Ha ha ha!!}$
+%    "))$\Comment{ here an example of multi line string}$
+%\end{lstlisting}
+%\end{NiceCode}
+%\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Visualize DB}
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+{reuse  $\ReuseUrl{L42.is/AdamsTowel}$
+Db: Load[]<{reuse L42.is/Db}
+Gui: Load[]<{reuse L42.is/2dGui}
+Tables: DB(S"...my connection string...")
+StudentList: Collections.list(Tables::Student)
+StudentsView: Gui.tableOf(StudentList)
+QueryFrom: Tables::Query[result:StudentList](
+  DB::SQL"Select * from Student where country=@country")
+Main:{
+  connection=Tables.connect()
+  fromItaly=QueryFrom(connection, country:S"Italy")
+  Gui.show(StudentsView(fromItaly))
+  return ExitCode.normal()
+  }
+}
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Visualize DB}
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+DB: Load[]<{$\ReuseUrl{L42.is/DB}$}
+Gui: Load[]<{$\ReuseUrl{L42.is/2dGUI}$}
+Tables: DB(S"...my connection string...")
+StudentList: Collections.list(Tables::Student)
+StudentsView: Gui.tableOf(StudentList)
+QueryFrom: Tables::Query[result:StudentList](
+  DB::SQL"Select * from Student where country=@country")
+\end{lstlisting}
+\end{NiceCode}
+\begin{itemize}
+\item \Q@Load[]<{$\ReuseUrl{L42.is/..}$}@
+\Q@Load@ is loading the code of a library
+and, according to the conventions in 
+$\ReuseUrl{L42.is/AdamsTowel}$, is linking numbers, strings
+and other general purposes classes to their correspondent 
+inside of $\ReuseUrl{L42.is/AdamsTowel}$.
+\item \Q@DB(S"...my connection string...")@
+creates classes to reify tables in the database.
+\item \Q@StudentList: Collections.list(Tables::Student)@
+creates a collection for students.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Visualize DB}
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+StudentsView: Gui.tableOf(StudentList)
+QueryFrom: Tables::Query[result:StudentList](
+  DB::SQL"Select * from Student where country=@country")
+\end{lstlisting}
+\end{NiceCode}
+\begin{itemize}
+\item \Q@StudentsView: Gui.tableOf(StudentList)@
+create a widget visualizing lists of students.
+Every collection can be seen as a table, if the object supports
+iteration over its fields and its class supports iteration over its field names and types.
+\Q@Data[]@ can easily add those methods for you.
+\item \Q@QueryFrom: Tables::Query[result:StudentList](..)@
+creates a (class that can only perform a) prepared query.
+If the query is of the form \Q@"Select * from TableName where ..."@ then
+it can produce a list of instances of a class under \Q@Table::@.
+Otherwise, it would also generate a nested class for the result.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Visualize DB}
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+Main:{
+  connection=Tables.connect()
+  fromItaly=QueryFrom(connection, country:S"Italy")
+  Gui.show(StudentsView(fromItaly))
+  return ExitCode.normal()
+  }
+\end{lstlisting}
+\end{NiceCode}
+\begin{itemize}
+\item \Q@Tables.connect()@ connects to the database.
+\item\Q@fromItaly=QueryFrom(connection, country:S"Italy")@
+Using \Q@QueryForm@ we ask for students coming from Italy.
+Notice how \Q@country:@ is part of the method signature.
+The name of the parameter was extracted while generating the class.
+A good IDE autocompletion would take advantage of it.
+\item\Q@Gui.show(StudentsView(fromItaly))@
+close the circle, showing a table view of our Italian students.
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Maintainability?}
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+{reuse  $\ReuseUrl{L42.is/AdamsTowel}$
+Db: Load[]<{reuse L42.is/Db}
+Gui: Load[]<{reuse L42.is/2dGui}
+Tables: DB(S"...my connection string...")
+StudentList: Collections.list(Tables::Student)$\Comment{ HERE!!}$
+StudentsView: Gui.tableOf(StudentList)
+QueryFrom: Tables::Query[result:StudentList](
+  DB::SQL"Select * from Student where country=@country")
+Main:{
+  connection=Tables.connect()
+  fromItaly=QueryFrom(connection, country:S"Italy")
+  Gui.show(StudentsView(fromItaly))
+  return ExitCode.normal()
+  }
+}
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}

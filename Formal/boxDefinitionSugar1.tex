@@ -1,0 +1,311 @@
+%\begin{MDefinition}{\x\Append{}\NonTerminale{ident}=\y}
+%\x\Append{}\NonTerminale{ident}=\y
+%\parbox{0.95\linewidth}{ where $\y$ is the identifier composed by $\x$ followed by $\NonTerminale{ident}$.
+%Alpha renaming can be consistently applied to 
+%$\NonTerminale{ident}$ in order to not clash with some variable originally present in the program.}
+%\end{MDefinition}
+%\\
+\begin{MDefinition}{\e\Subst\x\y}
+\V{\e_\vz}\Subst{\x}{\V{\e_\vI}}
+\mbox{ propagate on the structure, and }\\
+(\x\eqOp\e_\vz)\Subst{\x}{\e}=\x\eqOp(\e_\vz\Subst{\x}{\e})
+\\
+\x\Subst{\x}{\e}=\e
+\end{MDefinition}
+\\
+
+\begin{MDefinition}{\e\Subst{\x\T}\y}
+\e\Subst{\x\mdf\,\AnyKw}\y\!=\!\e \mbox{, otherwise }\!
+\e\Subst{\x\T}\y\!=\!
+%\ReplaceAssign{\Subst\x\y}
+\e\Subst{\x}\y
+\end{MDefinition}
+\\
+%\begin{MDefinition}{\ReplaceAssign{\Subst\x\y}{\e}}
+%\ReplaceAssign{\Subst\x\y}{\CtxStar{\x\, \eqOp\, \e_\vz}}=
+%\\\quad
+%\ReplaceAssign{\Subst\x\y}{\CtxStar{
+%\Vd{\y\, \eqOp\, \e_\vz}{}{\x\equalSign\y}
+%}}\\
+%\quad\mbox{with either }\e_\vz\neq\y\mbox{ or }\eqOp\neq\equalSign\\
+%\ReplaceAssign{\Subst\x\y}{\e}=
+%\e
+%\\
+%\quad\mbox{iff}\e\mbox{ not of form} \CtxStar{\x\, \eqOp\, \e_\vz}
+%\end{MDefinition}
+%\\
+%\begin{MDefinition}{\ReplaceAssign{\Many{\x,\z}}{\e}}
+%\ReplaceAssign{\x,\z\,\Many{\x,\z}}{\CtxStar{\x\, \eqOp\, \e}}=
+%\\\quad
+%\ReplaceAssign{\x,\z\,\Many{\x,\z}}{\CtxStar{
+%\x\, \eqOp\, \z\Mc{\itUpdate}{\e}
+%}}\\
+%\mbox{ iff }\e\neq\z\Mc{\itUpdate}{\_}
+%\\
+%\ReplaceAssign{\x,\z\,\Many{\x,\z}}{\e}=
+%\ReplaceAssign{\Many{\x,\z}}{\e}
+%\\\mbox{ iff }
+%\e_\vz\inside\e\mbox{ implies }
+%\e_\vz=\z\Mc{\itUpdate}{\_}
+%\\
+%\ReplaceAssign{\emptyset,\emptyset}{\e}=\e
+%\end{MDefinition}
+%\\
+\begin{MDefinition}{\Desugar\e_\p {\mbox{ auxiliary definitions}}}
+
+%\Desugar{\ifKw\,\e\, \block}_\p = \Desugar{\ifKw\,\e\,\block\,\elseKw\,\Vd{}{}{\voidKw}}_\p\\
+
+\DesugarPs{\e_\vz\ \Many{\x\colon\e}}_{\varEnv,\T\classSep\m,\Many\classB}=
+\DesugarPs{\thatKw \colon\e_\vz\ 
+\Many{\x\colon\e}}_{\varEnv,\T\classSep\m,\Many\classB}\\
+
+\DesugarPs{\x_\vI\colon\e_\vI\ldots\x_\vn\colon\e_\vn}_{\varEnv,\T\classSep\m,\Many\classB}=
+\\\quad\quad\x_\vI\colon\Desugar{\e_\vI}_{\varEnv,\T\classSep\m
+\oRound\x_1\ldots\x_n\cRound\classSep\x_1,
+,\Many\classB}\ldots
+\\\quad\quad\x_\vn\colon\Desugar{\e_\vn}_{\varEnv,\T\classSep\m,
+\oRound\x_1\ldots\x_n\cRound\classSep\x_n,
+\Many\classB}
+\\
+
+\DesugarPs{\x_\vI\colon\e_\vI\ldots\x_\vn\colon\e_\vn}_{\varEnv,\T,\Many\classB}=
+\\\quad\quad\x_\vI\colon\Desugar{\e_\vI}_{\varEnv,\T,\Many\classB}\ldots
+\x_\vn\colon\Desugar{\e_\vn}_{\varEnv,\T,\Many\classB}
+\\
+
+%\DesugarMember{\Mh{\m}{\Many\f}}_\p=
+%\Mh{\DesugarChar\m}{\ScopeDesugar{\Many\f}_\p}
+%\\
+%\DesugarMember{ \interfaceKw}_\p= \interfaceKw
+%\\
+%\DesugarMember{ \traitKw}_\p= \traitKw
+%\\
+\DesugarMember{\member_\vI\ldots\member_\vn}_\p=\DesugarMember{\member_\vI}_\p\ldots\DesugarMember{\member_\vn}_\p
+\\
+\DesugarMember{\mh\e}_\p=
+\DesugarMember{\DesugarMember\mh_\p\ \Desugar\e_{\emptyset;\expectedFrom(\mh);\p}}
+\\
+
+\DesugarMember{\mh\ctxStar[\Vd{\decs}{
+\catchKw\,\exceptionKw\,\x\oRound
+\ons
+\defaultKw\,\e
+\cRound
+}{\e_0}]}=
+\\\quad
+\DesugarMember{\mh\ctxStar[\Vd{\decs}{
+\catchKw\,\exceptionKw\,\x\oRound
+\ons
+\onKw\,\AnyKw\,\e
+\cRound
+}{\e_0}]}
+\\
+\DesugarMember{\mh\ctxStar[\Vd{\decs}{
+\catchKw\,\returnKw\,\x\oRound
+\ons
+\defaultKw\,\e
+\cRound
+}{\e_0}]}=
+\\\quad
+\DesugarMember{\mh\ctxStar[\Vd{\decs}{
+\catchKw\,\returnKw\,\x\oRound
+\ons
+\onKw\,\T\,\e
+\cRound
+}{\e_0}]}
+\\
+\quad\mbox{where $\T$ is obtained  using } \ctxStar\mbox{ as the innermost}
+\\\quad\catchKw\,\_\,\returnKw
+\oRound\onKw\ \T\_\cRound
+%\\\quad
+\mbox{ or }\AnyKw\mbox{ if no such }\ctxStar\mbox{ exists}
+%Yes, with a single on only!
+\\
+\DesugarMember{\mh\ctxStar[\Vd{\decs_1\C\colon\e\decs_2 }{\Opt\catch}{\e_0}]}=
+\\\quad
+\DesugarMember{\C\colon\e}
+\DesugarMember{\mh\ctxStar[\Vd{\decs_1\decs_2 }{\Opt\catch}{\e_0}]}\\
+\mbox{otherwise }
+\DesugarMember{\mh\e}=\mh\e
+\\
+\DesugarMember{\C\colon\ctxFull[\singleDot\singleDot\singleDot]}_\p=
+\DesugarMember{\C\colon\ctxFull[\e]}_\p
+\mbox{Where $\e$ is found}
+\\
+\ \parbox{0.95\linewidth}{
+on the local system depending on the original position of such $\singleDot\singleDot\singleDot$ symbol in the source and $\C$
+}
+%\DesugarMember{\mh \e}_\p=
+%\Many{\C\colon\e}\,
+%\DesugarMember\mh_\p \e\vT
+%\\\mbox{with }
+%\e\vT=\Desugar\e_\p\mbox{ without all the $\X$ of form }
+%\Many{\C\colon\e}
+
+\\
+\DesugarMember{
+  \mhTt{\mdf}{\m}{\Many{\ft{}{\x}{\T}}}{\T}{\Paths}
+}_\p=\\\quad
+  \mhTt{\mdf}{\DesugarChar\m}{\ScopeDesugar{\Many{\ft{}{\x}{\T}}}_\p}{\ScopeDesugar\T_\p}{\ScopeDesugar\Paths_\p}
+\\
+\DesugarMember{
+\methodKw \Mh{\m}{\xs}}_\p=\methodKw \Mh{\DesugarChar\m}{\xs} 
+\\
+\DesugarMember{\C\colon}_\p=\C\colon\\
+%\end{MDefinition}
+%\begin{MDefinition}{\DesugarX\X_\p}
+%#Definition for giveName(es)
+%\GiveName{\X_\vI\ldots\X_\vn}=\GiveName{\X_\vI}\ldots\GiveName{\X_\vn}
+%\begin{MDefinition}{\DesugarI\iterDeclaration_\p}
+%\DesugarI{
+%\ft{\varOpt}{\x_\vI}{\TOpt_\vI}\,\inKw\,\Xt{}{\x_\vII}{\TOpt_\vII}{\e}}=
+%\ft{\varOpt}{\x_\vI}{\TOpt_\vI}\,\inKw\,\Xt{}{\x_\vII}{\TOpt_\vII}{\e}\\
+%\DesugarI{
+%\ft{\varOpt}{\x_\vI}{\TOpt_\vI}\,\inKw\,\e}=
+%\ft{\varOpt}{\x_\vI}{\TOpt_\vI}\,\inKw\,\Xt{}{\x_\vII}{}{\e}\!\mbox{ with }\!\x_\vII\!\mbox{ fresh}
+%\end{MDefinition}
+%\begin{MDefinition}{\ScopeDesugar\Path_\p}
+\ScopeDesugar{\C\Many{\classSep\C}}_{\classB_\vz\ldots\classB_\vn}= \Outer_\vk\classSep\C\Many{\classSep\C} 
+\\
+\mbox{where }\classB_\vk(\classSep\C) \mbox{ well defined and }
+\\\quad
+\ForallSide{\vi<\vk}{\classB_\vi(\classSep\C)\mbox{ not well defined}}
+\\
+\ScopeDesugar{\C\Many{\classSep\C}}_{\classB_\vz\ldots\classB_\vn}= \Outer_\vn\classSep\C\Many{\classSep\C} 
+\\
+
+\mbox{where }\ForallSide{\vi\in 0..\vn}{\classB_\vi(\classSep\C)\mbox{ not well defined}}
+\\
+
+%\ScopeDesugar{\h} \mbox{ and }
+%\ScopeDesugar{\mh}
+%\mbox{  propagates over the structure.}
+\end{MDefinition}
+\\
+\begin{MDefinition}{\expectedFrom}
+\expectedFrom(\C\colon)=\Type\IMdf\LibraryKw{}\\
+\expectedFrom(\mhTt{\mdf}{\m}{\Many{\ft{}{\x}{\T}}}{\T}{\Paths})=\T\\
+\expectedFrom(\methodKw \Mh{\m}{\xs})=
+\Outer_0\singleDot\Mh{\m}{\xs}
+\end{MDefinition}
+\\
+\begin{MDefinition}{\DeclareIterators{}{\is}{\e_\vz}
+}
+\DeclareIterators{}{\emptyset}{\e}=\e\\
+
+\DeclareIterators{}{
+\ft{\varOpt}{\x_0}{}\,\inKw\,\e_\vz\is}{\e}=
+\oRound
+\\\quad
+\Xt{}{\x_\vz}{}{\e_\vz}
+%\\
+\quad
+\oRound\oRound\DeclareIterators{}{\is}{\e}
+\\\quad
+\catchKw\,\exceptionKw\,\y\,\oRound
+  \defaultKw
+    \Vd{\x_\vz\Mc{\itFinalize}{}\,}{}{\exceptionKw\,\y}
+\cRound
+\\\quad\voidKw\cRound
+\\\quad
+\catchKw\,\returnKw\,\y'\,\oRound
+  \defaultKw
+    \Vd{\x_\vz\Mc{\itFinalize}{}\,}{}{\exceptionKw\,\y'}
+\cRound
+
+\\\quad
+\x_\vz\Mc{\itFinalize}{}
+
+
+\cRound
+
+\end{MDefinition}
+\\
+\begin{MDefinition}{\Next{\vi}{\xs}}
+\Next{\vi}{\z_\vz\ldots\z_\vn}=
+\z_\vi\Mc{\itNext}{}
+\\\quad\catchKw\,\exceptionKw\,\oRound\onKw\,\VoidKw\oRound
+
+\\\quad\Vd{\z_{i+1}\Mc\itNext{}}{\catchKw\,\exceptionKw\,\oRound\onKw\,
+\VoidKw\,\voidKw\cRound}{\voidKw}
+\\\quad\ldots
+\Vd{\z_\vn\Mc\itNext{}
+}{\catchKw\,\exceptionKw\,\oRound\onKw\,
+\VoidKw\,\voidKw\cRound}{\voidKw}
+\\\quad\Vd{\z_\vz\Mc\itMustEnd{}}{\catchKw\,\exceptionKw\,\oRound\onKw\,
+\VoidKw\,
+\voidKw\cRound}{\voidKw}
+\\\quad\ldots
+\Vd{\z_\vn\Mc\itMustEnd{}}{\catchKw\,\exceptionKw\,\oRound\onKw\,
+\VoidKw\,\voidKw\cRound}{\voidKw}
+\\\quad\exceptionKw\,\voidKw
+\cRound\cRound
+
+\end{MDefinition}
+
+%\\
+%\begin{MDefinition}{\Aux{domVar}(\X_\vI\ldots\X_\vn)}
+%\mbox{IS IT USED??}\\
+%\x\colon\C\in\Aux{domVar}(\X_\vI\ldots\X_\vn)\mbox{ iff }\\\quad
+%\X_\vi=\_\Xt{\varKw}{\x}{\TOpt}{\e}\_, \C\mbox{ is fresh and } \vi\in1..\vn
+%\end{MDefinition}
+\\
+\begin{MDefinition}{\Cast{\Type\mdf\Path{}}{\y}{\x}}
+\Cast{\Type\mdf\Path{}}{\y}{\x}=\Xt{}{\y}{\Type\mdf\Path{}}{\Vd{\returnKw\,\x}{
+\\\quad
+\catchKw\ \returnKw\,\z\oRound\onKw\,\Type\mdf\Path{} \z\,\onKw\,\Type\mdf\AnyKw{}\ \exceptionKw\,\voidKw\cRound}{
+\\\quad
+\errorKw\,\voidKw}}
+\quad
+\mbox{ with }\!\z \!\mbox{ fresh }
+%\varEnv(\x_\vI)\neq\varEnv\vT(\x_\vI)
+\end{MDefinition}
+\\
+\begin{MDefinition}{\xsOfPs(\ps)}
+\e_0 \x_1:\e_1\ldots\x_n:\e_n=\thatKw \x_1\ldots\x_n\\
+\x_1:\e_1\ldots\x_n:\e_n=\x_1\ldots\x_n
+\end{MDefinition}
+
+
+
+
+%
+%\begin{MDefinition}{}
+%\Cast{\varEnv,\varEnv\vT\,\T}{\x_\vz}{\x_\vI}=
+%\\\quad
+%\C\colon\Cb{\oRound
+%  \varEnv(\x_\vI)\,\fieldDelegate\comma
+%  \varKw\,\T\,\fieldInnerAux
+%  \cRound
+%\\\quad\quad
+%\mhTt{\SMdf}{\hash\fieldInner}{}{\T}{\emptyset}
+%\Vd{}{}{\this\Mc{\hash\fieldInnerAux}{}}
+%
+%\\\quad\quad
+%\mhTt{\SMdf}{\fieldInner}{\ft{}{\thatKw}{\T}}{\VoidKw}{\emptyset}
+%\\\quad\quad
+%\Vd{}{}{\this\Mc{\fieldInnerAux}{\thatKw}\comma
+%\this\Mc{\fieldDelegate}{\thatKw}
+%  }
+%  }
+%  
+%\\\quad
+%\Xt{\!}{\x_\vz}{\varEnv(\x_\vz)}{
+%\Path\classSep\C\Mc{\fApply}{
+% \fieldDelegate\colon\x_\vI\comma
+%\! \fieldInner\colon\!
+%\Vd{\!\returnKw\,\x_\vI}{
+%\\\quad\quad
+%\catchKw\,\z\,\onKw\,\returnKw\,\T\Vd{}{}{\z}\,\onKw\,\returnKw\,AnyKw\Vd{}{}{\exceptionKw\,\voidKw}}{
+%\\\quad
+%\errorKw\,\voidKw}
+%}
+%
+%}
+%\quad\mbox{ with }\!\z \!\mbox{ fresh and }
+%\\\quad\quad
+% \varEnv(\x_\vz)=\SMdf\,\Path\C
+%\mbox{ and }
+%\varEnv(\x_\vI)=\varEnv\vT(\x_\vI)
+%\end{MDefinition}
+

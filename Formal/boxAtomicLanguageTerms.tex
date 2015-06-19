@@ -1,0 +1,78 @@
+%\mbox{\textbf{Atomic language terms}}\\
+\mbox{
+%\vspace{-2ex}
+\begin{grammatica}
+%#L::= return | error| signal
+\produzione\L{
+\returnKw\mid\errorKw\mid\exceptionKw%\mid\xMany
+}{results}\\
+%#mdf::= type | shared| readable| owned| lent | unique | immutable
+\produzione\mdf{
+\TMdf\mid\SMdf\mid\RMdf\mid\LMdf\mid\CMdf\mid\IMdf
+}{type modifiers}\\
+\produzione{\V{\NonTerminale{ident}}}{
+\mbox{< [\_,a..z,A..Z,,$\$$,$\%$] [\_,a..z,A..Z,$\$$,$\%$,0..9]*>}
+}{identifiers}\\
+%#C::= <identifiers starting uppercase except Any and Library>
+\produzione\C{
+\mbox{<\V{\NonTerminale{ident}} starting upper-case except $\AnyKw$, $\VoidKw$,
+ $\LibraryKw$>}
+}{Class names}\\
+%#x,z,y::= <identifiers starting lowercase except keywords>
+\produzione{\x,\y,\z}{
+\mbox{<\V{\NonTerminale{ident}} starting lower-case (or \_) except keywords>}
+}{variable names}\\
+\produzione\m{\x\mid\hash\x\mid\emptyset\mid
+\unOp\mid\eqOp\mid\binOp}
+{method names}\\
+%#docs::= <some representation of documentation>
+\produzione{\docs}{
+\V{\NonTerminale{strLine}}_\vI\ldots\V{\NonTerminale{strLine}}_\vn
+\mbox{<often omitted for brevity>}
+}{documentation}\\
+\produzione{\V{\NonTerminale{strLine}}}{
+  \mbox{<spaces>}\ \Terminale{'} \mbox{<sequence of $\stringChar$ excluding \EOL>}
+  \mbox{\EOL}
+}{line of documentation}\\
+\produzione{\V{\NonTerminale{string}}}
+{\mbox{<any sequence of $\stringChar$ excluding (\Terminale{"}) and \EOL>}}{simple string}\\
+\seguitoProduzione{\mid
+\EOL\,\docs\mbox{<spaces>} \mbox{<where $\docs$ is not empty>}}{multi line string}\\
+
+\produzione\stringChar{\mbox{<a subset of all character; around $\sim$ 100 symbols>}}{source chars}\\
+\produzione{\NonTerminale{digit}}{
+\Terminale{0}\mid\Terminale{1}\mid\Terminale{2}
+\mid\Terminale{3}\mid\Terminale{4}\mid\Terminale{5}
+\mid\Terminale{6}\mid\Terminale{7}\mid\Terminale{8}
+\mid\Terminale{9}
+ }{}\\
+\produzione{\V{\NonTerminale{digit+}}}{
+\V{\NonTerminale{digit}}
+\mid \Terminale{.}\V{\NonTerminale{digit}}
+\mid \Terminale{-}\V{\NonTerminale{digit}}
+}{}\\
+\produzione\num{
+\Opt\dataOp\V{\NonTerminale{digit}}
+\Many{\NonTerminale{digit+}}
+  }{}\\
+\produzione\unOp{
+\Terminale{!} 	\mid \scalebox{0.7}[0.9]{\Terminale{$\sim$}} % sig ~ does not works in terminale...
+}{}\\
+\produzione\eqOp{\SymEquals{+} \mid \SymEquals{-}	\mid \SymEquals{*}	\mid\SymEquals{/}	
+\mid\SymEquals{\&}	\mid\SymEquals{|}	
+\mid\SymEquals{>>}     \mid\SymEquals{<<}
+\mid \SymEquals{++}\mid \SymEquals{**}
+	\mid\equalSign}{requires $\x$ as left value}\\
+\produzione\boolOp{\Terminale{\&} \mid \Terminale{|}}{weak precedence}\\
+\produzione\bDataOp{\Terminale{<} \mid \Terminale{>} \mid \initSign\initSign \mid \Terminale{!}\!\initSign\mid \SymEquals{<}\mid \SymEquals{>}}{medium precedence}\\
+\produzione\dataOp{\Terminale{+} \mid \Terminale{-}\mid \Terminale{*} \mid \Terminale{/}\mid
+ \Terminale{<<} \mid \Terminale{>>}
+\mid \Terminale{++}\mid \Terminale{**}
+}{strong precedence}\\
+\produzione\binOp{\boolOp\mid\bDataOp\mid\dataOp}{binary operators}\\
+%TODO: make a macro for this
+\produzione{\V{\NonTerminale{url}}}{
+  \mbox{<sequence of $\stringChar$ excluding <space>,$\EOL$, $\oCurly$ and $\cCurly$>}
+}{}\\
+
+\end{grammatica}} 

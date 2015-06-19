@@ -1,0 +1,489 @@
+\begin{RuleFrame}\pBox{Type for expressions}%
+\!\!\!\begin{array}{l}
+\vspace{-5ex}\\
+%----------------------
+%----------------------First
+%----------------------
+\!\!\!\!\begin{array}{l}
+\begin{MetaRule}{path-path}
+\begin{consequence}
+\TsJ{\p;\varEnv;\sealEnv;\throwEnv}\Path{\TMdf\,\Path}
+\end{consequence}
+\begin{sideCondition}
+\p(\Path)=\Compiled\ct\mbox{ not  interface}\\
+\mbox{if }\StarOf\p\mbox{ then }\StarOf{\p,\Path}
+\\
+\mbox{if }\ExeAndComplete{\p}\mbox{ then }\ExeAndComplete{\p,\Path}
+
+
+%\mbox{if }\labelVarOf(\p)\in\{\typeStar,\typeMeta\}
+%\mbox{ then }\labelVarOf(\p,\Path)=\typeStar\\
+%\mbox{if }\labelVarOf(\p)=\typePlus
+%\mbox{ then }\labelVarOf(\p,\Path)\in\{\typeStar,\typePlus\}\\
+%\mbox{if }\labelVarOf(\p)=\typeLess
+%\mbox{ then }\labelVarOf(\p,\Path)\in\{\typeStar,\typePlus,\typeLess\}\\
+%\labelVarOf(\p)\neq\typeLess
+\end{sideCondition}
+\end{MetaRule}
+\vspace{-1ex}
+\\
+
+%\begin{MetaRule}{path-relax}
+%\begin{consequence}
+%\TsJ{\p;\varEnv;\sealEnv;\throwEnv}\Path{\TMdf\,\Path}
+%\end{consequence}
+%\begin{sideCondition}
+%%\labelVarOf(\p)\in\{\typePlus,\typeLess\}\\
+%%\mbox{if }\labelVarOf(\p,\Path)=\typeLess
+%%\mbox{ then }\labelVarOf(\p)=\typeLess\\
+%\labelVarOf(\p,\Path)\mbox{ is defined}\\
+%\p(\Path)\mbox{ not  interface}
+%\end{sideCondition}
+%\end{MetaRule}
+
+%\\
+\begin{MetaRule}{path-any}
+\begin{consequence}
+\TsJ{\p;\varEnv;\sealEnv;\throwEnv}\Path{\TMdf\,\AnyKw}
+\end{consequence}
+\begin{sideCondition}
+%\labelVarOf(\p,\Path)\in\{\typeStar,\typePlus,\typeLess\}\\
+\mbox{either }\p(\Path)=\Compiled\ct\\
+\mbox{or }\Path\in\{\AnyKw,\VoidKw,\LibraryKw\}
+%\mbox{if }\labelVarOf(\p,\Path)\!=\!\typeLess
+%\mbox{ then }\labelVarOf(\p)\in\{\typeMeta,\typeLess\}\\
+\end{sideCondition}
+\end{MetaRule}
+\vspace{-1ex}
+\\
+
+\begin{MetaRule}{lib-t}
+\begin{consequence}
+\TsJ{
+\p\Opt\typeStar;\varEnv;\sealEnv;\throwEnv
+}{\classB}{\IMdf\,\LibraryKw}
+\end{consequence}
+\begin{sideCondition}
+%\TypeJ{\p}{\classB}{\Cb{\_}^{\labelVar_\vI;\_}}\\
+\p\vdash \classB\ReduceArrow{}{\Compiled\ct}\\
+\p\vdash \Compiled\ct:\mbox{ok}\\
+\mbox{if }\StarOf\p\mbox{ then }
+\Compiled\ct=\Cb{\_\,\_}^{\Opt\typePlus,\_}
+%\labelVarOf(\ct)\!=\!\typeLess
+%\!\mbox{ iff }\!\labelVarOf(\p)\in\{\typeLess,\typeMeta\}\\
+%\labelVarOf(\ct)\!=\!\typePlus
+%\!\mbox{ iff }\!\labelVarOf(\p)\in\{\typePlus,\typeStar\}\\
+\end{sideCondition}
+\end{MetaRule}
+
+%\vspace{-2ex}\\
+%\begin{MetaRule}{no-K}
+%\begin{consequence}
+%\TsJ\_\emptyset\T
+%\end{consequence}
+%\end{MetaRule}
+\\
+{}_{}
+\\
+\begin{MetaRule}{meth-unknown-t}
+\begin{premise}
+\TsJ{\p;\varEnv;\sealEnv;\throwEnv}{\e_i}{\T_i}
+\mbox{ for all }i\in 0..n\\
+\end{premise}
+\begin{consequence}
+\TsJ{\p;\varEnv;\sealEnv;\throwEnv}{\e_\vz\Mc\m{\x_\vI\colon\e_\vI\ldots\x_\vn\colon\e_\vn}}{\T}
+\end{consequence}
+\begin{sideCondition}
+\mbox{either }\forall\T.\TsJ{\p;\varEnv;\sealEnv;\throwEnv}{\e_0}{\T}\\
+\mbox{ or not } \ExeAndComplete{\p},\mbox{not }\StarOf\p\mbox{ and }\\
+%\quad\T_0\in\{\Type\_{\Path\Many{\classSep\C}}{},\Path\Many{\classSep\C}\singleDot\Many\mx\}\\
+\quad\T_0=\Type\_{\Path\Many{\classSep\C}}{}
+\mbox{ where }\p(\Path)\in\{\emptyset,\walkBy\}
+\end{sideCondition}
+\end{MetaRule}
+\\
+\begin{MetaRule}{using-t}
+  \begin{premise}
+\TsJ{\p;\varEnv;\sealEnv;\throwEnv}{\e_i}{\T'_i\leq\T_i}
+\mbox{ for all }i\in 0..n\\
+  \end{premise}
+  \begin{consequence}
+    \TsJ{\p;\varEnv;\sealEnv;\throwEnv}{
+\Using\Path{\Mc\m{\Many{\x\colon\e}}}{\e_0}
+}{\T_0 }
+  \end{consequence}
+  \begin{sideCondition}
+\Many{\x\colon\e}=
+\x_\vI\colon\e_\vI\ldots\x_\vn\colon\e_\vn\\
+%\Nv{\varEnv}^\typeEnv(\z)\!=\!\IMdf\,\Path\\
+\PlGet{\p,\Path,\Mc\m{\!{\x_\vI\ldots\x_\vn}}}
+=\plugin;\T_0\T_1\ldots\T_n\\
+  \end{sideCondition}
+\end{MetaRule}
+
+
+\end{array}
+
+
+%\begin{MetaRule}{}
+%\begin{premise}
+%\end{premise}
+%\begin{consequence}
+%\end{consequence}
+%\begin{sideCondition}
+%\end{sideCondition}
+%\end{MetaRule}
+
+
+%----------------------
+%----------------------SECOND
+%----------------------
+%\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!
+\!\!\!\!\!\!\!\!\!
+\!\!\!\!\begin{array}{l}
+
+%\begin{MetaRule}{t-var0}
+%\begin{consequence}
+%\TypeJ{\p;\varEnv;\_;\_;\_}{\x}{\T}
+%\end{consequence}
+%\begin{sideCondition}
+%\quad\labelVarOf(\p)=\typeLess\\
+%\Norm\p{\varEnv(\x)}=\Path\singleDot\Many\mx\\
+%\end{sideCondition}
+%\end{MetaRule}
+%\\
+\begin{MetaRule}{t-var}
+%\begin{premise}
+%\end{premise}
+\begin{consequence}
+\TypeJ{\p;\varEnv;\xs_0;\xs_1\ldots\xs_n;\_;\_}{
+\x}{\T}
+\end{consequence}
+\begin{sideCondition}
+\Norm\p{\varEnv(\x)}=\Type{\mdf}{\Path}{\ph}\\
+\x\notin\xs_0\\
+\T=\begin{cases}
+\Type{\LMdf}{\Path}{\alpha}\!\!\!&\mbox{if}\ \x\in\xs_1\ldots\xs_n\\
+\Type{\mdf}{\Path}{\alpha}\!\!\!&\mbox{otherwise}
+\end{cases}
+\end{sideCondition}
+\end{MetaRule}
+\\[10ex]
+\begin{MetaRule}{throw-t}
+\begin{premise}
+\TsJ{\p;\varEnv;\sealEnv;\TMany\Paths}{\e}{\_\leq\Type\mdf\Path{}}
+\end{premise}
+\begin{consequence}
+\TsJ{\p;\varEnv;\sealEnv;\TMany\Paths}{\L\,\e}{\T}
+\end{consequence}
+\begin{sideCondition}
+\!\mbox{if }\!
+\L\!=\!\returnKw \!\mbox{ then }\!
+\Type\mdf\Path{}\in\TMany,
+\\\quad
+\mbox{otherwise }\! \mdf\!=\!\IMdf
+\\
+\!\mbox{if }\!
+\L\!=\!\exceptionKw \!\mbox{ then }\! \Path\in\Paths\\
+%\!\mbox{if }\!
+%\L\!=\!\errorKw\!\mbox{ or }\!\mdf\!=\!\TMdf
+%\!\mbox{ then }\!\Path\!=\!\AnyKw??
+\end{sideCondition}
+\end{MetaRule}
+
+
+\\
+\begin{MetaRule}{t-void}
+\begin{consequence}
+\TypeJ{\p;\varEnv;
+\sealEnv;\throwEnv
+}{\voidKw}{\Type{\CMdf}{\VoidKw}{}}
+\end{consequence}
+\end{MetaRule}
+
+\\
+
+\begin{MetaRule}{loop-t}
+  \begin{premise}
+\TsJ{\p;\varEnv;\sealEnv;\throwEnv}{\e}{\Type\IMdf\VoidKw{}}
+  \end{premise}
+  \begin{consequence}
+\TsJ{\p;\varEnv,\_;\sealEnv;\throwEnv}{          
+\loopKw\ \e
+  }{\Type\IMdf\VoidKw{}}
+  \end{consequence}
+\begin{sideCondition}
+\!\T\mbox{ not of form }\Type\CMdf\_\_\ 
+\forall \x{:}\T\in \varEnv
+\end{sideCondition}
+\end{MetaRule}
+%\\
+%\begin{MetaRule}{block-in}
+ % \begin{premise}
+%\TsJ{\varEnv[\Opt\catch];\sealEnv;\throwEnv}{\Vd{\Many\dec}{\Opt\catch}\e}{\T}
+%  \end{premise}
+ % \begin{consequence}
+%\TsJ{\p;\varEnv;\sealEnv;\throwEnv}{          
+%\Vd{\Many\dec}{\Opt\catch}\e
+ % }{\T}
+ % \end{consequence}
+%\end{MetaRule}
+
+\\
+\begin{MetaRule}{t-unlock}
+\begin{premise}
+\TypeJ{\p;\varEnv;\sealEnv';\throwEnv}{\e}{\_\leq\Type{\mdf}{\Path}{\alpha}}
+\end{premise}
+\begin{consequence}
+\TypeJ{\p;\varEnv;\sealEnv;\throwEnv}{\e}{
+\mutableToLent(\Type{\mdf}{\Path}{\alpha})
+}
+\end{consequence}
+\begin{sideCondition}
+\sealEnv=\xs;\xs_0,\xs_1\ldots\xs_n;\Many\xs\\
+\sealEnv'=\xs';\xs_1\ldots\xs_n,\mutableVars(\varEnv){\setminus}\xs_0\ldots\xs_n;\Many\xs\\
+%\mdf\neq\SMdf\\
+\mbox{if }\mdf\in\{\RMdf,\LMdf,\SMdf\}
+\ \mbox{ then }\xs'=\xs\\
+\quad\mbox{otherwise }\xs'=\emptyset
+\end{sideCondition}
+\end{MetaRule}
+
+
+\end{array}
+%\\[5ex]
+
+%----------------------
+%----------------------Third
+%----------------------
+\!\!\!\!\!\!\!\!\!\!\!\begin{array}{l}
+\begin{MetaRule}{t-methCall}
+\begin{premise}
+\TypeJ{\p;\varEnv_0;\sealEnv_0;\throwEnv}{\e_0}{
+\_\leq\Type{\mdf_0}{\Path_0}{}}
+\\
+\TypeJ{\p;\varEnv_i;\sealEnv_i;\throwEnv}{\e_i}{\T'_i\leq\T_i}
+\quad \forall i\in 1..n\\
+\end{premise}
+\begin{consequence}
+\TypeJ{\p;\varEnv;\sealEnv;\throwEnv}{
+\MethCall{\e_0}{\m}{\x_1\colon\e_1\ldots\x_n\colon\e_n}
+}{\T'}
+\end{consequence}
+\begin{sideCondition}
+\Method\p{\Path_0}{\m,\x_1\ldots\x_n}=
+\\\quad
+\mhTt{\mdf_0}{\m}{\T_1\ \x_1\ldots\T_n\ \x_n}{\T}
+{\Paths}\ \_
+\\
+\p\vdash\Paths\leq\throwEnv\\
+%\T'_i\leq\T_i\ \forall\ i\in 1..n\\
+\varEnv_i\subseteq\varEnv\ \forall i\in 0..n\\
+\varEnv_i(\x)=\varEnv_j(\x)=
+\Type{\CMdf}{\_}{\_}\ \mbox{implies}\ i=j\\
+\T'=
+\begin{cases}
+\T\  \mbox{if}\  \T'_i=\Type{\mdf_i}{\Path_i}{} \mbox{for all}\ i\in 1..n\\
+\toPartial(\T)\ \mbox{otherwise}
+\end{cases}
+\\
+\sealEnv=\xs;\Many\xs;\xs_1\ldots\xs_k\\
+\xs'_i=\FV(\e_0\ldots\e_n\setminus\e_i)\\
+\sealEnv_i=
+\xs;\Many\xs;\xs_1\xs'_i\ldots\xs_k\xs'_i
+
+\end{sideCondition}
+\end{MetaRule}
+
+\\{}_{}\\
+
+\begin{MetaRule}{t-mutable}
+\begin{premise}
+\TypeJ{\p;\varEnv;\sealEnv';\throwEnv}{\e}{\Type{\SMdf}{\Path}{\alpha}}
+\end{premise}
+\begin{consequence}
+\TypeJ{\p;\varEnv;\sealEnv;\throwEnv}{\e}{\Type{\CMdf}{\Path}{\alpha}}
+\end{consequence}
+\begin{sideCondition}
+\sealEnv=\xs;\xs_1\ldots\xs_n;\Many\xs\\
+\sealEnv'=\xs;\xs_1\ldots\xs_n,\mutableVars(\varEnv){\setminus}\xs_1\ldots\xs_n;\Many\xs\\
+\end{sideCondition}
+\end{MetaRule}
+\\
+\begin{MetaRule}{t-readable}
+\begin{premise}
+\TypeJ{\p;\varEnv;\sealEnv';\throwEnv}{\e}{\Type{\mdf}{\Path}{\alpha}}
+\end{premise}
+\begin{consequence}
+\TypeJ{\p;\varEnv;\sealEnv;\throwEnv}{\e}{\Type{\IMdf}{\Path}{\alpha}}
+\end{consequence}
+\begin{sideCondition}
+\mdf\in\{\RMdf,\LMdf\}\\
+\sealEnv=\xs;\xs_1\ldots\xs_n;\Many\xs\\
+\xs_0=\mutableVars(\varEnv){\setminus}\xs_1\ldots\xs_n\\
+\sealEnv'=\xs,\mutableSuper(\varEnv);\xs_0\ldots\xs_n;\Many\xs\\
+\end{sideCondition}
+\end{MetaRule}
+
+
+%\\[6ex]
+
+
+%\begin{MetaRule}{t-lent}
+%\begin{premise}
+%\TypeJ{\p;\x:\Type{\SMdf}{\Path}{\alpha},\varEnv;\sealEnv';\throwEnv}{\e}{\T}
+%\end{premise}
+%\begin{consequence}
+%\TypeJ{\p;\x:\Type{\LMdf}{\Path}{\alpha},\varEnv;
+%\sealEnv;\throwEnv}{\e}{\mutableToLent(\T)}
+%\end{consequence}
+%\begin{sideCondition}
+%\sealEnv=\xs;\xs_1\ldots\xs_n\\
+%\sealEnv'=\xs;\xs_1\ldots\xs_n,\mutableVars(\varEnv){\setminus}\xs_1\ldots\xs_n\\
+%\MSComm{\mbox{con la nuova unlock la lent puo' sparire?}}
+%\end{sideCondition}
+%\end{MetaRule}
+\\
+
+
+
+
+
+
+
+\end{array}
+\\
+%\\{}_{}\\
+%\begin{MetaRule}{}
+%\begin{premise}
+%\end{premise}
+%\begin{consequence}
+%\end{consequence}
+%\begin{sideCondition}
+%\end{sideCondition}
+%\end{MetaRule}
+
+\begin{MetaRule}{t-block-complete/partial}
+\begin{premise}
+\TypeJ{\p;\varEnv_i[\catch,\sealEnv];\sealEnv;\throwEnv[\catch]}{\e_i}{\T'_i\leq\toPartial(\T_i)}\quad\forall i\in 1..n
+\\
+\TypeJ{\p;\varEnv_0;\sealEnv\,\FV(\e_1\ldots\e_n)\cup\x_1\ldots\x_n;\throwEnv}{\e}{\T}\\
+%\TypeJ{\p;\varEnv_0;\sealEnv;\throwEnv}{\Opt\catch}{\T}
+\TypeJ{\p;\varEnv_0\setminus\Dom{\varEnv'};\sealEnv;\throwEnv}{\catchKw\ \L\ \x\oRound\on_i\cRound}{\T}
+\quad\forall i\in 1..k
+\end{premise}
+\begin{consequence}
+\TypeJ{\p;\varEnv;\sealEnv;\throwEnv}{
+\Vd{
+\Dec{\T_1}{\x_1}{\e_1}
+\ \ldots\ 
+\Dec{\T_n}{\x_n}{\e_n}}{\catch}\e
+}{\T}
+\end{consequence}
+\begin{sideCondition}
+\catch=\catchKw\ \L\ \x\oRound\on_1\ldots\on_k\cRound\\
+\varEnv'=\x_1:\T_1\ldots\x_n:\T_n\\
+%\T'_i\leq\toPartial(\T_i)\ \forall\ i\in 1..n\\
+\varEnv_i(\x)=\varEnv_j(\x)=\Type{\CMdf}{\_}{\_}\ \mbox{implies}\ i=j\\
+\StarOk{\p,\varEnv_0}\\
+\mbox{either }\\
+\quad\varEnv_i\subseteq
+ \complete(\varEnv),\toPh{\complete(\varEnv')}
+\ \forall i\in 1..n\\
+\quad\varEnv_0\subseteq\varEnv,\varEnv'\\
+\mbox{or}\\
+\quad\varEnv_i\subseteq\varEnv,\toPh{\complete(\varEnv')}\ \forall i\in 1..n\\
+\quad\varEnv_0\subseteq\varEnv,\toPartial(\varEnv')
+\end{sideCondition}
+\end{MetaRule}
+
+\begin{array}{l}
+\begin{MetaRule}{K-t-any}
+  \begin{premise}
+\TsJ{\p;\varEnv;\sealEnv;\throwEnv[\catch_i]}{          
+\catch_i{}  }{\T}
+\quad\forall i\in 1..2
+  \end{premise}
+  \begin{consequence}
+\TsJ{\p;\varEnv;\sealEnv;\throwEnv}{          
+\catchKw\,\L\,\x
+\oRound\onKw\,\Type\mdf\AnyKw{}\e\cRound
+  }{\T}
+  \end{consequence}
+\begin{sideCondition}
+\mbox{either}\L=\exceptionKw,\mdf'=\mdf=\IMdf
+\\\mbox{ or }
+\L=\returnKw,\TMdf\in\{\mdf',\mdf\},\mdf'\neq\mdf\\
+\catch_1,\catch_2=
+\catchKw\,\L\,\x
+\oRound\onKw\,\Type\mdf\LibraryKw{}\e\cRound,
+\catchKw\,\L\,\x
+\oRound\onKw\,\Type{\mdf'}\VoidKw{}\e\cRound
+
+\end{sideCondition}
+
+\end{MetaRule}
+
+\\
+\begin{MetaRule}{K-t}
+  \begin{premise}
+\!\!\!\TsJ{\p;\x{:}\T',\varEnv;\sealEnv;\throwEnv}{\e}{\T}\!\!\!
+  \end{premise}
+  \begin{consequence}
+\!\!\!\TsJ{\p;\varEnv;\sealEnv;\throwEnv}{          
+\catchKw\L\,\x
+\oRound\onKw\,\T'\e\cRound
+  }{\T}\!\!\!
+  \end{consequence}
+\end{MetaRule}
+\!\!\!\!\!
+\begin{MetaRule}{dec-f-t}
+\begin{premise}
+\!\!\!\TsJ{\p;\varEnv;
+\sealEnv;\throwEnv
+}{
+\Vd{\es_\vz}{\Opt\catch}{
+\Vd{\es_\vI}{\Opt\catch}{\e_\vz}}
+}{\T}\!\!\!
+\end{premise}
+\begin{consequence}
+\TsJ{
+\p;\varEnv;
+\sealEnv;\throwEnv
+}{\Vd{\es_\vz\,\es_\vI}{\Opt\catch}{\e_\vz}}{\T}
+\end{consequence}
+\end{MetaRule}
+
+\\
+\begin{MetaRule}{dec-k-prom-t}
+  \begin{premise}
+\TsJ{
+\p;\varEnv;
+\sealEnv;\throwEnv
+}{\Vd{\es_\vz\,\es_\vI}{
+\catchKw\,\returnKw\,\x
+\oRound\onKw\,\Type{\mdf'}\Path{}\ \x\cRound
+}{\e_\vz}}{\T}
+ \end{premise}
+  \begin{consequence}
+\TsJ{
+\p;\varEnv;
+\sealEnv;\throwEnv
+}{\Vd{\es_\vz\,\es_\vI}{
+\catchKw\,\returnKw\,\x
+\oRound\onKw\,\Type\mdf\Path{}\ \x\cRound
+}{\e_\vz}}{\T}
+\end{consequence}
+\begin{sideCondition}
+\mdf=\CMdf\mbox{ and }\mdf'=\SMdf\\
+\mbox{ or }
+\mdf=\IMdf\mbox{ and }\mdf'\in\{\SMdf,\RMdf\}
+\end{sideCondition}
+\end{MetaRule}
+
+
+
+\end{array}
+\end{array}
+
+\end{RuleFrame}

@@ -1,0 +1,905 @@
+
+\begin{frame}[fragile]
+\frametitle{Detailed Language introduction}
+\begin{itemize}
+\item Numbers, String and unit of measures
+\item Collections and With
+\item Mutually recursive bindings
+\item Exceptions/return
+\item Control flow
+\item Support for multiple files
+\item type modifiers
+\item modifiers immutable and mutable
+\item modifiers lent and readable
+\item modifier capsule
+\item modifier type
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Numbers, String and unit of measures}
+Numbers and strings are explicitly typed, allowing a higher level of checking.
+\\
+We support unit of measure and string formatting.
+ For example:
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+a=12Meter + 4Meter $\Comment{that is fine}$
+b=12Meter + 4Kg $\Comment{type error}$
+c=12Meter * 4Kg $\Comment{type error too}$
+d=KgMeter[12Meter; 4Kg] $\Comment{that is fine}$
+e=S"just a string"
+f=URL"www.aStringRespectingSomeRules"
+g=Prolog"
+  'isNum(z). %my multiline prolog string
+  'isNum(s(X)):-isNum(X).
+  "
+\end{lstlisting}
+\end{NiceCode}
+Pure object oriented model: we do not have any primitive type, nor predefined classes.
+All the operators are desugared as method calls,  e.g. \Q@12Meter + 4Meter@ $\rightarrow$ 
+\Q@Meter.#parseNumber(...).#plus(Meter.#parseNumber(...))@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Collections Initialization}
+Collection classes support the \Q@[...;...;]@ initialization syntax
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+v=NVector[1N;2N;3N;] $\Comment{a vector of N (natural numbers)}$
+\end{lstlisting}
+\end{NiceCode}
+A matrix can be initialized in a similar way
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+m=NMatrix2d[
+     #[1N; 2N; 3N; 4N ];
+     #[1N; 2N; 3N; 4N ];
+     #[1N; 2N; 3N; 4N ];
+     ] 
+\end{lstlisting}
+\end{NiceCode}
+Maps can be initialized in the following ways:
+%'last ; is allowed but not required
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+myMap1=SNMap[ $\Comment{provide key and val for all the entries}$
+  key: S"Mike" val: 12N; $\Comment{S is the string type}$
+  key: S"Luke" val: 10N; $\Comment{key and val are just parameters names}$
+  ]
+$\Comment{or equivalently, using :: to access nested classes}$
+entry=SNMap::Entry $\Comment{entry refers to the class SNMap::Entry}$
+myMap2=SNMap[$\Comment{entry objects has key and val fields}$
+  entry(key: S"Mike" val: 12N);  entry(key: S"Luke" val: 10N);]
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{\Q@with@: a Swiss army knife to encode complex behaviour}
+There are two basic usage: as for-each and as a typecase.
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+vec= SVector[S"foo"; S"bar"; S"beer"]
+var S result=S""
+with myElem in vec.vals() (result:=result++myElem)$\Comment{like for(myElem:vec)\{..\}}$
+$\Comment{result==S"foobarbeer"}$
+with myData=foo.bar() ($\Comment{like a typecase/switch/chain of instanceof}$
+  on S  ( Gui.alert(myData) )  $\Comment{if is a string}$
+  on N case 2N.divides(myData) ( Gui.alert(...) ) $\Comment{if is an even natural}$
+  )
+\end{lstlisting}
+\end{NiceCode}
+if \Q@myData@ is already declared one can simply write
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+with myData (
+  on S ( Gui.alert(myData) )  
+  default (error S"myData was not a string") 
+  )
+\end{lstlisting}
+\end{NiceCode}
+Those two modes can be combined
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+vec= AnyVector[S"foo"; 12N; S"beer";]
+var S result=S""
+with myElem in vec.vals() (on S ( result:=result++myElem ) ) 
+$\Comment{result==S"foobeer", composed by all strings inside vec}$
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{\Q@with@: a Swiss army knife to encode complex behaviour}
+\Q@with@ can be used as list comprehension
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+vec=AnyVector[S"foo"; 12N; S"beer";]
+v=SVector[with myElem in vec.vals() (on S myElem )]$\Comment{filter non strings}$
+$\Comment{v==SVector[S"foo"; S"beer";]}$
+\end{lstlisting}
+\end{NiceCode}
+for multiple dispatch:
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+method N m(Shape x, Person y, Vehicle z) { $\Comment{example of method using with}$
+ with x y z (
+ on Square Student Car (...return ...)$\Comment{x here is a Square}$
+ on Circle Person Airplane (...)$\Comment{x here is a Circle}$
+ default (...)$\Comment{default case, here x is just a Shape}$ 
+  )}
+\end{lstlisting}
+\end{NiceCode}
+Or to iterate over multiple collections at once
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+rs=Vector[1N;2N;3N;]
+as= Vector[10N;20N;30N;]
+bs= Vector[100N;200N;300N;]
+$\Comment{here a, b and r iterate over my data}$
+with a in as.vals(), b in bs.vals(), var r in rs.vals() (r:=r+a+b)
+$\Comment{now rs==Vector[111N;222N;333N;]}$
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{The \Q@with@: a Swiss knife to encode complex behaviour}
+While iterating on multiple collections, a dynamic error is usually raised if \Q@rs@, \Q@as@ and \Q@bs@ have different length.
+This behaviour can be tuned in many way, for example using \Q@cut()@ and \Q@fill(...)@
+
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+rs=Vector[1N;2N;3N;]
+as= Vector[10N;20N;30N;40N;50N;]
+bs= Vector[100N;200N;]
+with a in as.valsCut(), b in bs.vals(fill:300N), var r in rs.vals() (
+  r:=r+a+b)
+$\Comment{rs==Vector[111N;222N;333N;]}$
+\end{lstlisting}
+\end{NiceCode}
+Resources used within an iteration can be released after the iteration 
+since collections are notified when the iteration ends.
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+$\Comment{a contains "foo1 \textbackslash n foo2 \textbackslash n foo3"}$
+$\Comment{b contains "bar1\textbackslash n bar2"}$
+with 
+  input in LineStream.readFile(S"a"), 
+  var output in LineStream.readWriteFile(S"b",fill:S"None") (
+    output:= output +" : "+input)$\Comment{line by line, add input in the file}$
+$\Comment{b contains "bar1 : foo1 \textbackslash n bar2 : foo2 \textbackslash n None : foo3"}$
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Mutually recursive local bindings}
+Like OCaML ``let rec'', Haskell lazy bindings or Placeholers
+
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+{
+A:{(B b)}
+B:{(A a)}
+...
+  ($\Comment{a parentesized set of expressions is a `block'}$
+    A myA=A(b:myB)$\Comment{using the binding b that is declared "at the same time"}$
+    myB=B(a:myA) $\Comment{note that the local binding type can always be inferred}$
+    myA.b().a().b() $\Comment{this is the result of the block}$
+  )
+}
+\end{lstlisting}
+\end{NiceCode}
+
+Variables declared in the same scope can see each other.
+The type system ensures that variables are never used as receivers until they are initialized.
+It also prevents cases like \Q@T x=x@ and all the subtle variants of it.
+\\*
+(We will not see this part of the type system today.)
+%Variables declared with \Q@var@ can be updated.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Single dispatch subtype polymorphism}
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+PredOnZero: {()}
+Nat: {interface method Nat pred();}
+Zero:{()<:Nat method pred() {error PredOnZero()} }
+Succ: {(Nat $\_$pred)<:Nat  method pred() this.$\_$pred()}
+\end{lstlisting}
+\end{NiceCode}
+Note that there is no overloading: the added flexibility on method selectors provides
+a better solution to the need of reusing names:
+\begin{itemize}
+\item \Q@A.foo()@, \Q@A.foo(bar:x)@, \Q@A.foo(beer:x)@
+are all different methods, with different method selectors.
+\item \Q@A.#foo()@ is a valid, different method selector too.
+Conventionally, \Q@#@  denote \emph{warning}, on methods to use only while knowing what you are doing, like methods opening resources that needs to be manually closed or methods exposing internal mutable state.
+\end{itemize}
+All the operators and control flow constructs of the language can be expressed as combination of 
+method calls and (near conventional) exceptions.
+\end{frame}
+
+\begin{frame}[fragile]
+%\addtocounter{framenumber}{-1}
+\frametitle{Multi-sort result 
+propagation/inspection}
+Like Exceptions in Java
+
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+
+PredOnZero: {()}
+Nat: {interface method Nat pred();}
+Zero:{()<:Nat method pred() {error PredOnZero()} }
+Succ: {(Nat $\_$pred)<:Nat  method pred() this.$\_$pred()}
+..
+  method foo(Nat n) {
+    Nat n1=n.pred() $\Comment{Nat is the preferred result of pred()}$
+    catch error x ($\Comment{catch - on is similar to a try-catch}$
+      on PredOnZero (...)$\Comment{PredOnZero is an error result}$
+      )
+    ..$\Comment{here you can use n1}$
+    }
+\end{lstlisting}
+\end{NiceCode}
+
+{\small
+\Q@exception@s are like checked exceptions in Java;
+\Q@error@s are like Java unchecked ones, but capturing them does not expose half processed objects;
+\Q@return@s are guaranteed to be captured in the scope of their method, and serve the role of Java return keyword.
+%Since we have exceptions, we only need a \Q@loop (...)@ operation in order to be able to encode all desired control structure.
+}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Exceptions}
+In real systems every operation can fail (as method call can cause
+ a in stack-overflow no matter what).
+To support critical applications in real systems
+ we need the ability to capture such (any) errors and resume the application.
+ Only exceptions seem to be able to provide such a capability.
+\\*${}_{}$\\*
+In 42 exceptions are related to variable declarations:
+\begin{itemize}
+\item No explicit \alert{try}.
+\item Failure to initialize a variable is an exception.
+\item The variables can be used if no exception is thrown.
+\item Body of selected \Q@catch on@ do not see uninitialized variables.
+\item \Q@exception@ correspond to Java checked exceptions.
+\item \Q@error@ preserve strong exception safety.
+\item \Q@return@ can not escape body of a method.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Return}
+Expressions enclosed in \Q@{ .. }@ can use \Q@return@
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+method S getName(){
+  if condition ( return S"No Name" )
+  S userName={if !User.registered() (return S"")
+    return User.getName()
+    }  
+  return S"The name is "++userName
+  }
+\end{lstlisting}
+\end{NiceCode}
+Nested curly brackets can be used to obtain nested return scopes.
+This reduces the needs for continue, and break is obtained by
+\Q@exception void@
+
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+method S getName(){
+  while condition {
+    if skipCase (return void)
+    if searchComplete (exception void)
+    doStuff
+    }
+\end{lstlisting}
+\end{NiceCode}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Control flow}
+All is control flow is desugared as combinations of 
+method calls and exceptions.
+For example: \Q@if@
+\\*
+\begin{NiceCode}{26ex}{0.8}
+\begin{lstlisting}
+if x (doStuff1)      $\longrightarrow$
+else (doStuff2)      $\longrightarrow$
+                     $\longrightarrow$
+${}_{}$
+\end{lstlisting}
+\end{NiceCode}
+\begin{NiceCode}{26ex}{0.8}
+\begin{lstlisting}
+(x.checkTrue()
+ catch exception(
+    on Void (doStuff2))
+doStuff1)  
+\end{lstlisting}
+\end{NiceCode}
+
+\begin{NiceCode}{26ex}{0.8}
+\begin{lstlisting}
+if e (doStuff1)      $\longrightarrow$
+${}_{}$
+\end{lstlisting}
+\end{NiceCode}
+\begin{NiceCode}{26ex}{0.8}
+\begin{lstlisting}
+if e (doStuff1)
+else (void)
+\end{lstlisting}
+\end{NiceCode}
+
+\begin{NiceCode}{26ex}{0.8}
+\begin{lstlisting}
+if e (doStuff1)      $\longrightarrow$
+else (doStuff2)      $\longrightarrow$
+\end{lstlisting}
+\end{NiceCode}
+\begin{NiceCode}{26ex}{0.8}
+\begin{lstlisting}
+(x=e if x (doStuff1)
+else (void))
+\end{lstlisting}
+\end{NiceCode}
+
+\Q@{ .. return .. }@
+
+\begin{NiceCode}{26ex}{0.8}
+\begin{lstlisting}
+T x={ .. }      $\longrightarrow$
+                $\longrightarrow$
+${}_{}$
+\end{lstlisting}
+\end{NiceCode}
+\begin{NiceCode}{26ex}{0.8}
+\begin{lstlisting}
+T x=(T y={ .. } 
+  catch return z (on T z)
+  y)
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Outers}
+In 42 all class names denote a node in relation 
+to where they are defined.
+Names starting with an \Q@Outer@ are explicit;
+other names have a sensible \Q@Outer@ level inferred at pre-compilation phase. That is
+
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+{
+A: {
+  A: {(B b)
+    B: {(C c)}
+    C: {(A a, Outer3::A a3)}
+    }
+  }}
+\end{lstlisting}
+\end{NiceCode}
+
+is equivalent to 
+
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+{
+A: {
+  A: {(Outer0::B b)
+    B: {(Outer1::C c)}
+    C: {(Outer2::A a, Outer3::A a3)}
+    }
+  }}
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+%\addtocounter{framenumber}{-1}
+\frametitle{Support for multiple files}
+Little 42 programs can consist of a single file with \texttt{.L42}
+extension.\\*
+Larger programs are a folder with subfolders.
+Every folder must include a file \texttt{Outer0.L42}
+containing the program code.
+%The special expression
+%``\Q@...@'' refers to other files/folders in the current folder.
+For example in 
+file MyGame/Outer0.L42
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+reuse $\ReuseUrl{L42.is/fun}$
+Cell:Enumeration"Rock Grass Exit"
+MapCell: Collections.matrix(Cell)
+MyMap: ... $\Comment{the symbol ... means search for a file/dir called MyMap}$
+Gui.alert(MyMap().toText())
+\end{lstlisting}
+\end{NiceCode}
+
+file MyGame/MyMap.L42 or file MyGame/MyMap/Outer0.L42
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+{ type method(){
+  r=Cell::Rock
+  g=Cell::Grass
+  e=Cell::Exit
+  return MapCell[ #[r;r;r;r];$\Comment{MapCell is a matrix of Cells}$
+    #[r;g;g;r];
+    ...
+    #[r;r;e;r]]
+}}
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+%\begin{frame}[fragile]
+%\addtocounter{framenumber}{-1}
+%\frametitle{Resource}
+%
+%Using \Q@Resource@ is like to declare a class with a single method,
+% returning such resource value.
+%Resources are much safer then static fields.
+%\end{frame}
+%
+
+
+%\fullPageImage{lego1}
+
+\begin{frame}[fragile]
+\frametitle{Type modifiers and promotion}
+Up to now we mostly explored the functional part of 42.
+\\*
+We also offer conventional mutable state (as in \Q@Person:{mut (var Year age) ...}@ )
+\\*
+However, since we expect libraries to be automatically composed, we offer \alert{type modifiers} as an instrument to prevent multiple libraries to corrupt each other data-structures.
+\\*
+For each class (\Q@Person@ as in the example) there are multiple types, encoding the different access permissions.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Type modifiers and promotion}
+\begin{Scaled}{0.9}{0.9}
+\!\!\!\!
+\parbox{67ex}{
+%There are three kinds of objects in 42:
+%(deeply) immutable objects as found in many functional languages,
+%mutable objects as in Java and type objects (representing classes and interfaces).
+%Fields, updateable fields, bindings and variables are called references and
+%can refer to each kind of objects using the following type modifiers:
+\begin{itemize}
+\item \Q@Person p@ is an immutable reference, and refer to a deeply immutable object graph (as in many functional languages).
+
+\item \Q@mut Person p@ is a mutable reference, and refer to an unrestricted mutable object (the Java default).
+
+\item \Q@lent Person p@ is an hygienic reference to mutable objects: can be used 
+for mutation but it can not be stored in existing structures for long term use,nor
+ can pre-existing mutable objects be referenced by it.
+
+\item \Q@read Person p@ is a readable reference, and is a common supertype for both mutable, lent and immutable references.
+A readable reference can not be use for mutation nor stored inside existing structures for long term reuse.
+
+\item \Q@capsule Person p@ is a fully encapsulated reference: it refers to
+ a completely isolated object graph, reachable only through that reference.
+ Thus \Q@capsule@ references generate the object as mutable or
+ immutable depending on the way the capsule is opened.
+
+\item\Q@type Person p@ Finally, the type references refers to the Class itself.
+\end{itemize}
+}
+\end{Scaled}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Immutable objects}
+Deeply immutable,
+no matter how the fields are declared, always immutable values are fetched out of fields.
+Note the following code, mixing immutable and mutable content
+\begin{lstlisting}
+Pathologies:Collections.list(of:Pathology)
+Person:{mut (var Date lastVisit, mut Pathologies history)}
+Main:{
+  me=Person(lastVisit:Date(....),
+      history:Pathologies[Laziness()])
+  me.lastVisit(Date.today()) $\Comment{ok replace the whole Date}$
+$\Comment{me.lastVisit().setDay(1Day) 'wrong change a part of Date}$
+  me.history().add(DustAllergy())$\Comment{ok change a part of history}$
+$\Comment{me.history(Pathologies[]) 'wrong change the whole history}$
+  ....}
+  \end{lstlisting}
+  
+\Q@me.lastVisit(Date.today())@ is valid code; the \Q@Date@ object is immutable; but is  referenced
+ with a variable field (\Q@var lastVisit@ in the example), that can be mutated. The opposite holds for the medical history.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Mutable references}
+Mutable references refer to unrestricted mutable objects like in Java.
+Newly created objects have the modifier declared in the header, but a context sensitive promotion allows to convert
+mutable references to capsule or immutable.
+\\*
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+{
+Person:{mut (var mut Person friend)
+  method Person factory(){ $\Comment{return type is (immutable) Person}$
+    mut Person fred=Person(friend:fred)
+    mut Person barney=Person(friend:barney)
+    fred.friend(barney)  
+    barney.friend(fred)
+    return fred $\Comment{mut Person promoted to (immutable) Person}$
+   $\Comment{now fred and barney are friends forever!}$
+    }
+  }
+}
+\end{lstlisting}
+\end{NiceCode}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Lent and Readable references}
+Hygienic reference to mutable objects: can be used 
+for mutation but it can not be stored in existing structures for long term use,nor pre-existing mutable objects can be referenced by it. Useful to preserve encapsulation properties of objects.
+
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+lent C treasure=myLovedData.getStuff()
+lent C r=evilCode.useForAWhile(treasure)
+$\Comment{now my treasure is back!}$
+$\Comment{note, r could still refer to treasure}$
+$\Comment{but evilCode can not.}$
+\end{lstlisting}
+\end{NiceCode}
+A method taking a lent reference must release it after completion.
+Providing conceptually private property objects as lent preserves encapsulation.
+Bindings and variables can be lent;
+mutable objects with lent fields are discussed next.
+
+
+Readable references simply combine the restrictions of Lent and Immutable. They closely model the idea of a safe ``parameter''.
+
+\end{frame}
+
+\begin{frame}[fragile]
+%\addtocounter{framenumber}{-1}
+\frametitle{Temporary objects}
+Temporary objects, i.e., objects that are created to compute a result but
+are meant to be garbage-collected after the computation,
+are best referenced as \Q@lent@ objects. 
+
+For any expression, internally created objects used for the computation of the result but garbage collected when the expression evaluation is completed are called temporary objects; and the \Q@lent@ modifier helps to track of them!
+
+Mutable objects with lent fields are always referred by  \Q@lent@ references, and are
+an useful type of 
+temporary objects; 
+useful for collections of lent objects coming from different sources
+and for the decorator pattern.
+
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+lent C a=...   lent C b=...   lent C c=...
+lent LentVec tempObj=LentVec[a;b;c;]$\Comment{temporary collection}$
+
+var lent C a=...
+a:=Decorator.addLogging(a) $\Comment{temporary decorator}$
+\end{lstlisting}
+\end{NiceCode}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Capsules}
+We support encapsulation, indeed we have the \Q@capsule@ modifier!
+A \Q@capsule@ can not be accessed at all, thus is not observable
+ whether the content is mutable or immutable.
+
+The only way to obtain a \Q@capsule@ is converting a  \Q@mut@ reference by promotions.
+A \Q@capsule@ reference can then be transparently converted into other references.
+The next example shows how a \Q@capsule@ can be converted into a \Q@mut@, mutated and then converted back to \Q@capsule@.
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+method
+capsule C playWithCapsules(capsule C x, C p1, lent C p2, read C p3){
+    mut C myX=x
+    $\Comment{here you can do all you want with the stuff in scope}$
+    return myX
+    }
+\end{lstlisting}
+\end{NiceCode}
+Capsules local binding can be used only once,
+How to support capsule fields in an open research question.
+%but class instrumenters can impose  opportune relaxations of
+%the capsule guarantee for some \Q@mut@ fields.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Promotions as a form of alchemy }
+Since 42 do not have any form of static variables,\\*
+any expression that produce a mutable reference (the bad dangerous and low value stuff)\\*
+but do not takes in input any mutable reference\\*
+must create such mutable value during its own execution.\\*
+Thus, we can convert such mutable reference to \Q@capsule@ (the gold!)
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Type: Instance, class and metaclass}
+Classes have instances, but classes are not types.
+\\*
+Type=type modifier + class name
+\\*${}_{}$\\*
+For example mutable and immutable Persons
+have different types,
+so if I declare \Q@mut Person p1=..@ or \Q@Person p2=..@,
+in both cases I get an instance of \Q@Person@,
+ but with different types:
+there is a radically different set of methods that I can call
+on \Q@p1@ w.r.t. \Q@p2@.
+In the same way in \Q@type Person p0=Person@
+\Q@p0@ is still an instance of \Q@Person@.
+\\*${}_{}$\\*
+\Q@Person@ is a special instance that ``just exists''
+and is visible everywhere, or is recreated everywhere is needed, if you prefer.
+\Q@p0@ offers a radically different set of methods w.r.t. \Q@p1@ or \Q@p2@,
+but that is fine since it has a different type.\\*
+So the class of \Q@p1@ is \Q@Person@, and the class of \Q@Person@ is \Q@Person@.
+\\*${}_{}$\\*
+Metaclasses are supported as library following the mirrors philosophy.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Type and subyping}
+With an interface \Q@I@,
+\Q@type I@ would reference only type-objects implementing \Q@I@.
+For example:
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+{
+I:{interface $\Comment{type methods accept type receivers; feels like static in Java}$
+  type method I (I^ f); $\Comment{ \^{} means placeholder, a not yet existing object}$
+  method I f(); $\Comment{getter}$
+  }
+A:{new(I f)<:I, method(f){return this.new(f:f)}}$\Comment{forwarding constructors }$
+B:{new(I f)<:I, method(f){return this.new(f:f)}}$\Comment{to the method of I}$
+User:{()
+  method I init(type I t1, type I t2) (
+    i1=t1(f:i2)
+    i2=t2(f:i1)
+    i1
+    )
+  method I user() (this.init(t1:A t2:B)) $\Comment{here A and B are the only two}$
+           $\Comment{values acceptable for a type I parameter}$
+    }}
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+%\begin{frame}[fragile]
+%\frametitle{Owned fields}
+%An owned field can be initialized and updated only using a \Q@capsule@.
+%Intuitively an owned field contains a ``balloon'' of data, that is reachable only through that field itself.
+%However, some of that data could be currently lent, or ``already accessed using that field''.
+%Precisely, ignoring lent references and the owned field itself,
+% objects connected to the owner are called external, while object connected to the root object of the balloon are called internal, and those two sets are disjoint.
+%
+%The main use for owned field is to guarantee to an object the control of its fields. We expect most fields of shared object to be either immutable or owned.
+%\begin{NiceCode}{59ex}{0.8}
+%\begin{lstlisting}
+%C:{(owned D f)}
+%...
+%C(D())'ok, since D() can be promoted to capsule in place
+%...
+%method (capsule D x)(...
+%  C(x)'ok too!
+%  )
+%\end{lstlisting}
+%\end{NiceCode}
+%\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{That is all for now. What is \textbf{not} here?}
+What we are proud to not have
+\begin{itemize}
+\item primitive types
+\item primitive classes (only primitive nodes are Library, Void and Any)
+\item predefined literals (only literal for code values)
+\item static fields and related initialization issues (circularity + exception)
+\item null and default values in general
+\item concept of top level class / absolute names
+\item extends / base class
+\item variable / field hiding
+\item closures (especially, no capture of variable)
+\item super / super-constructors
+\item inner classes (only nested)
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{That is all for today. What is \textbf{not} here?}
+
+%What I had no time to explain today
+\begin{itemize}
+%\item Exceptions
+%\item placeholder types for circular initialization
+\item sand-boxing  (integrated with the language, fundamental for security)
+\item connection with the rest of the world (as native interface in Java)
+\item code and IDE connection: libraries can personalize the IDE
+\item how the syntactic sugar works
+%\item 42 project management
+\item fully automatic parallelization
+\item full abstract interpretation/symbolic execution as optimization
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{ Thanks! }
+\center{\huge Questions?}
+\end{frame}
+
+\begin{frame}[fragile]
+\addtocounter{framenumber}{-1}
+\frametitle{That is all. What is \textbf{not} here?}
+
+What can be added by libraries written in 42 itself
+\begin{itemize}
+\item booleans
+\item numbers
+\item arrays
+\item multi-methods
+\item access to libraries written in other languages
+\item collections/generics
+\item enumerations
+\item pre-post conditions verification
+\item deployment on multiple platforms
+\item optimization(automatic parallelism, method inlining)
+\item ...
+\end{itemize}
+\end{frame}
+
+
+
+
+%
+\begin{frame}[fragile]
+\addtocounter{framenumber}{-1}
+\frametitle{The syntactic sugar}
+\begin{itemize}
+\item reuse is (conceptually) replaced with the library code itself
+\item $\Comment{@private}$ members are turned in unforgeable names during reuse replacement.
+\item typed literals (\Q@12Meter@, \Q@DBConnection"...."@,..)
+are desugared in sequences of method calls, something like \Q@Meters.#parseInt().#$\_$1().#$\_$2().#endParse()@
+\item if, while, with, \{ \} and so on are defined by syntactic sugar.
+\end{itemize}
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\addtocounter{framenumber}{-1}
+\frametitle{Target usage}
+A small set of good programmers can design good libraries that can be used by a mass of
+non-professional programmers to obtain decent but non cutting-edge applications.
+Good application designers 
+(user interactions? game designer? data presentation experts?)
+will be able to use 42 without great programming skills.
+
+Good programmers will find it easier to develop libraries in 42 than in other languages.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\addtocounter{framenumber}{-1}
+\frametitle{Deep instantiation example}
+Collections generation can be based on desired properties.
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+{...
+S:{...}$\Comment{S is a string type}$
+Collection:{...}$\Comment{Collection(dept4) generate different collection kinds}$
+Set:Collection($\Comment{Set(dept3) generate sets for different contents}$
+  order:Collection::Order::Irrelevant
+  repetition:Collection::Repetition::SilentlyAvoided
+  size:Collection::Size::Dynamic
+  ) $\Comment{here Set.of(....) is a kind of collection where....}$
+NameSet:Set.of(S)$\Comment{NameSet(dept2) is a set of immutable strings}$
+$\Comment{Set.ofShared(....) will create sets of shared objects}$
+SetKindSet:Set.ofType(Set::Kind)
+$\Comment{SetKindSet(dept2) set of sets type objects}$
+CollectionKindSet:Set.ofType(Collection::Kind)
+$\Comment{CollectionKindSet(dept2) set of Collections type objects}$
+myFriends:NameSet[S"Mattia";S"Luca";S"Paolo"]
+$\Comment{myFriends(dept1) is a specific set of names}$
+mySets:SetKindSet[NameSet;SetKindSet]
+$\Comment{those are all the kind of sets I have defined}$
+myGenerators:CollectionKindSet[Set]
+$\Comment{Here I defined 1 kind of collections only: Set}$
+}
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\addtocounter{framenumber}{-1}
+\frametitle{5 pillars / Core Language mechanisms}
+\begin{itemize}
+\tiny
+\item Active libraries
+\begin{itemize}
+\tiny
+\item library literals and code composition algebra;
+\item incremental typing;
+\item meta level soundness.
+\end{itemize}
+
+\item Minimal OO capabilities:
+\begin{itemize}
+\tiny
+\item (final) classes with state (constructor composed by fields) and behaviour;
+\item single dispatch method call, with nominal method selectors;
+\item interfaces as the only way to induce subtyping; that is, all class types are exact types.
+\end{itemize}
+\item Signals:
+\begin{itemize}
+\tiny
+\item three kinds of alternative results (error, exception and return), plus conventional (preferred) results;
+\item capturing of alternative results based on the object type;
+\item safe interaction between mutable state and signals.
+\end{itemize}
+
+\item Multiple variable declarations:
+\begin{itemize}
+\tiny
+\item placeholder semantics;
+\item placeholder types;
+\item commitment points.
+\end{itemize}
+
+\item Encapsulation by (deep) type modifiers:
+\begin{itemize}
+\tiny
+\item object kinds: immutable, mutable and type;
+\item references: immutable, shared, readable, lent, capsule and owned;
+\item transparent promotions.
+\end{itemize}
+
+\end{itemize}
+\end{frame}
+
+
+

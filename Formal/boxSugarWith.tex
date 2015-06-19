@@ -1,0 +1,564 @@
+\begin{MDefinition}{\Desugar\e_\sugarEnv \mbox{ simple cases, where }\sugarEnv\ {:}{:}{=}\ \varEnv;\T;\Many\classB}
+
+%REUSE
+\Case{dw}
+\Desugar{\Cb{\reuseKw\,\V{\NonTerminale{url}} \members}}_{\_;\_;\Many\classB}
+=
+%\\\quad
+  \Cb{\Aux{downloadFromWeb}(\V{\NonTerminale{url}})\,\members'} 
+\mbox{ iff }  \Desugar{\Cb{ \members} }_{\emptyset;\_;\Cb{ \members} }=
+\Cb{ \members'}
+\\\mbox{ otherwise }
+\Desugar{
+\Cb{\h\,\implSign\Paths\members}}_{\Many\classB} =
+%\\\quad
+\Cb{
+\DesugarMember\h_\sugarEnv
+\implSign\Desugar{\Paths}_\sugarEnv
+\DesugarMember{\members}_\sugarEnv
+}
+\\
+\mbox{ with } \sugarEnv=\emptyset;\Type\IMdf\VoidKw{};\Cb{\h\,\implSign\Paths\members},\Many\classB\\
+
+\Case{cons}
+\Desugar{\Cb{\mdf\,\Mh\m{\Many{\f}} \members}}_\sugarEnv
+=\Desugar{\Cb{
+\CFType{\mdf\,\Mh\m{\Many{\f}}}
+ \members}}_\sugarEnv\\
+%Yes, is ok to not use cup!
+%LITERALS
+\Case{lt}
+\Desugar{\num\e}_\sugarEnv=
+  \Desugar{\e\Mc{\pNumberParser}{\Cb{
+  \Terminale{'@String}\EOL 
+  \Terminale{'}\DesugarChar{\num}\EOL 
+  }}}_\sugarEnv
+\\
+\Desugar{\e\Terminale{"}\Many\stringChar\Terminale{"}}_\sugarEnv=
+  \Desugar{\e\Mc{\pStringParser}{\Cb{
+  \Terminale{'@String}\EOL 
+  \Terminale{'}\DesugarChar{\Many\stringChar}\EOL 
+  }}}_\sugarEnv
+\\
+\Desugar{\e\Terminale{"}\EOL\Many\stringChar\EOL\Terminale{"}}_\sugarEnv=
+  \Desugar{\e\Mc{\pStringParser}{\Cb{
+  \Terminale{'@String}\EOL 
+  \Terminale{'}\DesugarChar{\Many\stringChar\EOL}\EOL 
+  }}}_\sugarEnv
+\\
+
+
+%WHILE
+\Case{cf}
+\Desugar{\whileKw\,\e\,\block}_\sugarEnv=
+ \Desugar{\Vd{\loopKw \Vd{}{}{\e\Mc{\bCheckTrue}{}\block}}{\catchKw\,\exceptionKw\oRound\onKw\,\VoidKw\,\voidKw\cRound}{\voidKw}}_\sugarEnv
+\\
+
+
+%Foo x={if e(return b) return c}
+%a+x
+%a+{if e (return b) return c}
+%a+(e)?b:c
+%con il return on T invece che on Path,
+%l'if funziona.
+
+%Quindi: proposta: {}e' di tipo void eccetto due casi particolari:
+%method body puo' essere {}, e T x={} anche.
+%il desugaring si porta dietro:
+%varEnv, eccezioni, return type e manyL
+%metavariabile: il vecchio exception env?
+%regola return any sparisce
+%\\
+\Desugar{\ifKw\,\atom\,\block_\vI\,\elseKw\,\block_\vII}_\sugarEnv =
+ \Desugar{\Vd{\atom\Mc{\bCheckTrue}{}}{\catchKw\,\exceptionKw
+\oRound\onKw\VoidKw\, \block_\vII\cRound}{\block_\vI\,\voidKw}}_\sugarEnv\\
+
+\Desugar{\ifKw\,\e\,\block_\vI\,\elseKw\,\block_\vII}_\sugarEnv =
+ \Desugar{\Vd{
+\Xt{}{\y}{}{\e}\,}{}{\ifKw\,\y\,\block_\vI\,\elseKw\,\block_\vII}}_\sugarEnv
+\quad\mbox{with }\y\mbox{ fresh and } \e\neq\atom\\
+
+\Desugar{
+\Vd{\es_\vI\catch_\vI\ldots\es_\vn\catch_\vn}{}{\e}
+}_\sugarEnv=
+\Desugar{\Vd{\es_\vI}{\catch_\vI}{
+  \oRound\ldots\Vd{\es_\vn}{\catch_\vn}{\e}\ldots\cRound}}_\sugarEnv
+\\
+
+%\Many{\x:\C}\vT=\Many{\x:\C},\Aux{domVar}(\X_\vI\ldots\X_\vn)
+%\\
+
+
+\Desugar{\voidKw}_\sugarEnv=\voidKw\quad\quad
+\Desugar{\Path}_{\_,\Many\classB}=\ScopeDesugar\Path_{\Many\classB}
+\quad\quad
+\Desugar{\e\ \docs}_\sugarEnv=
+\Desugar{
+\Vd{\docs}{\,}{\e}
+}_\sugarEnv
+\\
+
+\Desugar{\x}_{\_}=\x
+\quad
+\Desugar{\x \equalSign \e}_{\sugarEnv}=  \x\singleDot\fieldInner\oRound \Desugar\e_{\sugarEnv}
+\cRound
+\quad
+
+\Desugar{\L\,\e}_\sugarEnv=\L\,\Desugar{\e}_\sugarEnv
+\\ 
+\Desugar{\loopKw\,\e}_{\varEnv,\T\,\Many\classB}=\loopKw\,\Desugar{\e}_{\varEnv,\Type\IMdf\VoidKw{}\Many\classB}
+\\
+\Desugar{\e\Mc\m{\ps}}_{\varEnv,\T\,\Many\classB}= \Desugar\e_{\varEnv,\T\,\Many\classB}\Mc\m{\Desugar\ps_{\varEnv,
+\GuessType{\varEnv}\e\classSep\m
+,\Many\classB}}\\
+\Desugar{\Using\Path{\Mc\m{\ps}}\e}_{\varEnv,\T,\Many\classB}=
+\Using{\Desugar\Path_\sugarEnv}{\Mc\m{\Desugar\ps_{\varEnv,\Type\IMdf\VoidKw{}\Many\classB}}}{\Desugar\e_{\varEnv,\T,\Many\classB}}
+
+%block
+\\
+\Case{rt}\Desugar{\Cb{
+\es_\vI\catch_\vI\ldots\es_\vn\catch_\vn
+}}_{\varEnv,\T,\Many\classB}
+\!=\!
+\Desugar{\Vd{
+  \Vd{\es_\vI\catch_\vI\ldots\es_\vn\catch_\vn}{}{\voidKw}
+  }{
+  \catchKw\,\returnKw\,\y\,\oRound\onKw\,\T\,\y\cRound
+ }{
+\errorKw\,\voidKw
+}
+}_{\varEnv,\T,\Many\classB}
+
+
+%Var dec
+\\
+\Case{vd1}
+
+\Desugar{\e_0}_\sugarEnv=
+\Desugar{\oRound
+\C\colon\Cb{\SMdf\oRound \varKw\ \T\fieldInner\cRound}\\\quad
+\decs_1 \Xt{}{\x}{\T}{\e} \decs_2
+\dec' (\decs_3
+\ \Opt\catch\ \e_1)\Subst{\x\eqOp}{\z\eqOp}\Subst{\x}{\z\Mc{\hash\fieldInner}{}}
+\cRound
+}_\sugarEnv\\
+\quad\mbox{with }
+\e_0=\Vd{\decs_1\Xt{\varKw}{\x}{\T}{\e} \decs_2 \decs_3}
+{\Opt\catch}{\e_1}
+\quad\quad\dec'=\Xt{}{\z}{\Type\SMdf{\Outer_0\classSep\C}{}}{
+\Outer_0\classSep\C\oRound\fieldInner\colon\x\cRound}
+\\
+\quad\mbox{not }\x\equalSign\_\inside\decs_2
+\quad
+\mbox{ and either}\decs_3=\emptyset\mbox{ or }\decs_3=\dec\,\_ \mbox{ and }\x\equalSign\_\inside\dec
+\\
+
+
+
+\Desugar{\!
+\Vd{
+\decs
+\Xt{\varOpt}{\x}{}{\e}
+\decs'
+}{\Opt\catch}{\e_1}
+\!}_{\varEnv;\T';\Many\classB}
+\!=\!
+\Desugar{\!
+\Vd{
+\decs
+\Xt{\varOpt}{\x}{\T}{\e}
+\decs'
+}{\Opt\catch}{\e_1}
+\!}_{\varEnv;\T';\Many\classB}
+\quad\!
+\mbox{with }
+\T\!=\!\GuessType{\varEnv,\varEnvOf\decs}\e
+\\
+\Desugar{
+\Vd{
+\decs_1
+\e\ 
+\decs_2
+}{\Opt\catch}{\e_1}
+}_{\sugarEnv}
+=
+\Desugar{
+\Vd{
+\decs_1
+\Xt{}{\x}{\Type\IMdf\voidKw{}}{\e}
+\decs_2
+}{\Opt\catch}{\e_1}
+}_{\sugarEnv}
+\\
+
+%\quad\quad\mbox{and not }\FV(
+%\Vd{\decs_1\Xt{\varKw}{\x}{\T}{\e} \decs_2\dec}{}{\voidKw}
+%)\subseteq \FV(\e_0)
+
+%\Desugar{
+%\Vd{\es_\vI\catch_\vI\ldots\es_\vn\catch_\vn}{}{}
+%}_{\Many\classB}= 
+%\Desugar{\Vd{\es_\vI\catch_\vI\ldots\es_\vn\catch_\vn}{}{\voidKw}}_{\Many\classB}
+%\\
+
+
+%\Desugar{\Cb{
+%\es_\vI\catch_\vI\ldots\es_\vn\catch_\vn
+%}}_{\Many\classB}=
+%\Desugar{\Cb{
+%\es_\vI\catch_\vI\ldots\es_\vn\catch_\vn\returnKw\,\voidKw
+%}}_{\Many\classB}
+%\\
+
+
+%\mbox{ CASE NEED FIXING USING T}
+%\\
+%\mbox{where holds  }\SyntaxFlow{\Desugar{\Vd{
+%  \es_\vI\catch_\vI\ldots\es_\vn\catch_\vn}{}{\voidKw}}_{\Many\classB}}
+%\Desugar{\ifKw\,\e_\vz\,\block_\vI\,\elseKw\,\block_\vII}_{\Many\classB} =
+%  \Desugar{\Vd{\x\initSign\e_\vz}{}{\ifKw\,\x\,\block_\vI\,\elseKw\,\block_\vII}}_{\Many\classB}
+%\mbox{ with } \e_\vz\neq\x\\
+
+%\Desugar{\ifKw\,\x\,\block_\vI\,\elseKw\,\block_\vII}_{\Many\classB} =
+% \Desugar{\Vd{\x\Mc{\bCheckTrue}{}}{\withKw\,\exceptionKw\,\onKw\,\VoidKw\, \block_\vII\,}{\block_\vI}}_{\Many\classB}\\
+
+
+%\Desugar{\withKw\,\breakKw\, \doKw\,\e}=
+%\withKw\, \exceptionKw\,\x\onKw\,\TMdf\,\LibraryKw\,\doKw\,\Desugar{\e}\\
+
+
+%OLD WHILE
+%\Desugar{\whileKw\,\e\,\block}_{\Many{\x:\C}\x_\vI:\T_\vI\ldots\x_\vn:\T_\vn,\T,\Paths,\Many\classB} =
+%\Desugar{\oRound\C\colon\Cb{
+%\Mh\_{}
+%\\\quad\quad
+%\mhTt{\TMdf}{\fApply}{\T_\vI\x_\vI\ldots\T_\vn\x_\vn}{\T}{\Paths}
+%\Cb{
+%\\\quad\quad\quad
+%\ifKw\,\e\oRound
+%%\\\quad
+%    \block\,
+%%\\\quad
+%    \returnKw \this\oRound\x_\vI\colon\x_\vI\ldots\x_\vn\colon\x_\vn\cRound
+%\cRound
+%%\\\quad
+%\exceptionKw\, \voidKw
+%}%end method
+%}%end class
+%}_{\Many{\x:\C}\x_\vI:\T_\vI\ldots\x_\vn:\T_\vn,\T,\Paths,\Many\classB}
+%\\\quad\quad
+%\returnKw\C\oRound\x_\vI\colon\x_\vI\ldots\x_\vn\colon\x_\vn\cRound
+%\catchKw\,\onKw\, \exceptionKw\, \VoidKw \Vd{}{}\voidKw \voidKw
+%\cRound
+%\\
+%\mbox{ so,  $\sugarEnv::=\Many{\x:\C},\varEnv,\T,\Paths,\Many\classB$ }
+%\end{MDefinition}
+%\\
+%\mbox{NOTE: to do (T1 x1=e1...Tn xn=en k e) for multiple ons, we must}
+%\\
+%\mbox{wrap every e1 into many catch that save the possible exception}
+%\\
+%\mbox{ in an opt variable, then we error such variable and we do a with'value'}
+%\\
+
+
+\Desugar{\Vd{\dec_1\ldots\dec_n}{\Opt\catch}{\e}}_{\varEnv;\T;\Many\classB}=
+\Vd{
+\DesugarX{\dec_1}_{\sugarEnv}\ldots\DesugarX{\dec_n}_{\sugarEnv}}{\DesugarK{\Opt\catch}_{\varEnv;\T;\Many\classB}}{\Desugar\e_\sugarEnv}
+\\
+\mbox{with }
+\sugarEnv=\varEnv,\varEnvOf(\dec_1\ldots\dec_n);\T;\Many\classB
+\quad\quad
+\DesugarX{\C\colon\e}_\_=\C\colon\e
+\quad\quad\DesugarX{\Xt{}\x\T\e}_{\varEnv\_\Many\classB}=
+\Xt{}\x\T\Desugar{\e}_{\varEnv\T\Many\classB}\\
+
+
+%\DesugarX{\Xt{\varKw}{\x}{\T}{\e}\,\es}_\sugarEnv
+%=
+%\C\colon\Cb{\oRound
+%  \varKw\,\T\,\fieldInner
+%  \cRound}
+%  \\\quad
+%\Xt{}{\x}{\SMdf\,\Outer_\vz\classSep\C}{
+%\Outer_\vz\classSep\C\Mc{\fApply}{
+%\fieldInner\colon\Desugar{\e}_{\sugarEnv U \T}
+%}
+%}
+%\DesugarX{\es}_{\sugarEnv Uvar \x\colon\SMdf\,\Outer_\vz\classSep\C U \x\colon\T}
+
+%\end{MDefinition}
+%\\
+%\begin{MDefinition}{\Desugar\e_\sugarEnv\mbox{ case }\onKw-\catchKw}
+
+\DesugarK{\catchKw\ \L\ \ons\Opt{\defaultKw\,\e}}_\sugarEnv= \DesugarK{\catchKw\ \L\ \x\,\ons\Opt{\defaultKw\,\e}}_\sugarEnv\\
+
+\DesugarK{\catchKw\ \L\ \x\,\ons}_\sugarEnv=
+\Desugar{\catchKw\ \L\ \x\,\onKw\,\AnyKw\Vd{}{}{
+\withKw\,\x\,\oRound \ons \defaultKw\ \L\,\x \cRound}}_\sugarEnv
+\mbox{ iff } \onKw\,\T\ \ifKw\,\e\,\block\in\ons
+\\
+\DesugarK{\catchKw\ \L\ \x\,\ons\,\defaultKw\,\e}_\sugarEnv=
+\Desugar{\catchKw\ \L\ \x\,\onKw\,\AnyKw\Vd{}{}{
+\withKw\,\x\,\oRound \ons \defaultKw\ \e \cRound}}_\sugarEnv
+\mbox{ iff } \onKw\,\T\ \ifKw\,\e\,\block\in\ons
+\\\mbox{ otherwise }
+\DesugarK{\catchKw\ \L\ \x\,\on_\vI\ldots\on_\vn}_\sugarEnv
+=
+\catchKw\ \L\ \x\,  \DesugarK{\on_\vI}_{\x,\sugarEnv}\ldots\DesugarK{\on_\vn}_{\x,\sugarEnv}
+\mbox{ and}\\
+\DesugarK{\catchKw\ \L\ \x\,\on_\vI\ldots\on_\vn\defaultKw\,\e}_\sugarEnv
+=
+\catchKw\ \L\ \x\,  \DesugarK{\on_\vI}_{\x,\sugarEnv}\ldots\DesugarK{\on_\vn}_{\x,\sugarEnv}
+\defaultKw\,\Desugar{\e}_{\x:\Type\IMdf\AnyKw{},\sugarEnv}
+\\
+%\\\mbox{ iff all of }\on_\vI\ldots\on_\vn\mbox{ of form }\onKw\,\L\,\Path_\vi\Opt{\ifKw\,\e}_\vi\,\block_\vi\mbox{ that is, all captures the same $\L$}\\
+%\mbox{ otherwise }
+%\DesugarK{
+%\catchKw\,\x\,\on_\vI\ldots\on_\vn}_p=
+%\catchKw\,\x\,\ons\vT_\vI\ldots\ons\vT_\vk\ons\vT_\vz
+%\quad\mbox{that is, $\onKw$s are grouped w.r.t. $\L_\vi$}
+%\\
+%\quad\mbox{with }\{\ons_\vI\ldots\ons_\vk\ons_\vz\}=\{\on_\vI\ldots\on_\vn\},
+%%\\
+%\quad
+%\ons_\vz=\Many{\onKw\Path_\vI\,\Path_\vII\,\x\block},
+%\\
+%\quad
+%\ForallSide{\vi\in1..\vk\!}{\ons_\vi\!=\!\onKw\L_\vi\_\ldots\onKw\L_\vi\_}
+%\!\mbox{ and }\!\ForallSide{\on,\on\vT\!\mbox{ such that }\!\ons_\vi\!=\!\_\on\on\vT\_\!}{\on_\vI\ldots\on_\vn\!=\!\_\on\ons\on\vT\_},
+%\\
+%%\quad
+%%\ForallSide{\vi\in1..\vk}{\ons_\vi=\_\,\on_\vk\,\on_\vj\,\_\mbox{ implies }k<j}
+%%\\
+%\quad
+%\ForallSide{\vi,\vj\in1..\vk}{\mbox{either } i= j\mbox{ or }\L_\vi\neq\L_\vj},
+%\quad
+%\ForallSide{\vi\in0..\vk}{\catchKw\,\x\ons\vT_\vi=\DesugarK{\catchKw\,\x\ons_\vi}_\sugarEnv}
+
+\DesugarK{\onKw\,\T\,\block}_{\x,\sugarEnv}=
+\onKw\,\Desugar{\T}_\sugarEnv\,\Desugar{\block}_{\x\colon\T,\sugarEnv}
+\mbox{(note:}\onKw\,\T\ \caseKw\e\,\block\mbox{ is managed in the catch)}
+%\\
+%\DesugarK{\onKw\,\Path_\vI\,\Path_\vII\,\x\,\block}_\sugarEnv=
+%\onKw\,\Desugar{\Path_\vI}_\sugarEnv\,\Desugar{\Path_\vII}_\sugarEnv\,\x\,\Desugar{\block}_\sugarEnv
+\end{MDefinition}
+\\
+
+\begin{MDefinition}{\Desugar\e\mbox{ case collections initialization and operators}}
+\Case{init}\Desugar{\e\oSquare\ps_\vI\semicolon\ldots\semicolon\ps_\vn\semicolon\cSquare}_\sugarEnv
+=
+\Desugar{\e\Mc\itBegin{}
+\Mc\itAdd{\ps_\vI}
+\ldots
+\Mc\itAdd{\ps_\vn}
+\Mc\itEnd{}
+}_\sugarEnv
+\\
+\Case{op}
+\Desugar{\e_\vI\,\binOp\,\e_\vII}_{\Many\classB}=
+\Desugar{\e_\vI\Mc{\DesugarChar\binOp}{\e_\vII}}_{\Many\classB}\\
+\Desugar{\x\,\eqOp\,\e}_\sugarEnv=
+
+\Desugar{\x\equalSign
+\x\Mc{\hash\fieldInner}{}
+\Mc{\DesugarChar\eqOp}{\e}}_\sugarEnv\\
+
+\Desugar{\unOp\,\e}_{\Many\classB}=\Desugar{\e}_{\Many\classB}\Mc{\DesugarChar\unOp}{}
+\\
+\Desugar{\e\oRound\ps\cRound}_{\Many\classB}=
+\Desugar{\e\Mc{\fApply}{\ps}}_{\Many\classB}
+\\
+
+
+
+\end{MDefinition}
+\\
+\begin{MDefinition}{\Desugar\docs_\p}
+
+\ \parbox{0.95\linewidth}{
+$\Desugar\docs_\p$
+ replaces all substrings of the form 
+$\Terminale{@}\Path$
+ and $\Terminale{@}\Vd{}{}{\e}$
+ with $\Terminale{@}\Desugar\Path_\p$
+ and $\Terminale{@}\Vd{}{}{\Desugar\e_\p}$.
+This applies to all documentations excluding the
+one in multi-line string literals.}
+
+\end{MDefinition}
+
+%\\
+
+%\begin{MDefinition}{\FinOne{\x,\e}}
+%\FinOne{\x,\e}=
+%\oRound\y\initSign\oRound\oRound\oRound\e\quad
+%\withKw\,\returnKw\,\y_\vII\,\onKw\,\AnyKw\,
+%\Vd{\x\Mc{\itFinalize}{}\,}{}{\returnKw\,\y_\vII}
+%\cRound
+%\\\quad\quad
+%\withKw\,\exceptionKw\,\y_\vI\,\onKw\,\AnyKw\,
+%\Vd{\x\Mc{\itFinalize}{}\,}{}{\exceptionKw\,\y_\vI}
+%\cRound
+%\\\quad
+%\withKw\,\errorKw\,\y_\vz\,\onKw\,\AnyKw\,
+%\Vd{\x\Mc{\itFinalize}{}\,}{}{\errorKw\,\y_\vz}
+%\cRound
+%\\\quad\x\Mc{\itFinalize}{}\y\cRound
+%\\\quad\mbox{with }\y,\y_\vz,\y_\vI,\y_\vII\mbox{ fresh}
+%\end{MDefinition}
+
+\\
+\begin{MDefinition}{\DesugarW\e=\e}
+\DesugarW\e\mbox{ propagate on the structure, and }\\
+\Case{a}\DesugarW{
+\withKw\,\xs\,\is\,\es\,
+\oRound\Many\onWith\cRound
+}=
+\DesugarW{\withKw\,\xs\,\is\,\es\,
+\oRound\Many\onWith \defaultKw\, \voidKw\cRound}
+\\
+\Case{b}\DesugarW{
+\withKw\,\xs\,\es\,
+\oRound\Many\onWith
+\,\defaultKw\, \e_2
+\cRound
+}=
+\DesugarW{\oRound\es\,\withKw\x_\vI\ldots\x_\vn
+\oRound
+\Many\onWith
+\,\defaultKw\, \e_2
+\cRound
+\cRound}
+
+\\\quad
+\mbox{ with }
+\withKw\,\xs\,\es=\withKw\x_\vI\_\ldots\x_\vn\_
+\\
+
+\Case{c}
+\DesugarW{
+\withKw \xs \oRound \Many\onWith \defaultKw\, \e\cRound
+}=
+\DesugarW{\DesugarW{\Many\onWith \defaultKw\, \e}_{\xs}}
+
+\\
+\Case{ca}
+\DesugarW{\onKw\,\T_\vI\ldots\T_\vn \Opt{\caseKw\,\e_0}\ \e_1\ \Many\onWith\ \defaultKw\, \e}_{\x_1\ldots\x_n}=
+\oRound \Opt\e\ 
+\Cast{\T_1}{\y_\vI}{\x_\vI}\ldots\Cast{\T_n}{\y_\vn}{\x_\vn}
+\\\quad\catchKw\,\exceptionKw\,\VoidKw\,
+\DesugarW{\Many\onWith\defaultKw\, \e}_{\x_1\ldots\x_n}
+(\e_1 \Subst{\x_\vI\T_\vI}{\y_\vI}\ldots\Subst{\x_\vn\T_\vn}{\y_\vn})
+\,\voidKw\cRound
+
+\\\quad\mbox{with }\y_\vI\ldots\y_\vn \mbox{ fresh}
+
+\mbox{ and either }\Opt{\caseKw\,\e_0}=\Opt\e=\emptyset\\
+\quad\mbox{or }\Opt{\caseKw\,\e_0}=\caseKw\,\e_0\mbox{ and }
+\Opt\e=\withKw\,\x_\vI\ldots\x_\vn\oRound\onKw\,\T_\vI\ldots\T_\vn
+\oRound
+\ifKw\,\e_\vz\,\Vd{}{}{\voidKw}
+\elseKw\,\Vd{}{}{\exceptionKw\,\voidKw}
+\cRound
+\\
+\Case{cb}
+\DesugarW{\caseKw\,\e_0\ \e_1\ \ons\ \defaultKw\, \e}_{\x_1\ldots\x_n}= 
+\ifKw\ \e_0\ \e_1\ \elseKw\oRound
+\DesugarW{\ons\ \defaultKw\, \e}_{\x_1\ldots\x_n}
+ \cRound
+\\
+\Case{cc}
+\DesugarW{\defaultKw\, \e}_{\_}=\e\\
+
+%\Case{e}
+%\Desugar{
+%\withKw\,\xs\,\is\,\es\,
+%\oRound\Many\onWith
+%\ifKw\,\e\block_\vI\, \defaultKw\, \block_\vII
+%\cRound
+%}_\sugarEnv=
+%\Desugar{
+%\withKw\,\xs\,\is\,\es\,
+%\oRound\Many\onWith
+%%\ifKw\,\e\block_\vI\,\block_\vII
+%\oRound\ifKw\,\e
+%\block_\vI\elseKw\block_\vII\cRound
+%}_\sugarEnv
+%\\
+
+
+\Case{d}\DesugarW{
+\withKw\,\xs\,\is\,\es\,
+\oRound\Many\onWith
+\,\defaultKw\, \e_2
+\cRound
+}=
+\DesugarW{\withKw\,\is\,
+\oRound\es\,\withKw\x_\vI\ldots\x_\vn
+\oRound
+\Many\onWith
+\ \defaultKw\,\e_2
+\cRound
+\cRound}
+\\\quad
+\mbox{ with }
+\withKw\,\xs\,\is\,\es=\withKw\x_\vI\_\ldots\x_\vn\_
+\\
+\Case{e}\DesugarW{\withKw\,\is\,\block}=
+\DesugarW{\DeclareIterators{}
+{\is}{\!\!
+\Vd{
+\\\quad
+\loopKw\!\oRound
+\X_1\catch_1\ldots\X_n\catch_n
+\block
+[\x_1\equalSign\x_1\Mc{\hash\fieldInner}{}\!]\ldots[\x_n\equalSign\x_n\Mc{\hash\fieldInner}{}\!]
+\!\cRound
+}{
+\\\quad
+\catchKw\,\exceptionKw\oRound\onKw\,\VoidKw\,\voidKw\cRound
+}{
+\voidKw
+}}}
+\\\quad\mbox{with } 
+\is=\ft{\_}{}{\x_1}\,\inKw\,\_\ldots
+\ft{\_}{}{\x_n}\,\inKw\,\_,
+\quad\X_\vi\catch_\vi=\Next{\vi}{\x_1\ldots\x_n}
+\\
+%\varEnv=,
+%\x_\vz: \GuessType{\varEnv\vT}{\e_\vz}\singleDot \itNext'\varOpt_\vz
+%\ldots
+%\x_\vn:\GuessType{\varEnv\vT}{\e_\vn}\singleDot\itNext'\varOpt_\vz
+
+%\quad\mbox{and }
+%\block\vT=\ReplaceAssign{
+%%\{\x_\vi,\z_\vi\mid\varOpt_\vi=\varKw\}
+%\x_\vz,\z_\vz\ldots\x_\vn,\z_\vn
+%}{\block}
+\Case{initW}\DesugarW{
+\e\oSquare
+\withKw\,\xs\,\is\,\es\oRound
+\onWith_1\ldots\onWith_n
+\Opt{\defaultKw\,\e}\cRound
+\cSquare}=
+\\\quad
+\DesugarW{
+\Vd{\Xt{\varKw}{\x}{}{\e\Mc\itBegin{}}
+\withKw\,\xs\,\is\,\es\,\oRound
+\onWith'_1\ldots\onWith'_n
+\Opt{\defaultKw\,\e}'\cRound
+}{}{
+\x\Mc\itEnd{}}}
+\\\quad
+\mbox{with }\onWith_i=
+\Opt{\onKw\,\Many\T}\,\Opt{\ifKw\e}\e,
+\onWith'_i=\Opt{\onKw\,\Many\T}\,\Opt{\ifKw\e}\,\x\equalSign\x\Mc\itAdd{\e}
+\mbox{ and either }
+\Opt{\defaultKw\,\e}=\Opt{\defaultKw\,\e}'=\emptyset
+\\\quad\mbox{ or }\Opt{\defaultKw\,\e}=\defaultKw\,\e
+\mbox{ and } \Opt{\defaultKw\,\e}'=\defaultKw\,\x\equalSign\x\Mc\itAdd{\e}
+\\
+
+
+\end{MDefinition}

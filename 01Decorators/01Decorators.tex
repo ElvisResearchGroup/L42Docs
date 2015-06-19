@@ -1,0 +1,59 @@
+%\documentclass{beamer}
+%\usetheme{Madrid}
+
+%-----------
+%comment first in handout mode, second in lecture mode
+%------------
+\documentclass[secfooter,english]{beamer}
+\newcommand\PresentationOnly[1]{#1}
+\newcommand\HandoutOnly[1]{}
+
+%-----------
+%\documentclass[handout,english]{beamer}
+%\newcommand\PresentationOnly[1]{}
+%\newcommand\HandoutOnly[1]{#1}
+
+\usetheme{boadilla}
+\usecolortheme{crane}
+\usepackage[absolute,overlay]{textpos}
+%\usepackage[colorgrid,texcoord]{eso-pic} %??????
+%\usecolortheme{beaver}
+
+\let\block\undefined
+\input{../Def/Def}
+
+\newcommand\fullPageImage[1]{
+{ % all template changes are local to this group.
+    \setbeamertemplate{navigation symbols}{}
+    \begin{frame}[plain]
+        \begin{tikzpicture}[remember picture,overlay]
+            \node[at=(current page.center)] {
+%                \includegraphics[width=\paperwidth]{#1}
+  \includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{#1}
+            };
+        \end{tikzpicture}
+     \end{frame}
+  }
+}
+\title{42 Programming Language\\*Class Decorators}
+%\author{Marco Servetto}
+%\institute{VUW}
+\author{}
+\institute{}
+\date{}
+
+%\logo{%
+%{\large http://www.youtube.com/watch?v=aboZctrHfK8}
+%%
+%\vspace{220pt}\hspace{105pt}%
+%}
+
+\begin{document}
+\maketitle
+
+
+\logo{}
+\input{slides}
+
+
+\end{document}
