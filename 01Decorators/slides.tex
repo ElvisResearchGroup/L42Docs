@@ -101,14 +101,14 @@ Margin: {(N maxX, N maxY, N minX, N minY)}$\Comment{just the fields}$
 \pause
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-Margin: Data[]<{(N maxX, N maxY, N minX, N minY)}
+Margin: Data[]<{(N minX, N minY, N maxX, N maxY)}
 $\Comment{automatically generated equals/hashcode, no validation}$
 \end{lstlisting}
 \end{NiceCode}
 \pause{\small If \Q@invariant@ is provided, it will be dynamically called in the right moments.}
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-Margin: Data[]<{(N maxX, N maxY, N minX, N minY)
+Margin: Data[]<{(N minX, N minY, N maxX, N maxY)
   method Void invariant() {
     return Assert[
       this.minX() >0N;
@@ -182,7 +182,8 @@ B:{()} $\Comment{the empty class}$
 {\small Like compile time execution in C++, template haskell and others.
 First class code literals, called \Q@Librar@ies allows classes
  to be created, from top to bottom, using formerly defined classes.
-In the end, the execution process itself is the production of all the classes.}
+The program can perform side effects while creating classes.
+Execution is just the production of all the classes.}
 
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
@@ -243,8 +244,9 @@ Is it also possible to delete a  nested class and redirect all the reference to 
 \item \Q@Introspect@ is a class allowing to query a library on its methods and nested classes names and structural shapes.
 
 \end{itemize}
-Never ever we modify existent code.\\* New libraries are created decorating old ones.
-
+Generated libraries are decorated copies of old ones.
+\\*
+Pre-existing code is never modified.
 \end{frame}
 
 
@@ -273,7 +275,7 @@ Internally, the code of \Q@Collection.vector@ may look like the following
 \begin{lstlisting}
 Collection:{...
   Library vector(type Any that){
-    return Adapt[Name"T" into: Name(that) ]<{()
+    return Adapt[Name"T" into:Name(that) ]<{()
       T:{}
       method Void add(T that){...}
      ...}
@@ -303,13 +305,13 @@ In the same way, it would be possible to have maps/filters/folds as in functiona
 \begin{lstlisting}
 myStudents= PersonList[....]
 FindOlder: Accumulate[PersonList]<{
-  method Person (Person a, Person b){
-    if a.age()>b.age() ( return a )
-    return b
+  method Person accumulate (Person left, Person right){
+    if left.age()>right.age() ( return left )
+    return right
   }}
-older= FindOlder(myStudents)
+older= FindOlder.from(myStudents)
 $\Comment{haskell-like equivalent}$
-$\Comment{older=accumulate (a,b->if a.age()>b.age() a else b) myStudents}$
+$\Comment{older=accumulate (left,right->if left.age()>right.age() left else right) myStudents}$
 \end{lstlisting}
 \end{NiceCode}
 While do not look as nice as an haskell-like equivalent,
@@ -502,11 +504,11 @@ Code<Void> myCode=<|
 \end{lstlisting}
 \end{NiceCode}
 Special parenthesis \Q@<|  |>@ denotes first class code literals,
-with holes, denoted by the simbol \Q@`( )@.
+with holes, denoted by the symbol \Q@`( )@.
 The holes can be filled with arbitrary expressions of \Q@Code@ type.
 This is just a layer of syntactic sugar over regular 
-MetaObject Protocol(MOP), that is basically a object oriented data-structure representing
-and AST for the language under consideration.
+Meta Object Protocol(MOP), that is basically an object oriented data-structure representing
+an AST for the language under consideration.
 Depending on the specific language,
 it is possible to guarantee a range of properties on the resulting code.
 \end{frame}
@@ -520,8 +522,7 @@ Since every kind of code can have holes, there is an enormous error space.\\*
 ${}_{}$\\*
 In my opinion Templating DSLs are a fast and dirty \\*
 way to obtain good initial results using metaprogramming.\\*
-The technique does not scale and is very low level, that is
-work and it does not scale well.\\*
+The technique does not scale and is very low level.
 ${}_{}$\\*
 L42 does \alert{not} rely on Templating DSL.\\*
 We focus on behaviour composition instead of ``source code'' composition,
