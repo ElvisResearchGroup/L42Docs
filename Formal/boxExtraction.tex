@@ -1,7 +1,5 @@
 \begin{RuleFrame}\pBox{Extraction of types}
 \vspace{-5ex}\\
-%\vspace{-5ex}\\
-
 \begin{MetaRule}{et-+}
 \begin{premise}
 \classB_\vI
@@ -142,7 +140,27 @@
 \end{sideCondition}
 \end{MetaRule}
 
-
+\\
+\MS{\mbox{need a rule for neverLess? read comment under}}\\
+%\vspace{-5ex}\\
+%May be we need a  new rule for type extraction:
+%     L-p->error void
+%     if neverLess_p(L)
+%     neverLess_p({<:I1..In ..}^_)
+%     iff(p(Ii))=e, e not of form L
+%
+%     neverLess_p(L)
+%     L={_ h ctx[e.m(xes)] _}^something
+%     Outer0=guessType(varEnv^{h,ctx},e)
+%     L(m(xs)) not defined
+%     //this is actually a discovered error? should go in checking?
+%     same for nesteds? how? keep track of nesting level?
+%
+%     the top level class should not become error void..?
+%
+%     so, only for missing interfaces become error void?
+%     and add checks in check ct1? is that check just normal method checks?
+%     just enrich method unknown? add that subtype is always fine?
 
 %\vspace{-1ex}
 \\
