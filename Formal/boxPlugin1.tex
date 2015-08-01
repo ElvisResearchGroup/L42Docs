@@ -1,12 +1,19 @@
 \begin{RuleFrame}\cBox{Plugin auxiliary definitions}
+\begin{MDefinition}{\classB_1=\classB_2}
+\classB\mbox{ is equivalent to a version where all the \Q+'@private+}
+\\
+\mbox{members have been consistently renamed}
+\end{MDefinition}\\
 \begin{MDefinition}{\classB_1\oplus\classB_2=\classB}
 \!\Cb{\h_1\implSign\, \Many{\Path}_1 \members_1}
 \oplus
 \Cb{\h_2\implSign\, \Many{\Path}_2 \members_2}
 \!=\!
 \Cb{\h_1\oplus\h_2\implSign\, \Many{\Path}_1\Many{\Path}_2 \members_1\oplus\members_2}\\
-\traitKw \oplus \h= \h \oplus \traitKw=\h\\
 \interfaceKw\oplus\interfaceKw=\interfaceKw\\
+\emptyset\oplus\emptyset=\emptyset\\
+\interfaceKw\oplus\emptyset=\emptyset\oplus\interfaceKw=\emptyset\\
+\mbox{only if }\interfaceKw \mbox{is virgin}\\
 \members_1\member\oplus\members_2=
 \members_1\oplus(\member\oplus\members_2)\\
 \emptyset\oplus\members=\members\\
@@ -20,10 +27,7 @@
 \mhT_1\oplus\mhT_2\Opt\e\members=(\mhT_1\oplus\mhT_2)\Opt\e\members\\
 \mbox{ where }\mhT_1,\mhT_2\mbox{ differs only for the documentation}\\
 
-\methodKw\docs\mx\e\oplus\mhT\members=
-\mhT\oplus\methodKw\docs\mx\e\members=
-\\\quad
-\methodKw(\Aux{docsOf}(\mhT)\oplus\docs)\mx\e\members\mbox{ \MS{fix in the code}}\\
+\methodKw\docs\mx\e\mbox{ can not be sum with }\mhT\\
 
 \end{MDefinition}
 \\

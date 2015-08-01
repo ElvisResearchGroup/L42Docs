@@ -73,7 +73,7 @@ it would be outdated very fast.
 \frametitle{First exposure to class Decorators}
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-Point: Data[]<{ (N x, N y) ... }
+Point: Data[]<<{ (N x, N y) ... }
 Main:{
   p1= Point(x:12N,y:22N) $\Comment{this is declaring a final local var}$
   p2= Point(x:12N,y:22N)
@@ -83,8 +83,8 @@ Main:{
 \end{lstlisting}
 \end{NiceCode}
 \Q@Data@  is a class, whose instances are class decorators.
-A class decorator is an object offering  a method named \Q@<@ that takes a library (=a class with nested classes) and return a library; that is:\\*
-\Q@method Library <(Library that)@.
+A class decorator is an object offering  a method named \Q@<<@ that takes a library (=a class with nested classes) and return a library; that is:\\*
+\Q@method Library <<(Library that)@.
 Since class decorator tends to have many options, they can be instantiated using the square brackets, as in \Q@Data[...optionName1:value1;optionName2:value2;...]@  .\\*
 (That is the syntax for any var-arg method, including convenient collections initialization as \Q@NVec[a;b;c;]@).
 
@@ -101,14 +101,14 @@ Margin: {(N maxX, N maxY, N minX, N minY)}$\Comment{just the fields}$
 \pause
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-Margin: Data[]<{(N minX, N minY, N maxX, N maxY)}
+Margin: Data[]<<{(N minX, N minY, N maxX, N maxY)}
 $\Comment{automatically generated equals/hashcode, no validation}$
 \end{lstlisting}
 \end{NiceCode}
 \pause{\small If \Q@invariant@ is provided, it will be dynamically called in the right moments.}
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-Margin: Data[]<{(N minX, N minY, N maxX, N maxY)
+Margin: Data[]<<{(N minX, N minY, N maxX, N maxY)
   method Void invariant() {
     return Assert[
       this.minX() >0N;
@@ -120,7 +120,7 @@ Margin: Data[]<{(N minX, N minY, N maxX, N maxY)
 \pause {\small Now we can have points inside a margin.}
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-Point: Data[]<{(Margin that,  N x, N y)
+Point: Data[]<<{(Margin that,  N x, N y)
   method Void invariant() {
     return Assert[   that.minX() <=this.x();  that.minY() <=this.y();
        that.maxX() >=this.x();  that.maxY() >=this.y();  ]}}
@@ -230,23 +230,28 @@ program.}
 \frametitle{Minimal building block}
 To manipulate libraries we do not use any templating mechanism.
 Libraries can be composed with other libraries using an algebra of composition operators /decorators.
-The main ones are \Q@Use@ and \Q@Adapt@
-\begin{itemize}
-\item \Q@Use@ decorates a class by summing to it a list of libraries.
-\\*
-\Q@Use[a;b;c]<d@ composes in a symmetrical way \Q@a b c d@. Abstract methods can be implemented, nested classes with the same name are recursivly summed.
-\Q@Use@ can take options to resolve conflicts (i.e. same method implemented in multiple classes)
-\item \Q@Adapt@ decorates a class by renaming/making private methods and nested classes.
-Is it also possible to delete a  nested class and redirect all the reference to it to an external one.
-\\*
-\Q@ Adapt[Name"foo()" into:Name"bar()"]<d@
- adapts \Q@d@ so that the method \Q@foo()@ is now called \Q@bar()@ (as in refactoring).
-\item \Q@Introspect@ is a class allowing to query a library on its methods and nested classes names and structural shapes.
+The main one is \Q@Compose@, that decorates a class by summing to it a list of libraries. It is the only one that uses multiple libraries.\\*
+\Q@Compose[a;b;c]<<d@ composes \Q@a b c d@. Abstract methods can be implemented, nested classes with the same name are recursively summed.
+On default the composition is symmetric, but \Q@Compose@ can take options to automatically solve conflicts (i.e. same method implemented in multiple classes). For example, a right preferential strategy.
 
-\end{itemize}
-Generated libraries are decorated copies of old ones.
+Note that generated libraries are decorated copies of old ones.
 \\*
 Pre-existing code is never modified.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Minimal building block}
+
+In addition to compose there are a plethora of \alert{refactoring} operators, that takes a single library and adapt it somehow.
+\begin{itemize}
+\item \Q@RenamePath@ and \Q@RenameSelector@ rename nested classes and methods
+\item \Q@RemoveImplementationPath@  make a nested class (and the whole subtree) fully abstract. (See also \Q@RemoveImplementationSelector@)
+\item \Q@Redirect@ delete a  nested class and redirect all the reference to it to an external one.
+\item \Q@Introspect@ is a class allowing to query a library on its methods and nested classes names and structural shapes.
+\item \Q@MakePrivatePath@ and \Q@MakePrivateSelector@ to tune privateness.
+\item \Q@AddDocumentationPath@, \Q@AddDocumentationSelector@, \Q@RemoveDocumentationPath@, \Q@RemoveDocumentationSelector@
+support generation of documentation with metaprogramming.
+\end{itemize}
 \end{frame}
 
 
@@ -275,7 +280,7 @@ Internally, the code of \Q@Collection.vector@ may look like the following
 \begin{lstlisting}
 Collection:{...
   Library vector(type Any that){
-    return Adapt[Name"T" into:Name(that) ]<{()
+    return Refactor::Redirect[Path"T" to: that ]<<{()
       T:{}
       method Void add(T that){...}
      ...}
@@ -304,7 +309,7 @@ In the same way, it would be possible to have maps/filters/folds as in functiona
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
 myStudents= PersonList[....]
-FindOlder: Accumulate[PersonList]<{
+FindOlder: Accumulate[PersonList]<<{
   method Person accumulate (Person left, Person right){
     if left.age()>right.age() ( return left )
     return right
@@ -335,7 +340,7 @@ For example, to define a gui with callbacks, we can have a html form where butto
 %should be ok with Gui g and give type error with Outer1 g
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-Gui:Use[GuiFromHtml(myHtml)]<{
+Gui:Use[GuiFromHtml(myHtml)]<<{
   ButtonStart:{ method Void onClick(Gui g){
     g.resultText().value(g.inputText().value())   }}
 \end{lstlisting}
@@ -346,7 +351,7 @@ The programmer can/must rely on those conventions!\\*
 As an alternative design, \Q@GuiFromHtml@ could be a decorator; this it could examine the input code and check conventions are respected.
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-Gui:GuiFromHtml[myHtml]<{
+Gui:GuiFromHtml[myHtml]<<{
   ButtStart:{ method Void onClick(Gui g){$\Comment{error is discovered}$
     g.resultText().value(g.inputText().value())   }}
 \end{lstlisting}
@@ -381,7 +386,7 @@ the resulting method \Q@a()@ will perform the logic and of the result of the two
 Example of input and expected result
 \begin{NiceCode}{59ex}{0.76}
 \begin{lstlisting}
-Point:Data[]<{(N x,N y)}$\Comment{example just on ==}$
+Point:Data[]<<{(N x,N y)}$\Comment{example just on ==}$
 \end{lstlisting}
 \end{NiceCode}
 reduces to
@@ -410,29 +415,30 @@ Point:{(N x,N y)
 \frametitle{How Data could work? - Example: equals on fields}
 \begin{NiceCode}{59ex}{0.76}
 \begin{lstlisting}
-method Library equal(Name class,Name name) {$\Comment{equal on single field}$
-  return Adapt[Name"T" into: class; Name"f()" into:name]<{
+method Library equal(type Any class,Selector name) {$\Comment{equal on single field}$
+  return Refactor::Redirect[Path"T" to: class]<<
+         Refactor::RenameSelector[Selector"f()" to:name]<<{
     T:{ method Bool ==(Any that)}
     method T f()
     method Bool internEquals(Outer0 that) {return this.f()==that.f()}
     }  
   }$\pause$
 method Library addEquals(Library l){$\Comment{produces a class with == and internEquals}$ $\pause$
-  var use=Use[resolver:{$\Comment{ how to merge two equal on single field}$
+  var composer=Compose[resolver:{$\Comment{ how to merge two equal on single field}$
     method Bool internEquals(Outer0 that) {
       return this.left(that) & this.right(that) }
     method Bool left(Outer0 that)
     method Bool right(Outer0 that)   }]$\pause$
   with field in Introspection.fieldsOf(l).vals() ($\Comment{accumulate equalities}$
-    use:=use.add( this.equal(class:field.class(), name:field.name()))  )$\pause$
-  result=use<{$\Comment{compute internEquals and add the == method}$
+    composer:=composer.add( this.equal(class:field.class(), name:field.name()))  )$\pause$
+  result=composer<<{$\Comment{compute internEquals and add the == method}$
     method Bool internEquals(Outer0 that)
     method Bool ==(Any that){
       with that (
         on Outer0  return this.internEquals(that)
         default    return false
         ) }   }$\pause$
-  return Adapt[makePrivate:Name"internEquals(that)"]<result  }
+  return Adapt[makePrivate:Name"internEquals(that)"]<<result  }
 \end{lstlisting}
 \end{NiceCode}
 \end{frame}
@@ -456,10 +462,10 @@ Any operation can be synthesized as a library that would implement the operation
 \frametitle{Just a different way to generate code}
 More Decorators! 
 \begin{itemize}
-\item \Q@Abstract[]<{...}@ produces the skeleton of the input (that is, all the methods become abstract)
-\item \Q@Load[]<{...}@ takes a library with abstract methods/classes and bind them to some predefined value.
-\item \Q@Iterable[]<{...}@ using \Q@v.size()@, \Q@v(i)@ and \Q@v(i,val:e)@ adds a standard implementation of iterators for the input.
-\item \Q@Optimize[]<{...}@ produces a library with the same behaviour but with better performance (this would need ast level reasoning)
+\item \Q@Abstract[]<<{...}@ produces the skeleton of the input (that is, all the methods become abstract)
+\item \Q@Load[]<<{...}@ takes a library with abstract methods/classes and bind them to some predefined value.
+\item \Q@Iterable[]<<{...}@ using \Q@v.size()@, \Q@v(i)@ and \Q@v(i,val:e)@ adds a standard implementation of iterators for the input.
+\item \Q@Optimize[]<<{...}@ produces a library with the same behaviour but with better performance (this would need ast level reasoning)
 
 \end{itemize}
 
@@ -471,19 +477,14 @@ More Decorators!
 \begin{frame}[fragile]
 \frametitle{Decorator composition}
 Decorators are 
- endofunctions (functions whose domain is equal to its codomain), thus function composition of two decorator produces another decorator.
-This can be obtained in 42 by having decorators offering method 
-\Q@<<@.
+ endofunctions (functions whose domain is equal to its codomain), thus we can apply many decorators in a chain.
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-Point1: Data[]<<Logging[]<{...}
-Point2: Data[]<(Logging[]<{...}) $\Comment{equivalent without composition}$
+Point1: Data[]<<Logging[]<<{...}
 \end{lstlisting}
 \end{NiceCode}
 \Q@Logging@ here will somehow log all the methods call of the original code, but not the ones added by \Q@Data@ itself.\\*
-
-While it is clear the expected semantic of \Q@<@ on the result,
-I'm still deciding what should be the behaviour for other operations, (as  adding more parameters). 
+(Note that this works since \Q@<<@, \Q@>>@, \Q@++@ and \Q@**@ are right associative in 42.)
 \end{frame}
 
 
@@ -540,7 +541,7 @@ The shift of mind that I'm suggesting here is similar to the one from imperative
 (as in \Q@a.draw(b)@)\\*
 However, the programmers are still in control, since they are instantiating and passing around such objects.
 \item With class decorators, the programmers do not chose explicitly what methods are in each class.\\*
-(as in \Q@Person:Data[]<...@)\\*
+(as in \Q@Person:Data[]<<...@)\\*
 However, the programmers are still in control, since they writing and applying such decorator objects.
 \end{itemize}
 The difference is in the which programmer keeps the control:
