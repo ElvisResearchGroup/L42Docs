@@ -188,7 +188,7 @@
 \begin{MetaRule}{meth-t-def}
 \begin{premise}
 \TsJ{\p;\varEnv;\sealEnv;\emptyset;\Paths}
-{\e}{\T'\leq\T}\  \mbox{if }\Opt\e=\e
+{\e}{\T'\leq\toPartial(\T)}\  \mbox{if }\Opt\e=\e
 \end{premise}
 \begin{consequence}
 \TypeJ{\p}{\member}{\mbox{ok}}
