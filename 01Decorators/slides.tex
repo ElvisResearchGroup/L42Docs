@@ -331,8 +331,8 @@ is it easier to reason about higher order polymorphic function composition?
 
 
 \begin{frame}[fragile]
-\frametitle{Use}
- \Q@Use@ decorates a class by summing to it a list of libraries.
+\frametitle{Compose}
+ \Q@Compose@ decorates a class by summing to it a list of libraries.
 Since there is no ``extends'', code reuse is obtained with decorators.
 For example, to define a gui with callbacks, we can have a html form where buttons have ids, and we can implement the onclick method:
 
@@ -340,7 +340,7 @@ For example, to define a gui with callbacks, we can have a html form where butto
 %should be ok with Gui g and give type error with Outer1 g
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-Gui:Use[GuiFromHtml(myHtml)]<<{
+Gui:Compose[GuiFromHtml(myHtml)]<<{
   ButtonStart:{ method Void onClick(Gui g){
     g.resultText().value(g.inputText().value())   }}
 \end{lstlisting}
@@ -364,7 +364,7 @@ Gui:GuiFromHtml[myHtml]<<{
 The need of super is satisfied with resolvers. In the following code
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-Use[
+Compose[
   { method Bool a(){return True()} };
   { method Bool a(){return False()} };
   resolver:{
@@ -375,7 +375,7 @@ Use[
   ]
 \end{lstlisting}
 \end{NiceCode}
-The \Q@Use@ instance will compose the two classes successfully and
+The \Q@Compose@ instance will compose the two classes successfully and
 the resulting method \Q@a()@ will perform the logic and of the result of the two methods.
 
 \end{frame}
@@ -438,7 +438,7 @@ method Library addEquals(Library l){$\Comment{produces a class with == and inter
         on Outer0  return this.internEquals(that)
         default    return false
         ) }   }$\pause$
-  return Adapt[makePrivate:Name"internEquals(that)"]<<result  }
+  return MakePrivateSelector[Selector"internEquals(that)"]<<result  }
 \end{lstlisting}
 \end{NiceCode}
 \end{frame}
@@ -458,34 +458,32 @@ Any operation can be synthesized as a library that would implement the operation
 \end{frame}
 
 
-\begin{frame}[fragile]
-\frametitle{Just a different way to generate code}
-More Decorators! 
-\begin{itemize}
-\item \Q@Abstract[]<<{...}@ produces the skeleton of the input (that is, all the methods become abstract)
-\item \Q@Load[]<<{...}@ takes a library with abstract methods/classes and bind them to some predefined value.
-\item \Q@Iterable[]<<{...}@ using \Q@v.size()@, \Q@v(i)@ and \Q@v(i,val:e)@ adds a standard implementation of iterators for the input.
-\item \Q@Optimize[]<<{...}@ produces a library with the same behaviour but with better performance (this would need ast level reasoning)
-
-\end{itemize}
-
-\end{frame}
-
-
+%\begin{frame}[fragile]
+%\frametitle{Just a different way to generate code}
+%More Decorators! 
+%\begin{itemize}
+%\item \Q@Abstract[]<<{...}@ produces the skeleton of the input (that is, all the methods become abstract)
+%\item \Q@Load[]<<{...}@ takes a library with abstract methods/classes and bind them to some predefined value.
+%\item \Q@Iterable[]<<{...}@ using \Q@v.size()@, \Q@v(i)@ and \Q@v(i,val:e)@ adds a standard implementation of iterators for the input.
+%\item \Q@Optimize[]<<{...}@ produces a library with the same behaviour but with better performance (this would need ast level reasoning)
+%
+%\end{itemize}
+%
+%\end{frame}
 
 
-\begin{frame}[fragile]
-\frametitle{Decorator composition}
-Decorators are 
- endofunctions (functions whose domain is equal to its codomain), thus we can apply many decorators in a chain.
-\begin{NiceCode}{59ex}{0.8}
-\begin{lstlisting}
-Point1: Data[]<<Logging[]<<{...}
-\end{lstlisting}
-\end{NiceCode}
-\Q@Logging@ here will somehow log all the methods call of the original code, but not the ones added by \Q@Data@ itself.\\*
-(Note that this works since \Q@<<@, \Q@>>@, \Q@++@ and \Q@**@ are right associative in 42.)
-\end{frame}
+%\begin{frame}[fragile]
+%\frametitle{Decorator composition}
+%Decorators are 
+% endofunctions (functions whose domain is equal to its codomain), thus we can apply many decorators in a chain.
+%\begin{NiceCode}{59ex}{0.8}
+%\begin{lstlisting}
+%Point1: Data[]<<Logging[]<<{...}
+%\end{lstlisting}
+%\end{NiceCode}
+%\Q@Logging@ here will somehow log all the methods call of the original code, but not the ones added by \Q@Data@ itself.\\*
+%(Note that this works since \Q@<<@, \Q@>>@, \Q@++@ and \Q@**@ are right associative in 42.)
+%\end{frame}
 
 
 \begin{frame}[fragile]
@@ -531,7 +529,7 @@ and we take inspiration from class/module composition languages.
 \end{frame}
 
 
-\fullPageImage{lego1}
+%\fullPageImage{lego1}
 
 \begin{frame}[fragile]
 \frametitle{Today, a goal for tomorrow}
