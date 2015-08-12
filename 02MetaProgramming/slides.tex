@@ -84,7 +84,7 @@ all together.
 \frametitle{Decorators}
 
 Library composition is obtained using decorators, that are build upon 
-basic decorators \Q@Compose@ and \Q@Adapt@.\\*
+basic decorators \Q@Compose@ and \Q@Refactor::*@.\\*
 ${}_{}$\\*
 Composing classes ``as modules'',\\*
 \pause with a associative and commutative compose/merge/sum
@@ -381,14 +381,15 @@ MySolution:ExprProblem(
 
 
 \begin{frame}[fragile]
-\frametitle{Adapt}
+\frametitle{Refactor}
 Ok, \Q@Compose@ is cool.
-What about \Q@Adapt@?
+What about \Q@Refactor::*@?
 It can rename methods, nested classes, and can set members private.
-More than that, \Q@Adapt@ is cool since it can apply \Q@Compose@ internally.
+More than that, \Q@Refactor::*@ is cool since it can apply \Q@Compose@ internally.
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-D:Adapt[Name"C" into: Name"K";Name"A" into: Name"K"]<{
+D:Refactor::RenamePath[Path"C" to: Path"K"]<<
+  RenamePath[Path"A" to: Path"K"]<<{
   C:{method N c()}
   A:{method N a()}
   method C m(A a)
@@ -411,7 +412,7 @@ D:{
 \begin{NiceCode}{59ex}{0.8}
 \frametitle{Adapt}
 \begin{lstlisting}
-D:Adapt[ Name"C::A" into Name"Outer0" ] < {
+D:RenamePath[Path"C::A" to: Path"Outer0" ] << {
   method N top()
   C:{method N c()
     A:{ method N a() }
@@ -429,31 +430,27 @@ D:{
   }
 \end{lstlisting}
 \end{NiceCode}
-Should this be called \Q@Move@ instead of \Q@Adapt@?
-
-\end{frame}
 
 
-\begin{frame}[fragile]
-\frametitle{Adapt}
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-D:Adapt[ Name"Outer0" into Name"C::A" ] < {..}
+D:RenamePath[Path"Outer0" to: Path"C::A" ] << {..}
 \end{lstlisting}
 \end{NiceCode}
 rewrites to 
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
 D:{ C:{ A:{..}}}
-$\Comment{or D:\{interface C:\{interface A:\{..\}\}\}}$
 \end{lstlisting}
 \end{NiceCode}
-Should this be called \Q@Move@ instead of \Q@Adapt@?
-And finally,
 
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Redirect}
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-D:Adapt[ Name"C" into Name(S) ] < {
+D:Refactor::Redirect[Path"C" to:S ] << {
   C:{.. B:{..}}
   method C m(C::B x)
   }
@@ -469,7 +466,6 @@ D:{
 \end{NiceCode}
 This last operation requires to check the structural type of
 \Q@S@ and \Q@S::B@ to be compatible with \Q@C@ and \Q@C::B@.
-Should this be called \Q@Replace@ instead of \Q@Adapt@?
 \end{frame}
 
 
@@ -499,16 +495,19 @@ and the types \Q@Library@, \Q@Void@ and \Q@Any@.
 
 \begin{frame}[fragile]
 \frametitle{Towel Intro}
-The header reuse L42.is/BasicTowel imports the code from 
-the URL L42.is/BasicTowel and places it at the start of the class.
-Code is(=will be) downloaded/updated from the Internet automatically.
+%The header reuse L42.is/BasicTowel imports the code from 
+%the URL L42.is/BasicTowel and places it at the start of the class.
+%Code is(=will be) downloaded/updated from the Internet automatically.
+
 We generally call towels libraries that are expected to provide standard
 functionalities and types, such as numbers N, booleans Bool,
 strings S and various kinds of system errors
 (and Load, as discussed later).
+\\*${}_{}$\\*
 However, we do not expect all L42 programs to reuse the same towel.
 For hygienic reasons, in real life everyone tends to use their own towel.
 For similar reasons, any 42 program will use its own towel.
+\\*${}_{}$\\*
 We expect different programs to use massively different libraries for
 what in other languages is the standard library.
 That is, there is no such thing as ''the L42 standard library''
@@ -520,7 +519,7 @@ That is, there is no such thing as ''the L42 standard library''
 Most L42 libraries are not towels.
 All 42 libraries are closed code.
 \\*
-Thus, all non-towel 42 library is generic
+Thus, all non-towel 42 library are generic
 (have abstract classes/methods)
 
 \begin{NiceCode}{59ex}{1}
@@ -535,8 +534,8 @@ Main:{
 \end{NiceCode}
 \Q@Load[]<{..}@
 would intuitively behave like 
-\Q@Adapt[Name"N" into:Name(N);Name"S" into:Name(S);...]<{..}@\\*
-\Q@Load@ uses \Q@Adapt@ to redirect such abstract classes to their incarnation in BasicTowel,
+\Q@Refactor::Redirect[Path"N" to:N]<<.."S" to:S..<<{..}@\\*
+\Q@Load@ redirect such abstract classes to their incarnation in the Towel,
 assuming they respect some structural interface.
 
 \end{frame}
@@ -555,7 +554,7 @@ C:{reuse $\ReuseUrl{L42.is/FordTowel}$
   $\Comment{here you can access a different set of classes.}$
   $\Comment{For example, N would refer to the number in FordTowel}$
   $\Comment{and to see the number declared in AdamTowel}$
-  $\Comment{you have to write Outer1::N}$
+  $\Comment{you have to write Outer::N}$
   }
 }
 \end{lstlisting}
@@ -576,9 +575,9 @@ Define and deploy our own towel: like BasicTowel, with Gui as before.
 \begin{NiceCode}{59ex}{1}
 \begin{lstlisting}
 {reuse $\ReuseUrl{L42.is/DeploymentTowel}$
-Main:Deploy[URL".../GuiTowel";permissions:S"..."]<{
+Main:DeployTowel[URL".../GuiTowel";permissions:S"..."]<<{
   reuse $\ReuseUrl{L42.is/BasicTowel}$
-  Gui:Load[]<{reuse $\ReuseUrl{L42.is/2dGui}$}
+  Gui:Load[]<<{reuse $\ReuseUrl{L42.is/2dGui}$}
   }
 }
 \end{lstlisting}
@@ -602,15 +601,19 @@ This requires some special care:
 \begin{NiceCode}{59ex}{0.9}
 \begin{lstlisting}
 {reuse $\ReuseUrl{L42.is/DeploymentTowel}$
-Main:
-  Deploy[URL".../MyTowel";permissions:S"..."]<<
-  Adapt[Name"NAlt" into:Name"N"; Name"SAlt" into:Name"S"]<<
-  Abstract[Name"N";Name"S"]<$\Comment{now N and S are abstract}$
-    {$\Comment{code with alternative versions for N and S}$
+Main:(
+  var code={$\Comment{code with alternative versions for N and S}$
     reuse $\ReuseUrl{L42.is/BasicTowel}$
-    NAlt:Load[]<{reuse $\ReuseUrl{L42.is/InfinitePrecisionNatural}$}
-    SAlt:Load[]<{reuse $\ReuseUrl{L42.is/UTF8Strings}$}
-    }
+    NAlt:Load[]<<{reuse $\ReuseUrl{L42.is/InfinitePrecisionNatural}$}
+    SAlt:Load[]<<{reuse $\ReuseUrl{L42.is/UTF8Strings}$} }
+  code:=Refactor::RemoveImplementation[Path"N"]<<code
+  code:=Refactor::RemoveImplementation[Path"S"]<<code
+  $\Comment{now N and S are abstract}$
+  code:=Refactor::Rename[Path"NAlt" to:Path"N"]<<code
+  code:=Refactor::Rename[Path"SAlt" to:Path"S"]<<code
+  DeployTowel[URL".../MyTowel";permissions:S"..."]<<code
+  )
+}
 \end{lstlisting}
 \end{NiceCode}
 
@@ -622,32 +625,79 @@ Non-towel libraries can also be deployed in a similar way:
 \begin{NiceCode}{59ex}{0.9}
 \begin{lstlisting}
 {reuse $\ReuseUrl{L42.is/DeploymentTowel}$
-Main:
-  Deploy[URL"../MyTowel";permissions:S".."]<<
-  Optimize::RemoveUnreachableCode[]<<
-  ExposeAsLibrary[Name"MyLib"]<{
+Main:(
+  var code={
     reuse  $\ReuseUrl{L42.is/BasicTowel}$
     MyLib:... $\Comment{this refers to the file MyLib.L42}$
-    } }
+    }
+  code:=Refactor::ExposeAsLibrary[Path"MyLib"]<<code
+  code:=Optimize::RemoveUnreachableCode[]<<code
+  Deploy[URL"../MyTowel";permissions:S".."]<<code
+  )
+}
 \end{lstlisting}
 \end{NiceCode}
+Where \Q@ExposeAsLibrary[Path"MyLib"]<<code@
+put the path MyLib at top level and make abstract classes like S, N and Bool.
+All the rest of the code is marked as private.
 
-
-Where \Q@ExposeAsLibrary[Name"MyLib"]<{..}@
-could be:
-\begin{NiceCode}{59ex}{0.9}
-\begin{lstlisting}
-  Adapt[makePrivate:Name"PrImpl"]<<
-  Adapt[Name"PrImpl::N" into:Name"N";Name"PrImpl::S" into:..]<<
-  Adapt[Name"PrImpl::MyLib" into:Name"Outer0"]<<
-  Adapt[Name"Outer0" into:PrImpl]<<
-  Abstract[Name"N";Name"S";Name"Bool";..]<{..}
-\end{lstlisting}
-\end{NiceCode}
+Then, \Q@Optimize::RemoveUnreachableCode[]<<code@ remove all the unreachable private code.
 
 \end{frame}
 
 
+
+
+\begin{frame}[fragile]
+%\addtocounter{framenumber}{-1}
+\frametitle{ExposeAsLibrary example code}
+This code show how error managing can be mangle with 
+the behavioural logic in a bearable way.
+\begin{NiceCode}{59ex}{0.7}
+\begin{lstlisting}
+method 'here this.target() is the path of the lib we want to expose
+Library <<(Library that)exception TargetUnavailable,PrivacyCoupuled,InvalidShape{
+  this.checkValid(that)'throws TargetUnavailable,InvalidShape
+  
+  var res=that    
+  res:=RemoveImplementationPath[Path"N"]<<res
+  res:=RemoveImplementationPath[Path"S"]<<res
+  res:=RemoveImplementationPath[Path"Bool"]<<res'leak PrivacyCoupuled
+  catch exception (on Report::TargetUnavailable error Report::CodeNotReachable())  
+  
+  res:=RenamePath[Path"N" to:this.target()++Path"N"]<<res
+  res:=RenamePath[Path"S" to:this.target()++Path"S"]<<res
+  res:=RenamePath[Path"Bool" to:this.target()++Path"Bool"]<<res
+  
+  res:=RenamePath[Path"Outer0" to:Path"PrImpl"]<<res
+  res:=RenamePath[Path"PrImpl"++this.that() to:Path"Outer0"]<<res
+  res:=MakePrivatePath[Path"PrImpl"]<<res
+  return res
+  catch exception (on Report error Report::CodeNotReachable())
+  }\end{lstlisting}
+\end{NiceCode}
+
+\end{frame}
+
+\begin{frame}[fragile]
+%\addtocounter{framenumber}{-1}
+\frametitle{checkValid}
+\begin{NiceCode}{59ex}{0.7}
+\begin{lstlisting}
+method Void checkValid exception TargetUnavailable,InvalidShape (
+  intro=Introspection(lib:that)
+  if !intro.hasPath(this.target()) (exception TargetUnavailable())
+  if !intro.hasPath(Path"N") (exception InvalidShape"..")
+  if !intro.hasPath(Path"S") (exception InvalidShape"..")
+  if !intro.hasPath(Path"B") (exception InvalidShape"..")
+  if intro.hasPath(this.target()++Path"N") (exception InvalidShape"..")
+  if intro.hasPath(this.target()++Path"S") (exception InvalidShape"..")
+  if intro.hasPath(this.target()++Path"B") (exception InvalidShape"..")
+  void)
+\end{lstlisting}
+\end{NiceCode}
+
+\end{frame}
 
 
 \begin{frame}[fragile]
