@@ -270,7 +270,7 @@ C:{
     method N m2(N that) this.m1(that)+1N
     }         ' "this" is of type Outer0, no relation with C
   }
-D:Use[ C.a() ] < C.b()' the result (if any) will be well typed
+D:Compose[ C.a() ] < C.b()' the result (if any) will be well typed
 \end{lstlisting}
 \end{NiceCode}
 rewrites to 
@@ -305,7 +305,7 @@ C:{    'this code is required to be completely well typed
     method N m1(N that) that+1N
     }
   }
-D:Use[ C.a() ] < {       'the result (if any) will be well typed
+D:Compose[ C.a() ] < {       'the result (if any) will be well typed
   method N m1(N that)  ' if this code is correct
   method N m2(N that) this.m1(that)+1N
   }         ' "this" is of type Outer0, is it also  Outer1::D
@@ -357,7 +357,7 @@ C:{    'this code is required to be completely well typed
     method N m1(N that) that+1N
     }
   }
-D:Use[ C.a() ] < {'code not required to be checked at this stage.
+D:Compose[ C.a() ] < {'code not required to be checked at this stage.
   method N m2(N that, D other) other.m1(that)+1N
   } 'note, no declaration for m1!
 \end{lstlisting}
@@ -390,7 +390,7 @@ C:{    'this code is required to be completely well typed
     method N m1(N that) that+1N
     }
   }
-D:Use[ C.a() ] < {'code not required to be checked at this stage.
+D:Compose[ C.a() ] < {'code not required to be checked at this stage.
   method N m2(N that, D other) this.m1(that)+1N
   } 'note, no declaration for m1!
 \end{lstlisting}
@@ -417,7 +417,8 @@ D:{'this code is now available to type-check
 What happens here?
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-D:Use[{  method T foo()...}]<<Adapt[ Name"foo()" into: Name"bar()" ] < {
+D:Compose[{  method T foo()...}]<<
+  Refactor::RenameSelector[ Selector"foo()" to: Selector"bar()" ] <<{
     method D foo() this
     method Any m1() this.foo().foo()
     }
@@ -426,7 +427,7 @@ D:Use[{  method T foo()...}]<<Adapt[ Name"foo()" into: Name"bar()" ] < {
 rewrites to 
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-D:Use[{  method T foo()...}]< {
+D:Compose[{  method T foo()...}]< {
     method D bar() this
     method Any m1() this.bar().foo()
     }
@@ -452,7 +453,7 @@ Here \Q@this.foo()@ returns \Q@D@, and we do not know what methods
 Sometimes "typish" information is needed for the operators to work
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-D:Adapt[ Name"m()" into Name"k()" ] < {
+D:Refactor::RenameSelector[ Selector"m()" to: Selector"k()" ]<< {
   method Outer0 m() this.m()
   method D toD() this
   method Outer0 m0() Foo().m()
@@ -489,7 +490,7 @@ D:{
 What happens here?
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-D:Adapt[ Name"m()" into Name"k()" ] < {
+D:Refactor::RenameSelector[ Selector"m()" to: Selector"k()" ] < {
   method Outer0 m1() this.m().m()
   }
 \end{lstlisting}
