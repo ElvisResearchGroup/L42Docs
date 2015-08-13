@@ -50,7 +50,7 @@ we may want to implement a method comparing points lexicographically
 \item toString, serialize, deserialize/parse, toHTML, clone,...
 \end{itemize}
 Implementing such methods is not only very boring,
-\pause\alert{It is super tricky!}
+\PresentationOnly\pause\alert{It is super tricky!}
 
 \end{frame}
 
@@ -58,13 +58,13 @@ Implementing such methods is not only very boring,
 \frametitle{How can it be so hard?}
 \begin{itemize}
 \item It is actually order of magnitude  simpler to use objects defining those methods than to define them correctly.
-\pause\item Up to the point that every year multiple articles challenge  the establish standard on how to
+\PresentationOnly\pause\item Up to the point that every year multiple articles challenge  the establish standard on how to
 do those kinds of operation on arbitrarily shaped objects/object graphs.
-\pause\item If automatic generations of those methods was a language feature
+\PresentationOnly\pause\item If automatic generations of those methods was a language feature
 %/part of a standard library,
 it would be outdated very fast.
-%\pause\item If it was a third party library, it would be doomed to stay unknown to most programmers. (How many of us known and use Project Lombock?)
-%\pause\item 42 is designed to attempt solving this kinds of problems.
+%\PresentationOnly\pause\item If it was a third party library, it would be doomed to stay unknown to most programmers. (How many of us known and use Project Lombock?)
+%\PresentationOnly\pause\item 42 is designed to attempt solving this kinds of problems.
 \end{itemize}
 \end{frame}
 
@@ -98,14 +98,14 @@ Since class decorator tends to have many options, they can be instantiated using
 Margin: {(N maxX, N maxY, N minX, N minY)}$\Comment{just the fields}$
 \end{lstlisting}
 \end{NiceCode}
-\pause
+\PresentationOnly\pause
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
 Margin: Data[]<<{(N minX, N minY, N maxX, N maxY)}
 $\Comment{automatically generated equals/hashcode, no validation}$
 \end{lstlisting}
 \end{NiceCode}
-\pause{\small If \Q@invariant@ is provided, it will be dynamically called in the right moments.}
+\PresentationOnly\pause{\small If \Q@invariant@ is provided, it will be dynamically called in the right moments.}
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
 Margin: Data[]<<{(N minX, N minY, N maxX, N maxY)
@@ -117,7 +117,7 @@ Margin: Data[]<<{(N minX, N minY, N maxX, N maxY)
       this.maxY() >this.minY();  ]}}
 \end{lstlisting}
 \end{NiceCode}
-\pause {\small Now we can have points inside a margin.}
+\PresentationOnly\pause {\small Now we can have points inside a margin.}
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
 Point: Data[]<<{(Margin that,  N x, N y)
@@ -322,7 +322,7 @@ $\Comment{older=accumulate (left,right->if left.age()>right.age() left else righ
 While do not look as nice as an haskell-like equivalent,
 our approach works with a simple pure nominal type system.
 \\*
-\pause
+\PresentationOnly\pause
 \alert{Question:}
 \\*
 Is it easier to reason about decorators as producing code taking some hint in input, or
@@ -422,22 +422,22 @@ method Library equal(type Any class,Selector name) {$\Comment{equal on single fi
     method T f()
     method Bool internEquals(Outer0 that) {return this.f()==that.f()}
     }  
-  }$\pause$
-method Library addEquals(Library l){$\Comment{produces a class with == and internEquals}$ $\pause$
+  }$\PresentationOnly\pause$
+method Library addEquals(Library l){$\Comment{produces a class with == and internEquals}$ $\PresentationOnly\pause$
   var composer=Compose[resolver:{$\Comment{ how to merge two equal on single field}$
     method Bool internEquals(Outer0 that) {
       return this.left(that) & this.right(that) }
     method Bool left(Outer0 that)
-    method Bool right(Outer0 that)   }]$\pause$
+    method Bool right(Outer0 that)   }]$\PresentationOnly\pause$
   with field in Introspection.fieldsOf(l).vals() ($\Comment{accumulate equalities}$
-    composer:=composer.add( this.equal(class:field.class(), name:field.name()))  )$\pause$
+    composer:=composer.add( this.equal(class:field.class(), name:field.name()))  )$\PresentationOnly\pause$
   result=composer<<{$\Comment{compute internEquals and add the == method}$
     method Bool internEquals(Outer0 that)
     method Bool ==(Any that){
       with that (
         on Outer0  return this.internEquals(that)
         default    return false
-        ) }   }$\pause$
+        ) }   }$\PresentationOnly\pause$
   return MakePrivateSelector[Selector"internEquals(that)"]<<result  }
 \end{lstlisting}
 \end{NiceCode}

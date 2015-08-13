@@ -432,7 +432,7 @@ For example in
 file MyGame/Outer0.L42
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-reuse $\ReuseUrl{L42.is/fun}$
+$\ReuseUrl{L42.is/fun}$
 Cell:Enumeration"Rock Grass Exit"
 MapCell: Collections.matrix(Cell)
 MyMap: ... $\Comment{the symbol ... means search for a file/dir called MyMap}$
@@ -447,7 +447,7 @@ file MyGame/MyMap.L42 or file MyGame/MyMap/Outer0.L42
   r=Cell::Rock
   g=Cell::Grass
   e=Cell::Exit
-  return MapCell[ #[r;r;r;r];$\Comment{MapCell is a matrix of Cells}$
+  return MapCell[$\Comment{MapCell is a matrix of Cells}$
     #[r;g;g;r];
     ...
     #[r;r;e;r]]
@@ -744,162 +744,162 @@ What we are proud to not have
 
 \end{frame}
 
-
-\begin{frame}[fragile]
-\frametitle{That is all for today. What is \textbf{not} here?}
-
-%What I had no time to explain today
-\begin{itemize}
-%\item Exceptions
-%\item placeholder types for circular initialization
-\item sand-boxing  (integrated with the language, fundamental for security)
-\item connection with the rest of the world (as native interface in Java)
-\item code and IDE connection: libraries can personalize the IDE
-\item how the syntactic sugar works
-%\item 42 project management
-\item fully automatic parallelization
-\item full abstract interpretation/symbolic execution as optimization
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{ Thanks! }
-\center{\huge Questions?}
-\end{frame}
-
-\begin{frame}[fragile]
-\addtocounter{framenumber}{-1}
-\frametitle{That is all. What is \textbf{not} here?}
-
-What can be added by libraries written in 42 itself
-\begin{itemize}
-\item booleans
-\item numbers
-\item arrays
-\item multi-methods
-\item access to libraries written in other languages
-\item collections/generics
-\item enumerations
-\item pre-post conditions verification
-\item deployment on multiple platforms
-\item optimization(automatic parallelism, method inlining)
-\item ...
-\end{itemize}
-\end{frame}
-
-
-
-
 %
-\begin{frame}[fragile]
-\addtocounter{framenumber}{-1}
-\frametitle{The syntactic sugar}
-\begin{itemize}
-\item reuse is (conceptually) replaced with the library code itself
-\item $\Comment{@private}$ members are turned in unforgeable names during reuse replacement.
-\item typed literals (\Q@12Meter@, \Q@DBConnection"...."@,..)
-are desugared in sequences of method calls, something like \Q@Meters.#parseInt().#$\_$1().#$\_$2().#endParse()@
-\item if, while, with, \{ \} and so on are defined by syntactic sugar.
-\end{itemize}
-
-
-\end{frame}
-
-
-
-\begin{frame}[fragile]
-\addtocounter{framenumber}{-1}
-\frametitle{Target usage}
-A small set of good programmers can design good libraries that can be used by a mass of
-non-professional programmers to obtain decent but non cutting-edge applications.
-Good application designers 
-(user interactions? game designer? data presentation experts?)
-will be able to use 42 without great programming skills.
-
-Good programmers will find it easier to develop libraries in 42 than in other languages.
-\end{frame}
-
-
-\begin{frame}[fragile]
-\addtocounter{framenumber}{-1}
-\frametitle{Deep instantiation example}
-Collections generation can be based on desired properties.
-\begin{NiceCode}{59ex}{0.8}
-\begin{lstlisting}
-{...
-S:{...}$\Comment{S is a string type}$
-Collection:{...}$\Comment{Collection(dept4) generate different collection kinds}$
-Set:Collection($\Comment{Set(dept3) generate sets for different contents}$
-  order:Collection::Order::Irrelevant
-  repetition:Collection::Repetition::SilentlyAvoided
-  size:Collection::Size::Dynamic
-  ) $\Comment{here Set.of(....) is a kind of collection where....}$
-NameSet:Set.of(S)$\Comment{NameSet(dept2) is a set of immutable strings}$
-$\Comment{Set.ofShared(....) will create sets of shared objects}$
-SetKindSet:Set.ofType(Set::Kind)
-$\Comment{SetKindSet(dept2) set of sets type objects}$
-CollectionKindSet:Set.ofType(Collection::Kind)
-$\Comment{CollectionKindSet(dept2) set of Collections type objects}$
-myFriends:NameSet[S"Mattia";S"Luca";S"Paolo"]
-$\Comment{myFriends(dept1) is a specific set of names}$
-mySets:SetKindSet[NameSet;SetKindSet]
-$\Comment{those are all the kind of sets I have defined}$
-myGenerators:CollectionKindSet[Set]
-$\Comment{Here I defined 1 kind of collections only: Set}$
-}
-\end{lstlisting}
-\end{NiceCode}
-\end{frame}
-
-
-
-\begin{frame}[fragile]
-\addtocounter{framenumber}{-1}
-\frametitle{5 pillars / Core Language mechanisms}
-\begin{itemize}
-\tiny
-\item Active libraries
-\begin{itemize}
-\tiny
-\item library literals and code composition algebra;
-\item incremental typing;
-\item meta level soundness.
-\end{itemize}
-
-\item Minimal OO capabilities:
-\begin{itemize}
-\tiny
-\item (final) classes with state (constructor composed by fields) and behaviour;
-\item single dispatch method call, with nominal method selectors;
-\item interfaces as the only way to induce subtyping; that is, all class types are exact types.
-\end{itemize}
-\item Signals:
-\begin{itemize}
-\tiny
-\item three kinds of alternative results (error, exception and return), plus conventional (preferred) results;
-\item capturing of alternative results based on the object type;
-\item safe interaction between mutable state and signals.
-\end{itemize}
-
-\item Multiple variable declarations:
-\begin{itemize}
-\tiny
-\item placeholder semantics;
-\item placeholder types;
-\item commitment points.
-\end{itemize}
-
-\item Encapsulation by (deep) type modifiers:
-\begin{itemize}
-\tiny
-\item object kinds: immutable, mutable and type;
-\item references: immutable, shared, readable, lent, capsule and owned;
-\item transparent promotions.
-\end{itemize}
-
-\end{itemize}
-\end{frame}
-
-
-
+%\begin{frame}[fragile]
+%\frametitle{That is all for today. What is \textbf{not} here?}
+%
+%%What I had no time to explain today
+%\begin{itemize}
+%%\item Exceptions
+%%\item placeholder types for circular initialization
+%\item sand-boxing  (integrated with the language, fundamental for security)
+%\item connection with the rest of the world (as native interface in Java)
+%\item code and IDE connection: libraries can personalize the IDE
+%\item how the syntactic sugar works
+%%\item 42 project management
+%\item fully automatic parallelization
+%\item full abstract interpretation/symbolic execution as optimization
+%\end{itemize}
+%
+%\end{frame}
+%
+%\begin{frame}[fragile]
+%\frametitle{ Thanks! }
+%\center{\huge Questions?}
+%\end{frame}
+%
+%\begin{frame}[fragile]
+%\addtocounter{framenumber}{-1}
+%\frametitle{That is all. What is \textbf{not} here?}
+%
+%What can be added by libraries written in 42 itself
+%\begin{itemize}
+%\item booleans
+%\item numbers
+%\item arrays
+%\item multi-methods
+%\item access to libraries written in other languages
+%\item collections/generics
+%\item enumerations
+%\item pre-post conditions verification
+%\item deployment on multiple platforms
+%\item optimization(automatic parallelism, method inlining)
+%\item ...
+%\end{itemize}
+%\end{frame}
+%
+%
+%
+%
+%%
+%\begin{frame}[fragile]
+%\addtocounter{framenumber}{-1}
+%\frametitle{The syntactic sugar}
+%\begin{itemize}
+%\item reuse is (conceptually) replaced with the library code itself
+%\item $\Comment{@private}$ members are turned in unforgeable names during reuse replacement.
+%\item typed literals (\Q@12Meter@, \Q@DBConnection"...."@,..)
+%are desugared in sequences of method calls, something like \Q@Meters.#parseInt().#$\_$1().#$\_$2().#endParse()@
+%\item if, while, with, \{ \} and so on are defined by syntactic sugar.
+%\end{itemize}
+%
+%
+%\end{frame}
+%
+%
+%
+%\begin{frame}[fragile]
+%\addtocounter{framenumber}{-1}
+%\frametitle{Target usage}
+%A small set of good programmers can design good libraries that can be used by a mass of
+%non-professional programmers to obtain decent but non cutting-edge applications.
+%Good application designers 
+%(user interactions? game designer? data presentation experts?)
+%will be able to use 42 without great programming skills.
+%
+%Good programmers will find it easier to develop libraries in 42 than in other languages.
+%\end{frame}
+%
+%
+%\begin{frame}[fragile]
+%\addtocounter{framenumber}{-1}
+%\frametitle{Deep instantiation example}
+%Collections generation can be based on desired properties.
+%\begin{NiceCode}{59ex}{0.8}
+%\begin{lstlisting}
+%{...
+%S:{...}$\Comment{S is a string type}$
+%Collection:{...}$\Comment{Collection(dept4) generate different collection kinds}$
+%Set:Collection($\Comment{Set(dept3) generate sets for different contents}$
+%  order:Collection::Order::Irrelevant
+%  repetition:Collection::Repetition::SilentlyAvoided
+%  size:Collection::Size::Dynamic
+%  ) $\Comment{here Set.of(....) is a kind of collection where....}$
+%NameSet:Set.of(S)$\Comment{NameSet(dept2) is a set of immutable strings}$
+%$\Comment{Set.ofShared(....) will create sets of shared objects}$
+%SetKindSet:Set.ofType(Set::Kind)
+%$\Comment{SetKindSet(dept2) set of sets type objects}$
+%CollectionKindSet:Set.ofType(Collection::Kind)
+%$\Comment{CollectionKindSet(dept2) set of Collections type objects}$
+%myFriends:NameSet[S"Mattia";S"Luca";S"Paolo"]
+%$\Comment{myFriends(dept1) is a specific set of names}$
+%mySets:SetKindSet[NameSet;SetKindSet]
+%$\Comment{those are all the kind of sets I have defined}$
+%myGenerators:CollectionKindSet[Set]
+%$\Comment{Here I defined 1 kind of collections only: Set}$
+%}
+%\end{lstlisting}
+%\end{NiceCode}
+%\end{frame}
+%
+%
+%
+%\begin{frame}[fragile]
+%\addtocounter{framenumber}{-1}
+%\frametitle{5 pillars / Core Language mechanisms}
+%\begin{itemize}
+%\tiny
+%\item Active libraries
+%\begin{itemize}
+%\tiny
+%\item library literals and code composition algebra;
+%\item incremental typing;
+%\item meta level soundness.
+%\end{itemize}
+%
+%\item Minimal OO capabilities:
+%\begin{itemize}
+%\tiny
+%\item (final) classes with state (constructor composed by fields) and behaviour;
+%\item single dispatch method call, with nominal method selectors;
+%\item interfaces as the only way to induce subtyping; that is, all class types are exact types.
+%\end{itemize}
+%\item Signals:
+%\begin{itemize}
+%\tiny
+%\item three kinds of alternative results (error, exception and return), plus conventional (preferred) results;
+%\item capturing of alternative results based on the object type;
+%\item safe interaction between mutable state and signals.
+%\end{itemize}
+%
+%\item Multiple variable declarations:
+%\begin{itemize}
+%\tiny
+%\item placeholder semantics;
+%\item placeholder types;
+%\item commitment points.
+%\end{itemize}
+%
+%\item Encapsulation by (deep) type modifiers:
+%\begin{itemize}
+%\tiny
+%\item object kinds: immutable, mutable and type;
+%\item references: immutable, shared, readable, lent, capsule and owned;
+%\item transparent promotions.
+%\end{itemize}
+%
+%\end{itemize}
+%\end{frame}
+%
+%
+%

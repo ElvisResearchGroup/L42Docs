@@ -270,7 +270,7 @@ C:{
     method N m2(N that) this.m1(that)+1N
     }         ' "this" is of type Outer0, no relation with C
   }
-D:Compose[ C.a() ] < C.b()' the result (if any) will be well typed
+D:Compose[ C.a() ] << C.b()' the result (if any) will be well typed
 \end{lstlisting}
 \end{NiceCode}
 rewrites to 
@@ -305,7 +305,7 @@ C:{    'this code is required to be completely well typed
     method N m1(N that) that+1N
     }
   }
-D:Compose[ C.a() ] < {       'the result (if any) will be well typed
+D:Compose[ C.a() ] << {       'the result (if any) will be well typed
   method N m1(N that)  ' if this code is correct
   method N m2(N that) this.m1(that)+1N
   }         ' "this" is of type Outer0, is it also  Outer1::D
@@ -333,12 +333,12 @@ D:{
 Sometimes, we need to delay type checking for code in class literals.
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-A:Data[] < {'the result well-typedness depends from the
+A:Data[] << {'the result well-typedness depends from the
             ' code in the dots
   method B playWithB(B that) .. that.fooB() .. 
   ..
   }         
-B:Data[] < {'the result well-typedness depends from the
+B:Data[] << {'the result well-typedness depends from the
             ' code in the dots
   method A playWithA(A that) .. that.fooA() ..  
   ..
@@ -357,7 +357,7 @@ C:{    'this code is required to be completely well typed
     method N m1(N that) that+1N
     }
   }
-D:Compose[ C.a() ] < {'code not required to be checked at this stage.
+D:Compose[ C.a() ] << {'code not required to be checked at this stage.
   method N m2(N that, D other) other.m1(that)+1N
   } 'note, no declaration for m1!
 \end{lstlisting}
@@ -390,7 +390,7 @@ C:{    'this code is required to be completely well typed
     method N m1(N that) that+1N
     }
   }
-D:Compose[ C.a() ] < {'code not required to be checked at this stage.
+D:Compose[ C.a() ] << {'code not required to be checked at this stage.
   method N m2(N that, D other) this.m1(that)+1N
   } 'note, no declaration for m1!
 \end{lstlisting}
@@ -427,7 +427,7 @@ D:Compose[{  method T foo()...}]<<
 rewrites to 
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-D:Compose[{  method T foo()...}]< {
+D:Compose[{  method T foo()...}]<< {
     method D bar() this
     method Any m1() this.bar().foo()
     }
@@ -443,7 +443,7 @@ D:{
   }
 \end{lstlisting}
 \end{NiceCode}
-Here \Q@this.foo()@ returns \Q@D@, and we do not know what methods
+Here \Q@this.foo()@ returns \Q@D@, and at the start we do not know what methods
 \Q@D@ will have.
 \end{frame}
 
@@ -487,10 +487,11 @@ D:{
 
 
 \begin{frame}[fragile]
+\frametitle{Final example}
 What happens here?
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-D:Refactor::RenameSelector[ Selector"m()" to: Selector"k()" ] < {
+D:Refactor::RenameSelector[ Selector"m()" to: Selector"k()" ] << {
   method Outer0 m1() this.m().m()
   }
 \end{lstlisting}
@@ -501,8 +502,8 @@ otherwise only the first one.
 But there is no \Q@method Outer0 m()@
 in the code.
 
-Should be an error/exception trying to rename
-a method that is not declared?
+Trying to rename a method that is not declared:
+we decided to treat this as an exception.
 
 \end{frame}
 

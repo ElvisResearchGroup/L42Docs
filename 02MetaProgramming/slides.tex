@@ -87,15 +87,15 @@ Library composition is obtained using decorators, that are build upon
 basic decorators \Q@Compose@ and \Q@Refactor::*@.\\*
 ${}_{}$\\*
 Composing classes ``as modules'',\\*
-\pause with a associative and commutative compose/merge/sum
+\PresentationOnly\pause with a associative and commutative compose/merge/sum
 operation:\\*
 \begin{itemize}
-\pause\item nested classes with same name are recursively merged;\\*
-\pause\item the set of implemented interfaces is merged;\\*
-\pause\item methods with same name are merged,\pause and conflict arises if both version have an implementation or if the headers are not compatible.\\*
+\PresentationOnly\pause\item nested classes with same name are recursively merged;\\*
+\PresentationOnly\pause\item the set of implemented interfaces is merged;\\*
+\PresentationOnly\pause\item methods with same name are merged,\PresentationOnly\pause and conflict arises if both version have an implementation or if the headers are not compatible.\\*
 \end{itemize}
 ${}_{}$\\*
-\pause Good, but... how to merge fields/constructors?
+\PresentationOnly\pause Good, but... how to merge fields/constructors?
 
 \end{frame}
 
@@ -104,21 +104,21 @@ ${}_{}$\\*
 \begin{frame}[fragile]
 \frametitle{Constructors and fields}
 
-%  type method Library point()Export"Point"<{
-%    Point:Data[abstract:#]<{(N x, N y)
+%  type method Library point()Export"Point"<<{
+%    Point:Data[abstract:#]<<{(N x, N y)
 %      
 %      }
 %    }
 
-\pause What is exactly a field/constructor in 42,
+\PresentationOnly\pause What is exactly a field/constructor in 42,
 ${}_{}$\\*
-\pause since I can only
+\PresentationOnly\pause since I can only
 access them as getters/setters/factories?
 ${}_{}$\\*
-\pause What is the exact meaning of writing
+\PresentationOnly\pause What is the exact meaning of writing
 \Q@Point:{(N x, N y)}@?
 ${}_{}$\\*
-\pause
+\PresentationOnly\pause
 It is just sugar for 
 \begin{NiceCode}{59ex}{1}
 \begin{lstlisting}
@@ -144,21 +144,21 @@ Point:{ $\Comment{(N x, N y) desugar into}$
   }
 \end{lstlisting}
 \end{NiceCode}
-\pause In many languages, a concrete class have no abstract methods;
+\PresentationOnly\pause In many languages, a concrete class have no abstract methods;
 In 42, a concrete class have a \alert{coherent set} of abstract methods:
 \begin{itemize}
-\pause\item A class with no abstract methods is concrete {\small(as {\texttt{java.lang.Math}})}
-\pause\item A class with a single abstract \Q@type@ method returning \Q@Outer0@
+\PresentationOnly\pause\item A class with no abstract methods is concrete {\small(as {\texttt{java.lang.Math}})}
+\PresentationOnly\pause\item A class with a single abstract \Q@type@ method returning \Q@Outer0@
 whose parameters are all of placeholder type (as \Q@N^ x@) is concrete.
-\pause\item If such abstract \Q@type@ method is present, then, for each parameter,
+\PresentationOnly\pause\item If such abstract \Q@type@ method is present, then, for each parameter,
 it is allowed to have abstract getters and setters,
 where the name maps back to the parameter name.
 \end{itemize}
-\pause
+\PresentationOnly\pause
 Take a deep breath, to me this is game changing and mind blowing.
 There are only methods. The constructor/getter implementation is not
 protected/hidden/secret/native. It is just \alert{not there}.
-\pause The whole formal model works without requiring any difference between abstract methods
+\PresentationOnly\pause The whole formal model works without requiring any difference between abstract methods
 and getters/setters/constructors.
 
 \end{frame}
@@ -179,7 +179,7 @@ C:{
 
     }
   }
-ColPoint:Compose[C.point()]<{(N x, N y, Color color)
+ColPoint:Compose[C.point()]<<{(N x, N y, Color color)
   type method Outer0 (N^ x,N^ y)
     Outer0(x:x,y:y,color:Color.black())
   }
@@ -203,7 +203,7 @@ C:{
     method Outer0 clone(N x) Outer0(x:x,y:this.y())
     }
   }
-ColPoint:Compose[C.point()]<{(N x, N y, Color color)
+ColPoint:Compose[C.point()]<<{(N x, N y, Color color)
   type method Outer0 (N^ x,N^ y)
     Outer0(x:x,y:y,color:Color.black())
   }$\Comment{now with sets the color to black :-(}$
@@ -227,7 +227,7 @@ C:{
     method Outer0 clone(N x)
     }
   }
-ColPoint:Data[]<<Compose[C.point()]<{(N x, N y, Color color)
+ColPoint:Data[]<<Compose[C.point()]<<{(N x, N y, Color color)
   type method Outer0 (N^ x,N^ y)
     Outer0(x:x,y:y,color:Color.black())
   }$\Comment{let data do its job}$
@@ -252,7 +252,7 @@ Sum a trait to a (concrete) class and get
 as a result a better (concrete) class, if such class offers all
 the methods required (i.e. abstract) in the thread.
 \\*
-\Q@Compose[Lib.a();Lib.b();..]<{..}@
+\Q@Compose[Lib.a();Lib.b();..]<<{..}@
 \\*
 
 
@@ -410,7 +410,7 @@ D:{
 
 \begin{frame}[fragile]
 \begin{NiceCode}{59ex}{0.8}
-\frametitle{Adapt}
+\frametitle{Refactor}
 \begin{lstlisting}
 D:RenamePath[Path"C::A" to: Path"Outer0" ] << {
   method N top()
@@ -525,14 +525,14 @@ Thus, all non-towel 42 library are generic
 \begin{NiceCode}{59ex}{1}
 \begin{lstlisting}
 {reuse $\ReuseUrl{L42.is/BasicTowel}$
-Gui:Load[]<{reuse $\ReuseUrl{L42.is/2dGui}$}
+Gui:Load[]<<{reuse $\ReuseUrl{L42.is/2dGui}$}
 Main:{
   Gui.alert(S"Hello world")
   return ExitCode.normal()
 }
 \end{lstlisting}
 \end{NiceCode}
-\Q@Load[]<{..}@
+\Q@Load[]<<{..}@
 would intuitively behave like 
 \Q@Refactor::Redirect[Path"N" to:N]<<.."S" to:S..<<{..}@\\*
 \Q@Load@ redirect such abstract classes to their incarnation in the Towel,
@@ -710,7 +710,7 @@ method Void checkValid exception TargetUnavailable,InvalidShape (
 Local:UrlData.readOnly(prefix:URL"file:///../myProjects/")
 Remote:UrlData.writeOnly(prefix:URL"L42.is/byMarco/",permission:S"..")
 Web:UrlData.writeOnly(prefix:URL"www.myWebsite.com/",permission:S"..")
-Header:Deployer[]<{()
+Header:Deployer[]<<{()
     method DeployResult() {
       var acc=Project(Local"header")
       b= Benchmark(Local"headerBenchmark")
@@ -719,7 +719,7 @@ Header:Deployer[]<{()
       return acc.deploy(Remote"header")
       }
   }
-GraphicEngine:Deployer[]<{(Header h)
+GraphicEngine:Deployer[]<<{(Header h)
   method DeployResult() {
     var acc=Project(Local"graphicEngine")
       $\Comment{inside reuse L42.is/byMarco/header}$
@@ -741,7 +741,7 @@ GraphicEngine:Deployer[]<{(Header h)
 \frametitle{Support for decent size applications}
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-MyGame:Deployer[]<{(Header h GraphicEngine e)
+MyGame:Deployer[]<<{(Header h GraphicEngine e)
   method DeployResult() {
     var acc=Project(Local"myGame")
     b=Benchmark(Local"myGameBenchmark")
@@ -948,14 +948,14 @@ me=Tables::Student(id:....)
 %  receive:Date $\Comment{input produce widgets for any type}$
 %  request:S"insert your date of birth")
 %Date userDate= BirthInput()
-%$\pause$Second userS= Date.today() - userDate
+%$\PresentationOnly\pause$Second userS= Date.today() - userDate
 %years= (userS/Seconds.year().asNumber()).floor()
 %Gui::Alert(S"you are "+years.asText()+S" years old")
 %myBirth=Date.gregorian(
 %  year:1981N
 %  month:Month::April
 %  day:21N)
-%if myBirth<userDate (
+%if myBirth<<userDate (
 %  Gui::Alert(S"
 %    $\Comment{I'm younger that you}$
 %    $\Comment{       Ha ha ha!!}$
@@ -965,12 +965,12 @@ me=Tables::Student(id:....)
 %\end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Visualize DB}
+\frametitle{Can you guess what this code is doing?}
 \begin{NiceCode}{59ex}{1}
 \begin{lstlisting}
 {reuse  $\ReuseUrl{L42.is/AdamsTowel}$
-Db: Load[]<{reuse L42.is/Db}
-Gui: Load[]<{reuse L42.is/2dGui}
+Db: Load[]<<{$\ReuseUrl{L42.is/Db}$}
+Gui: Load[]<<{$\ReuseUrl{L42.is/2dGui}$}
 Tables: DB(S"...my connection string...")
 StudentList: Collections.list(Tables::Student)
 StudentsView: Gui.tableOf(StudentList)
@@ -993,8 +993,8 @@ Main:{
 \frametitle{Visualize DB}
 \begin{NiceCode}{59ex}{1}
 \begin{lstlisting}
-DB: Load[]<{$\ReuseUrl{L42.is/DB}$}
-Gui: Load[]<{$\ReuseUrl{L42.is/2dGUI}$}
+DB: Load[]<<{$\ReuseUrl{L42.is/DB}$}
+Gui: Load[]<<{$\ReuseUrl{L42.is/2dGUI}$}
 Tables: DB(S"...my connection string...")
 StudentList: Collections.list(Tables::Student)
 StudentsView: Gui.tableOf(StudentList)
@@ -1003,7 +1003,7 @@ QueryFrom: Tables::Query[result:StudentList](
 \end{lstlisting}
 \end{NiceCode}
 \begin{itemize}
-\item \Q@Load[]<{$\ReuseUrl{L42.is/..}$}@
+\item \Q@Load[]<<{$\ReuseUrl{L42.is/..}$}@
 \Q@Load@ is loading the code of a library
 and, according to the conventions in 
 $\ReuseUrl{L42.is/AdamsTowel}$, is linking numbers, strings
@@ -1071,8 +1071,8 @@ close the circle, showing a table view of our Italian students.
 \begin{NiceCode}{59ex}{1}
 \begin{lstlisting}
 {reuse  $\ReuseUrl{L42.is/AdamsTowel}$
-Db: Load[]<{reuse L42.is/Db}
-Gui: Load[]<{reuse L42.is/2dGui}
+Db: Load[]<<{$\ReuseUrl{L42.is/Db}$}
+Gui: Load[]<<{$\ReuseUrl{L42.is/2dGui}$}
 Tables: DB(S"...my connection string...")
 StudentList: Collections.list(Tables::Student)$\Comment{ HERE!!}$
 StudentsView: Gui.tableOf(StudentList)

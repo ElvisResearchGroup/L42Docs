@@ -23,6 +23,17 @@
 %-----------------listing
 %--------------------------------------------------------------------------------------------------------------------------------
 
+%-----------
+%comment first in handout mode, second in lecture mode
+%------------
+%\newcommand\PresentationOnly[1]{#1}
+%\newcommand\HandoutOnly[1]{}
+
+%-----------
+\newcommand\PresentationOnly[1]{}
+\newcommand\HandoutOnly[1]{#1}
+
+
 \newcommand{\TerminaleRed}[1]{
 \ensuremath{
 {\mbox{\mO\lstinline@#1@\mC}}
