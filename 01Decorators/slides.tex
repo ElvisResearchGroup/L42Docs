@@ -274,7 +274,7 @@ Multiple incompatible collections can be generated for the same type, in order t
 
 \begin{frame}[fragile]
 \frametitle{Collection generation / not with generics}
-Thanks to \Q@Adapt@ we can emulate generics, just redirect a class to the final destination.
+Thanks to \Q@Refactor::Redirect@ we can emulate generics, just redirect a class to the final destination.
 Internally, the code of \Q@Collection.vector@ may look like the following
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
@@ -413,7 +413,7 @@ Point:{(N x,N y)
 
 \begin{frame}[fragile]
 \frametitle{How Data could work? - Example: equals on fields}
-\begin{NiceCode}{59ex}{0.76}
+\begin{NiceCode}{59ex}{0.74}
 \begin{lstlisting}
 method Library equal(type Any class,Selector name) {$\Comment{equal on single field}$
   return Refactor::Redirect[Path"T" to: class]<<
@@ -430,7 +430,7 @@ method Library addEquals(Library l){$\Comment{produces a class with == and inter
     method Bool left(Outer0 that)
     method Bool right(Outer0 that)   }]$\PresentationOnly\pause$
   with field in Introspection.fieldsOf(l).vals() ($\Comment{accumulate equalities}$
-    composer:=composer.add( this.equal(class:field.class(), name:field.name()))  )$\PresentationOnly\pause$
+    composer:=composer.add(this.equal(class:field.class(),name:field.name())))$\!\!\PresentationOnly\pause$
   result=composer<<{$\Comment{compute internEquals and add the == method}$
     method Bool internEquals(Outer0 that)
     method Bool ==(Any that){
@@ -438,7 +438,7 @@ method Library addEquals(Library l){$\Comment{produces a class with == and inter
         on Outer0  return this.internEquals(that)
         default    return false
         ) }   }$\PresentationOnly\pause$
-  return MakePrivateSelector[Selector"internEquals(that)"]<<result  }
+  return Refactor::MakePrivateSelector[Selector"internEquals(that)"]<<result}
 \end{lstlisting}
 \end{NiceCode}
 \end{frame}
