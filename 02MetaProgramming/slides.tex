@@ -123,7 +123,7 @@ It is just sugar for
 \begin{NiceCode}{59ex}{1}
 \begin{lstlisting}
 Point:{ $\Comment{(N x, N y) desugar into}$
-  type method Outer0 (N^ x, N^ y)
+  type method Outer0 (N x, N y)
   method N x()
   method N y()
   }
@@ -138,7 +138,7 @@ That is, a class with just abstract methods.
 \begin{NiceCode}{59ex}{1}
 \begin{lstlisting}
 Point:{ $\Comment{(N x, N y) desugar into}$
-  type method Outer0 (N^ x, N^ y)
+  type method Outer0 (N x, N y)
   method N x()
   method N y()
   }
@@ -180,7 +180,7 @@ C:{
     }
   }
 ColPoint:Compose[C.point()]<<{(N x, N y, Color color)
-  type method Outer0 (N^ x,N^ y)
+  type method Outer0 (N x,N y)
     Outer0(x:x,y:y,color:Color.black())
   }
 \end{lstlisting}
@@ -204,7 +204,7 @@ C:{
     }
   }
 ColPoint:Compose[C.point()]<<{(N x, N y, Color color)
-  type method Outer0 (N^ x,N^ y)
+  type method Outer0 (N x,N y)
     Outer0(x:x,y:y,color:Color.black())
   }$\Comment{now with sets the color to black :-(}$
 \end{lstlisting}
@@ -228,7 +228,7 @@ C:{
     }
   }
 ColPoint:Data[]<<Compose[C.point()]<<{(N x, N y, Color color)
-  type method Outer0 (N^ x,N^ y)
+  type method Outer0 (N x,N y)
     Outer0(x:x,y:y,color:Color.black())
   }$\Comment{let data do its job}$
 \end{lstlisting}
