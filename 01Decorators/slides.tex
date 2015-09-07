@@ -139,11 +139,11 @@ Point: Data[]<<{(Margin that,  N x, N y)
 
 \item If you have some former knowledge of generative programming, you will know that I'm not proposing anything new or groundbreaking.
 
-\item What I'm proposing is to design a language around the idea that decorators are going to \alert{be there} and massively used.
+\PresentationOnly\pause\item What I'm proposing is to design a language around the idea that decorators are going to \alert{be there} and massively used.
 
-\item In the end, the programmers may change their perception about writing code: Instead of directly encoding the behaviour they need, they will give some suggestion to a decorator, that is going to do all the hard job.
+\PresentationOnly\pause\item In the end, the programmers may change their perception about writing code: Instead of directly encoding the behaviour they need, they will give some suggestion to a decorator, that is going to do all the hard job.
 
-\item This also allows for a much simpler language,requiring only a simple nominal (sub-)types and no inheritance.
+\PresentationOnly\pause\item This also allows for a much simpler language,requiring only a simple nominal (sub-)types and no inheritance.
 \\*Code reuse (with inheritance as a special case), generics (as shown later), enumerations and many other concepts may be encoded as (active) libraries / decorators.
 \end{itemize}
 \end{frame}
@@ -232,7 +232,8 @@ To manipulate libraries we do not use any templating mechanism.
 Libraries can be composed with other libraries using an algebra of composition operators /decorators.
 The main one is \Q@Compose@, that decorates a class by summing to it a list of libraries. It is the only one that uses multiple libraries.\\*
 \Q@Compose[a;b;c]<<d@ composes \Q@a b c d@. Abstract methods can be implemented, nested classes with the same name are recursively summed.
-On default the composition is symmetric, but \Q@Compose@ can take options to automatically solve conflicts (i.e. same method implemented in multiple classes). For example, a right preferential strategy.
+
+\PresentationOnly\pause On default the composition is symmetric, but \Q@Compose@ can take options to automatically solve conflicts (i.e. same method implemented in multiple classes). For example, a right preferential strategy.
 
 Note that generated libraries are decorated copies of old ones.
 \\*
@@ -244,12 +245,12 @@ Pre-existing code is never modified.
 
 In addition to compose there are a plethora of \alert{refactoring} operators, that takes a single library and adapt it somehow.
 \begin{itemize}
-\item \Q@RenamePath@ and \Q@RenameSelector@ rename nested classes and methods
-\item \Q@RemoveImplementationPath@  make a nested class (and the whole subtree) fully abstract. (See also \Q@RemoveImplementationSelector@)
-\item \Q@Redirect@ delete a  nested class and redirect all the reference to it to an external one.
-\item \Q@Introspect@ is a class allowing to query a library on its methods and nested classes names and structural shapes.
-\item \Q@MakePrivatePath@ and \Q@MakePrivateSelector@ to tune privateness.
-\item \Q@AddDocumentationPath@, \Q@AddDocumentationSelector@, \Q@RemoveDocumentationPath@, \Q@RemoveDocumentationSelector@
+\PresentationOnly\pause\item \Q@RenamePath@ and \Q@RenameSelector@ rename nested classes and methods
+\PresentationOnly\pause\item \Q@RemoveImplementationPath@  make a nested class (and the whole subtree) fully abstract. (See also \Q@RemoveImplementationSelector@)
+\PresentationOnly\pause\item \Q@Redirect@ delete a  nested class and redirect all the reference to it to an external one.
+\PresentationOnly\pause\item \Q@Introspect@ is a class allowing to query a library on its methods and nested classes names and structural shapes.
+\PresentationOnly\pause\item \Q@MakePrivatePath@ and \Q@MakePrivateSelector@ to tune privateness.
+\PresentationOnly\pause\item \Q@AddDocumentationPath@, \Q@AddDocumentationSelector@, \Q@RemoveDocumentationPath@, \Q@RemoveDocumentationSelector@
 support generation of documentation with metaprogramming.
 \end{itemize}
 \end{frame}
@@ -448,12 +449,12 @@ method Library addEquals(Library l){$\Comment{produces a class with == and inter
 \frametitle{Just a different way to generate code}
 Operations are defined by inductively generated methods:
 \begin{itemize}
-\item define a behaviour for base case (``single field'' in the example)
-\item define composition of behaviours (``logic and'' in the example)
-\item refine the result depending of what you are doing (``result'' in the example) 
+\PresentationOnly\pause\item define a behaviour for base case (``single field'' in the example)
+\PresentationOnly\pause\item define composition of behaviours (``logic and'' in the example)
+\PresentationOnly\pause\item refine the result depending of what you are doing (``result'' in the example) 
 \end{itemize}
-At any step is possible to check what we are creating and provide good error messages if something is going wrong.\\*${}_{}$\\*
-Any operation can be synthesized as a library that would implement the operation on the original input when summed (Use).
+\PresentationOnly\pause At any step is possible to check what we are creating and provide good error messages if something is going wrong.\\*${}_{}$\\*
+Any operation can be synthesized as a library that would implement the operation on the original input when summed (Compose).
 
 \end{frame}
 
@@ -518,11 +519,11 @@ it is possible to guarantee a range of properties on the resulting code.
 Templating DSL: a low level mechanism for metaprogramming.\\*
 Focus is placed on the code and on the concrete implementation.\\*
 Since every kind of code can have holes, there is an enormous error space.\\*
-${}_{}$\\*
+${}_{}$\\*\PresentationOnly\pause
 In my opinion Templating DSLs are a fast and dirty \\*
 way to obtain good initial results using metaprogramming.\\*
 The technique does not scale and is very low level.
-${}_{}$\\*
+${}_{}$\\*\PresentationOnly\pause
 L42 does \alert{not} rely on Templating DSL.\\*
 We focus on behaviour composition instead of ``source code'' composition,
 and we take inspiration from class/module composition languages.
@@ -538,12 +539,12 @@ The shift of mind that I'm suggesting here is similar to the one from imperative
 \item With OO, thanks to dynamic dispatch, the programmer do not chose explicitly what behaviour to invoke when a method is called.\\*
 (as in \Q@a.draw(b)@)\\*
 However, the programmers are still in control, since they are instantiating and passing around such objects.
-\item With class decorators, the programmers do not chose explicitly what methods are in each class.\\*
+\PresentationOnly\pause\item With class decorators, the programmers do not chose explicitly what methods are in each class.\\*
 (as in \Q@Person:Data[]<<...@)\\*
 However, the programmers are still in control, since they writing and applying such decorator objects.
-\end{itemize}
+\end{itemize}\PresentationOnly\pause
 The difference is in the which programmer keeps the control:
-In both cases we have a shift: the programmers of the final application can delegate more and more control to the programmers of the libraries.
+In both cases we have a shift: the programmers of the final application can delegate more and more control to \emph{the programmers of the libraries}.
 \end{frame}
 
 %
@@ -573,6 +574,29 @@ In both cases we have a shift: the programmers of the final application can dele
 %Libraries can be composed by code and not by programmers.
 %\end{frame}
 
+
+\begin{frame}[fragile]
+\frametitle{Can you guess what this code is doing?}
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+{reuse  $\ReuseUrl{L42.is/AdamsTowel}$
+DB: Load[]<<{reuse $\ReuseUrl{L42.is/DB}$}
+Gui: Load[]<<{reuse f$\ReuseUrl{L42.is/2dGui}$}
+Tables: DB(S"...my connection string...")
+StudentList: Collections.list(Tables::Student)
+StudentsView: Gui.tableOf(StudentList)
+QueryFrom: Tables::Query[result:StudentList](
+  DB::SQL"Select * from Student where country=@country")
+Main:{
+  connection=Tables.connect()
+  fromItaly=QueryFrom(connection, country:S"Italy")
+  Gui.show(StudentsView(fromItaly))
+  return ExitCode.normal()
+  }
+}
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
 
 
 

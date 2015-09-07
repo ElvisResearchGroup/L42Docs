@@ -6,7 +6,7 @@
 \begin{NiceCode}{59ex}{1}
 \begin{lstlisting}
 A:{ 'a class with ``m'' returning a class with ``foo''
-  type method Library m() { N foo() 42N }
+  type method Library m() { method N foo() 42N }
   'in Java this would look like 
   'static Library m()\{return \{ int foo()\{return 42;\}\};\}
   }
@@ -18,9 +18,9 @@ rewrites to
 \begin{NiceCode}{59ex}{1}
 \begin{lstlisting}
 A:{ 'a class with ``m'' returning a class with ``foo''
-  type method Library m() { N foo() 42N }
+  type method Library m() { method N foo() 42N }
   }
-B:{ N foo() 42N }'a class 
+B:{ method N foo() 42N }'a class 
 \end{lstlisting}
 \end{NiceCode}
 \end{frame}
@@ -84,7 +84,7 @@ find the first class that requires meta execution.
 \item[$\G$]
 type-check all the (transitively) used classes, starting from the $\Y$ expression.
 \item[$\G$]
-type-check the yellow expression. We have enough type information now.
+type-check the yellow expression. This is possible using the available (green) type information.
 \item[$\G$]
 execute the well typed expression. Now we get a class.
 By construction, this class can only refer to the types collected before.
@@ -154,7 +154,7 @@ type-check the used classes.
 This time, we have a class literal that uses \Q@D@ (that uses \Q@E@).
 What happens here?
 \item[$\G$]
-type-check the yellow expression. We have enough type information now.
+type-check the yellow expression.  Is this possible using the available (green) type information? only if we do not check inside of \Q@{..D..}@.
 \end{itemize}
 Can we proceed without verifying \Q@{..D..}@?
 How the decorators/composition operators are going to work over 

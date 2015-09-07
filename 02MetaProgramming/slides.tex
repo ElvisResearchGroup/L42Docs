@@ -148,8 +148,10 @@ Point:{ $\Comment{(N x, N y) desugar into}$
 In 42, a concrete class have a \alert{coherent set} of abstract methods:
 \begin{itemize}
 \PresentationOnly\pause\item A class with no abstract methods is concrete {\small(as {\texttt{java.lang.Math}})}
-\PresentationOnly\pause\item A class with a single abstract \Q@type@ method returning \Q@Outer0@
-whose parameters are all of placeholder type (as \Q@N^ x@) is concrete.
+\PresentationOnly\pause\item
+ A class with a single abstract \Q@type@ method returning \Q@Outer0@
+%whose parameters are all of placeholder type (as \Q@N^ x@)
+ is concrete.
 \PresentationOnly\pause\item If such abstract \Q@type@ method is present, then, for each parameter,
 it is allowed to have abstract getters and setters,
 where the name maps back to the parameter name.
@@ -632,7 +634,7 @@ Main:(
     }
   code:=Refactor::ExposeAsLibrary[Path"MyLib"]<<code
   code:=Optimize::RemoveUnreachableCode[]<<code
-  Deploy[URL"../MyTowel";permissions:S".."]<<code
+  Deploy[URL"../MyLib";permissions:S".."]<<code
   )
 }
 \end{lstlisting}
@@ -969,8 +971,8 @@ me=Tables::Student(id:....)
 \begin{NiceCode}{59ex}{1}
 \begin{lstlisting}
 {reuse  $\ReuseUrl{L42.is/AdamsTowel}$
-Db: Load[]<<{$\ReuseUrl{L42.is/Db}$}
-Gui: Load[]<<{$\ReuseUrl{L42.is/2dGui}$}
+DB: Load[]<<{reuse $\ReuseUrl{L42.is/DB}$}
+Gui: Load[]<<{reuse f$\ReuseUrl{L42.is/2dGui}$}
 Tables: DB(S"...my connection string...")
 StudentList: Collections.list(Tables::Student)
 StudentsView: Gui.tableOf(StudentList)
@@ -993,8 +995,8 @@ Main:{
 \frametitle{Visualize DB}
 \begin{NiceCode}{59ex}{1}
 \begin{lstlisting}
-DB: Load[]<<{$\ReuseUrl{L42.is/DB}$}
-Gui: Load[]<<{$\ReuseUrl{L42.is/2dGUI}$}
+DB: Load[]<<{reuse $\ReuseUrl{L42.is/DB}$}
+Gui: Load[]<<{reuse $\ReuseUrl{L42.is/2dGUI}$}
 Tables: DB(S"...my connection string...")
 StudentList: Collections.list(Tables::Student)
 StudentsView: Gui.tableOf(StudentList)
@@ -1003,7 +1005,7 @@ QueryFrom: Tables::Query[result:StudentList](
 \end{lstlisting}
 \end{NiceCode}
 \begin{itemize}
-\item \Q@Load[]<<{$\ReuseUrl{L42.is/..}$}@
+\item \Q@Load[]<<{reuse $\ReuseUrl{L42.is/..}$}@
 \Q@Load@ is loading the code of a library
 and, according to the conventions in 
 $\ReuseUrl{L42.is/AdamsTowel}$, is linking numbers, strings
@@ -1071,8 +1073,8 @@ close the circle, showing a table view of our Italian students.
 \begin{NiceCode}{59ex}{1}
 \begin{lstlisting}
 {reuse  $\ReuseUrl{L42.is/AdamsTowel}$
-Db: Load[]<<{$\ReuseUrl{L42.is/Db}$}
-Gui: Load[]<<{$\ReuseUrl{L42.is/2dGui}$}
+DB: Load[]<<{reuse $\ReuseUrl{L42.is/DB}$}
+Gui: Load[]<<{reuse $\ReuseUrl{L42.is/2dGui}$}
 Tables: DB(S"...my connection string...")
 StudentList: Collections.list(Tables::Student)$\Comment{ HERE!!}$
 StudentsView: Gui.tableOf(StudentList)
