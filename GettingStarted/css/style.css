@@ -1,0 +1,173 @@
+    html, body, div, span, applet, object, iframe,
+    h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+    a, abbr, acronym, address, big, cite, code,
+    del, dfn, em, img, ins, kbd, q, s, samp,
+    small, strike, strong, sub, sup, tt, var,
+    b, u, i, center,
+    dl, dt, dd, ol, ul, li,
+    fieldset, form, label, legend,
+    table, caption, tbody, tfoot, thead, tr, th, td,
+    article, aside, canvas, details, embed,
+    figure, figcaption, footer, header, hgroup,
+    menu, nav, output, ruby, section, summary,
+    time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+    }
+    /*HTML5 display-role reset for older browsers*/
+    article, aside, details, figcaption, figure,
+    footer, header, hgroup, menu, nav, section {
+    display: block;
+    }
+    body {
+    line-height: 1.6;
+    }
+    ol, ul {
+    list-style: none;
+    }
+    blockquote, q {
+    quotes: none;
+    }
+    blockquote:before, blockquote:after,
+    q:before, q:after {
+    content: '';
+    content: none;
+    }
+    table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    }
+body {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    color:#333;
+	background: rgb(245,245,245);
+}
+
+p { padding: 10px;}
+
+#wrapper {
+    margin: 0 auto;
+    width: 1000px;
+}
+
+#headerwrap {
+    width: 1000px;
+    float: left;
+    margin: 0 auto;
+    clear: both;
+}
+
+#header {
+    height: 85px;
+	background-color: rgb(0, 71, 48);
+    background-image: url('stars.gif');
+    background-repeat: repeat-y;
+    background-attachment: scroll;
+    background-position: center top;
+    background-clip: border-box;
+    background-origin: padding-box;
+    background-size: auto auto;
+    border-radius: 0px  0px 10px 10px;
+	border-style:solid;
+    border-color:rgb(0,40,20);
+    border-width: 0px 0px 3px 0px;
+    margin: 5px;
+}
+
+#contentwrap {
+    width: 1000;
+    float: left;
+    margin: 0 auto;
+    width:100%;
+}
+
+#content {
+    background: white;
+    border-radius: 10px;
+    border: 1px solid #a1a1a1;
+    margin: 5px;
+    }
+
+#footerwrap {
+    width: 1000px;
+    float: left;
+    margin: 0 auto;
+    clear: both;
+}
+
+#footer {
+    background: rgb(245,245,245);
+    border-radius: 10px  10px 0px 0px;
+    border-style:solid;
+    border-color:rgb(200,200,200);
+    border-width: 3px 0px 0px 0px;
+    color: rgb(150,150,150);
+    margin: 5px;
+}
+#footer a, #footer a:link, #footer a:visited, #footer a:active, #footer a:hover {
+    color: rgb(150,150,150);
+}
+#viewQuestionLeftColumn {
+    text-align:left;
+    width: 55%;
+    /*float: left;  NO, to compute the space*/
+    /*background: #ccc;*/
+    margin: 1px 0px 1px;
+}
+
+#viewQuestionRightColumn {
+    width: 45%;
+    margin-right: 5px;
+    text-align:left;
+    float: right;/*to put before left in the page*/
+    /*background: #eee;*/
+}
+
+#evaluateAnswerMainColumn {
+    /*width: 950px;
+    background: #ccc;*/
+    padding: 10px;
+}
+
+#evaluateAnswerFeedback {
+    width: 95%;
+    background: #eee;
+    text-align: left;
+
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 30px;
+
+    padding: 10px;
+
+    border-style: solid;
+    border-color: darkgray;
+    border-top: 2px solid darkgray;
+    border-right: 2px solid white;
+    border-bottom: 2px solid white;
+    border-left: 2px solid darkgray;
+
+
+
+}
+
+ul{padding-left: 30px;
+  list-style-type: square;
+}
+
+.l42{
+  background-color:lightgray;
+
+  padding: 10px;
+  font-family:monospace; font-weight: bold; color: rgb(10,10,55);
+}
+
+h2{padding: 10px;font-size: 110%;font-weight: bold;}
+ 
+.code{font-family:monospace; font-weight: bold; color: rgb(10,10,55);}

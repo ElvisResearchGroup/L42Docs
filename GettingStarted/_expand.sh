@@ -1,0 +1,1 @@
+sed '/^#/ d' < fileAux1.xhtml > fileAux2.xhtml
