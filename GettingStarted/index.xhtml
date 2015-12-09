@@ -31,37 +31,48 @@ where every value is an object.
 If you come from other languages like Java this means that
 <ul>
 <li>
-Numbers are objects, so thay can have methods like <span class="code"><![CDATA[.sqrt()]]></span> or <span class="code"><![CDATA[.abs()]]></span>.
+Numbers are objects,
+so thay can have methods like <span class="code"><![CDATA[.sqrt()]]></span> or <span class="code"><![CDATA[.abs()]]></span>.
 </li><li>
-All operators are just method calls, thus <span class="code"><![CDATA[a+b]]></span> is sugar for <span class="code"><![CDATA[a.operator+(b)]]></span>, and so on.
-Any class that offers that method can support such operator.
+All operators are just method calls, thus <span class="code"><![CDATA[a+b]]></span> is sugar for <span class="code"><![CDATA[a.operator+(b)]]></span>, and so on. Note how <span class="code"><![CDATA[operator+]]></span> is a valid method name.
+Any class that offers that method supports the operator.
 
 </li><li>
 Classes are objects, when you write <span class="code"><![CDATA[Foo.bar()]]></span> you refer to the method <span class="code"><![CDATA[.bar()]]></span> offered by the object denoted by <span class="code"><![CDATA[Foo]]></span>.
 class objects are just objects, and you can also store them in local bindings if you wish, as in <span class="code"><![CDATA[x=Foo]]></span>
 </li><li>
-The code you write is an object, but only at the granularity of
-Libraries, that is, balanced pairs of curly brakets representing classes (or interfaces) with methods and nesteds, as in
-<pre class="l42"><![CDATA[ Library myCode={ method Int foo()} ]]></pre>
+The code is an object, but only at the granularity of
+Libraries, that is, balanced pairs of curly brakets representing classes (or interfaces) with methods and nesteds.
+This is usefull for meta-programming, as we will see later this is the most important feature of 42.
+<!--<pre class="l42"><![CDATA[ Library myCode={ method Int foo()} ]]></pre>
 A local binding of type Library initialized with a class with a single <span class="code"><![CDATA[foo()]]></span> method. Since there is no body, it is an abstract method.
+ -->
 
 </li><li>
 Differently from other pure object oriented languages, in 42
 all objects have the same treatement, both syntactically and semantically.
-For example <span class="code"><![CDATA[x=40Int+2Int]]></span>
-This is a declaraton for a local binding <span class="code"><![CDATA[x]]></span>.
-Coming from another programming language, you many be suprised that we have to write <span class="code"><![CDATA[Int]]></span> after 40 and 2.
+For example <span class="code"><![CDATA[x=S"Hello "++S"World"]]></span>
+This is a declaraton for a local binding <span class="code"><![CDATA[x]]></span>, using the string class <span class="code"><![CDATA[S]]></span> and the concatenation operator <span class="code"><![CDATA[++]]></span>.
+Coming from another programming language, you many be suprised that we have to write <span class="code"><![CDATA[S]]></span> before <span class="code"><![CDATA["Hello "]]></span> and <span class="code"><![CDATA["World"]]></span>.
 This extra verbosity is need to provide fair treatement to all classes. (<a href= "note1.xhtml">see more</a>)
 In 42 we do not give preferencial treatement
 to special object/classes. In this sense, we consider
 most other languages to be racist.
 They give priority to their "preferred" version of numbers and strings, and this puts into a position of unfair disadvantage library code trying to define its own numbers kinds.
-Reading 42 code you may encounter Int, UInt, Float, Meter, Kg, Second, Year, PhoneNumber and many other numeric classes.
-In the same way, to print a debug message you may see
-<span class="code"><![CDATA[Debug(S"My Message")]]></span>
-where the S is the stringable type, but you may encounter
-<span class="code"><![CDATA[URL]]></span>, <span class="code"><![CDATA[URI]]></span>, <span class="code"><![CDATA[PROLOG]]></span>, <span class="code"><![CDATA[EMAIL]]></span>
-and many other stringable types.
+Insead in 42 you may encounter strings like <span class="code"><![CDATA[URL"www.google.com"]]></span>,
+ <span class="code"><![CDATA[EMAIL"Artur.Dent@gmail.com"]]></span> or multiline strings like
+ <pre class="l42"><![CDATA[ Javascript"
+'x=function(){
+'  alert("hello world";)
+'  }
+' x()
+"
+]]></pre>
+
+The same for numeric classes: to talk about a street, 20 meters long, you would write
+<span class="code"><![CDATA[streetLenght=20Meter]]></span>.
+Note that we write the class name after the number, both for better readability and because <span class="code"><![CDATA[Meter20]]></span> would be consider an identifier by the parser.
+You may encounter <span class="code"><![CDATA[Int]]></span>, <span class="code"><![CDATA[UInt]]></span>, <span class="code"><![CDATA[Float]]></span>, <span class="code"><![CDATA[Meter]]></span>, <span class="code"><![CDATA[Kg]]></span>, <span class="code"><![CDATA[Second]]></span>, <span class="code"><![CDATA[Year]]></span>, <span class="code"><![CDATA[PhoneNumber]]></span> and many other numeric classes.
 </li></ul>
 
 </p><h2> Simpler complete program </h2> <p>
@@ -72,7 +83,7 @@ Let now starts showing the simplest 42 progam: an empty library.
 
 If we save this valid program in a file <span class="code"><![CDATA[Test.L42]]></span> and we run <span class="code"><![CDATA[L42 Test]]></span>, we get an error.
 </p><p>
-As you see 42 is very intuitive, as you whould expect from your former life experiences, most simple things just does not work.
+As you see 42 is very intuitive, as you would expect from your former life experiences, most simple things just does not work.
 Note how valid programs can produce errors.
 We will soon learn how to produce errors in controlled and elegant ways.
 </p><h2> Simple hello world program </h2> <p>
@@ -94,7 +105,15 @@ Main:{
   }
 }
 ]]></pre>
-
+At the right of <span class="code"><![CDATA[Main:]]></span> we write the expression/statements that
+we wish to execute. <span class="code"><![CDATA[Main]]></span> is not a method, and <span class="code"><![CDATA[Main]]></span> is not special name either. In 42 there is no concept of main method as in
+Java or C. For now you can think of <span class="code"><![CDATA[Main:]]></span> as a top level command, we will understand later how this fits with the general language design.
+<!--A 42 program execution <span style="color:#ff1111; font-weight: bold;">is</span> the generation of all its nested classes/interface.
+, code is simply executed from top to bottom as in
+Python, Javascript or Php. However, the
+top level expression is a Library, and code can go in libraries
+as an initializer foyou need to put the code into an expression
+-->
 Here AdamTowel is our Towel, that is the set of classes and interfaces that we wish to start from.
 </p><p>
 We are not supposed to always start from AdamTowel, there are many interesting towels out there, and you may also become skilled in the
@@ -115,7 +134,8 @@ Main:{
   }
 }
 ]]></pre>
-Here we declare a class to host our hello(name) function.
+Here we declare a class to host our <span class="code"><![CDATA[hello(name)]]></span> method.
+We write <span class="code"><![CDATA[class method]]></span> to declare a method that can be called on the class object, as in <span class="code"><![CDATA[MyCode.hello(name=S"world")]]></span>.
 The ++ is used as string (or in general sequence/collection) concatenation.
 
 Note how the method is called using the parameter name explicitly.

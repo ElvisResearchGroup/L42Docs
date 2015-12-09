@@ -8,35 +8,45 @@ If you come from other languages like Java this means that
 Numbers are objects, 
 so thay can have methods like Wcode(.sqrt()) or Wcode(.abs()). 
 </li><li>
-All operators are just method calls, thus Wcode(a+b) is sugar for Wcode(a.operator+(b)), and so on.
+All operators are just method calls, thus Wcode(a+b) is sugar for Wcode(a.operator+(b)), and so on. Note how Wcode(operator+) is a valid method name.
 Any class that offers that method supports the operator.
 
 </li><li>
 Classes are objects, when you write Wcode(Foo.bar()) you refer to the method Wcode(.bar()) offered by the object denoted by Wcode(Foo).
 class objects are just objects, and you can also store them in local bindings if you wish, as in Wcode(x=Foo)
 </li><li>
-The code you write is an object, but only at the granularity of 
-Libraries, that is, balanced pairs of curly brakets representing classes (or interfaces) with methods and nesteds, as in
-OCode Library myCode={ method Int foo()} CCode
+The code is an object, but only at the granularity of 
+Libraries, that is, balanced pairs of curly brakets representing classes (or interfaces) with methods and nesteds.
+This is usefull for meta-programming, as we will see later this is the most important feature of 42.
+<!--OCode Library myCode={ method Int foo()} CCode
 A local binding of type Library initialized with a class with a single Wcode(foo()) method. Since there is no body, it is an abstract method.
+ -->
 
 </li><li>
 Differently from other pure object oriented languages, in 42
 all objects have the same treatement, both syntactically and semantically.
-For example Wcode(x=40Int+2Int)
-This is a declaraton for a local binding Wcode(x).
-Coming from another programming language, you many be suprised that we have to write Wcode(Int) after 40 and 2.
+For example Wcode(x=S"Hello "++S"World")
+This is a declaraton for a local binding Wcode(x), using the string class Wcode(S) and the concatenation operator Wcode(++).
+Coming from another programming language, you many be suprised that we have to write Wcode(S) before Wcode("Hello ") and Wcode("World").
 This extra verbosity is need to provide fair treatement to all classes. (Wlink(note1,see more))
 In 42 we do not give preferencial treatement
 to special object/classes. In this sense, we consider
 most other languages to be racist.
 They give priority to their "preferred" version of numbers and strings, and this puts into a position of unfair disadvantage library code trying to define its own numbers kinds.
-Reading 42 code you may encounter Int, UInt, Float, Meter, Kg, Second, Year, PhoneNumber and many other numeric classes.
-In the same way, to print a debug message you may see
-Wcode(Debug(S"My Message"))
-where the S is the stringable type, but you may encounter 
-Wcode(URL), Wcode(URI), Wcode(PROLOG), Wcode(EMAIL)
-and many other stringable types.
+Insead in 42 you may encounter strings like Wcode(URL"www.google.com"),
+ Wcode(EMAIL"Artur.Dent@gmail.com") or multiline strings like
+ OCode Javascript"
+'x=function(){
+'  alert("hello world";)
+'  }
+' x()
+"
+CCode
+
+The same for numeric classes: to talk about a street, 20 meters long, you would write
+Wcode(streetLenght=20Meter).
+Note that we write the class name after the number, both for better readability and because Wcode(Meter20) would be consider an identifier by the parser.
+You may encounter Wcode(Int), Wcode(UInt), Wcode(Float), Wcode(Meter), Wcode(Kg), Wcode(Second), Wcode(Year), Wcode(PhoneNumber) and many other numeric classes.
 </li></ul>
 
 WTitle(Simpler complete program)
@@ -47,7 +57,7 @@ OCode {} CCode
 
 If we save this valid program in a file Wcode(Test.L42) and we run Wcode(L42 Test), we get an error.
 WP
-As you see 42 is very intuitive, as you whould expect from your former life experiences, most simple things just does not work.
+As you see 42 is very intuitive, as you would expect from your former life experiences, most simple things just does not work.
 Note how valid programs can produce errors.
 We will soon learn how to produce errors in controlled and elegant ways.
 WTitle(Simple hello world program)
@@ -69,7 +79,15 @@ Main:{
   }
 }
 CCode
-
+At the right of Wcode(Main:) we write the expression/statements that
+we wish to execute. Wcode(Main) is not a method, and Wcode(Main) is not special name either. In 42 there is no concept of main method as in
+Java or C. For now you can think of Wcode(Main:) as a top level command, we will understand later how this fits with the general language design.
+<!--A 42 program execution WEmph(is) the generation of all its nested classes/interface.
+, code is simply executed from top to bottom as in 
+Python, Javascript or Php. However, the
+top level expression is a Library, and code can go in libraries 
+as an initializer foyou need to put the code into an expression
+-->
 Here AdamTowel is our Towel, that is the set of classes and interfaces that we wish to start from.
 WP
 We are not supposed to always start from AdamTowel, there are many interesting towels out there, and you may also become skilled in the 
@@ -90,7 +108,8 @@ Main:{
   }
 }
 CCode
-Here we declare a class to host our hello(name) function.
+Here we declare a class to host our Wcode(hello(name)) method.
+We write Wcode(class method) to declare a method that can be called on the class object, as in Wcode(MyCode.hello(name=S"world")).
 The ++ is used as string (or in general sequence/collection) concatenation.
 
 Note how the method is called using the parameter name explicitly.
