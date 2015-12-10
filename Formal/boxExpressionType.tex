@@ -60,19 +60,16 @@
 \begin{MetaRule}{lib-t}
 \begin{consequence}
 \TsJ{
-\p\Opt\typeStar;\varEnv;\sealEnv;\throwEnv
+\p;\varEnv;\sealEnv;\throwEnv
 }{\classB}{\IMdf\,\LibraryKw}
 \end{consequence}
 \begin{sideCondition}
-%\TypeJ{\p}{\classB}{\Cb{\_}^{\labelVar_\vI;\_}}\\
 \p\vdash \classB\ReduceArrow{}{\Compiled\ct}\\
-\p\vdash \Compiled\ct:\mbox{ok}\\
-\mbox{if }\StarOf\p\mbox{ then }
+\mbox{if not }\ExeAndComplete{\p}
+\mbox{ then }
+\p\vdash \Compiled\ct:\mbox{ok}
+\mbox{ and}\\
 \Compiled\ct=\Cb{\_\,\_}^{\Opt\typePlus,\_}
-%\labelVarOf(\ct)\!=\!\typeLess
-%\!\mbox{ iff }\!\labelVarOf(\p)\in\{\typeLess,\typeMeta\}\\
-%\labelVarOf(\ct)\!=\!\typePlus
-%\!\mbox{ iff }\!\labelVarOf(\p)\in\{\typePlus,\typeStar\}\\
 \end{sideCondition}
 \end{MetaRule}
 
@@ -83,25 +80,25 @@
 %\end{consequence}
 %\end{MetaRule}
 \\
-{}_{}
-\\
-\begin{MetaRule}{meth-unknown-t}
-\begin{premise}
-\TsJ{\p;\varEnv;\sealEnv;\throwEnv}{\e_i}{\T_i}
-\mbox{ for all }i\in 0..n\\
-\end{premise}
-\begin{consequence}
-\TsJ{\p;\varEnv;\sealEnv;\throwEnv}{\e_\vz\Mc\m{\x_\vI\colon\e_\vI\ldots\x_\vn\colon\e_\vn}}{\T}
-\end{consequence}
-\begin{sideCondition}
-\mbox{either }\forall\T.\TsJ{\p;\varEnv;\sealEnv;\throwEnv}{\e_0}{\T}\\
-\mbox{ or not } \ExeAndComplete{\p},\mbox{not }\StarOf\p\mbox{ and }\\
-%\quad\T_0\in\{\Type\_{\Path\Many{\classSep\C}}{},\Path\Many{\classSep\C}\singleDot\Many\mx\}\\
-\quad\T_0=\Type\_{\Path\Many{\classSep\C}}{}
-\mbox{ where }\p(\Path)\in\{\emptyset,\walkBy\}
-\end{sideCondition}
-\end{MetaRule}
-\\
+%{}_{}
+%\\
+%\begin{MetaRule}{meth-unknown-t}
+%\begin{premise}
+%\TsJ{\p;\varEnv;\sealEnv;\throwEnv}{\e_i}{\T_i}
+%\mbox{ for all }i\in 0..n\\
+%\end{premise}
+%\begin{consequence}
+%\TsJ{\p;\varEnv;\sealEnv;\throwEnv}{\e_\vz\Mc\m{\x_\vI\colon\e_\vI\ldots\x_\vn\colon\e_\vn}}{\T}
+%\end{consequence}
+%\begin{sideCondition}
+%\mbox{either }\forall\T.\TsJ{\p;\varEnv;\sealEnv;\throwEnv}{\e_0}{\T}\\
+%\mbox{ or not } \ExeAndComplete{\p},\mbox{not }\StarOf\p\mbox{ and }\\
+%%\quad\T_0\in\{\Type\_{\Path\Many{\classSep\C}}{},\Path\Many{\classSep\C}\singleDot\Many\mx\}\\
+%\quad\T_0=\Type\_{\Path\Many{\classSep\C}}{}
+%\mbox{ where }\p(\Path)\in\{\emptyset,\walkBy\}
+%\end{sideCondition}
+%\end{MetaRule}
+%\\
 \begin{MetaRule}{using-t}
   \begin{premise}
 \TsJ{\p;\varEnv;\sealEnv;\throwEnv}{\e_i}{\T'_i\leq\T_i}
