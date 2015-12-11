@@ -3,17 +3,21 @@ WTitle(Why 42)
 42 is a new programming language,
 the name is inspired by The Hitchhiker's Guide to the Galaxy.
 The language goal is to allow the transparent cooperation and composition of millions of libraries at the same time.
+WP
 In 42 you will be able to import libraries just by naming them and to
 compose them in your code without worrying of their dependencies.
-Normally libraries are big things, coming from outside and manually imported/installed. In 42 Libraries are first class entities, that can be manipulated as values,loaded, stored, modified, adapted, saved or simply used. You will write code that manipulate libraries, but more importantly you will use libraries that manipulate libraries in non trivial ways.
-
+Normally libraries are big monolitic things, coming from outside and manually imported/installed. The user have little control on
+the library code, and the library have no influence on the importing context.
+WP
+In 42 Libraries are usually much smaller and are first class entities, that can be manipulated as values,loaded, stored, modified, adapted, saved or simply used. You will write code that manipulate libraries, but more importantly you will use libraries that manipulate libraries in non trivial ways.
+Indeed in 42 manipulating libraries is so natural that is convenient to think of your own code as a library that you offer to yourself only.
 WP
 42 enforce a high level of abstraction, thus there is no access to primitive
 structures like arrays (just use collections), and there is no concept of null or default initialization.
-While is possible to write in a fully functional style in 42, usually 42 programs mix mutable datastructure with aliasing and immutable data as found in functional languages. Indeed 42 offers powerful support for aliasing control and immutability, helping in mixing the two stiles in an easy and natural way.
+While is possible to write in a fully functional style in 42, usually 42 programs mix WEmph(mutable datastructure with aliasing)  and WEmph(deeply immutable data). Indeed 42 offers powerful support for aliasing control and immutability, helping in mixing the two stiles in an easy and natural way.
 
 WP
-42 offers (well, will offer) automatic parallelism: code that can safely be executed in parallel may be automatically optimized.
+42 offers (well, will offer) automatic parallelism: thanks to immutability and aliasing control, many patterns of normal sequential code will be safely be executed in parallel.
 
 WTitle(Object orientation)
 42 is a pure object oriented language,
