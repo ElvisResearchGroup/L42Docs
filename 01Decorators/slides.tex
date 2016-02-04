@@ -6,7 +6,7 @@
 Point: {(N x, N y) $\Comment{class point and field declarations}$
   method N distance(Point that){$\Comment{method declaration}$
     var tmpX=this.x()-that.x() $\Comment{fields are getters}$
-    tmpX:=tmpX*tmpX $\Comment{allowed since delcared var}$
+    tmpX:=tmpX*tmpX $\Comment{allowed since declared var}$
     var tmpY=this.y()-that.y() $\Comment{omitted var type}$
     tmpY*=tmpY  $\Comment{usual Java/C++ operators}$
     return (tmpX+tmpY).sqrt() $\Comment{pure oo view}$

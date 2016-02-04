@@ -195,7 +195,7 @@ For very short methods we can omit the curly brackets and return.
 Indeed method bodies are just expressions, and the curly brackets turn statements into expressions.
 
 In the method <span class="code"><![CDATA[add(x)]]></span> we show a constructor call and getters.
-In the method <span class="code"><![CDATA[add(y)]]></span> we show an improved version, using the with method, another gift of Data, that allows us to easily create a clone with a
+In the method <span class="code"><![CDATA[add(y)]]></span> we show an improved version, using the <span class="code"><![CDATA[with]]></span> method, another gift of Data, that allows us to easily create a clone with a
 single field updated.
 We can declare two methods, <span class="code"><![CDATA[add(x)]]></span> and <span class="code"><![CDATA[add(y)]]></span> with the same name, if parameter names are different.
 
@@ -244,9 +244,14 @@ Animal:Data<<{
   mut method
   Void move()
     this.location(path.first()))
-    path.removeFirst()
+    this.path().removeFirst()
   }
 ]]></pre>
+
+Here we use the type <span class="code"><![CDATA[Points]]></span> that we assumed to be a list of <span class="code"><![CDATA[Point]]></span>. We can instantiate <span class="code"><![CDATA[Points]]></span> by using <span class="code"><![CDATA[[..;..]]]></span> as shown later.
+Here we use <span class="code"><![CDATA[mut Points path]]></span> to denote a mutable list of points. Note the absence of <span class="code"><![CDATA[var]]></span>; this is conceptually similar to a <span class="code"><![CDATA[Points * const path;]]></span> in C++ or <span class="code"><![CDATA[final Points path;]]></span> in Java.
+To contrast, the declaration <span class="code"><![CDATA[var Point location]]></span> is similar to
+<span class="code"><![CDATA[Point const * location;]]></span> in C++ or <span class="code"><![CDATA[ImmPoint location;]]></span> in Java (for an opportune <span class="code"><![CDATA[ImmPoint]]></span> class).
 This code models an animal following a path. It can be used like this.
 This code involve a mutable animal with a mutable field. This is often
 a terrible idea, since its behaviour may depend on aliasing: what happens with 2 dogs?
@@ -269,7 +274,7 @@ Animal:Data<<{
   mut method
   Void move()
     this.location(path.first()))
-    path.removeFirst()
+    this.path().removeFirst()
   }
 ]]></pre>
 Now we use the modifier "capsule", this requires the field to be encapsulated with respect to aliasing.
@@ -283,8 +288,11 @@ Now the code of before would not compile. However we can still write the followi
   dog1.move()
   dog2.move()
 ]]></pre>
-Where the <span class="code"><![CDATA[ps]]></span> local binding is declared capsule, thus it can satisfy the Animal.path requirement, but it can be used only onece.
+Where the <span class="code"><![CDATA[ps]]></span> local binding is declared capsule, thus it can satisfy the Animal.path requirement, but it can be used only once.
 dog2 have to use another capsule. It is ok to just write the object creation in place as is done.
+Alternativelly, most classes offers a <span class="code"><![CDATA[clone()]]></span> method,
+in this case we could write
+<span class="code"><![CDATA[dog2=Animal(location=zero, path=dog1.ps().clone())]]></span>
 
 </p><h2> Modifiers , recall </h2> <p>
 We have now seen many different modifiers, lets recall them:

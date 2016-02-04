@@ -169,7 +169,7 @@ For very short methods we can omit the curly brackets and return.
 Indeed method bodies are just expressions, and the curly brackets turn statements into expressions. 
 
 In the method Wcode(add(x)) we show a constructor call and getters.
-In the method Wcode(add(y)) we show an improved version, using the with method, another gift of Data, that allows us to easily create a clone with a
+In the method Wcode(add(y)) we show an improved version, using the Wcode(with) method, another gift of Data, that allows us to easily create a clone with a
 single field updated.
 We can declare two methods, Wcode(add(x)) and Wcode(add(y)) with the same name, if parameter names are different.
 
@@ -218,9 +218,14 @@ Animal:Data<<{
   mut method
   Void move() 
     this.location(path.first()))
-    path.removeFirst()
+    this.path().removeFirst()
   }
 CCode
+
+Here we use the type Wcode(Points) that we assumed to be a list of Wcode(Point). We can instantiate Wcode(Points) by using Wcode([..;..]) as shown later. 
+Here we use Wcode(mut Points path) to denote a mutable list of points. Note the absence of Wcode(var); this is conceptually similar to a Wcode(Points * const path;) in C++ or Wcode(final Points path;) in Java.
+To contrast, the declaration Wcode(var Point location) is similar to
+Wcode(Point const * location;) in C++ or Wcode(ImmPoint location;) in Java (for an opportune Wcode(ImmPoint) class).
 This code models an animal following a path. It can be used like this.
 This code involve a mutable animal with a mutable field. This is often
 a terrible idea, since its behaviour may depend on aliasing: what happens with 2 dogs?
@@ -243,7 +248,7 @@ Animal:Data<<{
   mut method
   Void move() 
     this.location(path.first()))
-    path.removeFirst()
+    this.path().removeFirst()
   }
 CCode
 Now we use the modifier "capsule", this requires the field to be encapsulated with respect to aliasing.
@@ -257,9 +262,12 @@ OCode
   dog1.move()
   dog2.move()
 CCode
-Where the Wcode(ps) local binding is declared capsule, thus it can satisfy the Animal.path requirement, but it can be used only onece.
+Where the Wcode(ps) local binding is declared capsule, thus it can satisfy the Animal.path requirement, but it can be used only once.
 dog2 have to use another capsule. It is ok to just write the object creation in place as is done.
-
+Alternativelly, most classes offers a Wcode(clone()) method,
+in this case we could write
+Wcode(dog2=Animal(location=zero, path=dog1.ps().clone()))
+  
 WTitle(Modifiers COMMA recall)
 We have now seen many different modifiers, lets recall them:
 immutable: the default, when you omit the modifier, you mean immutable. 
