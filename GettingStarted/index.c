@@ -19,6 +19,9 @@ While is possible to write in a fully functional style in 42, usually 42 program
 WP
 42 offers (well, will offer) automatic parallelism: thanks to immutability and aliasing control, many patterns of normal sequential code will be safely be executed in parallel.
 
+
+WTitle((1) Objects and Classes)
+
 WTitle(Object orientation)
 42 is a pure object oriented language,
 where every value is an object. This means that:
@@ -37,9 +40,7 @@ class objects are just objects, and you can also store them in local bindings if
 The code is an object, but only at the granularity of 
 Libraries, that is, balanced pairs of curly brackets representing classes (or interfaces) with methods and nesteds.
 This is usefull for meta-programming, as we will see later this is the most important feature of 42.
-<!--OCode Library myCode={ method Int foo()} CCode
-A local binding of type Library initialized with a class with a single Wcode(foo()) method. Since there is no body, it is an abstract method.
- -->
+
 
 </li><li>
 Differently from other pure object oriented languages, in 42
@@ -70,19 +71,6 @@ Note that we write the class name after the number, both for better readability 
 You may encounter Wcode(Int), Wcode(UInt), Wcode(Float), Wcode(Meter), Wcode(Kg), Wcode(Second), Wcode(Year), Wcode(PhoneNumber) and many other numeric classes.
 </li></ul>
 
-<!--WTitle(Simpler complete program)
-
-Let now starts showing the simplest 42 program: an empty library.
-
-OCode {} CCode
-
-If we save this valid program in a file Wcode(Test.L42) and we run Wcode(L42 Test), we get an error.
-WP
-As you see 42 is very intuitive, as you would expect from your former life experiences, most simple things just does not work.
-Note how valid programs can produce errors.
-We will soon learn how to produce errors in controlled and elegant ways.
--->
-
 WTitle(Simple hello world program)
 Let show now a simple hello world program:
 OCode 
@@ -96,12 +84,7 @@ CCode
 At the right of Wcode(Main:) we write the expression/statements that
 we wish to execute. Wcode(Main) is not a method, and Wcode(Main) is not special name either. In 42 there is no concept of main method as in
 Java or C. For now you can think of Wcode(Main:) as a top level command, we will understand later how this fits with the general language design.
-<!--A 42 program execution WEmph(is) the generation of all its nested classes/interface.
-, code is simply executed from top to bottom as in 
-Python, Javascript or Php. However, the
-top level expression is a Library, and code can go in libraries 
-as an initializer for you need to put the code into an expression
--->
+
 When we write Wcode(reuse L42.is/AdamTowel) we are asking 42 to
 reuse the code offered by the library offered in the internet address 
 Wcode(L42.is/AdamTowel).
@@ -128,11 +111,6 @@ Main:{
 CCode
 Here we declare a class to host our Wcode(hello(name)) method.
 We write Wcode(class method) to declare a method that can be called on the class object, as in Wcode(MyCode.hello(name=S"world")). This is equivalent to a static method in languages like Java or C++.
-WP
-<!-- LATER?
-Wcode(MyCode.hello(..)) use directly the Wcode(MyCode) class instance as receiver. We can also give it a name 
-e se vuoi puoi anche salvarlo su un binding locale, tipo x=MyCode  x.hello(...)
--->
 
 WP
 Note how the method is called using the parameter name explicitly.
@@ -180,8 +158,10 @@ WP
 Note how we use always getters and we never access fields directly.
 In many other languages we can use write Wcode(a.fieldName) and Wcode(a.fieldName=newValue). Such syntax do not exists in 42. Same goes for object instantiation; in many languages there is a special Wcode(new ClassName(..)) dedicated syntax, while in 42 it is just a method call.
 WP
-Also, similarly to what happens in python, we need to use Wcode(this.methName()) to call methods when the receiver is Wcode(this).
+Also, similarly to what happens in python, we need to use Wcode(this.methodName()) to call methods when the receiver is Wcode(this).
 While this makes some code more verbose, save us from the burden of  method hiding.   
+
+
 
 WTitle(Decorators)
 Decorators are one of the main concepts used by 42 programmers. We will encounter many decorators in this tutorial.
@@ -189,10 +169,29 @@ For now, just get used to the pattern of writing
 Wcode(<<) to go from a minimal chunk of code, with method declarations for the important bits, to a fully fledged usable class.
 Wlink(Decorators, More on decorators)
 
+WTitle(Object creation COMMA recall)
+42 supports many different syntactic forms that are convenient to create objects:
+<ul><li>
+12Int: from a numeric representation
+</li><li>
+S"foo": from a string representation
+</li><li>
+Point(x=_,y=_): from the parameter values
+</li><li>
+Points[_;_;_]: from a variable length sequence of values; for example Wcode(Points) can be a list of Wcode(Point). We can instantiate Wcode(Points) by using the square brakets as shown later. 
+</li></ul>
+
+Note that in 42 those are all just expressions, and represents methods in the named class.
+Sometime is convenient to reuse this kind of syntax to get better syntactic support for certain operations; for example the string class use square brakets to support string formatting.
+Wlink(S, To understand it better: a guide to the S class)
+
+
+WTitle((2) Modifiers COMMA kinds of classes/references/objects)
+
 WTitle(Kinds of classes)
 Wcode(Point) is a WEmph(Immutable class): none of its field can be updated or mutated.
 Immutable classes are very easy to use but may be inadequate when representing real objects, whose state can mutate across time.
-A WEmph(Mutable class) is a class where the state of its instances may be mutated.
+A WEmph(Mutable class) is a class where the state of (some of) its instances may be mutated.
 
 Lets now declare a Wcode(Animal) mutable class, whose location can be updated.
 OCode
@@ -205,13 +204,13 @@ Animal:Data<<{
 CCode
 There are two new keywords used here:
 <ul><li>
-the location field is declared var.
+the Wcode(location) field is declared Wcode(var).
   This is called a variable field, and can be updated by calling a setter.
   Non variable fields can not be updated
 </li><li>
   the modifier "mut" in front of the method. 
   We have seen "class" already, an we have seen methods with the default modifier ( add(x) and add(y) ).
-  mut methods can mutate the "this" object. If you have experience with C++ you can see the similarity with const methods.
+  mut methods can mutate the "this" object. If you have experience with C++ you can see the similarity with Wcode(const) methods.
   immutable (default) methods works only on immutable "this" objects. We will see later much more about modifiers
 </li></ul>
 
@@ -225,6 +224,13 @@ In those cases the first parameter is conventionally called Wcode(that),
 and writing Wcode(a.b(that=c))
 is equivalent to writing Wcode(a.b(c)).
 This works also for methods with multiple parameters, if the first one is called Wcode(that).
+We can use an animal by writing, for example:
+
+OCode
+  dog=Animal(location=Point(x=0Int, y=0Int))//type of the reference inferred
+  mut Animal dogAlias=dog //this is the exact type 
+  dog.run()
+CCode
 
 WTitle(Interaction between mutable and immutable)
 
@@ -240,10 +246,14 @@ Animal:Data<<{
   }
 CCode
 
-Here we use the type Wcode(Points) that we assumed to be a list of Wcode(Point). We can instantiate Wcode(Points) by using Wcode([..;..]) as shown later. 
+
 Here we use Wcode(mut Points path) to denote a mutable list of points. Note the absence of Wcode(var); this is conceptually similar to a Wcode(Points * const path;) in C++ or Wcode(final Points path;) in Java.
 To contrast, the declaration Wcode(var Point location) is similar to
 Wcode(Point const * location;) in C++ or Wcode(ImmPoint location;) in Java (for an opportune Wcode(ImmPoint) class).
+That is, 
+mutable objects can be referred using mutable references,
+Immutable objects can be referred using immutable references.
+
 This code models an animal following a path. It can be used like this.
 OCode
   zero=Point(x=0Int, y=0Int)
@@ -259,7 +269,7 @@ In this code the first dog goes to 12:20.
 The secon dog goes to 0:0. 
 
 This code involve a mutable animal with a mutable field. This is often
-a terrible idea, since its behaviour may depend on aliasing: what happens if the dogs follows the same paths?
+a terrible idea, since its behaviour may depend on aliasing: what happens if two dogs follow the same paths?
 OCode
   zero=Point(x=0Int, y=0Int)
   ps=Points[ Point(x=12Int, y=20Int);Point(x=1Int, y=2Int)]
@@ -306,53 +316,121 @@ Where the Wcode(ps) local binding is declared capsule, thus it can satisfy the A
 dog2 have to use another capsule. It is ok to just write the object creation in place as is done.
 Alternativelly, most classes offers a Wcode(clone()) method,
 in this case we could write
+
 Wcode(dog2=Animal(location=zero, path=dog1.ps().clone()))
-  
-WTitle(Modifiers COMMA recall)
-We have now seen many different modifiers, lets recall them:
-immutable: the default, when you omit the modifier, you mean immutable. 
-An immutable reference points to an object that is never changing. Its whole reachable object graph never change and is immutable as well.
-mutable: A mutable reference...
-capsule: capsule references are used only once and they guaranteed that the whole reachable object graph is reachable only thought that
-capsule reference.
-Fields can be annotate capsule, the meaning is that they need to be initialized/updated with capsule variables. 
-class: class references denote the class object,
-  on methods the meaning is the same of static methods in many languages, but it can consistently be used on parameters/local variables/fields
-to encode behaviours similar to dependency injection.
-We still need to see lent and read modifiers:
-lent: a hygienic mutable reference (more on lent later).
-read: common supertype between immutable and mutable (and lent).
-Use read when you do not care what is the mutability of an object.
-For example, we could add to Animal
+
+
+
+WTitle(Immutable objects of Mutable classes)
+
+How can we get an immutable Wcode(Animal)?
+When an Wcode(Animal) is created using Wcode(Animal(location=__,path=__)) we create a Wcode(mut Animal).
+
+In most cases you can promote such reference to immutable/capsule; just make the type of the local binding explicit.
+ The type system will take care of the rest.
+If a reference can not be safely promoted to immutable/capsule, you may have to use the Wcode(.clone()) method or to refactor your code.
+OCode
+  mut Animal dog1=Animal(__)//no promotion here
+  Animal dog2=Animal(__)//promotion mutable->immutable
+  dog1.move()
+  //dog2.move() //ill-typed, requires a mut Animal
+CCode
+
+We will explain later the exact rules for promotion,
+the main idea is that if the initialization expression uses local bindings in a controlled way, then promotion can be applied.
+For example, a mutable expression using only capsule or immutable references can be promoted to capsule/immutable.
+
+WTitle(read)
+
+Use "read" when you do not care what is the mutability of an object.
+For example, we could add to Wcode(Animal)
+
 OCode
 read method
 Bool isArrived()
   this.path().isEmpty()
 CCode
-This method can be called to mutable and immutable animals.
-Wait.. how can we get an immutable Animal? just make the type of the local binding explicit. The type system will take care of the rest.
-If a reference can not be safely promoted to immutable/capsule, you may have to use the .clone() method.
+This method can be called to mutable and immutable animals:
+
 OCode
-  mut Animal dog1=Animal(__)
-  Animal dog2=Animal(__)
-  dog1.move()
-  Debug(dog1.isArrived())
-  //dog2.move()
-  Debug(dog2.isArrived())
+ Debug(dog1.isArrived()) 
+ Debug(dog2.isArrived())
 CCode
+  
+WTitle(Kinds of classes COMMA recall)
+  
+<ul>
+<li>
+immutable classes: have only immutable fields.
+It is usefull to model mathematical concepts.
+It is easy to reason about code using immutable classes,
+but some properties of real objects can be better modelled with state mutation.
+</li><li>
+shallow mutable classes: have only (variable) fields of immutable or capsule type (or class, as we will see later). 
+Reasoning with shallow mutable classes is near as easy as reasoning with immutable ones, and often more natural.
+</li><li>
+deep mutable classes: have mutable fields.
+Reasoning with deep mutable classes can be very hard.
+</li></ul>
+  
+WTitle(Modifiers up to now COMMA recall)
 
-WTitle(Object creation COMMA recall)
+<ul>
+<li>
+immutable: the default, when you omit the modifier,
+ you mean immutable. 
+An immutable reference points to an object that is never changing. Its whole reachable object graph never change and is immutable as well.
 
-We have also seen many different syntactic forms to create objects: lets recall them:
-12Int: from a numeric representation
-S"foo": from a string representation
-Point(x=_,y=_): from the parameter values
-Points[_;_;_]: from a variable length sequence of values.
+</li><li>
+mutable: A mutable reference behave like normal reference in Java, C#,C++, Python and many other languages.
+Mutable references allows to mutate the referred object.
+</li><li>
+capsule: local capsule references are used only once and they guaranteed that the whole reachable object graph is reachable only thought that
+capsule reference. 
+Local Capsule references provide a structured way to reason over deep mutable objects.
 
-Note that in 42 those are all just expressions, and represents methods in the named class.
-Sometime is convenient to reuse this kind of syntax to get better syntactic support for certain operations:
+Fields can be annotate capsule, the meaning is that they need to be initialized/updated with capsule variables.
+We will discuss more about capsule fields and how they differs from capsule local binding later.
+ 
+</li><li>
+read: A readable reference can not be used to mutate the referred object; but other mutable references pointing to the same object can mutate it.
+Read references can point to both mutable and immutable objects.
+It is easy to confound between read and immutable references.
+As a rule of thumb, if you are in doubt if you should use an immutable or a readable, you probably want an immutable reference.
 
-Wlink(S, To understand it better: a guide to the S class)
+</li><li>
+
+class: class references denote the class object,
+  on methods the meaning is the same of static methods in many languages, but it can consistently be used on parameters/local variables/fields
+to encode behaviours similar to dependency injection.
+
+
+</li><li>
+lent: we still need to see the lent modifier; a hygienic mutable reference allowing mutation but not storage (more on lent later).
+</li></ul>
+
+
+
+WTitle(Kinds of objects COMMA recall)
+
+<ul>
+<li>
+immutable: objects 
+ can be instances of immutable classes, or promoted instances of mutable classes.
+ They
+can be referred only by immutable and read references.
+</li><li>
+mutable: objects are instances of mutable classes.
+They can be referred by capsule, mutable, lent and read references.
+</li><li>
+class: objects are instances of themselves.
+They can be referred only by class references, either of their class or of one transitivelly implemented interface.
+</li></ul>
+
+
+
+
+WTitle((3) not ready to read yet Libraries)
 
 WTitle(Libraries)
 42 stands for the primate of libraries, so let see some libraries in action.
@@ -384,6 +462,53 @@ Main:{
 CCode
 A very large class of practically useful programs can be obtained by just declaring smart structs using Data and Collections.
 
-	 
 
+
+
+WTitle(Collections)
+Declaring and using collections is simple and easy in 42.
+For example, we can declare and use a list of  Wcode(Point) by writing
+OCode
+Points:Collections.mutList(Point)
+
+...
+
+zero=Point(x=0Int, y=0Int)
+one=Point(x=1Int, y=1Int)
+ps0=Points[]//the empty list
+ps1=Points[zero;one]//contains zero, one
+ps2=Points[zero;one]//contains zero, one
+
+CCode
+
+
+
+<!--OCode Library myCode={ method Int foo()} CCode
+A local binding of type Library initialized with a class with a single Wcode(foo()) method. Since there is no body, it is an abstract method.
+ -->	 
+
+ <!--WTitle(Simpler complete program)
+
+Let now starts showing the simplest 42 program: an empty library.
+
+OCode {} CCode
+
+If we save this valid program in a file Wcode(Test.L42) and we run Wcode(L42 Test), we get an error.
+WP
+As you see 42 is very intuitive, as you would expect from your former life experiences, most simple things just does not work.
+Note how valid programs can produce errors.
+We will soon learn how to produce errors in controlled and elegant ways.
+-->
+<!--A 42 program execution WEmph(is) the generation of all its nested classes/interface.
+, code is simply executed from top to bottom as in 
+Python, Javascript or Php. However, the
+top level expression is a Library, and code can go in libraries 
+as an initializer for you need to put the code into an expression
+-->
+
+<!-- LATER?
+Wcode(MyCode.hello(..)) use directly the Wcode(MyCode) class instance as receiver. We can also give it a name 
+e se vuoi puoi anche salvarlo su un binding locale, tipo x=MyCode  x.hello(...)
+-->
+ 
 #include "footer.h"	 
