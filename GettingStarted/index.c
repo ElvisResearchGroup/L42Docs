@@ -129,8 +129,11 @@ CCode
 Here we declare a class to host our Wcode(hello(name)) method.
 We write Wcode(class method) to declare a method that can be called on the class object, as in Wcode(MyCode.hello(name=S"world")). This is equivalent to a static method in languages like Java or C++.
 WP
-Per Andre: MyCode.hello usa la classe, MyCode e' il receiver, MyCode e' un oggetto,
+<!-- LATER?
+Wcode(MyCode.hello(..)) use directly the Wcode(MyCode) class instance as receiver. We can also give it a name 
 e se vuoi puoi anche salvarlo su un binding locale, tipo x=MyCode  x.hello(...)
+-->
+
 WP
 Note how the method is called using the parameter name explicitly.
 We believe this increase readability.
@@ -144,6 +147,7 @@ WP
 The class Wcode(MyCode) of before offers a single class method, have no fields and you can not create instances of Wcode(MyCode), since no factory is present; you can think about it as a module.
 In 42 we do not have constructors. Objects are created by factory methods. We believe this is a much simpler and consistent approach to object initialization.
 
+WTitle(Simple class with internal state)
 Let create now a class with state and factory:
 OCode
 Point:Data<<{
@@ -172,6 +176,12 @@ In the method Wcode(add(x)) we show a constructor call and getters.
 In the method Wcode(add(y)) we show an improved version, using the Wcode(with) method, another gift of Data, that allows us to easily create a clone with a
 single field updated.
 We can declare two methods, Wcode(add(x)) and Wcode(add(y)) with the same name, if parameter names are different.
+WP
+Note how we use always getters and we never access fields directly.
+In many other languages we can use write Wcode(a.fieldName) and Wcode(a.fieldName=newValue). Such syntax do not exists in 42. Same goes for object instantiation; in many languages there is a special Wcode(new ClassName(..)) dedicated syntax, while in 42 it is just a method call.
+WP
+Also, similarly to what happens in python, we need to use Wcode(this.methName()) to call methods when the receiver is Wcode(this).
+While this makes some code more verbose, save us from the burden of  method hiding.   
 
 WTitle(Decorators)
 Decorators are one of the main concepts used by 42 programmers. We will encounter many decorators in this tutorial.
@@ -193,10 +203,7 @@ Animal:Data<<{
     this.location(this.location().add(x=20Int))
   }
 CCode
-As you see, we are using the add method from before.
-You can also notice that we are using a setter here, and that we are providing the first parameter without the argument name.
-This is accepted when writing down such name would not improve the readability, and in those cases the first parameter is conventionally called Wcode(that).
-More important, there are two new keyword:
+There are two new keywords used here:
 <ul><li>
 the location field is declared var.
   This is called a variable field, and can be updated by calling a setter.
@@ -207,6 +214,17 @@ the location field is declared var.
   mut methods can mutate the "this" object. If you have experience with C++ you can see the similarity with const methods.
   immutable (default) methods works only on immutable "this" objects. We will see later much more about modifiers
 </li></ul>
+
+WP
+As you see, we are using the Wcode(add) method from before.
+Also notice that we are using a setter here, where we are providing the first parameter without the argument name.
+While usual in other languages, in 42 parameters are passed
+by name.
+However, for some methods with a single parameter writing down the parameter name would not improve the readability and just add noise.
+In those cases the first parameter is conventionally called Wcode(that), 
+and writing Wcode(a.b(that=c))
+is equivalent to writing Wcode(a.b(c)).
+This works also for methods with multiple parameters, if the first one is called Wcode(that).
 
 WTitle(Interaction between mutable and immutable)
 
@@ -227,8 +245,21 @@ Here we use Wcode(mut Points path) to denote a mutable list of points. Note the 
 To contrast, the declaration Wcode(var Point location) is similar to
 Wcode(Point const * location;) in C++ or Wcode(ImmPoint location;) in Java (for an opportune Wcode(ImmPoint) class).
 This code models an animal following a path. It can be used like this.
+OCode
+  zero=Point(x=0Int, y=0Int)
+  ps1=Points[ Point(x=12Int, y=20Int);Point(x=1Int, y=2Int)]
+  ps2=Points[ zero;Point(x=1Int, y=2Int)]
+  dog1=Animal(location=zero, path=ps1)
+  dog2=Animal(location=zero, path=ps2)
+  dog1.move()
+  dog2.move()
+CCode
+
+In this code the first dog goes to 12:20.
+The secon dog goes to 0:0. 
+
 This code involve a mutable animal with a mutable field. This is often
-a terrible idea, since its behaviour may depend on aliasing: what happens with 2 dogs?
+a terrible idea, since its behaviour may depend on aliasing: what happens if the dogs follows the same paths?
 OCode
   zero=Point(x=0Int, y=0Int)
   ps=Points[ Point(x=12Int, y=20Int);Point(x=1Int, y=2Int)]
@@ -238,9 +269,13 @@ OCode
   dog2.move()
 CCode
 The first dog moves and consumes the path also for the second one.
+That is, the first goes to 12:20 and the second goes to 1:2.
+
 This is because Wcode(Animal) is now a WEmph(Deeply mutable class): a mutable class with mutable fields. 
 An amazing amount of bugs is caused by the usage of deeply mutable classes.
- If this behaviour is not what you expected, we have to change Wcode(Animal) to prevent this aliasing issue.
+This triky behaviour is correct for a 
+deeply mutable class. 
+In 42 we can change Wcode(Animal) to prevent this aliasing issue.
 OCode
 Animal:Data<<{
   var Point location
@@ -253,6 +288,11 @@ Animal:Data<<{
 CCode
 Now we use the modifier "capsule", this requires the field to be encapsulated with respect to aliasing.
 Immutable objects do not influence aliasing, so they are free from aliasing limitations.
+
+WP
+The "capsule" modifier WEmph(enforce) the users to provide well encapsulated values, and WEmph(ensure) the Wcode(Animal) data is well encapsulated.
+WP
+
 Now the code of before would not compile. However we can still write the following variant
 OCode
   zero=Point(x=0Int, y=0Int)

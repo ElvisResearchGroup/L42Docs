@@ -155,8 +155,11 @@ Main:{
 Here we declare a class to host our <span class="code"><![CDATA[hello(name)]]></span> method.
 We write <span class="code"><![CDATA[class method]]></span> to declare a method that can be called on the class object, as in <span class="code"><![CDATA[MyCode.hello(name=S"world")]]></span>. This is equivalent to a static method in languages like Java or C++.
 </p><p>
-Per Andre: MyCode.hello usa la classe, MyCode e' il receiver, MyCode e' un oggetto,
+<!-- LATER?
+<span class="code"><![CDATA[MyCode.hello(..)]]></span> use directly the <span class="code"><![CDATA[MyCode]]></span> class instance as receiver. We can also give it a name
 e se vuoi puoi anche salvarlo su un binding locale, tipo x=MyCode x.hello(...)
+-->
+
 </p><p>
 Note how the method is called using the parameter name explicitly.
 We believe this increase readability.
@@ -170,6 +173,7 @@ A nested in 42 is similar to a static inner class in Java, or a nested class in 
 The class <span class="code"><![CDATA[MyCode]]></span> of before offers a single class method, have no fields and you can not create instances of <span class="code"><![CDATA[MyCode]]></span>, since no factory is present; you can think about it as a module.
 In 42 we do not have constructors. Objects are created by factory methods. We believe this is a much simpler and consistent approach to object initialization.
 
+</p><h2> Simple class with internal state </h2> <p>
 Let create now a class with state and factory:
 <pre class="l42"><![CDATA[
 Point:Data<<{
@@ -198,6 +202,12 @@ In the method <span class="code"><![CDATA[add(x)]]></span> we show a constructor
 In the method <span class="code"><![CDATA[add(y)]]></span> we show an improved version, using the <span class="code"><![CDATA[with]]></span> method, another gift of Data, that allows us to easily create a clone with a
 single field updated.
 We can declare two methods, <span class="code"><![CDATA[add(x)]]></span> and <span class="code"><![CDATA[add(y)]]></span> with the same name, if parameter names are different.
+</p><p>
+Note how we use always getters and we never access fields directly.
+In many other languages we can use write <span class="code"><![CDATA[a.fieldName]]></span> and <span class="code"><![CDATA[a.fieldName=newValue]]></span>. Such syntax do not exists in 42. Same goes for object instantiation; in many languages there is a special <span class="code"><![CDATA[new ClassName(..)]]></span> dedicated syntax, while in 42 it is just a method call.
+</p><p>
+Also, similarly to what happens in python, we need to use <span class="code"><![CDATA[this.methName()]]></span> to call methods when the receiver is <span class="code"><![CDATA[this]]></span>.
+While this makes some code more verbose, save us from the burden of method hiding.
 
 </p><h2> Decorators </h2> <p>
 Decorators are one of the main concepts used by 42 programmers. We will encounter many decorators in this tutorial.
@@ -219,10 +229,7 @@ Animal:Data<<{
     this.location(this.location().add(x=20Int))
   }
 ]]></pre>
-As you see, we are using the add method from before.
-You can also notice that we are using a setter here, and that we are providing the first parameter without the argument name.
-This is accepted when writing down such name would not improve the readability, and in those cases the first parameter is conventionally called <span class="code"><![CDATA[that]]></span>.
-More important, there are two new keyword:
+There are two new keywords used here:
 <ul><li>
 the location field is declared var.
   This is called a variable field, and can be updated by calling a setter.
@@ -233,6 +240,17 @@ the location field is declared var.
   mut methods can mutate the "this" object. If you have experience with C++ you can see the similarity with const methods.
   immutable (default) methods works only on immutable "this" objects. We will see later much more about modifiers
 </li></ul>
+
+</p><p>
+As you see, we are using the <span class="code"><![CDATA[add]]></span> method from before.
+Also notice that we are using a setter here, where we are providing the first parameter without the argument name.
+While usual in other languages, in 42 parameters are passed
+by name.
+However, for some methods with a single parameter writing down the parameter name would not improve the readability and just add noise.
+In those cases the first parameter is conventionally called <span class="code"><![CDATA[that]]></span>,
+and writing <span class="code"><![CDATA[a.b(that=c)]]></span>
+is equivalent to writing <span class="code"><![CDATA[a.b(c)]]></span>.
+This works also for methods with multiple parameters, if the first one is called <span class="code"><![CDATA[that]]></span>.
 
 </p><h2> Interaction between mutable and immutable </h2> <p>
 
@@ -253,8 +271,21 @@ Here we use <span class="code"><![CDATA[mut Points path]]></span> to denote a mu
 To contrast, the declaration <span class="code"><![CDATA[var Point location]]></span> is similar to
 <span class="code"><![CDATA[Point const * location;]]></span> in C++ or <span class="code"><![CDATA[ImmPoint location;]]></span> in Java (for an opportune <span class="code"><![CDATA[ImmPoint]]></span> class).
 This code models an animal following a path. It can be used like this.
+<pre class="l42"><![CDATA[
+  zero=Point(x=0Int, y=0Int)
+  ps1=Points[ Point(x=12Int, y=20Int);Point(x=1Int, y=2Int)]
+  ps2=Points[ zero;Point(x=1Int, y=2Int)]
+  dog1=Animal(location=zero, path=ps1)
+  dog2=Animal(location=zero, path=ps2)
+  dog1.move()
+  dog2.move()
+]]></pre>
+
+In this code the first dog goes to 12:20.
+The secon dog goes to 0:0.
+
 This code involve a mutable animal with a mutable field. This is often
-a terrible idea, since its behaviour may depend on aliasing: what happens with 2 dogs?
+a terrible idea, since its behaviour may depend on aliasing: what happens if the dogs follows the same paths?
 <pre class="l42"><![CDATA[
   zero=Point(x=0Int, y=0Int)
   ps=Points[ Point(x=12Int, y=20Int);Point(x=1Int, y=2Int)]
@@ -264,9 +295,13 @@ a terrible idea, since its behaviour may depend on aliasing: what happens with 2
   dog2.move()
 ]]></pre>
 The first dog moves and consumes the path also for the second one.
+That is, the first goes to 12:20 and the second goes to 1:2.
+
 This is because <span class="code"><![CDATA[Animal]]></span> is now a <span style="color:#ff1111; font-weight: bold;">Deeply mutable class</span>: a mutable class with mutable fields.
 An amazing amount of bugs is caused by the usage of deeply mutable classes.
- If this behaviour is not what you expected, we have to change <span class="code"><![CDATA[Animal]]></span> to prevent this aliasing issue.
+This triky behaviour is correct for a
+deeply mutable class.
+In 42 we can change <span class="code"><![CDATA[Animal]]></span> to prevent this aliasing issue.
 <pre class="l42"><![CDATA[
 Animal:Data<<{
   var Point location
@@ -279,6 +314,11 @@ Animal:Data<<{
 ]]></pre>
 Now we use the modifier "capsule", this requires the field to be encapsulated with respect to aliasing.
 Immutable objects do not influence aliasing, so they are free from aliasing limitations.
+
+</p><p>
+The "capsule" modifier <span style="color:#ff1111; font-weight: bold;">enforce</span> the users to provide well encapsulated values, and <span style="color:#ff1111; font-weight: bold;">ensure</span> the <span class="code"><![CDATA[Animal]]></span> data is well encapsulated.
+</p><p>
+
 Now the code of before would not compile. However we can still write the following variant
 <pre class="l42"><![CDATA[
   zero=Point(x=0Int, y=0Int)
