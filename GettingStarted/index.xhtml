@@ -9,6 +9,19 @@
     <link rel="stylesheet" type="text/css" href="css/style.css" media="all"/>
     <link rel="shortcut icon" href="css/favicon.ico"/>
     <title>42 - Metaprogramming as default</title>
+    <style type="text/css" media="screen">
+
+      .ace_editor {
+        border: 1px solid lightgray;
+        margin: auto;
+        height: 200px;
+        width: 80%;
+      }
+      .scrollmargin {
+        height: 80px;
+            text-align: center;
+      }
+    </style>
   </head>
   <body>
     <div id="wrapper">
@@ -83,13 +96,12 @@ most other languages to be racist.
 They give priority to their "preferred" version of numbers and strings, and this puts into a position of unfair disadvantage library code trying to define its own numbers kinds.
 Instead in 42 you may encounter strings like <span class="code"><![CDATA[URL"www.google.com"]]></span>,
  <span class="code"><![CDATA[EMAIL"Artur.Dent@gmail.com"]]></span> or multiline strings like
- <pre class="l42"><![CDATA[ Javascript"
-'x=function(){
-'  alert("hello world";)
-'  }
-' x()
-"
-]]></pre>
+ <pre id="CodeSnippet1_JavascriptExample"><![CDATA[//Javascript
+x = function(){
+  alert("Hello World");
+};
+
+x();]]></pre>
 
 The same for numeric classes: to talk about a street, 20 meters long, you would write
 <span class="code"><![CDATA[streetLenght=20Meter]]></span>.
@@ -100,7 +112,7 @@ You may encounter <span class="code"><![CDATA[Int]]></span>, <span class="code">
 </p><h2> Simple hello world program </h2> <p>
 Let show now a simple hello world program:
 <pre class="l42"><![CDATA[
-{reuse L42.is/AdamTowel
+{reuse L42.is/AdamTowel2
 Main:{
   Debug(S"Hello world")
   return ExitCode.success()
@@ -122,7 +134,7 @@ advance technique of towel embroidery.
 </p><p>
 Lets now declare a method and call it.
 <pre class="l42"><![CDATA[
-{reuse L42.is/AdamTowel
+{reuse L42.is/AdamTowel2
 MyCode:{
   class method
   S hello(S name){
@@ -479,7 +491,7 @@ Collections: Load<<{reuse L42.is/Collections}
 Point:Data<<{Int x, Int y}
 Points:Collections.vector(of:Point)
 Main:{
-  ps=Points[ Point(x=12Int, y=20Int);Point(x=1Int, y=2Int);]
+  ps=Points[ Point(x: 12Int, y: 20Int);Point(x: 1Int, y=2Int);]
   var tot=0
   with p in ps (tot+=p.x()+p.y())
   return ExitCode.success()
@@ -499,8 +511,8 @@ Points:Collections.mutList(Point)
 
 ...
 
-zero=Point(x=0Int, y=0Int)
-one=Point(x=1Int, y=1Int)
+zero=Point(x: 0Int, y: 0Int)
+one=Point(x: 1Int, y: 1Int)
 ps0=Points[]//the empty list
 ps1=Points[zero;one]//contains zero, one
 ps2=Points[zero;one]//contains zero, one
@@ -553,6 +565,31 @@ e se vuoi puoi anche salvarlo su un binding locale, tipo x=MyCode x.hello(...)
       </div>
     </div>
 
+    <script src="../ace/ace.js"></script>
+    <script>
+        var editor = ace.edit("CodeSnippet1_JavascriptExample");
+        editor.setTheme("ace/theme/terminal");
+        editor.session.setMode("ace/mode/javascript");
+        editor.setOption("maxLines", 30);
+        editor.setReadOnly(true);  // false to make it editable
+
+
+        var list = document.getElementsByClassName("l42");
+        for (var i = list.length - 1; i >= 0; i--) {
+          var l42Box = ace.edit(list[i]);
+          l42Box.setTheme("ace/theme/l42");
+          l42Box.getSession().setMode("ace/mode/l42");
+          l42Box.setOption("maxLines", 30);
+          l42Box.setReadOnly(true);  // false to make it editable
+
+          // If our code as unrequired spaces at the front or back of the code. Remove them.
+          function trimValue(){
+            var text = l42Box.getValue();
+            return "\n"+text.trim();
+          };
+          l42Box.setValue(trimValue(),-1);
+        }
+    </script>
 
   </body>
 </html>
