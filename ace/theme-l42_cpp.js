@@ -31,6 +31,11 @@ border: 1px solid rgb(192, 192, 192);\
 .ace-l42-cpp .ace_marker-layer .ace_step {\
 background: rgb(255, 255, 0);\
 }\
+.ace-l42-cpp .ace_errorHighlight {\
+color: yellow;\
+background-color: red;\
+font-weight: bold\
+}\
 .ace-l42-cpp .ace_active-line {\
 background: rgb(232, 242, 254);\
 }\

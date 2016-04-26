@@ -35,6 +35,11 @@ color: rgb(6, 150, 14);\
 .ace-l42-eclipse .ace_function {\
 color: rgb(60, 76, 114);\
 }\
+.ace-l42-eclipse .ace_errorHighlight {\
+color: yellow;\
+background-color: red;\
+font-weight: bold\
+}\
 .ace-l42-eclipse .ace_string {\
 color: rgb(42, 0, 255);\
 }\
