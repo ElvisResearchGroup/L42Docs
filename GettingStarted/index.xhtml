@@ -96,12 +96,12 @@ most other languages to be racist.
 They give priority to their "preferred" version of numbers and strings, and this puts into a position of unfair disadvantage library code trying to define its own numbers kinds.
 Instead in 42 you may encounter strings like <span class="code"><![CDATA[URL"www.google.com"]]></span>,
  <span class="code"><![CDATA[EMAIL"Artur.Dent@gmail.com"]]></span> or multiline strings like
- <pre id="CodeSnippet1_JavascriptExample"><![CDATA[//Javascript
-x = function(){
-  alert("Hello World");
-};
-
-x();]]></pre>
+ <pre class="l42"><![CDATA[Javascript"
+'x=function(){
+'  alert("hello world";)
+'  }
+' x()
+"]]></pre>
 
 The same for numeric classes: to talk about a street, 20 meters long, you would write
 <span class="code"><![CDATA[streetLenght=20Meter]]></span>.
@@ -476,7 +476,7 @@ We have already see how to chose a towel, and many classes that are likely to be
 Int and Data.
 Let see now how to load a library from its url:
 <pre class="l42"><![CDATA[
-{reuse L42.is/AdamTowel
+{reuse L42.is/2
 Gui: Load<<{reuse L42.is/Gui}
 Main:{
   Gui.alert(S"hi!")
@@ -486,7 +486,7 @@ Main:{
 ]]></pre>
 Load is another decorator, here it modifies the library found in L42.is/Gui so that it can be used easly from AdamTowel.
 <pre class="l42"><![CDATA[
-{reuse L42.is/AdamTowel
+{reuse L42.is/AdamTowel2
 Collections: Load<<{reuse L42.is/Collections}
 Point:Data<<{Int x, Int y}
 Points:Collections.vector(of:Point)
@@ -567,17 +567,14 @@ e se vuoi puoi anche salvarlo su un binding locale, tipo x=MyCode x.hello(...)
 
     <script src="../ace/ace.js"></script>
     <script>
-        var editor = ace.edit("CodeSnippet1_JavascriptExample");
-        editor.setTheme("ace/theme/terminal");
-        editor.session.setMode("ace/mode/javascript");
-        editor.setOption("maxLines", 30);
-        editor.setReadOnly(true);  // false to make it editable
 
-
+        // Get every l42 Div
         var list = document.getElementsByClassName("l42");
         for (var i = list.length - 1; i >= 0; i--) {
+
+          // Turn it into an ace window and apply features
           var l42Box = ace.edit(list[i]);
-          l42Box.setTheme("ace/theme/l42");
+          l42Box.setTheme("ace/theme/l42_sublime");
           l42Box.getSession().setMode("ace/mode/l42");
           l42Box.setOption("maxLines", 30);
           l42Box.setReadOnly(true);  // false to make it editable
