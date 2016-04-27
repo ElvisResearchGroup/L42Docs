@@ -36,7 +36,8 @@ function setAllAs(className,options){
 function hide(elements) {
   elements = elements.length ? elements : [elements];
   for (var index = 0; index < elements.length; index++) {
-    document.getElementById(elements[index]).style.display = 'none';
+    var e=document.getElementById(elements[index]);
+    if(e!=null){e.style.display = 'none';}
   }
 }
 function show (element) { document.getElementById(element).style.display = 'block'; }

@@ -134,6 +134,21 @@ ul{padding-left: 30px;
 
 
 h2{padding: 10px;font-size: 110%;font-weight: bold;}
+
+h1{
+  padding: 15px;
+  font-size: 150%;
+  font-weight: bold;
+  color: rgb(45,45,45); 
+  border-top-color: rgb(100,100,150);
+  border-left-color:rgb(0,0,0);
+  border-top-left-radius: 2em;
+  border-top-width: 0.2em;
+  border-left-width: 0.0em;
+  border-top-style:solid;
+  border-left-style:solid;
+  width:85%; 
+  }
  
 .code{font-family:monospace; font-weight: bold; color: rgb(10,10,55);}
 
