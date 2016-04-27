@@ -12,6 +12,10 @@ Learn by examples
 Pure OO
 </Button>
 
+<Button class='button' type='button' onclick='showAll(allDivs);'>
+Show all content
+</Button>
+
 
 <Div id="a"><p>
 WTitle(Why 42)

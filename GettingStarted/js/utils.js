@@ -42,6 +42,13 @@ function hide(elements) {
 }
 function show (element) { document.getElementById(element).style.display = 'block'; }
 
+function showAll(elements){
+  elements = elements.length ? elements : [elements];
+  for (var index = 0; index < elements.length; index++) {
+    show(elements[index]);
+  }
+}
+
 function selectDiv(id){
   hide(allDivs)
   show(id)
