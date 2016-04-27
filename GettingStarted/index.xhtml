@@ -7,23 +7,12 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
     <link rel="stylesheet" type="text/css" href="css/style.css" media="all"/>
+    <script src="js/ace.js"></script>
+    <script src="js/utils.js"></script>
     <link rel="shortcut icon" href="css/favicon.ico"/>
     <title>42 - Metaprogramming as default</title>
-    <style type="text/css" media="screen">
-
-      .ace_editor {
-        border: 1px solid lightgray;
-        margin: auto;
-        height: 200px;
-        width: 80%;
-      }
-      .scrollmargin {
-        height: 80px;
-            text-align: center;
-      }
-    </style>
   </head>
-  <body>
+  <body onload='doOnLoad();'>
     <div id="wrapper">
       <div id="headerwrap">
         <div id="header">
@@ -38,6 +27,21 @@
       <div id="contentwrap">
         <div id="content">
 <p>
+
+</p><h2> First, read in any order those introduction </h2> <p>
+<Button class='button' type='button' onclick='selectDiv("a");'>
+Why 42
+</Button>
+<Button class='button' type='button' onclick='selectDiv("b");'>
+Learn by examples
+</Button>
+
+<Button class='button' type='button' onclick='selectDiv("c");'>
+Pure OO
+</Button>
+
+
+<Div id="a"><p>
 </p><h2> Why 42 </h2> <p>
 42 is a new programming language,
 the name is inspired by The Hitchhiker's Guide to the Galaxy.
@@ -53,21 +57,353 @@ Indeed in 42 manipulating libraries is so natural that is convenient to think of
 </p><p>
 42 enforce a high level of abstraction, thus there is no access to primitive
 structures like arrays (just use collections), and there is no concept of null or default initialization.
-While is possible to write in a fully functional style in 42, usually 42 programs mix <span style="color:#ff1111; font-weight: bold;">mutable datastructure with aliasing</span> and <span style="color:#ff1111; font-weight: bold;">deeply immutable data</span>. Indeed 42 offers powerful support for aliasing control and immutability, helping in mixing the two stiles in an easy and natural way.
+While is possible to write in a fully functional style in 42, usually 42 programs mix
+<span style="color:#ff1111; font-weight: bold;"> mutable datastructure with aliasing </span>
+and
+<span style="color:#ff1111; font-weight: bold;"> deeply immutable data </span>.
+Indeed 42 offers powerful support for aliasing control and immutability, helping in mixing the two stiles in an easy and natural way.
 
 </p><p>
 42 offers (well, will offer) automatic parallelism: thanks to immutability and aliasing control, many patterns of normal sequential code will be safely be executed in parallel.
 
+</p></Div>
 
-</p><h2> (1) Objects and Classes </h2> <p>
+<Div id="b"><p>
+</p><h2> Syntax </h2> <p>
+If you like to learn by examples, 
+here you can find snipplets of code in 42 and their equivalent version in Java.
+We format the code so that, line by line, you can see the differences.
 
-</p><h2> Object orientation </h2> <p>
+
+<!-- </p><h2>  </h2> <p>
+<div class="compare">
+<pre class="l42"><![CDATA[
+]]></pre>
+
+<pre class="java"><![CDATA[
+]]></pre>
+</div>-->
+
+<!-- ############################################################################-->
+<!-- ############################################################################-->
+<!-- ############################################################################-->
+<!-- ############################################################################-->
+</p><h2> Imports and comments </h2> <p>
+<div class="compare">
+<pre class="l42"><![CDATA[
+//42 code
+//comment
+
+/*multiline comment*/
+
+reuse L42.is/adamTowel //importing code
+]]></pre>
+
+<pre class="java"><![CDATA[
+//Java sort of equivalent code 
+//comment
+
+/*multiline comment*/
+
+import java.utils.ArrayList; //importing code
+... //more and more importing code
+import java.utils.List; //eventually, end importing
+]]></pre>
+</div>
+
+
+<!-- ############################################################################-->
+<!-- ############################################################################-->
+<!-- ############################################################################-->
+<!-- ############################################################################-->
+
+</p><h2> String and numbers </h2> <p>
+<div class="compare">
+<pre class="l42"><![CDATA[
+//42 code
+S"hello world" //String
+
+Url"www.google.com"//Specially formatted string
+
+
+Javascript"
+'x=function(){
+'  alert("hello world";)
+'  }
+' x()
+"//multiline string
+
+14Index //number suitable to be an index
+100Meter //100 meter
+25Kg //25 kg, 
+//25Kg+100Meter do not compile
+]]></pre>
+
+<pre class="java"><![CDATA[
+//Java sort of equivalent code 
+"hello world" //String
+
+URI.create("www.google.com")//explicit parsing
+//(and URL is broken)
+
+Javascript.create(//poor man solution
+"x=function(){",
+"  alert(\"hello world\";)",
+"  }",
+" x()"
+)//painful. Note how we need to escape "
+
+14 //general purpose int
+100L // may be we want long distances
+25d //may be we want high precision weight
+//25d+100L is a double :)
+]]></pre>
+</div>
+
+
+
+
+
+<!-- ############################################################################-->
+<!-- ############################################################################-->
+<!-- ############################################################################-->
+<!-- ############################################################################-->
+
+</p><h2> Hello world </h2> <p>
+<div class="compare">
+<pre class="l42"><![CDATA[
+{reuse L42.is/AdamTowel
+Main:{
+  Debug(S"Hello world")
+  return ExitCode.success()
+  }
+}
+]]></pre>
+
+<pre class="java"><![CDATA[
+class MyClassName{
+  public static void main(String[] args){
+    System.out.println("Hello world");
+  }
+}
+]]></pre>
+</div>
+<!-- ############################################################################-->
+<!-- ############################################################################-->
+<!-- ############################################################################-->
+<!-- ############################################################################-->
+
+
+
+
+
+
+
+
+
+
+</p><h2> Methods and Classes </h2> <p>
+<div class="compare">
+<pre class="l42"><![CDATA[
+//42 code
+class method//class method definition
+S answer()//return type and method name
+  S"42"//simple bodies do not need {..return..}
+
+class method//class method definition
+S compose(S left, S right)//paramters
+  left++right//sequence concatenation
+
+Person:Data<<{//declare a class Person
+  S name //fields
+  Year age
+//in 42 fields are seen as getters and setters
+//as getters and setters, no need to declare those.
+//Also, no need to write down a constructor:
+//Data declares a name,field factory for us.
+
+//Data generates implementations for methods like
+//equality, hashCode and conversion to string.
+
+  method//instance method
+  S sayHi(S to){ //here we use {..return..}
+    if to==this.name() (//no parenthesis on if/while
+      return S"Oh, you are called "[this.name()]" too?"
+      ) //string interpolation
+    return S"Hi, my name is "[this.name()]
+      " and  I'm "[this.age()]" years old"
+    }
+  }
+]]></pre>
+
+<pre class="java"><![CDATA[
+//Java sort of equivalent code 
+static String answer(){//static method definition
+  return "42";
+  }
+
+static method String compose(S left, S right){
+  return left+right;//magically specially overriden +
+  }
+
+class Person{//declare a class Person
+  String name; //fields
+  int age;
+  String getName(){return this.name;}
+  int getAge(){return this.age;}
+  public Person(String name, int age){
+    this.name=name;this.age=age;//even longer
+  }//if standard formatting is used
+  public boolean equals(Object other){/*...*/}
+  public int hashCode(){/*was int or long?*/}
+  public String toString(){/*...*/}
+  
+  public String sayHi(String to){
+    if (to.equals(this.getName()) {
+      return "Oh, you are called "+name+" too?";
+    }//is 'name' better then 'this.getName()'?
+    return "Hi, my name is "+this.getName()
+      +" and  I'm "+this.getAge()+" years old";
+  }
+}
+
+]]></pre>
+</div>
+<!-- ############################################################################-->
+<!-- ############################################################################-->
+<!-- ############################################################################-->
+<!-- ############################################################################-->
+
+
+
+</p><h2> Control structures </h2> <p>
+<div class="compare">
+<pre class="l42"><![CDATA[
+if a>b (return /*...*/)
+var S acc=S"" //explicit 'var': can be updated
+while Bool.true() (//booleans are not constants
+  if acc.size()>50Size (//Size: type of sequence indexes 
+    error void//like java break, rarelly used in 42
+    )
+  acc++=S"step"
+  )
+]]></pre>
+
+<pre class="java"><![CDATA[
+if (a>b) {return /*...*/;}
+S acc="";//updatable is default, but can be final
+while (true) {
+  if (acc.length()>50) {
+    break;
+    }
+  acc+="step";
+}
+]]></pre>
+</div>
+
+
+<!-- ############################################################################-->
+<!-- ############################################################################-->
+<!-- ############################################################################-->
+<!-- ############################################################################-->
+
+
+
+</p><h2> Vectors </h2> <p>
+<div class="compare">
+<pre class="l42"><![CDATA[
+names=Strings[S"Fred";S"Mary";S"Mark"]
+
+Years:Collection.vector(of:Year)//we need to declare it
+
+ages=Years[20Year;23Year;22Year]
+agesShort=Years[20\;23\;22\]//the symbol \ is a shortcut
+//Years resolve it as 'Year' since Years contains 'Year'
+
+with n in names.vals() (//like a for each
+  Debug(n)
+  )
+
+with n in names.vals(), a in ages.vals() (
+  Debug(Person(name:n, age:a))//print all the persons
+  )//fails with error if names.size()!=ages.size()
+
+Persons:Collection.vector(of:Person)
+
+friends=Persons[
+  Person(name:S"Fred", age:20Year);//long version
+  Person(name:S"Mary", age:23Year);
+  \(name:\"Mark", age:22\);//short version
+  ]
+
+moreFriends=Persons[
+  with n in names.vals(), a in ages.vals() (
+    use[ Person(name:n, age:a) ]
+  )]
+//moreFriends contains the same as friends
+
+//with works also in string interpolation:
+stringFriends=S"my friends ages are"[
+  with n in names.vals(), a in ages.vals() (
+    use[ a++S":"++n, sep:S", ") ]
+  )]""//== S"20:Fred, 23:Mary, 22:Mark"
+]]></pre>
+
+<pre class="java"><![CDATA[
+List<String> names=new ArrayList<>(Arrays.asList(
+  "Fred","Mary","Mark"));
+
+
+List<Integer> ages=new ArrayList<>(Arrays.asList(
+  20,23,22Year));
+
+
+for(String n :names){
+  System.out.println(n);
+}
+
+for(int i=0; i<names.size(); i++){
+  System.out.println(
+    new Person(names.get(i), ages.get(i)));
+  );//silently buggy if names.size()<ages.size()
+}
+
+List<Person> friends=new ArrayList<>(Arrays.asList(
+  new Person("Fred",20),
+  new Person("Mary"23),
+  new Person("Mark"22)
+  ));
+
+List<Person> moreFriends=new ArrayList<>();
+for(int i=0; i<names.size(); i++){
+  moreFriends.add(
+    new Person(names.get(i), ages.get(i)));
+}//silently buggy if names.size()<ages.size()
+
+//again, silently buggy if names.size()<ages.size()
+String stringFriends="my friends ages are";
+for(int i=0; i<names.size(); i++){
+  if(i>0){stringFriends+=", ";}
+  stringFriends+=ages.get(i)+":"+names.get(i);
+}
+]]></pre>
+</div>
+
+
+
+
+</p></Div>
+ 
+
+
+<Div id="c"><p>
+</p><h2> Pure and fair Object Oriented language </h2> <p>
 42 is a pure object oriented language,
 where every value is an object. This means that:
 <ul>
 <li>
-Numbers are objects,
-so thay can have methods like <span class="code"><![CDATA[.sqrt()]]></span> or <span class="code"><![CDATA[.abs()]]></span>.
+Numbers are objects, 
+so thay can have methods like <span class="code"><![CDATA[.sqrt()]]></span> or <span class="code"><![CDATA[.abs()]]></span>. 
 </li><li>
 All operators are just method calls, thus <span class="code"><![CDATA[a + b]]></span> is sugar for <span class="code"><![CDATA[a.operator+(b)]]></span>, and so on. Note how <span class="code"><![CDATA[operator+]]></span> is a valid method name.
 Any class that offers that method supports the operator.
@@ -76,7 +412,7 @@ Any class that offers that method supports the operator.
 Classes are objects, when you write <span class="code"><![CDATA[Foo.bar()]]></span> you refer to the method <span class="code"><![CDATA[.bar()]]></span> offered by the object denoted by <span class="code"><![CDATA[Foo]]></span>.
 class objects are just objects, and you can also store them in local bindings if you wish, as in <span class="code"><![CDATA[x=Foo]]></span>
 </li><li>
-The code is an object, but only at the granularity of
+The code is an object, but only at the granularity of 
 Libraries, that is, balanced pairs of curly brackets representing classes (or interfaces) with methods and nesteds.
 This is usefull for meta-programming, as we will see later this is the most important feature of 42.
 
@@ -89,30 +425,39 @@ This is a declaration for a local binding <span class="code"><![CDATA[x]]></span
 used as string (or in general sequence/collection) concatenation.
 
 Coming from another programming language, you many be surprised that we have to write <span class="code"><![CDATA[S]]></span> before <span class="code"><![CDATA["Hello "]]></span> and <span class="code"><![CDATA["World"]]></span>.
-This extra verbosity is need to provide fair treatment to all classes. (<a href= "note1.xhtml">see more</a>)
+This extra verbosity is need to provide fair treatment to all classes. (<a href="note1.xhtml">see more</a>)
 In 42 we do not give preferential treatment
 to special object/classes. In this sense, we consider
 most other languages to be racist.
 They give priority to their "preferred" version of numbers and strings, and this puts into a position of unfair disadvantage library code trying to define its own numbers kinds.
-Instead in 42 you may encounter strings like <span class="code"><![CDATA[URL"www.google.com"]]></span>,
- <span class="code"><![CDATA[EMAIL"Artur.Dent@gmail.com"]]></span> or multiline strings like
- <pre class="l42"><![CDATA[Javascript"
-'x=function(){
-'  alert("hello world";)
-'  }
-' x()
-"]]></pre>
-
+Instead in 42 you may encounter strings like <span class="code"><![CDATA[URL"www.google.com"]]></span> or
+ <span class="code"><![CDATA[EMAIL"Artur.Dent@gmail.com"]]></span>.
 The same for numeric classes: to talk about a street, 20 meters long, you would write
 <span class="code"><![CDATA[streetLenght=20Meter]]></span>.
-Note that we write the class name after the number, both for better readability and because <span class="code"><![CDATA[Meter20]]></span> would be consider an identifier by the parser.
-You may encounter <span class="code"><![CDATA[Int]]></span>, <span class="code"><![CDATA[UInt]]></span>, <span class="code"><![CDATA[Float]]></span>, <span class="code"><![CDATA[Meter]]></span>, <span class="code"><![CDATA[Kg]]></span>, <span class="code"><![CDATA[Second]]></span>, <span class="code"><![CDATA[Year]]></span>, <span class="code"><![CDATA[PhoneNumber]]></span> and many other numeric classes.
+Note that we write the class name after the number,
+while usually the class name is before.
+42 is a little incoherent in this point, both for better readability and because <span class="code"><![CDATA[Meter20]]></span> would be consider an identifier by the parser.
+You may encounter <span class="code"><![CDATA[Int]]></span>, <span class="code"><![CDATA[UInt]]></span>, <span class="code"><![CDATA[Float]]></span>,<span class="code"><![CDATA[Size]]></span>, <span class="code"><![CDATA[Meter]]></span>, <span class="code"><![CDATA[Kg]]></span>, <span class="code"><![CDATA[Second]]></span>, <span class="code"><![CDATA[Year]]></span>, <span class="code"><![CDATA[PhoneNumber]]></span> and many other numeric classes.
 </li></ul>
+
+</p><h2> A simple language </h2> <p>
+We believe 42 is a simple language,
+where all classes are final and interfaces are the only instrument to obtain subtyping.
+Moreover, 42 do not offers many controversial features usually found in other programming
+languages, including:
+(method) overloading, threading, numeric conversions and cohercions,
+casts, var-args, primitive types and automatic (un-)boxing,
+inner classes, arrays, generics, closures/lambdas and null.
+
+
+</p></Div>
+
+</p><h2> Now, dig into a tutorial! </h2> <p>
 
 </p><h2> Simple hello world program </h2> <p>
 Let show now a simple hello world program:
-<pre class="l42"><![CDATA[
-{reuse L42.is/AdamTowel2
+<pre class="l42"><![CDATA[ 
+{reuse L42.is/AdamTowel
 Main:{
   Debug(S"Hello world")
   return ExitCode.success()
@@ -124,22 +469,22 @@ we wish to execute. <span class="code"><![CDATA[Main]]></span> is not a method, 
 Java or C. For now you can think of <span class="code"><![CDATA[Main:]]></span> as a top level command, we will understand later how this fits with the general language design.
 
 When we write <span class="code"><![CDATA[reuse L42.is/AdamTowel]]></span> we are asking 42 to
-reuse the code offered by the library offered in the internet address
+reuse the code offered by the library offered in the internet address 
 <span class="code"><![CDATA[L42.is/AdamTowel]]></span>.
-AdamTowel is our Towel, that is the set of classes and interfaces that we wish to start from (<a href= "towel.xhtml">see more on towels</a>).
+AdamTowel is our Towel, that is the set of classes and interfaces that we wish to start from (<a href="towel.xhtml">see more on towels</a>).
 <span class="code"><![CDATA[L42.is]]></span> is the main website of 42, where most commonly used libraries are hosted. To reuse code you need internet connection; but this also means that you will never have to manually import any code. Required code will be transitivelly downloaded and cached on your machine, you need not to be aware of the existence of this mechanism.
 </p><p>
-We are not supposed to always start from AdamTowel, there are many interesting towels out there, and you may also become skilled in the
+We are not supposed to always start from AdamTowel, there are many interesting towels out there, and you may also become skilled in the 
 advance technique of towel embroidery.
 </p><p>
 Lets now declare a method and call it.
 <pre class="l42"><![CDATA[
-{reuse L42.is/AdamTowel2
+{reuse L42.is/AdamTowel
 MyCode:{
   class method
   S hello(S name){
     return S"hello "++name
-    }
+    } 
   }
 Main:{
   Debug(MyCode.hello(name=S"world"))
@@ -179,14 +524,14 @@ Point:Data<<{
 Here you can see we declare a <span class="code"><![CDATA[Point]]></span> class with <span class="code"><![CDATA[x]]></span> and <span class="code"><![CDATA[y]]></span> <span class="code"><![CDATA[Int]]></span> coordinates.
 <span class="code"><![CDATA[Data]]></span> is a decorator. Decorators are classes/objects that offers an operator <span class="code"><![CDATA[<<]]></span>, called the babel fish operator,
 whose goal is to translate a library into a "better" library.
-In this case, <span class="code"><![CDATA[Data]]></span> is translating the class <span class="code"><![CDATA[{Int x , Int y}]]></span> into a much longer class, with
+In this case, <span class="code"><![CDATA[Data]]></span> is translating the class <span class="code"><![CDATA[{Int x COMMA Int y}]]></span> into a much longer class, with
 a factory method taking in input the fields and initializing them, but also containing
  boring but useful definitions for
 equality, inequality, conversions from and into human readable strings, xml and binary representations for (de)serialization.
 </p><p>
 Finally, we declare methods to add to a single coordinate.
 For very short methods we can omit the curly brackets and return.
-Indeed method bodies are just expressions, and the curly brackets turn statements into expressions.
+Indeed method bodies are just expressions, and the curly brackets turn statements into expressions. 
 
 In the method <span class="code"><![CDATA[add(x)]]></span> we show a constructor call and getters.
 In the method <span class="code"><![CDATA[add(y)]]></span> we show an improved version, using the <span class="code"><![CDATA[with]]></span> method, another gift of Data, that allows us to easily create a clone with a
@@ -197,7 +542,7 @@ Note how we use always getters and we never access fields directly.
 In many other languages we can use write <span class="code"><![CDATA[a.fieldName]]></span> and <span class="code"><![CDATA[a.fieldName=newValue]]></span>. Such syntax do not exists in 42. Same goes for object instantiation; in many languages there is a special <span class="code"><![CDATA[new ClassName(..)]]></span> dedicated syntax, while in 42 it is just a method call.
 </p><p>
 Also, similarly to what happens in python, we need to use <span class="code"><![CDATA[this.methodName()]]></span> to call methods when the receiver is <span class="code"><![CDATA[this]]></span>.
-While this makes some code more verbose, save us from the burden of method hiding.
+While this makes some code more verbose, save us from the burden of  method hiding.   
 
 
 
@@ -205,9 +550,9 @@ While this makes some code more verbose, save us from the burden of method hidin
 Decorators are one of the main concepts used by 42 programmers. We will encounter many decorators in this tutorial.
 For now, just get used to the pattern of writing
 <span class="code"><![CDATA[<<]]></span> to go from a minimal chunk of code, with method declarations for the important bits, to a fully fledged usable class.
-<a href= "Decorators.xhtml">More on decorators</a>
+<a href="Decorators.xhtml">More on decorators</a>
 
-</p><h2> Object creation , recall </h2> <p>
+</p><h2> Object creation COMMA recall </h2> <p>
 42 supports many different syntactic forms that are convenient to create objects:
 <ul><li>
 12Int: from a numeric representation
@@ -216,27 +561,27 @@ S"foo": from a string representation
 </li><li>
 Point(x=_,y=_): from the parameter values
 </li><li>
-Points[_;_;_]: from a variable length sequence of values; for example <span class="code"><![CDATA[Points]]></span> can be a list of <span class="code"><![CDATA[Point]]></span>. We can instantiate <span class="code"><![CDATA[Points]]></span> by using the square brakets as shown later.
+Points[_;_;_]: from a variable length sequence of values; for example <span class="code"><![CDATA[Points]]></span> can be a list of <span class="code"><![CDATA[Point]]></span>. We can instantiate <span class="code"><![CDATA[Points]]></span> by using the square brakets as shown later. 
 </li></ul>
 
 Note that in 42 those are all just expressions, and represents methods in the named class.
 Sometime is convenient to reuse this kind of syntax to get better syntactic support for certain operations; for example the string class use square brakets to support string formatting.
-<a href= "S.xhtml">To understand it better: a guide to the S class</a>
+<a href="S.xhtml">To understand it better: a guide to the S class</a>
 
 
-</p><h2> (2) Modifiers , kinds of classes/references/objects </h2> <p>
+</p><h2> (2) Modifiers COMMA kinds of classes/references/objects </h2> <p>
 
 </p><h2> Kinds of classes </h2> <p>
-<span class="code"><![CDATA[Point]]></span> is a <span style="color:#ff1111; font-weight: bold;">Immutable class</span>: none of its field can be updated or mutated.
+<span class="code"><![CDATA[Point]]></span> is a <span style="color:#ff1111; font-weight: bold;"> Immutable class </span>: none of its field can be updated or mutated.
 Immutable classes are very easy to use but may be inadequate when representing real objects, whose state can mutate across time.
-A <span style="color:#ff1111; font-weight: bold;">Mutable class</span> is a class where the state of (some of) its instances may be mutated.
+A <span style="color:#ff1111; font-weight: bold;"> Mutable class </span> is a class where the state of (some of) its instances may be mutated.
 
 Lets now declare a <span class="code"><![CDATA[Animal]]></span> mutable class, whose location can be updated.
 <pre class="l42"><![CDATA[
 Animal:Data<<{
   var Point location
   mut method
-  Void run()
+  Void run() 
     this.location(this.location().add(x=20Int))
   }
 ]]></pre>
@@ -246,7 +591,7 @@ the <span class="code"><![CDATA[location]]></span> field is declared <span class
   This is called a variable field, and can be updated by calling a setter.
   Non variable fields can not be updated
 </li><li>
-  the modifier "mut" in front of the method.
+  the modifier "mut" in front of the method. 
   We have seen "class" already, an we have seen methods with the default modifier ( add(x) and add(y) ).
   mut methods can mutate the "this" object. If you have experience with C++ you can see the similarity with <span class="code"><![CDATA[const]]></span> methods.
   immutable (default) methods works only on immutable "this" objects. We will see later much more about modifiers
@@ -258,7 +603,7 @@ Also notice that we are using a setter here, where we are providing the first pa
 While usual in other languages, in 42 parameters are passed
 by name.
 However, for some methods with a single parameter writing down the parameter name would not improve the readability and just add noise.
-In those cases the first parameter is conventionally called <span class="code"><![CDATA[that]]></span>,
+In those cases the first parameter is conventionally called <span class="code"><![CDATA[that]]></span>, 
 and writing <span class="code"><![CDATA[a.b(that=c)]]></span>
 is equivalent to writing <span class="code"><![CDATA[a.b(c)]]></span>.
 This works also for methods with multiple parameters, if the first one is called <span class="code"><![CDATA[that]]></span>.
@@ -278,7 +623,7 @@ Animal:Data<<{
   var Point location
   mut Points path
   mut method
-  Void move()
+  Void move() 
     this.location(path.first()))
     this.path().removeFirst()
   }
@@ -288,7 +633,7 @@ Animal:Data<<{
 Here we use <span class="code"><![CDATA[mut Points path]]></span> to denote a mutable list of points. Note the absence of <span class="code"><![CDATA[var]]></span>; this is conceptually similar to a <span class="code"><![CDATA[Points * const path;]]></span> in C++ or <span class="code"><![CDATA[final Points path;]]></span> in Java.
 To contrast, the declaration <span class="code"><![CDATA[var Point location]]></span> is similar to
 <span class="code"><![CDATA[Point const * location;]]></span> in C++ or <span class="code"><![CDATA[ImmPoint location;]]></span> in Java (for an opportune <span class="code"><![CDATA[ImmPoint]]></span> class).
-That is,
+That is, 
 mutable objects can be referred using mutable references,
 Immutable objects can be referred using immutable references.
 
@@ -304,7 +649,7 @@ This code models an animal following a path. It can be used like this.
 ]]></pre>
 
 In this code the first dog goes to 12:20.
-The secon dog goes to 0:0.
+The secon dog goes to 0:0. 
 
 This code involve a mutable animal with a mutable field. This is often
 a terrible idea, since its behaviour may depend on aliasing: what happens if two dogs follow the same paths?
@@ -319,17 +664,17 @@ a terrible idea, since its behaviour may depend on aliasing: what happens if two
 The first dog moves and consumes the path also for the second one.
 That is, the first goes to 12:20 and the second goes to 1:2.
 
-This is because <span class="code"><![CDATA[Animal]]></span> is now a <span style="color:#ff1111; font-weight: bold;">Deeply mutable class</span>: a mutable class with mutable fields.
+This is because <span class="code"><![CDATA[Animal]]></span> is now a <span style="color:#ff1111; font-weight: bold;"> Deeply mutable class </span>: a mutable class with mutable fields. 
 An amazing amount of bugs is caused by the usage of deeply mutable classes.
-This triky behaviour is correct for a
-deeply mutable class.
+This triky behaviour is correct for a 
+deeply mutable class. 
 In 42 we can change <span class="code"><![CDATA[Animal]]></span> to prevent this aliasing issue.
 <pre class="l42"><![CDATA[
 Animal:Data<<{
   var Point location
   capsule Points path
   mut method
-  Void move()
+  Void move() 
     this.location(path.first()))
     this.path().removeFirst()
   }
@@ -338,7 +683,7 @@ Now we use the modifier "capsule", this requires the field to be encapsulated wi
 Immutable objects do not influence aliasing, so they are free from aliasing limitations.
 
 </p><p>
-The "capsule" modifier <span style="color:#ff1111; font-weight: bold;">enforce</span> the users to provide well encapsulated values, and <span style="color:#ff1111; font-weight: bold;">ensure</span> the <span class="code"><![CDATA[Animal]]></span> data is well encapsulated.
+The "capsule" modifier <span style="color:#ff1111; font-weight: bold;"> enforce </span> the users to provide well encapsulated values, and WEmph(ensure) the Wcode(Animal) data is well encapsulated.
 </p><p>
 
 Now the code of before would not compile. However we can still write the following variant
@@ -391,12 +736,12 @@ Bool isArrived()
 This method can be called to mutable and immutable animals:
 
 <pre class="l42"><![CDATA[
- Debug(dog1.isArrived())
+ Debug(dog1.isArrived()) 
  Debug(dog2.isArrived())
 ]]></pre>
-
-</p><h2> Kinds of classes , recall </h2> <p>
-
+  
+</p><h2> Kinds of classes COMMA recall </h2> <p>
+  
 <ul>
 <li>
 immutable classes: have only immutable fields.
@@ -404,19 +749,19 @@ It is usefull to model mathematical concepts.
 It is easy to reason about code using immutable classes,
 but some properties of real objects can be better modelled with state mutation.
 </li><li>
-shallow mutable classes: have only (variable) fields of immutable or capsule type (or class, as we will see later).
+shallow mutable classes: have only (variable) fields of immutable or capsule type (or class, as we will see later). 
 Reasoning with shallow mutable classes is near as easy as reasoning with immutable ones, and often more natural.
 </li><li>
 deep mutable classes: have mutable fields.
 Reasoning with deep mutable classes can be very hard.
 </li></ul>
-
-</p><h2> Modifiers up to now , recall </h2> <p>
+  
+</p><h2> Modifiers up to now COMMA recall </h2> <p>
 
 <ul>
 <li>
 immutable: the default, when you omit the modifier,
- you mean immutable.
+ you mean immutable. 
 An immutable reference points to an object that is never changing. Its whole reachable object graph never change and is immutable as well.
 
 </li><li>
@@ -424,12 +769,12 @@ mutable: A mutable reference behave like normal reference in Java, C#,C++, Pytho
 Mutable references allows to mutate the referred object.
 </li><li>
 capsule: local capsule references are used only once and they guaranteed that the whole reachable object graph is reachable only thought that
-capsule reference.
+capsule reference. 
 Local Capsule references provide a structured way to reason over deep mutable objects.
 
 Fields can be annotate capsule, the meaning is that they need to be initialized/updated with capsule variables.
 We will discuss more about capsule fields and how they differs from capsule local binding later.
-
+ 
 </li><li>
 read: A readable reference can not be used to mutate the referred object; but other mutable references pointing to the same object can mutate it.
 Read references can point to both mutable and immutable objects.
@@ -449,11 +794,11 @@ lent: we still need to see the lent modifier; a hygienic mutable reference allow
 
 
 
-</p><h2> Kinds of objects , recall </h2> <p>
+</p><h2> Kinds of objects COMMA recall </h2> <p>
 
 <ul>
 <li>
-immutable: objects
+immutable: objects 
  can be instances of immutable classes, or promoted instances of mutable classes.
  They
 can be referred only by immutable and read references.
@@ -476,7 +821,7 @@ We have already see how to chose a towel, and many classes that are likely to be
 Int and Data.
 Let see now how to load a library from its url:
 <pre class="l42"><![CDATA[
-{reuse L42.is/2
+{reuse L42.is/AdamTowel
 Gui: Load<<{reuse L42.is/Gui}
 Main:{
   Gui.alert(S"hi!")
@@ -486,12 +831,12 @@ Main:{
 ]]></pre>
 Load is another decorator, here it modifies the library found in L42.is/Gui so that it can be used easly from AdamTowel.
 <pre class="l42"><![CDATA[
-{reuse L42.is/AdamTowel2
+{reuse L42.is/AdamTowel
 Collections: Load<<{reuse L42.is/Collections}
 Point:Data<<{Int x, Int y}
 Points:Collections.vector(of:Point)
 Main:{
-  ps=Points[ Point(x: 12Int, y: 20Int);Point(x: 1Int, y=2Int);]
+  ps=Points[ Point(x=12Int, y=20Int);Point(x=1Int, y=2Int);]
   var tot=0
   with p in ps (tot+=p.x()+p.y())
   return ExitCode.success()
@@ -505,14 +850,14 @@ A very large class of practically useful programs can be obtained by just declar
 
 </p><h2> Collections </h2> <p>
 Declaring and using collections is simple and easy in 42.
-For example, we can declare and use a list of <span class="code"><![CDATA[Point]]></span> by writing
+For example, we can declare and use a list of  <span class="code"><![CDATA[Point]]></span> by writing
 <pre class="l42"><![CDATA[
 Points:Collections.mutList(Point)
 
 ...
 
-zero=Point(x: 0Int, y: 0Int)
-one=Point(x: 1Int, y: 1Int)
+zero=Point(x=0Int, y=0Int)
+one=Point(x=1Int, y=1Int)
 ps0=Points[]//the empty list
 ps1=Points[zero;one]//contains zero, one
 ps2=Points[zero;one]//contains zero, one
@@ -523,7 +868,7 @@ ps2=Points[zero;one]//contains zero, one
 
 <!--<pre class="l42"><![CDATA[ Library myCode={ method Int foo()} ]]></pre>
 A local binding of type Library initialized with a class with a single <span class="code"><![CDATA[foo()]]></span> method. Since there is no body, it is an abstract method.
- -->
+ -->	 
 
  <!--</p><h2> Simpler complete program </h2> <p>
 
@@ -537,18 +882,18 @@ As you see 42 is very intuitive, as you would expect from your former life exper
 Note how valid programs can produce errors.
 We will soon learn how to produce errors in controlled and elegant ways.
 -->
-<!--A 42 program execution <span style="color:#ff1111; font-weight: bold;">is</span> the generation of all its nested classes/interface.
-, code is simply executed from top to bottom as in
+<!--A 42 program execution <span style="color:#ff1111; font-weight: bold;"> is </span> the generation of all its nested classes/interface.
+, code is simply executed from top to bottom as in 
 Python, Javascript or Php. However, the
-top level expression is a Library, and code can go in libraries
+top level expression is a Library, and code can go in libraries 
 as an initializer for you need to put the code into an expression
 -->
 
 <!-- LATER?
-<span class="code"><![CDATA[MyCode.hello(..)]]></span> use directly the <span class="code"><![CDATA[MyCode]]></span> class instance as receiver. We can also give it a name
-e se vuoi puoi anche salvarlo su un binding locale, tipo x=MyCode x.hello(...)
+<span class="code"><![CDATA[MyCode.hello(..)]]></span> use directly the <span class="code"><![CDATA[MyCode]]></span> class instance as receiver. We can also give it a name 
+e se vuoi puoi anche salvarlo su un binding locale, tipo x=MyCode  x.hello(...)
 -->
-
+ 
         </p>
         </div>
       </div>
@@ -556,37 +901,14 @@ e se vuoi puoi anche salvarlo su un binding locale, tipo x=MyCode x.hello(...)
         <div id="footer">
           <ul style='padding: 10px;'>
             <!--<li style='display:inline;'><a href="http://ecs.victoria.ac.nz/Main/MarcoServetto" >Contact Us</a> |</li>
-            <li style='display:inline;'><a href="http://www.victoria.ac.nz/ecs/disclaimer">Disclaimer</a> |</li>
+            <li style='display:inline;'><a href="http://www.victoria.ac.nz/ecs/disclaimer">Mailing list</a> |</li>
             <li style='display:inline;'><a href="http://www.victoria.ac.nz/ecs/accessibility" >Site Accessibility</a></li>
-   -->
+			-->
           </ul>
-          <p class="update">Page Updated: 22/12/2014&nbsp;&nbsp;</p>
         </div>
       </div>
     </div>
 
-    <script src="../ace/ace.js"></script>
-    <script>
-
-        // Get every l42 Div
-        var list = document.getElementsByClassName("l42");
-        for (var i = list.length - 1; i >= 0; i--) {
-
-          // Turn it into an ace window and apply features
-          var l42Box = ace.edit(list[i]);
-          l42Box.setTheme("ace/theme/l42_sublime");
-          l42Box.getSession().setMode("ace/mode/l42");
-          l42Box.setOption("maxLines", 30);
-          l42Box.setReadOnly(true);  // false to make it editable
-
-          // If our code as unrequired spaces at the front or back of the code. Remove them.
-          function trimValue(){
-            var text = l42Box.getValue();
-            return "\n"+text.trim();
-          };
-          l42Box.setValue(trimValue(),-1);
-        }
-    </script>
-
+	
   </body>
 </html>

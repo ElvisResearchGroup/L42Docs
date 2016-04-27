@@ -1,12 +1,11 @@
-#define OCode <pre class="l42"><![CDATA[
-#define CCode ]]></pre>
-#define Wcode(x) <span class="code"><![CDATA[x]]></span>
-#define WcodeQuote(x) <h6 class="code">x</h6>
-#define Wlink(address,text) <a href= WAuxLink(address.xhtml)>text</a>
-#define WAuxLink(address) #address
-#define WP </p><p>
-#define WTitle(x) </p><h2> x </h2> <p>
-#define WMS(x) <span style="color:#ff0000">Marco:x</span> 
-#define COMMA ,
-
-#define WEmph(x) <span style="color:#ff1111; font-weight: bold;">x</span> 
+m4_define(`OCode',`<pre class="l42"><![CDATA[')m4_dnl
+m4_define(`CCode',`]]></pre>')m4_dnl
+m4_define(`OJCode',`<pre class="java"><![CDATA[')m4_dnl
+m4_define(`CJCode',`]]></pre>')m4_dnl
+m4_define(`Wcode',`<span class="code"><![CDATA[$1]]></span>')m4_dnl
+m4_define(`WcodeQuote',`<h6 class="code">$1</h6>')m4_dnl
+m4_define(`Wlink',`<a href="$1.xhtml">$2</a>')m4_dnl
+m4_define(`WP',`</p><p>')m4_dnl
+m4_define(`WTitle',`</p><h2> $1 </h2> <p>')m4_dnl
+m4_define(`WMS',`<span style="color:#ff0000">Marco:$1</span>')m4_dnl
+m4_define(`WEmph',`<span style="color:#ff1111; font-weight: bold;"> $1 </span>')m4_dnl

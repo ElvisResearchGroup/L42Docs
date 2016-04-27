@@ -1,3 +1,4 @@
+m4_include(`macro.h')m4_dnl
 <?xml version="1.0" encoding="UTF-8"?>
  <!DOCTYPE html
      PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -7,10 +8,12 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
     <link rel="stylesheet" type="text/css" href="css/style.css" media="all"/>
+    <script src="js/ace.js"></script>
+    <script src="js/utils.js"></script>
     <link rel="shortcut icon" href="css/favicon.ico"/>
     <title>42 - Metaprogramming as default</title>
   </head>
-  <body>
+  <body onload='doOnLoad();'>
     <div id="wrapper">
       <div id="headerwrap">
         <div id="header">
@@ -25,4 +28,3 @@
       <div id="contentwrap">
         <div id="content">
 <p>
-#include "macro.h"

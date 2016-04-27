@@ -80,7 +80,7 @@ p { padding: 10px;}
 }
 
 #contentwrap {
-    width: 1000;
+    width: 1000px;
     float: left;
     margin: 0 auto;
     width:100%;
@@ -112,50 +112,8 @@ p { padding: 10px;}
 #footer a, #footer a:link, #footer a:visited, #footer a:active, #footer a:hover {
     color: rgb(150,150,150);
 }
-#viewQuestionLeftColumn {
-    text-align:left;
-    width: 55%;
-    /*float: left;  NO, to compute the space*/
-    /*background: #ccc;*/
-    margin: 1px 0px 1px;
-}
-
-#viewQuestionRightColumn {
-    width: 45%;
-    margin-right: 5px;
-    text-align:left;
-    float: right;/*to put before left in the page*/
-    /*background: #eee;*/
-}
-
-#evaluateAnswerMainColumn {
-    /*width: 950px;
-    background: #ccc;*/
-    padding: 10px;
-}
-
-#evaluateAnswerFeedback {
-    width: 95%;
-    background: #eee;
-    text-align: left;
-
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 10px;
-    margin-bottom: 30px;
-
-    padding: 10px;
-
-    border-style: solid;
-    border-color: darkgray;
-    border-top: 2px solid darkgray;
-    border-right: 2px solid white;
-    border-bottom: 2px solid white;
-    border-left: 2px solid darkgray;
 
 
-
-}
 
 ul{padding-left: 30px;
   list-style-type: square;
@@ -163,11 +121,68 @@ ul{padding-left: 30px;
 
 .l42{
   background-color:lightgray;
-
-  padding: 10px;
-  font-family:monospace; font-weight: bold; color: rgb(10,10,55);
+  white-space: pre;
+  padding: 0.1em;
 }
+.compare .l42{
+  max-width: 49.5%;
+  float: left;
+  }
+.compare .java{
+  max-width: 49.5%;
+  }
+
 
 h2{padding: 10px;font-size: 110%;font-weight: bold;}
  
 .code{font-family:monospace; font-weight: bold; color: rgb(10,10,55);}
+
+
+.button {
+    background-color: rgb(100, 200,100);
+    border: none;
+    color: black;
+    font-weight: bold;
+    padding: 1em;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1.1em;
+    border-style: solid;
+    border-color: darkgray;
+    border-top: 0.5em solid rgb(50, 200,50);
+    border-right: 0.3em solid rgb(100, 200, 200);
+    border-left: 0.3em solid rgb(100, 200, 200);
+    border-bottom:0.3em solid rgb(80, 180, 180);
+    border-top-right-radius: 1em;
+    border-top-left-radius: 1em;
+    border-bottom-right-radius: 0.1em;
+    border-bottom-left-radius: 0.1em;
+    margin-top:1em;
+
+}
+.button:hover  {
+   padding-top:1.5em;
+   margin-top:0.5em;  
+   }
+.button:active  {
+  padding-top:0.5em;
+  margin-top:1.5em;  
+  background-color: rgb(70, 150,70);
+  border-top:0.5em solid rgb(30, 170,30);
+  border-right: 0.3em solid rgb(70, 170, 170);
+  border-left: 0.3em solid  rgb(70, 170, 170);
+  border-bottom: 0.3em solid rgb(40, 140, 140);
+  
+  }
+
+.ace_editor {
+   border: 1px solid lightgray;
+   margin: auto;
+   height: 200px;
+   width: 100%;
+   }
+.scrollmargin {
+  height: 80px;
+  text-align: center;
+  }
