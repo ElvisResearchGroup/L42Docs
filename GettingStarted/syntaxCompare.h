@@ -1,7 +1,7 @@
 <Div id="b"><p>
 WTitle(Syntax)
 If you like to learn by examples, 
-here you can find snipplets of code in 42 and their equivalent version in Java.
+here you can find snippets of code in 42 and their equivalent version in Java.
 We format the code so that, line by line, you can see the differences.
 
 
@@ -30,7 +30,7 @@ reuse L42.is/adamTowel //importing code
 CCode
 
 OJCode
-//Java sort of equivalent code 
+//(sort of) equivalent Java code 
 //comment
 
 /*multiline comment*/
@@ -70,7 +70,7 @@ Javascript"
 CCode
 
 OJCode
-//Java sort of equivalent code 
+//(sort of) equivalent Java code 
 "hello world" //String
 
 URI.create("www.google.com")//explicit parsing
@@ -147,8 +147,8 @@ S compose(S left, S right)//paramters
 Person:Data<<{//declare a class Person
   S name //fields
   Year age
-//in 42 fields are seen as getters and setters
-//as getters and setters, no need to declare those.
+//in 42 fields are seen as getters and setters,
+//thus there is no need to declare those.
 //Also, no need to write down a constructor:
 //Data declares a name,field factory for us.
 
@@ -167,12 +167,12 @@ Person:Data<<{//declare a class Person
 CCode
 
 OJCode
-//Java sort of equivalent code 
+//(sort of) equivalent Java code 
 static String answer(){//static method definition
   return "42";
   }
 
-static method String compose(S left, S right){
+static String compose(S left, S right){
   return left+right;//magically specially overriden +
   }
 

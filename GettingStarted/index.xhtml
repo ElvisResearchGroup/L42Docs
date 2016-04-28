@@ -48,34 +48,34 @@ Show all content
 <Div id="a"><p>
 </p><h2> Why 42 </h2> <p>
 42 is a new programming language,
-the name is inspired by The Hitchhiker's Guide to the Galaxy.
-The language goal is to allow the transparent cooperation and composition of millions of libraries at the same time.
+whose name is inspired by The Hitchhiker's Guide to the Galaxy.
+The language's goal is to allow the transparent cooperation and composition of millions of libraries at the same time.
 </p><p>
 In 42 you will be able to import libraries just by naming them and to
-compose them in your code without worrying of their dependencies.
-Normally libraries are big monolitic things, coming from outside and manually imported/installed. The user have little control on
-the library code, and the library have no influence on the importing context.
+compose them in your code without worrying about their dependencies.
+Normally libraries are big monolithic things, coming from outside and manually imported/installed. The user has little control over
+the library code, and the library has no influence over the importing context.
 </p><p>
-In 42 Libraries are usually much smaller and are first class entities, that can be manipulated as values,loaded, stored, modified, adapted, saved or simply used. You will write code that manipulate libraries, but more importantly you will use libraries that manipulate libraries in non trivial ways.
+In 42 libraries are usually much smaller and are first class entities, that can be manipulated as values, loaded, stored, modified, adapted, saved or simply used. You will write code that manipulate libraries, but more importantly you will use libraries that manipulate libraries in non-trivial ways.
 Indeed in 42 manipulating libraries is so natural that is convenient to think of your own code as a library that you offer to yourself only.
 </p><p>
-42 enforce a high level of abstraction, thus there is no access to primitive
+42 enforces a high level of abstraction, thus there is no access to primitive
 structures like arrays (just use collections), and there is no concept of null or default initialization.
 While is possible to write in a fully functional style in 42, usually 42 programs mix
-<span style="color:#ff1111; font-weight: bold;"> mutable datastructure with aliasing </span>
+<span style="color:#ff1111; font-weight: bold;"> mutable datastructures with aliasing </span>
 and
 <span style="color:#ff1111; font-weight: bold;"> deeply immutable data </span>.
-Indeed 42 offers powerful support for aliasing control and immutability, helping in mixing the two stiles in an easy and natural way.
+42 offers powerful support for aliasing control and immutability, helping in mixing the two styles in an easy and natural way.
 
 </p><p>
-42 offers (well, will offer) automatic parallelism: thanks to immutability and aliasing control, many patterns of normal sequential code will be safely be executed in parallel.
+42 offers (well, will offer) automatic parallelism: thanks to immutability and aliasing control, many patterns of normal sequential code will be safely executed in parallel.
 
 </p></Div>
 
 <Div id="b"><p>
 </p><h2> Syntax </h2> <p>
 If you like to learn by examples, 
-here you can find snipplets of code in 42 and their equivalent version in Java.
+here you can find snippets of code in 42 and their equivalent version in Java.
 We format the code so that, line by line, you can see the differences.
 
 
@@ -104,7 +104,7 @@ reuse L42.is/adamTowel //importing code
 ]]></pre>
 
 <pre class="java"><![CDATA[
-//Java sort of equivalent code 
+//(sort of) equivalent Java code 
 //comment
 
 /*multiline comment*/
@@ -144,7 +144,7 @@ Javascript"
 ]]></pre>
 
 <pre class="java"><![CDATA[
-//Java sort of equivalent code 
+//(sort of) equivalent Java code 
 "hello world" //String
 
 URI.create("www.google.com")//explicit parsing
@@ -221,8 +221,8 @@ S compose(S left, S right)//paramters
 Person:Data<<{//declare a class Person
   S name //fields
   Year age
-//in 42 fields are seen as getters and setters
-//as getters and setters, no need to declare those.
+//in 42 fields are seen as getters and setters,
+//thus there is no need to declare those.
 //Also, no need to write down a constructor:
 //Data declares a name,field factory for us.
 
@@ -241,12 +241,12 @@ Person:Data<<{//declare a class Person
 ]]></pre>
 
 <pre class="java"><![CDATA[
-//Java sort of equivalent code 
+//(sort of) equivalent Java code 
 static String answer(){//static method definition
   return "42";
   }
 
-static method String compose(S left, S right){
+static String compose(S left, S right){
   return left+right;//magically specially overriden +
   }
 
@@ -413,12 +413,13 @@ All operators are just method calls, thus <span class="code"><![CDATA[a + b]]></
 Any class that offers that method supports the operator.
 
 </li><li>
-Classes are objects, when you write <span class="code"><![CDATA[Foo.bar()]]></span> you refer to the method <span class="code"><![CDATA[.bar()]]></span> offered by the object denoted by <span class="code"><![CDATA[Foo]]></span>.
+Classes are objects, so when you write <span class="code"><![CDATA[Foo.bar()]]></span> you refer to the method <span class="code"><![CDATA[.bar()]]></span> offered by the object denoted by <span class="code"><![CDATA[Foo]]></span>.
 class objects are just objects, and you can also store them in local bindings if you wish, as in <span class="code"><![CDATA[x=Foo]]></span>
 </li><li>
 The code is an object, but only at the granularity of 
-Libraries, that is, balanced pairs of curly brackets representing classes (or interfaces) with methods and nesteds.
-This is usefull for meta-programming, as we will see later this is the most important feature of 42.
+Libraries, that is, balanced pairs of curly brackets representing classes (or interfaces) with methods and nested libraries.
+This is useful for meta-programming which we will see later.
+Meta-programming is the most important feature of 42.
 
 
 </li><li>
@@ -428,30 +429,30 @@ For example <span class="code"><![CDATA[x = S"Hello " ++ S"World"]]></span>
 This is a declaration for a local binding <span class="code"><![CDATA[x]]></span>, using the string class <span class="code"><![CDATA[S]]></span> and the operator <span class="code"><![CDATA[++]]></span>,
 used as string (or in general sequence/collection) concatenation.
 
-Coming from another programming language, you many be surprised that we have to write <span class="code"><![CDATA[S]]></span> before <span class="code"><![CDATA["Hello "]]></span> and <span class="code"><![CDATA["World"]]></span>.
-This extra verbosity is need to provide fair treatment to all classes. (<a href="note1.xhtml">see more</a>)
+Coming from another programming language, you may be surprised that we have to write <span class="code"><![CDATA[S]]></span> before <span class="code"><![CDATA["Hello "]]></span> and <span class="code"><![CDATA["World"]]></span>.
+This extra verbosity is needed to provide fair treatment to all classes. (<a href="note1.xhtml">see more</a>)
 In 42 we do not give preferential treatment
-to special object/classes. In this sense, we consider
+to special objects/classes. In this sense, we consider
 most other languages to be racist.
-They give priority to their "preferred" version of numbers and strings, and this puts into a position of unfair disadvantage library code trying to define its own numbers kinds.
+They give priority to their "preferred" version of numbers and strings, and this puts into a position of unfair disadvantage library code trying to define its own kinds of numbers/strings.
 Instead in 42 you may encounter strings like <span class="code"><![CDATA[URL"www.google.com"]]></span> or
- <span class="code"><![CDATA[EMAIL"Artur.Dent@gmail.com"]]></span>.
+ <span class="code"><![CDATA[EMAIL"Arthur.Dent@gmail.com"]]></span>.
 The same for numeric classes: to talk about a street, 20 meters long, you would write
-<span class="code"><![CDATA[streetLenght=20Meter]]></span>.
+<span class="code"><![CDATA[streetLength=20Meter]]></span>.
 Note that we write the class name after the number,
 while usually the class name is before.
-42 is a little incoherent in this point, both for better readability and because <span class="code"><![CDATA[Meter20]]></span> would be consider an identifier by the parser.
+42 is a little incoherent in this point, both for better readability and because <span class="code"><![CDATA[Meter20]]></span> would be considered an identifier by the parser.
 You may encounter <span class="code"><![CDATA[Int]]></span>, <span class="code"><![CDATA[UInt]]></span>, <span class="code"><![CDATA[Float]]></span>,<span class="code"><![CDATA[Size]]></span>, <span class="code"><![CDATA[Meter]]></span>, <span class="code"><![CDATA[Kg]]></span>, <span class="code"><![CDATA[Second]]></span>, <span class="code"><![CDATA[Year]]></span>, <span class="code"><![CDATA[PhoneNumber]]></span> and many other numeric classes.
 </li></ul>
 
 </p><h2> A simple language </h2> <p>
 We believe 42 is a simple language,
 where all classes are final and interfaces are the only instrument to obtain subtyping.
-Moreover, 42 do not offers many controversial features usually found in other programming
+Moreover, 42 does not offer many controversial features usually found in other programming
 languages, including:
-(method) overloading, threading, numeric conversions and cohercions,
-casts, var-args, primitive types and automatic (un-)boxing,
-inner classes, arrays, generics, methods fields and local variable hiding,
+(method) overloading; threading; numeric conversions and coercions;
+casts; var-args; primitive types and automatic (un-)boxing;
+inner classes; arrays; generics; hiding of methods, fields and local variable;
 closures/lambdas and null.
 
 
@@ -459,7 +460,7 @@ closures/lambdas and null.
 
 </p><h2> Now, dig into the tutorial! </h2> <p>
 
-<a href="tutorial.xhtml">Lets board the Vogon ship</a>
+<a href="tutorial.xhtml">Let's board the Vogon ship</a>
 
 
         </p>
