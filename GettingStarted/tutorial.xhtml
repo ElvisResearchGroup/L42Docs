@@ -27,7 +27,6 @@
       <div id="contentwrap">
         <div id="content">
 <p>
-
 </p><h1> Basics </h1> <p>
 </p><h2> (1/5)Simple hello world program </h2> <p>
 Let's look at a simple hello world program:
@@ -146,7 +145,6 @@ Points[_;_;_]: from a variable length sequence of values; for example <span clas
 Note that in 42 those are all just expressions, and represent methods in the named class.
 Sometimes it is convenient to reuse this kind of syntax to get better syntactic support for certain operations; for example, the string class uses square brackets to support string formatting.
 <a href="S.xhtml">To understand it better: a guide to the S class</a>
-
 </p><h1> Keep control: Modifiers, kinds of classes/references/objects </h1> <p>
 
 </p><h2> (1/5)Kinds of classes </h2> <p>
@@ -395,9 +393,63 @@ They can be referred by capsule, mutable, lent and read references.
 </li><li>
 class: objects are instances of themselves.
 They can be referred only by class references, either of their class or of one transitivelly implemented interface.
-</li></ul>
+</li></ul></p><h1> Units of Measure </h1> <p>
 
+</p><h2> (1/5) Bases and Units </h2> <p>
+AdamTowel define
+many common bases:
+<ul>
+<li><span class="code"><![CDATA[Int]]></span>:
+infinite precision positive and negative integer numbers
+</li>
+<li><span class="code"><![CDATA[Double]]></span>:
+double precision positive and negative floating points numbers
+</li>
+<li>
+<span class="code"><![CDATA[Q]]></span>: infinite precision positive and negative fractions
+</li>
+<li>
+<span class="code"><![CDATA[Int64]]></span>: 64 bits numbers
+</li>
+</ul>
+Other types of bases, that could be called <span class="code"><![CDATA[Int32]]></span>,
+<span class="code"><![CDATA[Int16]]></span>,
+<span class="code"><![CDATA[Int8]]></span>,
+<span class="code"><![CDATA[Float]]></span>
+are available as separate libraries that can be imported.
 
+The class 
+<span class="code"><![CDATA[Units]]></span>
+offers methods to create units out of those bases.
+For example
+<pre class="l42"><![CDATA[
+Meter:Units.of(Q)
+Kg:Units.of(Q)
+res=Meter[6Meter;1Kg;div:2Kg]// 6m*1kg/2kg
+//res == 3Meter
+]]></pre>
+Where the square brackets allows to 
+compose different kinds of units.
+We can also declare composite units and
+aliasing units:
+
+<pre class="l42"><![CDATA[
+Meter2:Units[Meter;Meter]
+Cm:Units.alias(0.01Meter)
+Meter height=178Cm
+res=Meter2[height;3Meter]
+]]></pre>
+
+Note how height is of type <span class="code"><![CDATA[Meter]]></span>.
+Alias units are just shortcut to declare values of
+the original unit.
+
+</p><h1> Collections and Data classes </h1> <p>
+
+A very large class of practically useful programs can be obtained by
+just declaring simple minded classes using Data and Collections.
+
+</p><h2> Libraries </h2> <p>
 
 
 </p><h1> not ready to read yet Libraries </h1> <p>
@@ -405,7 +457,7 @@ They can be referred only by class references, either of their class or of one t
 </p><h2> Libraries </h2> <p>
 42 stands for the primate of libraries, so let see some libraries in action.
 We have already see how to chose a towel, and many classes that are likely to be present in such towel, like
-Int and Data.
+<span class="code"><![CDATA[S]]></span> and <span class="code"><![CDATA[Data]]></span>.
 Let see now how to load a library from its url:
 <pre class="l42"><![CDATA[
 {reuse L42.is/AdamTowel
@@ -417,20 +469,33 @@ Main:{
 }
 ]]></pre>
 Load is another decorator, here it modifies the library found in L42.is/Gui so that it can be used easly from AdamTowel.
+ <!--
+    //Meter dx=this.x()-that.x();
+    //Meter dy=this.y()-that.y();
+    //m2=Meter2[dx;dx]+Meter2[dy;dy]
+    //return Meter[root:2Unit of:m2]
+    //dx=dx.unit()
+    //Meter.fromUnit(((dx*dx)+(dy*dy)).sqrt())
+ -->	
 <pre class="l42"><![CDATA[
 {reuse L42.is/AdamTowel
 Collections: Load<<{reuse L42.is/Collections}
-Point:Data<<{Int x, Int y}
+Point:Data<<{Meter x, Meter y
+  method 
+  Meter distance(Point from){/*...*/}
+  }
 Points:Collections.vector(of:Point)
 Main:{
-  ps=Points[ Point(x=12Int, y=20Int);Point(x=1Int, y=2Int);]
-  var tot=0
-  with p in ps (tot+=p.x()+p.y())
+  zero=Point(0Meter,0Meter)
+  ps=Points[ Point(x=12Meter, y=20Meter);Point(x=1Meter, y=2Meter);]
+  var Meter tot=0Meter
+  with p in ps.vals() (
+    tot+=p.distance(from:zero)
+    )
   return ExitCode.success()
   }
 }
 ]]></pre>
-A very large class of practically useful programs can be obtained by just declaring smart structs using Data and Collections.
 
 
 
@@ -480,7 +545,6 @@ as an initializer for you need to put the code into an expression
 <span class="code"><![CDATA[MyCode.hello(..)]]></span> use directly the <span class="code"><![CDATA[MyCode]]></span> class instance as receiver. We can also give it a name 
 e se vuoi puoi anche salvarlo su un binding locale, tipo x=MyCode  x.hello(...)
 -->
- 
         </p>
         </div>
       </div>
