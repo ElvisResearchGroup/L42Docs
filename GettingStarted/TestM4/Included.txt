@@ -1,2 +1,0 @@
-Hi Included
-write m4 -P input > output
