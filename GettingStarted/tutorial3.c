@@ -26,7 +26,7 @@ but triky modulo arithmetic.
 
 WTitle(Loading other numeric types)
 
-You can import other numerc types by loading libraries.
+You can import other numeric types by loading libraries.
 For example
 
 OCode
@@ -47,7 +47,7 @@ current context, while the
 reuse keyword imports the code from the web.
 
 WTitle(Conversions)
-Conversions between varius numeric classes must be performed explicitly.
+Conversions between various numeric classes must be performed explicitly.
 All numeric classes implements 
 the Wcode(Numeric) interface and offer the Wcode(.from(numeric)) method.
 So, for example 
@@ -59,25 +59,10 @@ CCode
 converts from Wcode(Size) to Wcode(Double).
 This avoid precision loss as much as possible.
 
-WTitle((2/5) Iteration)
-
-It is possible to iterate over a range of numbers:
-
-OCode
-with i in 4Size.vals() (
-  Debug(i)//prints 4,5,6,7 and so on forever
-  )
-CCode
-
-OCode
-with i in 4Size.upTo(42Size) (
-  Debug(i)//prints 4,5,6,7 and so on up to 42 excluded
-  )
-CCode
 
 
 
-WTitle((3/5) Units)
+WTitle((2/5) Units)
 
 
 The class 
@@ -93,7 +78,30 @@ res=(6Meter +4Meter)*2Num //20Meter
 //wrong1=6Meter+2Second
 //wrong2=6Meter/2Second
 CCode
-As you can see, we can sum meters together, and we can use the support for multiplicaiton, but we can not mix different units of measure.
+As you can see, we can sum meters together, and we can use the support for multiplication, but we can not mix different units of measure.
+
+
+Mathematically you can obtain the support out of the unit by
+division: Wcode(42Meter/2Meter = 21Meter).
+This do not work directly in 42, since multiplication and division
+takes the support and not a unit.
+Units provide method Wcode(div(that)) for this aim.
+Units also provide method  Wcode(`#'inner()),
+this is just extracting the value of the support from the unit.
+This can be convenient during programming bud 
+does not makes a lot of sense mathematically.
+Methods like that, require to be used with care, they start with
+Wcode(`#') to underline that they should be used with care.
+
+OCode
+Num n1=42Meter.div(2Meter)//=21Num
+Num n2=42Meter.#inner()//=42Num
+CCode
+
+
+
+WTitle((3/5) Composite Units)
+
 Wcode(Units) supports composite units:
 OCode
 Speed:Units.of(Meter per:Second)
@@ -113,7 +121,7 @@ gForceOnMe=Newton(78Kg and:g)//little less than 780
 myLift=myRoket-gForceOnMe
 if myLift>0Newton (Debug(S"I can fly"))
 myAcc=myLift.div1(78Kg)//get second component
-reachedHeight=myAcc.per(10Second).per(10Second)/2N //after 10 sec
+reachedHeight=myAcc.per(10Second).per(10Second)/2Num //after 10 sec
 CCode
 Note how we can use Wcode(.per()),
  Wcode(.div1()) 
@@ -132,7 +140,9 @@ Alias units are just shortcut to declare values of
 the original unit.
 
 
-WTitle((3/5) Alphanumeric)
+
+
+WTitle((4/5) Alphanumeric)
 In the same way Wcode(Units) allows easy creation of
 arithmetic classes,
 Wcode(Alphanumeric) allows easy creation of alphanumeric classes:
@@ -180,126 +190,16 @@ myEmail=Email"arthur.dent@gmail.com"
 Assert.$[myEmail.toS() expected:S"arthurdent@gmail.com"]
 CCode
 
+WTitle((5/5) Recall)
 
-
-WBigTitle(Collections and Data classes)
-
-A very large class of practically useful programs can be obtained by
-just declaring simple minded classes using Data and Collections.
-
-WTitle(Libraries)
-
-
-WBigTitle(not ready to read yet Libraries)
-
-WTitle(Libraries)
-42 stands for the primate of libraries, so let see some libraries in action.
-We have already see how to chose a towel, and many classes that are likely to be present in such towel, like
-Wcode(S) and Wcode(Data).
-Let see now how to load a library from its url:
-OCode
-{reuse L42.is/AdamTowel
-Gui: Load<<{reuse L42.is/Gui}
-Main:{
-  Gui.alert(S"hi!")
-  return ExitCode.success()
-  }
-}
-CCode
-Load is another decorator, here it modifies the library found in L42.is/Gui so that it can be used easly from AdamTowel.
- <!--
- 
- Data invariants
- interface
-  
- Sequences
- Strings
- Collections
- iterations 
- 
- Exceptions
- Assertions
- 
- Units and alphanumerics
- 
- 
- 
-
- 
- Use Extends Refactor
- 
-    //Meter dx=this.x()-that.x();
-    //Meter dy=this.y()-that.y();
-    //m2=Meter2[dx;dx]+Meter2[dy;dy]
-    //return Meter[root:2Unit of:m2]
-    //dx=dx.unit()
-    //Meter.fromUnit(((dx*dx)+(dy*dy)).sqrt())
- -->	
-OCode
-{reuse L42.is/AdamTowel
-Collections: Load<<{reuse L42.is/Collections}
-Point:Data<<{Meter x, Meter y
-  method 
-  Meter distance(Point from){/*...*/}
-  }
-Points:Collections.vector(of:Point)
-Main:{
-  zero=Point(0Meter,0Meter)
-  ps=Points[ Point(x=12Meter, y=20Meter);Point(x=1Meter, y=2Meter);]
-  var Meter tot=0Meter
-  with p in ps.vals() (
-    tot+=p.distance(from:zero)
-    )
-  return ExitCode.success()
-  }
-}
-CCode
-
-
-
-
-WTitle(Collections)
-Declaring and using collections is simple and easy in 42.
-For example, we can declare and use a list of  Wcode(Point) by writing
-OCode
-Points:Collections.mutList(Point)
-
-...
-
-zero=Point(x=0Int, y=0Int)
-one=Point(x=1Int, y=1Int)
-ps0=Points[]//the empty list
-ps1=Points[zero;one]//contains zero, one
-ps2=Points[zero;one]//contains zero, one
-
-CCode
-
-
-
-<!--OCode Library myCode={ method Int foo()} CCode
-A local binding of type Library initialized with a class with a single Wcode(foo()) method. Since there is no body, it is an abstract method.
- -->	 
-
- <!--WTitle(Simpler complete program)
-
-Let now starts showing the simplest 42 program: an empty library.
-
-OCode {} CCode
-
-If we save this valid program in a file Wcode(Test.L42) and we run Wcode(L42 Test), we get an error.
-WP
-As you see 42 is very intuitive, as you would expect from your former life experiences, most simple things just does not work.
-Note how valid programs can produce errors.
-We will soon learn how to produce errors in controlled and elegant ways.
--->
-<!--A 42 program execution WEmph(is) the generation of all its nested classes/interface.
-, code is simply executed from top to bottom as in 
-Python, Javascript or Php. However, the
-top level expression is a Library, and code can go in libraries 
-as an initializer for you need to put the code into an expression
--->
-
-<!-- LATER?
-Wcode(MyCode.hello(..)) use directly the Wcode(MyCode) class instance as receiver. We can also give it a name 
-e se vuoi puoi anche salvarlo su un binding locale, tipo x=MyCode  x.hello(...)
--->
+<ul><li>
+Use Wcode(Num) as your first guess for numeric types,
+if you have special needs, can consider loading a numeric library.
+</li><li>
+Use Wcode(Size) for indexing linear datastructures like vectors and strings.
+Beware of the tricky modulo arithmetic.
+</li><li>
+Use Wcode(Units) 
+and Wcode(Alphanumeric) to give meaning to your constants.
+In this way the type system will help you to use values with the semantic you decided.
+</li></ul>

@@ -36,13 +36,13 @@ MyCode:{
     } 
   }
 Main:{
-  Debug(MyCode.hello(name=S"world"))
+  Debug(MyCode.hello(name:S"world"))
   return ExitCode.success()
   }
 }
 CCode
 Here we declare a class to host our Wcode(hello(name)) method.
-We write Wcode(class method) to declare a method that can be called on the class object, as in Wcode(MyCode.hello(name=S"world")). This is roughly equivalent to a static method in languages like Java or C++, or class methods in Python.
+We write Wcode(class method) to declare a method that can be called on the class object, as in Wcode(MyCode.hello(name:S"world")). This is roughly equivalent to a static method in languages like Java or C++, or class methods in Python.
 
 WP
 Note how the method is called using the parameter name explicitly.
@@ -61,19 +61,19 @@ WTitle((3/5)Simple class with internal state)
 Let's create now a class with state and factory:
 OCode
 Point:Data<<{
-  Int x
-  Int y
+  Num x
+  Num y
   method
-  Point add(Int x)
-    Point(x=x+this.x(), y=this.y())
-  Point add(Int y)
-    this.with(y=y+this.y())
+  Point add(Num x)
+    Point(x:x+this.x(), y:this.y())
+  Point add(Num y)
+    this.with(y:y+this.y())
   }
 CCode
-Here you can see we declare a Wcode(Point) class with Wcode(x) and Wcode(y) Wcode(Int) coordinates.
+Here you can see we declare a Wcode(Point) class with Wcode(x) and Wcode(y) Wcode(Num) (unlimited precision rational number) coordinates.
 Wcode(Data) is a decorator. Decorators are classes/objects that offer an operator Wcode(<<), called the babel fish operator,
 whose goal is to translate a library into a "better" library.
-In this case, Wcode(Data) is translating the class Wcode(`{Int x, Int y}') into a much longer class, with
+In this case, Wcode(Data) is translating the class Wcode(`{Num x, Num y}') into a much longer class, with
 a factory method taking in input the fields and initializing them, but also containing
  boring but useful definitions for
 equality, inequality, conversions from and to human readable strings, XML and binary representations for (de)serialization.
@@ -88,27 +88,69 @@ single field updated.
 We can declare two methods, Wcode(add(x)) and Wcode(add(y)) with the same name, if parameter names are different.
 WP
 Note how we always use getters and we never access fields directly.
-In many other languages we can use write Wcode(a.fieldName) and Wcode(a.fieldName=newValue). Such syntax does not exists in 42. The same goes for object instantiation; in many languages there is a special Wcode(new ClassName(..)) dedicated syntax, while in 42 it is just a method call.
+In many other languages we can use write Wcode(a.fieldName) and Wcode(a.fieldName:newValue). Such syntax does not exists in 42. The same goes for object instantiation; in many languages there is a special Wcode(new ClassName(..)) dedicated syntax, while in 42 it is just a method call.
 WP
 Also, similarly to what happens in Python, we need to use Wcode(this.methodName()) to call methods when the receiver is Wcode(this).
 While this makes some code more verbose, it saves us from the burden of  method hiding.   
 
 
 
-WTitle((4/5)Decorators)
+WTitle(Decorators)
 Decorators are one of the main concepts used by 42 programmers. We will encounter many decorators in this tutorial.
 For now, just get used to the pattern of writing
 Wcode(<<) to go from a minimal chunk of code, with method declarations for the important bits, to a fully fledged usable class.
 Wlink(Decorators, More on decorators)
 
-WTitle(`(5/5)Object creation, recall')
+
+WTitle((4/5)Vectors)
+
+Vectors can be declared using Wcode(Collections.vector(of)), as in the example below.
+
+OCode
+Nums:Collections.vector(of:Num)//declaration for vectors of nums
+Points:Collections.vector(of:Point)//same for points
+/*..*/
+xs=Nums[10Num;20Num;30Num]
+ys=Nums[1Num;2Num;3Num]
+points=Points[with x in xs.vals(), y in ys.vals() (
+  use[Point(x:x, y:y)]
+  )]
+CCode
+
+Vectors can be initialized with the Wcode([_;_;_])
+syntax or with the Wcode([with _ ( _ use[ _ ]_ )]) syntax.
+We will discuss all the variation of Wcode(with) later.
+Note how to express number literal we need to specify their class.
+
+WTitle(`(5/5)Basis Recall')
+
+<ul><li>
+At the start of your program, import a towel using 
+"Wcode(reuse _)", as in Wcode(reuse L42.is/AdamTowel).
+</li><li>
+To declare a simple class exposing its state and 
+some methods working with those, use Wcode(Data), as in
+Wcode(Point:Data<<{Num x, Num y}).
+</li><li>
+You can declare methods in classes with the Wcode(method) keyword,
+as in Wcode(method ReturnType myName(ParType parName) body).
+Use Wcode(class method) for methods that can be called on the class object directly.
+</li><li>
+To define a vector of a type, use 
+Wcode(Collections.vector(of))
+as in 
+Wcode(Points:Collections.vector(of:Point))
+</li></ul>
+
+
+WTitle(`Object creation recall')
 42 supports many different syntactic forms that are convenient to create objects:
 <ul><li>
-12Int: from a numeric representation
+12Num: from a numeric representation
 </li><li>
 S"foo": from a string representation
 </li><li>
-Point(x=_,y=_): from the parameter values
+Point(x:_,y:_): from the parameter values
 </li><li>
 Points[_;_;_]: from a variable length sequence of values; for example Wcode(Points) can be a list of Wcode(Point). We can instantiate Wcode(Points) by using the square brackets as shown later. 
 </li></ul>

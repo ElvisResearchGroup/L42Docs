@@ -11,7 +11,7 @@ Animal:Data<<{
   var Point location
   mut method
   Void run() 
-    this.location(this.location().add(x=20Int))
+    this.location(this.location().add(x:20Num))
   }
 CCode
 There are two new keywords used here:
@@ -33,13 +33,13 @@ While usual in other languages, in 42 parameters are passed
 by name.
 However, for some methods with a single parameter writing down the parameter name would not improve the readability and just add noise.
 In those cases the first parameter is conventionally called Wcode(that), 
-and writing Wcode(a.b(that=c))
+and writing Wcode(a.b(that:c))
 is equivalent to writing Wcode(a.b(c)).
 This works also for methods with multiple parameters, if the first one is called Wcode(that).
 We can use an animal by writing, for example:
 
 OCode
-  dog=Animal(location=Point(x=0Int, y=0Int))//type of the reference inferred
+  dog=Animal(location:Point(x:0Num, y:0Num))//type of the reference inferred
   mut Animal dogAlias=dog //this is the exact type 
   dog.run()
 CCode
@@ -68,11 +68,11 @@ Immutable objects can be referred using immutable references.
 
 This code models an animal following a path. It can be used like this.
 OCode
-  zero=Point(x=0Int, y=0Int)
-  ps1=Points[ Point(x=12Int, y=20Int);Point(x=1Int, y=2Int)]
-  ps2=Points[ zero;Point(x=1Int, y=2Int)]
-  dog1=Animal(location=zero, path=ps1)
-  dog2=Animal(location=zero, path=ps2)
+  zero=Point(x:0Num, y:0Num)
+  ps1=Points[ Point(x:12Num, y:20Num);Point(x:1Num, y:2Num)]
+  ps2=Points[ zero;Point(x:1Num, y:2Num)]
+  dog1=Animal(location:zero, path:ps1)
+  dog2=Animal(location:zero, path:ps2)
   dog1.move()
   dog2.move()
 CCode
@@ -83,10 +83,10 @@ The secon dog goes to 0:0.
 This code involves a mutable animal with a mutable field. This is often
 a terrible idea, since its behaviour may depend on aliasing: what happens if two dogs follow the same path?
 OCode
-  zero=Point(x=0Int, y=0Int)
-  ps=Points[ Point(x=12Int, y=20Int);Point(x=1Int, y=2Int)]
-  dog1=Animal(location=zero, path=ps)
-  dog2=Animal(location=zero, path=ps)
+  zero=Point(x:0Num, y:0Num)
+  ps=Points[ Point(x:12Num, y:20Num);Point(x:1Num, y:2Num)]
+  dog1=Animal(location:zero, path:ps)
+  dog2=Animal(location:zero, path:ps)
   dog1.move()
   dog2.move()
 CCode
@@ -122,10 +122,10 @@ WP
 
 Now the code of before would not compile. However we can still write the following variant
 OCode
-  zero=Point(x=0Int, y=0Int)
-  capsule Points ps=Points[ Point(x=12Int, y=20Int);Point(x=1Int, y=2Int)]
-  dog1=Animal(location=zero, path=ps)
-  dog2=Animal(location=zero, path=Points[ Point(x=12Int, y=20Int);Point(x=1Int, y=2Int)])
+  zero=Point(x:0Num, y:0Num)
+  capsule Points ps=Points[ Point(x:12Num, y:20Num);Point(x:1Num, y:2Num)]
+  dog1=Animal(location:zero, path:ps)
+  dog2=Animal(location:zero, path:Points[ Point(x:12Num, y:20Num);Point(x:1Num, y:2Num)])
   dog1.move()
   dog2.move()
 CCode
@@ -136,14 +136,14 @@ has to use another capsule. It is ok to just write the object creation in place 
 Alternatively, most classes offer a Wcode(clone()) method,
 so in this case we could write
 
-Wcode(dog2=Animal(location=zero, path=dog1.ps().clone()))
+Wcode(dog2=Animal(location:zero, path:dog1.ps().clone()))
 
 
 
 WTitle(`(4/5)Immutable objects of Mutable classes')
 
 How can we get an immutable Wcode(Animal)?
-When an Wcode(Animal) is created using Wcode(Animal(location=__,path=__)) we create a Wcode(mut Animal).
+When an Wcode(Animal) is created using Wcode(Animal(location:__,path:__)) we create a Wcode(mut Animal).
 
 In most cases you can promote such reference to immutable/capsule; just make the type of the local binding explicit.
  The type system will take care of the rest.
@@ -245,5 +245,5 @@ mutable: objects are instances of mutable classes.
 They can be referred by capsule, mutable, lent and read references.
 </li><li>
 class: objects are instances of themselves.
-They can be referred only by class references, either of their class or of one transitivelly implemented interface.
+They can be referred only by class references, either of their class or of one transitively implemented interface.
 </li></ul>

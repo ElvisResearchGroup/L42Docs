@@ -65,13 +65,13 @@ MyCode:{
     } 
   }
 Main:{
-  Debug(MyCode.hello(name=S"world"))
+  Debug(MyCode.hello(name:S"world"))
   return ExitCode.success()
   }
 }
 ]]></pre>
 Here we declare a class to host our <span class="code"><![CDATA[hello(name)]]></span> method.
-We write <span class="code"><![CDATA[class method]]></span> to declare a method that can be called on the class object, as in <span class="code"><![CDATA[MyCode.hello(name=S"world")]]></span>. This is roughly equivalent to a static method in languages like Java or C++, or class methods in Python.
+We write <span class="code"><![CDATA[class method]]></span> to declare a method that can be called on the class object, as in <span class="code"><![CDATA[MyCode.hello(name:S"world")]]></span>. This is roughly equivalent to a static method in languages like Java or C++, or class methods in Python.
 
 </p><p>
 Note how the method is called using the parameter name explicitly.
@@ -90,19 +90,19 @@ In 42 we do not have constructors. Objects are created by factory methods. We be
 Let's create now a class with state and factory:
 <pre class="l42"><![CDATA[
 Point:Data<<{
-  Int x
-  Int y
+  Num x
+  Num y
   method
-  Point add(Int x)
-    Point(x=x+this.x(), y=this.y())
-  Point add(Int y)
-    this.with(y=y+this.y())
+  Point add(Num x)
+    Point(x:x+this.x(), y:this.y())
+  Point add(Num y)
+    this.with(y:y+this.y())
   }
 ]]></pre>
-Here you can see we declare a <span class="code"><![CDATA[Point]]></span> class with <span class="code"><![CDATA[x]]></span> and <span class="code"><![CDATA[y]]></span> <span class="code"><![CDATA[Int]]></span> coordinates.
+Here you can see we declare a <span class="code"><![CDATA[Point]]></span> class with <span class="code"><![CDATA[x]]></span> and <span class="code"><![CDATA[y]]></span> <span class="code"><![CDATA[Num]]></span> (unlimited precision rational number) coordinates.
 <span class="code"><![CDATA[Data]]></span> is a decorator. Decorators are classes/objects that offer an operator <span class="code"><![CDATA[<<]]></span>, called the babel fish operator,
 whose goal is to translate a library into a "better" library.
-In this case, <span class="code"><![CDATA[Data]]></span> is translating the class <span class="code"><![CDATA[{Int x, Int y}]]></span> into a much longer class, with
+In this case, <span class="code"><![CDATA[Data]]></span> is translating the class <span class="code"><![CDATA[{Num x, Num y}]]></span> into a much longer class, with
 a factory method taking in input the fields and initializing them, but also containing
  boring but useful definitions for
 equality, inequality, conversions from and to human readable strings, XML and binary representations for (de)serialization.
@@ -117,27 +117,69 @@ single field updated.
 We can declare two methods, <span class="code"><![CDATA[add(x)]]></span> and <span class="code"><![CDATA[add(y)]]></span> with the same name, if parameter names are different.
 </p><p>
 Note how we always use getters and we never access fields directly.
-In many other languages we can use write <span class="code"><![CDATA[a.fieldName]]></span> and <span class="code"><![CDATA[a.fieldName=newValue]]></span>. Such syntax does not exists in 42. The same goes for object instantiation; in many languages there is a special <span class="code"><![CDATA[new ClassName(..)]]></span> dedicated syntax, while in 42 it is just a method call.
+In many other languages we can use write <span class="code"><![CDATA[a.fieldName]]></span> and <span class="code"><![CDATA[a.fieldName:newValue]]></span>. Such syntax does not exists in 42. The same goes for object instantiation; in many languages there is a special <span class="code"><![CDATA[new ClassName(..)]]></span> dedicated syntax, while in 42 it is just a method call.
 </p><p>
 Also, similarly to what happens in Python, we need to use <span class="code"><![CDATA[this.methodName()]]></span> to call methods when the receiver is <span class="code"><![CDATA[this]]></span>.
 While this makes some code more verbose, it saves us from the burden of  method hiding.   
 
 
 
-</p><h2> (4/5)Decorators </h2> <p>
+</p><h2> Decorators </h2> <p>
 Decorators are one of the main concepts used by 42 programmers. We will encounter many decorators in this tutorial.
 For now, just get used to the pattern of writing
 <span class="code"><![CDATA[<<]]></span> to go from a minimal chunk of code, with method declarations for the important bits, to a fully fledged usable class.
 <a href="Decorators.xhtml">More on decorators</a>
 
-</p><h2> (5/5)Object creation, recall </h2> <p>
+
+</p><h2> (4/5)Vectors </h2> <p>
+
+Vectors can be declared using <span class="code"><![CDATA[Collections.vector(of)]]></span>, as in the example below.
+
+<pre class="l42"><![CDATA[
+Nums:Collections.vector(of:Num)//declaration for vectors of nums
+Points:Collections.vector(of:Point)//same for points
+/*..*/
+xs=Nums[10Num;20Num;30Num]
+ys=Nums[1Num;2Num;3Num]
+points=Points[with x in xs.vals(), y in ys.vals() (
+  use[Point(x:x, y:y)]
+  )]
+]]></pre>
+
+Vectors can be initialized with the <span class="code"><![CDATA[[_;_;_]]]></span>
+syntax or with the <span class="code"><![CDATA[[with _ ( _ use[ _ ]_ )]]]></span> syntax.
+We will discuss all the variation of <span class="code"><![CDATA[with]]></span> later.
+Note how to express number literal we need to specify their class.
+
+</p><h2> (5/5)Basis Recall </h2> <p>
+
+<ul><li>
+At the start of your program, import a towel using 
+"<span class="code"><![CDATA[reuse _]]></span>", as in <span class="code"><![CDATA[reuse L42.is/AdamTowel]]></span>.
+</li><li>
+To declare a simple class exposing its state and 
+some methods working with those, use <span class="code"><![CDATA[Data]]></span>, as in
+<span class="code"><![CDATA[Point:Data<<{Num x]]></span>.
+</li><li>
+You can declare methods in classes with the <span class="code"><![CDATA[method]]></span> keyword,
+as in <span class="code"><![CDATA[method ReturnType myName(ParType parName) body]]></span>.
+Use <span class="code"><![CDATA[class method]]></span> for methods that can be called on the class object directly.
+</li><li>
+To define a vector of a type, use 
+<span class="code"><![CDATA[Collections.vector(of)]]></span>
+as in 
+<span class="code"><![CDATA[Points:Collections.vector(of:Point)]]></span>
+</li></ul>
+
+
+</p><h2> Object creation recall </h2> <p>
 42 supports many different syntactic forms that are convenient to create objects:
 <ul><li>
-12Int: from a numeric representation
+12Num: from a numeric representation
 </li><li>
 S"foo": from a string representation
 </li><li>
-Point(x=_,y=_): from the parameter values
+Point(x:_,y:_): from the parameter values
 </li><li>
 Points[_;_;_]: from a variable length sequence of values; for example <span class="code"><![CDATA[Points]]></span> can be a list of <span class="code"><![CDATA[Point]]></span>. We can instantiate <span class="code"><![CDATA[Points]]></span> by using the square brackets as shown later. 
 </li></ul>
@@ -158,7 +200,7 @@ Animal:Data<<{
   var Point location
   mut method
   Void run() 
-    this.location(this.location().add(x=20Int))
+    this.location(this.location().add(x:20Num))
   }
 ]]></pre>
 There are two new keywords used here:
@@ -180,13 +222,13 @@ While usual in other languages, in 42 parameters are passed
 by name.
 However, for some methods with a single parameter writing down the parameter name would not improve the readability and just add noise.
 In those cases the first parameter is conventionally called <span class="code"><![CDATA[that]]></span>, 
-and writing <span class="code"><![CDATA[a.b(that=c)]]></span>
+and writing <span class="code"><![CDATA[a.b(that:c)]]></span>
 is equivalent to writing <span class="code"><![CDATA[a.b(c)]]></span>.
 This works also for methods with multiple parameters, if the first one is called <span class="code"><![CDATA[that]]></span>.
 We can use an animal by writing, for example:
 
 <pre class="l42"><![CDATA[
-  dog=Animal(location=Point(x=0Int, y=0Int))//type of the reference inferred
+  dog=Animal(location:Point(x:0Num, y:0Num))//type of the reference inferred
   mut Animal dogAlias=dog //this is the exact type 
   dog.run()
 ]]></pre>
@@ -215,11 +257,11 @@ Immutable objects can be referred using immutable references.
 
 This code models an animal following a path. It can be used like this.
 <pre class="l42"><![CDATA[
-  zero=Point(x=0Int, y=0Int)
-  ps1=Points[ Point(x=12Int, y=20Int);Point(x=1Int, y=2Int)]
-  ps2=Points[ zero;Point(x=1Int, y=2Int)]
-  dog1=Animal(location=zero, path=ps1)
-  dog2=Animal(location=zero, path=ps2)
+  zero=Point(x:0Num, y:0Num)
+  ps1=Points[ Point(x:12Num, y:20Num);Point(x:1Num, y:2Num)]
+  ps2=Points[ zero;Point(x:1Num, y:2Num)]
+  dog1=Animal(location:zero, path:ps1)
+  dog2=Animal(location:zero, path:ps2)
   dog1.move()
   dog2.move()
 ]]></pre>
@@ -230,10 +272,10 @@ The secon dog goes to 0:0.
 This code involves a mutable animal with a mutable field. This is often
 a terrible idea, since its behaviour may depend on aliasing: what happens if two dogs follow the same path?
 <pre class="l42"><![CDATA[
-  zero=Point(x=0Int, y=0Int)
-  ps=Points[ Point(x=12Int, y=20Int);Point(x=1Int, y=2Int)]
-  dog1=Animal(location=zero, path=ps)
-  dog2=Animal(location=zero, path=ps)
+  zero=Point(x:0Num, y:0Num)
+  ps=Points[ Point(x:12Num, y:20Num);Point(x:1Num, y:2Num)]
+  dog1=Animal(location:zero, path:ps)
+  dog2=Animal(location:zero, path:ps)
   dog1.move()
   dog2.move()
 ]]></pre>
@@ -269,10 +311,10 @@ The "capsule" modifier <span style="color:#ff1111; font-weight: bold;"> forces <
 
 Now the code of before would not compile. However we can still write the following variant
 <pre class="l42"><![CDATA[
-  zero=Point(x=0Int, y=0Int)
-  capsule Points ps=Points[ Point(x=12Int, y=20Int);Point(x=1Int, y=2Int)]
-  dog1=Animal(location=zero, path=ps)
-  dog2=Animal(location=zero, path=Points[ Point(x=12Int, y=20Int);Point(x=1Int, y=2Int)])
+  zero=Point(x:0Num, y:0Num)
+  capsule Points ps=Points[ Point(x:12Num, y:20Num);Point(x:1Num, y:2Num)]
+  dog1=Animal(location:zero, path:ps)
+  dog2=Animal(location:zero, path:Points[ Point(x:12Num, y:20Num);Point(x:1Num, y:2Num)])
   dog1.move()
   dog2.move()
 ]]></pre>
@@ -283,14 +325,14 @@ has to use another capsule. It is ok to just write the object creation in place 
 Alternatively, most classes offer a <span class="code"><![CDATA[clone()]]></span> method,
 so in this case we could write
 
-<span class="code"><![CDATA[dog2=Animal(location=zero, path=dog1.ps().clone())]]></span>
+<span class="code"><![CDATA[dog2=Animal(location:zero, path:dog1.ps().clone())]]></span>
 
 
 
 </p><h2> (4/5)Immutable objects of Mutable classes </h2> <p>
 
 How can we get an immutable <span class="code"><![CDATA[Animal]]></span>?
-When an <span class="code"><![CDATA[Animal]]></span> is created using <span class="code"><![CDATA[Animal(location=__,path=__)]]></span> we create a <span class="code"><![CDATA[mut Animal]]></span>.
+When an <span class="code"><![CDATA[Animal]]></span> is created using <span class="code"><![CDATA[Animal(location:__,path:__)]]></span> we create a <span class="code"><![CDATA[mut Animal]]></span>.
 
 In most cases you can promote such reference to immutable/capsule; just make the type of the local binding explicit.
  The type system will take care of the rest.
@@ -392,8 +434,9 @@ mutable: objects are instances of mutable classes.
 They can be referred by capsule, mutable, lent and read references.
 </li><li>
 class: objects are instances of themselves.
-They can be referred only by class references, either of their class or of one transitivelly implemented interface.
-</li></ul></p><h1> Units of Measure </h1> <p>
+They can be referred only by class references, either of their class or of one transitively implemented interface.
+</li></ul>
+</p><h1> Units of Measure </h1> <p>
 
 </p><h2> (1/5) Num and Size </h2> <p>
 <span class="code"><![CDATA[Num]]></span> is a general number type,
@@ -421,7 +464,7 @@ but triky modulo arithmetic.
 
 </p><h2> Loading other numeric types </h2> <p>
 
-You can import other numerc types by loading libraries.
+You can import other numeric types by loading libraries.
 For example
 
 <pre class="l42"><![CDATA[
@@ -442,7 +485,7 @@ current context, while the
 reuse keyword imports the code from the web.
 
 </p><h2> Conversions </h2> <p>
-Conversions between varius numeric classes must be performed explicitly.
+Conversions between various numeric classes must be performed explicitly.
 All numeric classes implements 
 the <span class="code"><![CDATA[Numeric]]></span> interface and offer the <span class="code"><![CDATA[.from(numeric)]]></span> method.
 So, for example 
@@ -454,25 +497,10 @@ myDouble=Double.from(numeric:size)
 converts from <span class="code"><![CDATA[Size]]></span> to <span class="code"><![CDATA[Double]]></span>.
 This avoid precision loss as much as possible.
 
-</p><h2> (2/5) Iteration </h2> <p>
-
-It is possible to iterate over a range of numbers:
-
-<pre class="l42"><![CDATA[
-with i in 4Size.vals() (
-  Debug(i)//prints 4,5,6,7 and so on forever
-  )
-]]></pre>
-
-<pre class="l42"><![CDATA[
-with i in 4Size.upTo(42Size) (
-  Debug(i)//prints 4,5,6,7 and so on up to 42 excluded
-  )
-]]></pre>
 
 
 
-</p><h2> (3/5) Units </h2> <p>
+</p><h2> (2/5) Units </h2> <p>
 
 
 The class 
@@ -488,7 +516,30 @@ res=(6Meter +4Meter)*2Num //20Meter
 //wrong1=6Meter+2Second
 //wrong2=6Meter/2Second
 ]]></pre>
-As you can see, we can sum meters together, and we can use the support for multiplicaiton, but we can not mix different units of measure.
+As you can see, we can sum meters together, and we can use the support for multiplication, but we can not mix different units of measure.
+
+
+Mathematically you can obtain the support out of the unit by
+division: <span class="code"><![CDATA[42Meter/2Meter = 21Meter]]></span>.
+This do not work directly in 42, since multiplication and division
+takes the support and not a unit.
+Units provide method <span class="code"><![CDATA[div(that)]]></span> for this aim.
+Units also provide method  <span class="code"><![CDATA[#inner()]]></span>,
+this is just extracting the value of the support from the unit.
+This can be convenient during programming bud 
+does not makes a lot of sense mathematically.
+Methods like that, require to be used with care, they start with
+<span class="code"><![CDATA[#]]></span> to underline that they should be used with care.
+
+<pre class="l42"><![CDATA[
+Num n1=42Meter.div(2Meter)//=21Num
+Num n2=42Meter.#inner()//=42Num
+]]></pre>
+
+
+
+</p><h2> (3/5) Composite Units </h2> <p>
+
 <span class="code"><![CDATA[Units]]></span> supports composite units:
 <pre class="l42"><![CDATA[
 Speed:Units.of(Meter per:Second)
@@ -527,7 +578,9 @@ Alias units are just shortcut to declare values of
 the original unit.
 
 
-</p><h2> (3/5) Alphanumeric </h2> <p>
+
+
+</p><h2> (4/5) Alphanumeric </h2> <p>
 In the same way <span class="code"><![CDATA[Units]]></span> allows easy creation of
 arithmetic classes,
 <span class="code"><![CDATA[Alphanumeric]]></span> allows easy creation of alphanumeric classes:
@@ -575,8 +628,19 @@ myEmail=Email"arthur.dent@gmail.com"
 Assert.$[myEmail.toS() expected:S"arthurdent@gmail.com"]
 ]]></pre>
 
+</p><h2> (5/5) Recall </h2> <p>
 
-
+<ul><li>
+Use <span class="code"><![CDATA[Num]]></span> as your first guess for numeric types,
+if you have special needs, can consider loading a numeric library.
+</li><li>
+Use <span class="code"><![CDATA[Size]]></span> for indexing linear datastructures like vectors and strings.
+Beware of the tricky modulo arithmetic.
+</li><li>
+Use <span class="code"><![CDATA[Units]]></span> 
+and <span class="code"><![CDATA[Alphanumeric]]></span> to give meaning to your constants.
+In this way the type system will help you to use values with the semantic you decided.
+</li></ul>
 </p><h1> Collections and Data classes </h1> <p>
 
 A very large class of practically useful programs can be obtained by
@@ -629,6 +693,26 @@ Load is another decorator, here it modifies the library found in L42.is/Gui so t
     //return Meter[root:2Unit of:m2]
     //dx=dx.unit()
     //Meter.fromUnit(((dx*dx)+(dy*dy)).sqrt())
+    
+    
+    
+    </p><h2> (2/5) Iteration </h2> <p>
+
+It is possible to iterate over a range of numbers:
+
+<pre class="l42"><![CDATA[
+with i in 4Size.vals() (
+  Debug(i)//prints 4,5,6,7 and so on forever
+  )
+]]></pre>
+
+<pre class="l42"><![CDATA[
+with i in 4Size.upTo(42Size) (
+  Debug(i)//prints 4,5,6,7 and so on up to 42 excluded
+  )
+]]></pre>
+
+    
  -->	
 <pre class="l42"><![CDATA[
 {reuse L42.is/AdamTowel
