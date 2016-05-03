@@ -149,17 +149,29 @@ var L42HighlightRules = function() {
                 token : "string", // single line
                 regex : "['](?:(?:\\\\.)|(?:[^'\\\\]))*?[']"
             }, {
-                token : "constant.numeric", // hex
-                regex : /0(?:[xX][0-9a-fA-F][0-9a-fA-F_]*|[bB][01][01_]*)[LlSsDdFfYy]?\b/
-            }, {
-                token : "constant.numeric", // float
-                regex : /[+-]?\d[\d_]*(?:(?:\.[\d_N]*)?(?:[eE][+-]?[\d_]+)?)?[A-Z$]+[a-zA-Z0-9_$%]*\b/
-            }, {
                 token : "constant.language.boolean",
                 regex : "(?:true|false)\\b"
             }, {
-                token : "upperIdentifiers",
-                regex : /[A-Z$]+[a-zA-Z0-9_$%]*/
+
+		token : function(val) {
+                    var numberPattern = /[0-9][0-9.-]*/;
+                    var nums=val.match( numberPattern )
+                    if (nums==null){return [{
+                        type: "upperIdentifiers",
+                        value: val
+                        }]}
+                    var size=nums[0].length
+                    return [{
+                        type: "string",
+                        value: val.slice(0, size)
+                        }, {
+                        type: "upperIdentifiers",
+                        value: val.slice(size)
+                        }];
+
+                },                
+//		token : "upperIdentifiers",
+                regex : /[0-9]*[A-Z$]+[a-zA-Z0-9_$%]*/ //[A-Z$][a-zA-Z0-9_$%] should be same
             }, {
                 token : function(val) {
                     if (val[val.length - 1] == ":") {

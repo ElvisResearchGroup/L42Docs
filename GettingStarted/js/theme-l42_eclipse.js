@@ -107,6 +107,7 @@ color: blue;\
 font-style: italic;\
 }\
 .ace-l42-eclipse .ace_objectCall {\
+color: blue;\
 font-style: italic;\
 }";
 
