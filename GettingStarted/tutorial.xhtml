@@ -559,7 +559,7 @@ gForceOnMe=Newton(78Kg and:g)//little less than 780
 myLift=myRoket-gForceOnMe
 if myLift>0Newton (Debug(S"I can fly"))
 myAcc=myLift.div1(78Kg)//get second component
-reachedHeight=myAcc.per(10Second).per(10Second)/2N //after 10 sec
+reachedHeight=myAcc.per(10Second).per(10Second)/2Num //after 10 sec
 ]]></pre>
 Note how we can use <span class="code"><![CDATA[.per()]]></span>,
  <span class="code"><![CDATA[.div1()]]></span> 
@@ -641,6 +641,191 @@ Use <span class="code"><![CDATA[Units]]></span>
 and <span class="code"><![CDATA[Alphanumeric]]></span> to give meaning to your constants.
 In this way the type system will help you to use values with the semantic you decided.
 </li></ul>
+</p><h1> Interfaces, Concepts and Data </h1> <p>
+
+</p><h2> (1/5)Interfaces </h2> <p>
+In 42 interfaces are quite similar to interfaces in other oo languages.
+There are however a couple of important differences:
+
+</p><p>
+while implementing an interface method, you have not to repeat the
+typing.
+For example, in the following code, to implement <span class="code"><![CDATA[Shape.draw(that)]]></span> inside
+of <span class="code"><![CDATA[Square]]></span>, we do not repeat the types <span class="code"><![CDATA[Void]]></span> and <span class="code"><![CDATA[Canvas]]></span>
+<pre class="l42"><![CDATA[
+Shape:{interface
+  method Void draw(Canvas that)
+  }
+Square:{implements Shape
+  method draw(that){..}
+  }
+]]></pre>
+
+In 42, we say that the method <span class="code"><![CDATA[draw(that)]]></span> 
+implemented in <span class="code"><![CDATA[Square]]></span>
+<span style="color:#ff1111; font-weight: bold;"> is defined by </span>
+<span class="code"><![CDATA[Shape]]></span>.
+Each method is defined in a single point, either the class itself
+or a (transitivelly) implemented interface.
+This means that a class can not implement multiple interfaces defining methods
+with the same name.
+For example, this code is ill-typed:
+<pre class="l42"><![CDATA[
+Card:{interface
+  method N draw()//the value of the drawn card
+  }
+Gun:{interface
+  method N draw()//the time it takes to drawn the gun
+  }
+Wrong:{implements Card,Gun//not allowed
+  }
+]]></pre>
+
+
+Note that that would be bad 42 code anyway, you should define an
+enumeration (see later) for your cards and use a <span class="code"><![CDATA[Second]]></span> unit of measure
+for the time.
+
+</p><h2> (2/5)Interfaces </h2> <p>
+However, interface diamond is allowed, that is, the following code is correct:
+<pre class="l42"><![CDATA[
+Shape:{interface
+  method Void draw(Canvas that)
+  }
+Animal:{interface implements Shape
+  method Meter run(){..}
+  }
+Noisy:{interface implements Shape
+  method Void play(Audio that){..}
+  }
+LoudCat:{implements Animal, Noisy
+  method draw(that){..}
+  method run(){..}
+  method play(that){..}
+  }
+]]></pre>
+
+You can further specify the type of an interface method by using the keyword 
+<span class="code"><![CDATA[refine]]></span>:
+<pre class="l42"><![CDATA[
+Monster:{interface
+  method Monster spawnMinion()
+  }
+BigMonster:{implements Monster
+  refine method BigMonster spawnMinion(){..}
+  }
+]]></pre>
+
+
+</p><h2> (3/5)Concepts: ToS, Equals, Classable, ... </h2> <p>
+<span class="code"><![CDATA[Concepts]]></span> is a class defined in AdamTowel,
+containing interfaces commonly used by many classes.
+</p><p>
+The most well known one is 
+<span class="code"><![CDATA[Concepts.ToS]]></span>, implemented by all objects that can
+be converted in human readable strings.
+
+In AdamTowel,
+Alphanumeric, Numeric and Units just print
+the string or the number as it is.
+Other objects prints their fields content in square brackets.
+<span class="code"><![CDATA[Data]]></span> will automatically generate a valid
+<span class="code"><![CDATA[Concepts.ToS]]></span> implementation. For fields of interface type,
+the class name of the stored instance is also produced.
+Strings and numbers are enclosed with double quotes.
+
+</p><p>
+Another very well known interface is <span class="code"><![CDATA[Concepts.Equals]]></span>
+implemented by objects that can be compared with
+<span class="code"><![CDATA[method Bool equals(Concepts.Equals that)]]></span>.
+Such objects usully also define methods <span class="code"><![CDATA[==]]></span> and <span class="code"><![CDATA[!=]]></span>
+based on <span class="code"><![CDATA[equals]]></span>, but is not required by the interface.
+
+WCode(Data) will automatically generate a valid <span class="code"><![CDATA[Concepts.Equals]]></span>
+implementation, and derived mehtods <span class="code"><![CDATA[==]]></span> and <span class="code"><![CDATA[!=]]></span>.
+The default implementaiton of <span class="code"><![CDATA[Data]]></span> do not takes in account circular object graphs, and will end up in loop in those cases. We will discuss later how to personalize the behaviour of <span class="code"><![CDATA[Data]]></span>.
+
+</p><p>
+Finally, an interface that near every class or interface implements is <span class="code"><![CDATA[Concepts.Classable]]></span>.
+It allows to get the class object out of an ordinary instance.
+This is very usefull when wanting to create an instance based on another.
+For example, to create another shape of the same kind of a given shape,
+we could do the following:
+<pre class="l42"><![CDATA[
+Shape:{implements Concepts.Classable
+  class method This newShape(Color that)
+  }
+Square:{implements Shape
+  Color color
+  method newShape(that)//implemented from Shape
+    This(color:that)
+  method clazz()//implemented from Concept.Classable
+    This//this implementation can be omitted if "Data<<" is used
+  }
+/*..*/
+Shape s=..
+s.clazz().newShape(Color.red())
+]]></pre>
+Where the interface <span class="code"><![CDATA[Shape]]></span> defines an abstract factry method (that is,
+an interface class method returning <span class="code"><![CDATA[This]]></span>)
+and class <span class="code"><![CDATA[Square]]></span> implements
+ <span class="code"><![CDATA[Shape]]></span> (and thus also <span class="code"><![CDATA[Concepts.Classable]]></span>).
+ 
+ 
+</p><h2> (4/5)Concepts.Invariant </h2> <p>
+ 
+<span class="code"><![CDATA[Concepts.Invariant]]></span> is another interface implemented very often and
+ that can be handled by <span class="code"><![CDATA[Data]]></span>, but in a different way with respect to the former ones:
+ An instance of an object is more than just a record storing other objects of various types;
+ those values are binded together by an invariant: a property that
+ holds for all values of that type.
+ AdamTowel and Data use <span class="code"><![CDATA[Concepts.Invariant]]></span> to represent this idea:
+ A class that does not implement <span class="code"><![CDATA[Concepts.Invariant]]></span> just have the
+ empty invariant enforced by type type of its fields, but the programmer can specify a more stringent invariant by implementing <span class="code"><![CDATA[Concepts.Invariant]]></span>, as 
+ in the following code:
+ 
+ <pre class="l42"><![CDATA[
+Margin:Data<<{implements Concepts.Invariant
+  var Meter minX
+  var Meter minY
+  var Meter maxX
+  var Meter maxY
+  method invariant()
+    this.minX()<=this.maxX() & this.minY()<=this.maxY()
+  }
+]]></pre>
+
+Here we define a class <span class="code"><![CDATA[Margin]]></span> where the invariant
+states that the min coordinates have to be smaller that the max ones.
+
+<span class="code"><![CDATA[Data]]></span> will generate code so that the invariant is checked while the object is created
+and in any field update.
+<span class="code"><![CDATA[Data]]></span> guarantees that no <span class="code"><![CDATA[Margin]]></span> object that does not 
+satify the invariant will ever be visible outside of the scope of the <span class="code"><![CDATA[invariant()]]></span> method itself.
+
+See more about restrictions of this mechanism in (<a href="dataAndInvariants.xhtml">data and invariants</a>)
+(This will go in that link, but need more context to be understood: more explanation of Capsule field vs Capsule bindings, exposers and lent, also, is not implemented in 42 Yet)
+The current example shows a class with all immutable fields.
+It is possible to enforce the invariant also on classes with immutable
+and capsule fields.
+Then <span class="code"><![CDATA[Data]]></span> will additionally check that the
+lent exposers are all private and not used in internal nested classes,
+and that every method using the lent exposer do not return a lent result.
+It is unobvious why such requirents sufficie: the idea is that the only way a capsule value ...
+
+
+</p><h2> (5/5)Interfaces and Data, recall </h2> <p>
+
+Interfaces in 42 serves the same role they serve in other languages,
+with a little bit of a twist in the details.
+
+The big news is that Decorators (<span class="code"><![CDATA[Data]]></span> in our examples) can
+help and provide implementations for free.
+This is much more powerfull with respect of traits, multiple inheritance or
+Java 8 default methods, since the implementation can be generated ad hoc
+by examining the class.
+ 
+
 </p><h1> Collections and Data classes </h1> <p>
 
 A very large class of practically useful programs can be obtained by
