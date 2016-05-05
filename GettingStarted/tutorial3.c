@@ -6,7 +6,7 @@ implemented as an arbitrary precision rational.
 When in doubt of what numeric type to use, Wcode(Num)
 is a good first guess.
 Some examples of usage:
-OCode
+OBCode
 little=123Num
 stillLittle=4567890Num
 big=100000000000000000Num
@@ -29,7 +29,7 @@ WTitle(Loading other numeric types)
 You can import other numeric types by loading libraries.
 For example
 
-OCode
+OBCode
 Int:Load<<{reuse L42.is/Numbers/Int}//not supported yet
 //infinite precision positive and negative integer numbers
 Double:Load<<{reuse L42.is/Numbers/Double}//not supported yet
@@ -51,7 +51,7 @@ Conversions between various numeric classes must be performed explicitly.
 All numeric classes implements 
 the Wcode(Numeric) interface and offer the Wcode(.from(numeric)) method.
 So, for example 
-OCode
+OBCode
 Double:Load<<{reuse L42.is/Numbers/Double}
 size=S"hello".size()
 myDouble=Double.from(numeric:size)
@@ -71,7 +71,7 @@ offers methods to create units out of numeric supports, like Wcode(Num)
 and Wcode(Size).
 
 For example
-OCode
+OBCode
 Meter:Units.of(Num)
 Second:Units.of(Num)
 res=(6Meter +4Meter)*2Num //20Meter
@@ -93,7 +93,7 @@ does not makes a lot of sense mathematically.
 Methods like that, require to be used with care, they start with
 Wcode(`#') to underline that they should be used with care.
 
-OCode
+OBCode
 Num n1=42Meter.div(2Meter)//=21Num
 Num n2=42Meter.#inner()//=42Num
 CCode
@@ -103,7 +103,7 @@ CCode
 WTitle((3/5) Composite Units)
 
 Wcode(Units) supports composite units:
-OCode
+OBCode
 Speed:Units.of(Meter per:Second)
 fast1=Speed(42Meter per:0.1Second)
 fast2=Speed"42/0.1"
@@ -130,7 +130,7 @@ Note how we can use Wcode(.per()),
 WP
 We can also declare aliasing units:
 
-OCode
+OBCode
 Cm:Units.alias(0.01Meter)//not supported yet
 Meter height=178Cm
 CCode
@@ -150,7 +150,7 @@ classes that can be istantiated from a string literal that follow certain
 properties.
 
 
-OCode
+OBCode
 Email:Alphanumeric<<{//not supported yet
   S local //fields
   S domain
@@ -178,7 +178,7 @@ We can declare fields, and compute their values by parsing the string.
 While it is suggested to propagate the original string in the factory,
 it is not mandatory, for example you could apply some form of normalization, as shown under:
 
-OCode
+OBCode
 Email:Alphanumeric<<{/*..*/
   This parse(S that) {/*..google ignore dots anyway..*/
     local=that(end:index).replaceAll(S"." with:S"")

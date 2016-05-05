@@ -28,7 +28,7 @@ thus program logic can depend on them being thrown.
 Assertions are very convenient to check for pre/post conditions.
 The following code show usages of Wcode(Assert.Pre) and Wcode(Assert.Bug)
 
-OCode
+OBCode
 Assert.Pre[ //preconditions
   myVal>0Nat;//simplest form
   myVal>0Nat msg:S"here with personalized message";
@@ -46,7 +46,7 @@ WTitle(`(2/5) create, throw and capture')
 You can create new kinds of messages using the 
 service class of the message interface:
 
-OCode
+OBCode
 AnswerNotUnderstood:Message.$<<{implements Guard}
 //this is a new kind of message, implementing Guard.
 //you can also add methods to your kind of message.
@@ -70,7 +70,7 @@ As you can see we can create messages with text, and
 then we can optionally add a response.
 Now, let see how to capture errors:
 
-OCode
+OBCode
 (myWait=7.5MillionYear
  answer=DeepThought.answer()
  understanding=myBrain.process(answer)
@@ -87,7 +87,7 @@ The catch capture errors in the block before the last (group of) catches.
 Catches can not see local variables declared in the scope of a possible error.
 The following example explain the control flow more in detail:
 
-OCode
+OBCode
 res=(
  b1=CanGoWrong()
  b2=CanGoWrong()//see b1
@@ -107,7 +107,7 @@ state present at the start of the block.
 This is enforced by disallowing catching errors if the (portion of the) block before can mutate visible objects.
 
 That is, the following code do not compile
-OCode
+OBCode
 p=Person(name:S"Bill" age:23Year)
 res=(
  p.age(p.age()+1Year)
@@ -119,7 +119,7 @@ CCode
 
 While the following is accepted.
 
-OCode
+OBCode
 res=(
  p=Person(name:S"Bill" age:23Year)
  p.age(p.age()+1Year)
@@ -141,7 +141,7 @@ where is important to prevent the programmer from forgot about
 the many possible outcome and focus only on its preferred one.
 Exceptions are checked, so methods leaking exceptions have to
 declare so in their header, as in the following.
-OCode
+OBCode
 /*somewhere in a GUI library*/
 method
 S promptUser(S text)
@@ -161,7 +161,7 @@ Often, the programmer wants to just turn exceptions in errors or other exception
 This is possible with the following code:
 
 
-OCode
+OBCode
 //long version
 DoStuff()
 catch exception FileNotFound fnf (
@@ -191,7 +191,7 @@ WTitle(`(4/5) return')
 Return, as we have seen, can be used to exit from the inner
 most level of curly brackets.
 Also curly brackets can have catches, let see some examples
-OCode
+OBCode
 {
 x=DoStuff()
 catch exception Stuff e1
@@ -210,7 +210,7 @@ CCode
 Moreover, curly brackets/return can be used
 to provide a different result if some computation fails:
 
-OCode
+OBCode
 res={return PlanA()
   catch error Guard x
     return PlanB()
@@ -225,7 +225,7 @@ outside of the scope of a method.
 Hold your head before it explodes, but curly brackets are just a syntactic sugar
  to capture returns; those two snippets of code are equivalent
 
-OCode
+OBCode
 N res={if bla return e1
   return e2}
 //---
@@ -256,7 +256,7 @@ terminate it with an Wcode(Assert)
 </li><li>
 Whenever something out of your
 control happen, Give it a name and throw it as an error, as in
-OCode
+OBCode
 NameOfIssue:Message.$<<{implements Guard}
 /*...*/
 if /*..*/ error NameOfIssue"more info"

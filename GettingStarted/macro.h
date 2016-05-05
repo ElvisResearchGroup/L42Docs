@@ -1,5 +1,6 @@
 m4_define(`OCode',`<pre class="l42"><![CDATA[')m4_dnl
 m4_define(`CCode',`]]></pre>')m4_dnl
+m4_define(`OBCode',`<pre class="l42Big"><![CDATA[')m4_dnl
 m4_define(`OJCode',`<pre class="java"><![CDATA[')m4_dnl
 m4_define(`CJCode',`]]></pre>')m4_dnl
 m4_define(`Wcode',`<span class="code"><![CDATA[$1]]></span>')m4_dnl

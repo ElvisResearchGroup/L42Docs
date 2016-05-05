@@ -14,7 +14,7 @@ WTitle(Libraries)
 We have already see how to chose a towel, and many classes that are likely to be present in such towel, like
 Wcode(S) and Wcode(Data).
 Let see now how to load a library from its url:
-OCode
+OBCode
 {reuse L42.is/AdamTowel
 Gui: Load<<{reuse L42.is/Gui}
 Main:{
@@ -58,13 +58,13 @@ Load is another decorator, here it modifies the library found in L42.is/Gui so t
 
 It is possible to iterate over a range of numbers:
 
-OCode
+OBCode
 with i in 4Size.vals() (
   Debug(i)//prints 4,5,6,7 and so on forever
   )
 CCode
 
-OCode
+OBCode
 with i in 4Size.upTo(42Size) (
   Debug(i)//prints 4,5,6,7 and so on up to 42 excluded
   )
@@ -72,7 +72,7 @@ CCode
 
     
  -->	
-OCode
+OBCode
 {reuse L42.is/AdamTowel
 Collections: Load<<{reuse L42.is/Collections}
 Point:Data<<{Meter x, Meter y
@@ -98,7 +98,7 @@ CCode
 WTitle(Collections)
 Declaring and using collections is simple and easy in 42.
 For example, we can declare and use a list of  Wcode(Point) by writing
-OCode
+OBCode
 Points:Collections.mutList(Point)
 
 ...
@@ -113,7 +113,7 @@ CCode
 
 
 
-<!--OCode Library myCode={ method Int foo()} CCode
+<!--OBCode Library myCode={ method Int foo()} CCode
 A local binding of type Library initialized with a class with a single Wcode(foo()) method. Since there is no body, it is an abstract method.
  -->	 
 
@@ -121,7 +121,7 @@ A local binding of type Library initialized with a class with a single Wcode(foo
 
 Let now starts showing the simplest 42 program: an empty library.
 
-OCode {} CCode
+OBCode {} CCode
 
 If we save this valid program in a file Wcode(Test.L42) and we run Wcode(L42 Test), we get an error.
 WP

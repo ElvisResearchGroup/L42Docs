@@ -6,7 +6,7 @@ Immutable classes are very easy to use but may be inadequate when representing r
 A WEmph(Mutable class) is a class where the state of (some of) its instances may be mutated.
 
 Let's now declare a Wcode(Animal) mutable class, whose location can be updated.
-OCode
+OBCode
 Animal:Data<<{
   var Point location
   mut method
@@ -38,7 +38,7 @@ is equivalent to writing Wcode(a.b(c)).
 This works also for methods with multiple parameters, if the first one is called Wcode(that).
 We can use an animal by writing, for example:
 
-OCode
+OBCode
   dog=Animal(location:Point(x:0Num, y:0Num))//type of the reference inferred
   mut Animal dogAlias=dog //this is the exact type 
   dog.run()
@@ -47,7 +47,7 @@ CCode
 WTitle(`(2/5)Interaction between mutable and immutable')
 
 We now explore some interaction between mutable and immutable objects.
-OCode
+OBCode
 Animal:Data<<{
   var Point location
   mut Points path
@@ -67,7 +67,7 @@ mutable objects can be referred using mutable references,
 Immutable objects can be referred using immutable references.
 
 This code models an animal following a path. It can be used like this.
-OCode
+OBCode
   zero=Point(x:0Num, y:0Num)
   ps1=Points[ Point(x:12Num, y:20Num);Point(x:1Num, y:2Num)]
   ps2=Points[ zero;Point(x:1Num, y:2Num)]
@@ -82,7 +82,7 @@ The secon dog goes to 0:0.
 
 This code involves a mutable animal with a mutable field. This is often
 a terrible idea, since its behaviour may depend on aliasing: what happens if two dogs follow the same path?
-OCode
+OBCode
   zero=Point(x:0Num, y:0Num)
   ps=Points[ Point(x:12Num, y:20Num);Point(x:1Num, y:2Num)]
   dog1=Animal(location:zero, path:ps)
@@ -101,7 +101,7 @@ WTitle(`(3/5)Capsules: Keep aliasing graphs untangled')
 This triky behaviour is correct for a 
 deeply mutable class. 
 In 42 we can change Wcode(Animal) to prevent this aliasing issue.
-OCode
+OBCode
 Animal:Data<<{
   var Point location
   capsule Points path
@@ -121,7 +121,7 @@ The "capsule" modifier WEmph(forces) the users to provide well encapsulated valu
 WP
 
 Now the code of before would not compile. However we can still write the following variant
-OCode
+OBCode
   zero=Point(x:0Num, y:0Num)
   capsule Points ps=Points[ Point(x:12Num, y:20Num);Point(x:1Num, y:2Num)]
   dog1=Animal(location:zero, path:ps)
@@ -148,7 +148,7 @@ When an Wcode(Animal) is created using Wcode(Animal(location:__,path:__)) we cre
 In most cases you can promote such reference to immutable/capsule; just make the type of the local binding explicit.
  The type system will take care of the rest.
 If a reference can not be safely promoted to immutable/capsule, you may have to use the Wcode(.clone()) method or to refactor your code.
-OCode
+OBCode
   mut Animal dog1=Animal(__)//no promotion here
   Animal dog2=Animal(__)//promotion mutable->immutable
   dog1.move()
@@ -164,14 +164,14 @@ WTitle(read)
 Use "read" when you do not care what is the mutability of an object.
 For example, we could add to Wcode(Animal)
 
-OCode
+OBCode
 read method
 Bool isArrived()
   this.path().isEmpty()
 CCode
 This method can be called to mutable and immutable animals:
 
-OCode
+OBCode
 Debug(dog1.isArrived())
 Debug(dog2.isArrived())
 CCode

@@ -1,7 +1,7 @@
 WBigTitle(Basics)
 WTitle((1/5)Simple hello world program)
 Let's look at a simple hello world program:
-OCode 
+OBCode 
 {reuse L42.is/AdamTowel
 Main:{
   Debug(S"Hello world")
@@ -27,7 +27,7 @@ WP
 
 WTitle((2/5)Method declaration and call)
 Let's now declare a method and call it.
-OCode
+OBCode
 {reuse L42.is/AdamTowel
 MyCode:{
   class method
@@ -59,7 +59,7 @@ In 42 we do not have constructors. Objects are created by factory methods. We be
 
 WTitle((3/5)Simple class with internal state)
 Let's create now a class with state and factory:
-OCode
+OBCode
 Point:Data<<{
   Num x
   Num y
@@ -106,7 +106,7 @@ WTitle((4/5)Vectors)
 
 Vectors can be declared using Wcode(Collections.vector(of)), as in the example below.
 
-OCode
+OBCode
 Nums:Collections.vector(of:Num)//declaration for vectors of nums
 Points:Collections.vector(of:Point)//same for points
 /*..*/

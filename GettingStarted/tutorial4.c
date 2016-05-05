@@ -9,7 +9,7 @@ while implementing an interface method, you have not to repeat the
 typing.
 For example, in the following code, to implement Wcode(Shape.draw(that)) inside
 of Wcode(Square), we do not repeat the types Wcode(Void) and Wcode(mut Canvas)
-OCode
+OBCode
 Shape:{interface
   method Void draw(mut Canvas that)
   }
@@ -27,7 +27,7 @@ or a (transitively) implemented interface.
 This means that a class can not implement multiple interfaces defining methods
 with the same name.
 For example, this code is ill-typed:
-OCode
+OBCode
 Card:{interface
   method N draw()//the value of the drawn card
   }
@@ -45,7 +45,7 @@ for the time.
 
 WTitle((2/5)Interfaces, Details)
 However, interface diamond is allowed, that is, the following code is correct:
-OCode
+OBCode
 Shape:{interface
   method Void draw(mut Canvas that)
   }
@@ -64,7 +64,7 @@ CCode
 
 You can further specify the type of an interface method by using the keyword 
 Wcode(refine):
-OCode
+OBCode
 Monster:{interface
   method Monster spawnMinion()
   }
@@ -111,7 +111,7 @@ It allows to get the class object out of an ordinary instance.
 This is very useful when wanting to create an instance based on another.
 For example, to create another shape of the same kind of a given shape,
 we could do the following:
-OCode
+OBCode
 Shape:{implements Concepts.Classable
   class method This newShape(Color that)
   }
@@ -145,7 +145,7 @@ Wcode(Concepts.Invariant) is another interface implemented very often and
  more stringent invariant by implementing Wcode(Concepts.Invariant), as 
  in the following code:
  
- OCode
+ OBCode
 Margin:Data<<{implements Concepts.Invariant
   var Meter minX
   var Meter minY

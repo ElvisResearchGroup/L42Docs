@@ -13,6 +13,12 @@ function doOnLoad(){
       mode:"ace/mode/l42",
       theme:"ace/theme/l42_eclipse"
       });
+    setAllAs("l42Big",{
+      fontSize:"110%",
+      maxLines:3000,
+      mode:"ace/mode/l42",
+      theme:"ace/theme/l42_eclipse"
+      });
   setAllAs("java",{
       fontSize:"80%",
       maxLines:3000,

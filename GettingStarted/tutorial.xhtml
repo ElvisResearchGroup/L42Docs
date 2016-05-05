@@ -30,7 +30,7 @@
 </p><h1> Basics </h1> <p>
 </p><h2> (1/5)Simple hello world program </h2> <p>
 Let's look at a simple hello world program:
-<pre class="l42"><![CDATA[ 
+<pre class="l42Big"><![CDATA[ 
 {reuse L42.is/AdamTowel
 Main:{
   Debug(S"Hello world")
@@ -56,7 +56,7 @@ advance technique of towel embroidery.
 
 </p><h2> (2/5)Method declaration and call </h2> <p>
 Let's now declare a method and call it.
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 {reuse L42.is/AdamTowel
 MyCode:{
   class method
@@ -88,7 +88,7 @@ In 42 we do not have constructors. Objects are created by factory methods. We be
 
 </p><h2> (3/5)Simple class with internal state </h2> <p>
 Let's create now a class with state and factory:
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Point:Data<<{
   Num x
   Num y
@@ -135,7 +135,7 @@ For now, just get used to the pattern of writing
 
 Vectors can be declared using <span class="code"><![CDATA[Collections.vector(of)]]></span>, as in the example below.
 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Nums:Collections.vector(of:Num)//declaration for vectors of nums
 Points:Collections.vector(of:Point)//same for points
 /*..*/
@@ -195,7 +195,7 @@ Immutable classes are very easy to use but may be inadequate when representing r
 A <span style="color:#ff1111; font-weight: bold;"> Mutable class </span> is a class where the state of (some of) its instances may be mutated.
 
 Let's now declare a <span class="code"><![CDATA[Animal]]></span> mutable class, whose location can be updated.
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Animal:Data<<{
   var Point location
   mut method
@@ -227,7 +227,7 @@ is equivalent to writing <span class="code"><![CDATA[a.b(c)]]></span>.
 This works also for methods with multiple parameters, if the first one is called <span class="code"><![CDATA[that]]></span>.
 We can use an animal by writing, for example:
 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
   dog=Animal(location:Point(x:0Num, y:0Num))//type of the reference inferred
   mut Animal dogAlias=dog //this is the exact type 
   dog.run()
@@ -236,7 +236,7 @@ We can use an animal by writing, for example:
 </p><h2> (2/5)Interaction between mutable and immutable </h2> <p>
 
 We now explore some interaction between mutable and immutable objects.
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Animal:Data<<{
   var Point location
   mut Points path
@@ -256,7 +256,7 @@ mutable objects can be referred using mutable references,
 Immutable objects can be referred using immutable references.
 
 This code models an animal following a path. It can be used like this.
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
   zero=Point(x:0Num, y:0Num)
   ps1=Points[ Point(x:12Num, y:20Num);Point(x:1Num, y:2Num)]
   ps2=Points[ zero;Point(x:1Num, y:2Num)]
@@ -271,7 +271,7 @@ The secon dog goes to 0:0.
 
 This code involves a mutable animal with a mutable field. This is often
 a terrible idea, since its behaviour may depend on aliasing: what happens if two dogs follow the same path?
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
   zero=Point(x:0Num, y:0Num)
   ps=Points[ Point(x:12Num, y:20Num);Point(x:1Num, y:2Num)]
   dog1=Animal(location:zero, path:ps)
@@ -290,7 +290,7 @@ An amazing amount of bugs are caused by the usage of deeply mutable classes.
 This triky behaviour is correct for a 
 deeply mutable class. 
 In 42 we can change <span class="code"><![CDATA[Animal]]></span> to prevent this aliasing issue.
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Animal:Data<<{
   var Point location
   capsule Points path
@@ -310,7 +310,7 @@ The "capsule" modifier <span style="color:#ff1111; font-weight: bold;"> forces <
 </p><p>
 
 Now the code of before would not compile. However we can still write the following variant
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
   zero=Point(x:0Num, y:0Num)
   capsule Points ps=Points[ Point(x:12Num, y:20Num);Point(x:1Num, y:2Num)]
   dog1=Animal(location:zero, path:ps)
@@ -337,7 +337,7 @@ When an <span class="code"><![CDATA[Animal]]></span> is created using <span clas
 In most cases you can promote such reference to immutable/capsule; just make the type of the local binding explicit.
  The type system will take care of the rest.
 If a reference can not be safely promoted to immutable/capsule, you may have to use the <span class="code"><![CDATA[.clone()]]></span> method or to refactor your code.
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
   mut Animal dog1=Animal(__)//no promotion here
   Animal dog2=Animal(__)//promotion mutable->immutable
   dog1.move()
@@ -353,14 +353,14 @@ For example, a mutable expression using only capsule or immutable references can
 Use "read" when you do not care what is the mutability of an object.
 For example, we could add to <span class="code"><![CDATA[Animal]]></span>
 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 read method
 Bool isArrived()
   this.path().isEmpty()
 ]]></pre>
 This method can be called to mutable and immutable animals:
 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Debug(dog1.isArrived())
 Debug(dog2.isArrived())
 ]]></pre>
@@ -444,7 +444,7 @@ implemented as an arbitrary precision rational.
 When in doubt of what numeric type to use, <span class="code"><![CDATA[Num]]></span>
 is a good first guess.
 Some examples of usage:
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 little=123Num
 stillLittle=4567890Num
 big=100000000000000000Num
@@ -467,7 +467,7 @@ but triky modulo arithmetic.
 You can import other numeric types by loading libraries.
 For example
 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Int:Load<<{reuse L42.is/Numbers/Int}//not supported yet
 //infinite precision positive and negative integer numbers
 Double:Load<<{reuse L42.is/Numbers/Double}//not supported yet
@@ -489,7 +489,7 @@ Conversions between various numeric classes must be performed explicitly.
 All numeric classes implements 
 the <span class="code"><![CDATA[Numeric]]></span> interface and offer the <span class="code"><![CDATA[.from(numeric)]]></span> method.
 So, for example 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Double:Load<<{reuse L42.is/Numbers/Double}
 size=S"hello".size()
 myDouble=Double.from(numeric:size)
@@ -509,7 +509,7 @@ offers methods to create units out of numeric supports, like <span class="code">
 and <span class="code"><![CDATA[Size]]></span>.
 
 For example
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Meter:Units.of(Num)
 Second:Units.of(Num)
 res=(6Meter +4Meter)*2Num //20Meter
@@ -531,7 +531,7 @@ does not makes a lot of sense mathematically.
 Methods like that, require to be used with care, they start with
 <span class="code"><![CDATA[#]]></span> to underline that they should be used with care.
 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Num n1=42Meter.div(2Meter)//=21Num
 Num n2=42Meter.#inner()//=42Num
 ]]></pre>
@@ -541,7 +541,7 @@ Num n2=42Meter.#inner()//=42Num
 </p><h2> (3/5) Composite Units </h2> <p>
 
 <span class="code"><![CDATA[Units]]></span> supports composite units:
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Speed:Units.of(Meter per:Second)
 fast1=Speed(42Meter per:0.1Second)
 fast2=Speed"42/0.1"
@@ -568,7 +568,7 @@ Note how we can use <span class="code"><![CDATA[.per()]]></span>,
 </p><p>
 We can also declare aliasing units:
 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Cm:Units.alias(0.01Meter)//not supported yet
 Meter height=178Cm
 ]]></pre>
@@ -588,7 +588,7 @@ classes that can be istantiated from a string literal that follow certain
 properties.
 
 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Email:Alphanumeric<<{//not supported yet
   S local //fields
   S domain
@@ -616,7 +616,7 @@ We can declare fields, and compute their values by parsing the string.
 While it is suggested to propagate the original string in the factory,
 it is not mandatory, for example you could apply some form of normalization, as shown under:
 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Email:Alphanumeric<<{/*..*/
   This parse(S that) {/*..google ignore dots anyway..*/
     local=that(end:index).replaceAll(S"." with:S"")
@@ -652,7 +652,7 @@ while implementing an interface method, you have not to repeat the
 typing.
 For example, in the following code, to implement <span class="code"><![CDATA[Shape.draw(that)]]></span> inside
 of <span class="code"><![CDATA[Square]]></span>, we do not repeat the types <span class="code"><![CDATA[Void]]></span> and <span class="code"><![CDATA[mut Canvas]]></span>
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Shape:{interface
   method Void draw(mut Canvas that)
   }
@@ -670,7 +670,7 @@ or a (transitively) implemented interface.
 This means that a class can not implement multiple interfaces defining methods
 with the same name.
 For example, this code is ill-typed:
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Card:{interface
   method N draw()//the value of the drawn card
   }
@@ -688,7 +688,7 @@ for the time.
 
 </p><h2> (2/5)Interfaces </h2> <p>
 However, interface diamond is allowed, that is, the following code is correct:
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Shape:{interface
   method Void draw(mut Canvas that)
   }
@@ -707,7 +707,7 @@ LoudCat:{implements Animal, Noisy
 
 You can further specify the type of an interface method by using the keyword 
 <span class="code"><![CDATA[refine]]></span>:
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Monster:{interface
   method Monster spawnMinion()
   }
@@ -754,7 +754,7 @@ It allows to get the class object out of an ordinary instance.
 This is very useful when wanting to create an instance based on another.
 For example, to create another shape of the same kind of a given shape,
 we could do the following:
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Shape:{implements Concepts.Classable
   class method This newShape(Color that)
   }
@@ -788,7 +788,7 @@ and class <span class="code"><![CDATA[Square]]></span> implements
  more stringent invariant by implementing <span class="code"><![CDATA[Concepts.Invariant]]></span>, as 
  in the following code:
  
- <pre class="l42"><![CDATA[
+ <pre class="l42Big"><![CDATA[
 Margin:Data<<{implements Concepts.Invariant
   var Meter minX
   var Meter minY
@@ -858,7 +858,7 @@ thus program logic can depend on them being thrown.
 Assertions are very convenient to check for pre/post conditions.
 The following code show usages of <span class="code"><![CDATA[Assert.Pre]]></span> and <span class="code"><![CDATA[Assert.Bug]]></span>
 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Assert.Pre[ //preconditions
   myVal>0Nat;//simplest form
   myVal>0Nat msg:S"here with personalized message";
@@ -876,7 +876,7 @@ if observedBug  (Assert.Bug"error message")
 You can create new kinds of messages using the 
 service class of the message interface:
 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 AnswerNotUnderstood:Message.$<<{implements Guard}
 //this is a new kind of message, implementing Guard.
 //you can also add methods to your kind of message.
@@ -900,7 +900,7 @@ As you can see we can create messages with text, and
 then we can optionally add a response.
 Now, let see how to capture errors:
 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 (myWait=7.5MillionYear
  answer=DeepThought.answer()
  understanding=myBrain.process(answer)
@@ -917,7 +917,7 @@ The catch capture errors in the block before the last (group of) catches.
 Catches can not see local variables declared in the scope of a possible error.
 The following example explain the control flow more in detail:
 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 res=(
  b1=CanGoWrong()
  b2=CanGoWrong()//see b1
@@ -937,7 +937,7 @@ state present at the start of the block.
 This is enforced by disallowing catching errors if the (portion of the) block before can mutate visible objects.
 
 That is, the following code do not compile
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 p=Person(name:S"Bill" age:23Year)
 res=(
  p.age(p.age()+1Year)
@@ -949,7 +949,7 @@ res=(
 
 While the following is accepted.
 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 res=(
  p=Person(name:S"Bill" age:23Year)
  p.age(p.age()+1Year)
@@ -971,7 +971,7 @@ where is important to prevent the programmer from forgot about
 the many possible outcome and focus only on its preferred one.
 Exceptions are checked, so methods leaking exceptions have to
 declare so in their header, as in the following.
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 /*somewhere in a GUI library*/
 method
 S promptUser(S text)
@@ -991,7 +991,7 @@ Often, the programmer wants to just turn exceptions in errors or other exception
 This is possible with the following code:
 
 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 //long version
 DoStuff()
 catch exception FileNotFound fnf (
@@ -1021,7 +1021,7 @@ that the programmer believe would never be executed.
 Return, as we have seen, can be used to exit from the inner
 most level of curly brackets.
 Also curly brackets can have catches, let see some examples
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 {
 x=DoStuff()
 catch exception Stuff e1
@@ -1040,7 +1040,7 @@ error on Guard
 Moreover, curly brackets/return can be used
 to provide a different result if some computation fails:
 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 res={return PlanA()
   catch error Guard x
     return PlanB()
@@ -1055,7 +1055,7 @@ outside of the scope of a method.
 Hold your head before it explodes, but curly brackets are just a syntactic sugar
  to capture returns; those two snippets of code are equivalent
 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 N res={if bla return e1
   return e2}
 //---
@@ -1086,7 +1086,7 @@ terminate it with an <span class="code"><![CDATA[Assert]]></span>
 </li><li>
 Whenever something out of your
 control happen, Give it a name and throw it as an error, as in
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 NameOfIssue:Message.$<<{implements Guard}
 /*...*/
 if /*..*/ error NameOfIssue"more info"
@@ -1124,7 +1124,7 @@ just declaring simple minded classes using Data and Collections.
 We have already see how to chose a towel, and many classes that are likely to be present in such towel, like
 <span class="code"><![CDATA[S]]></span> and <span class="code"><![CDATA[Data]]></span>.
 Let see now how to load a library from its url:
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 {reuse L42.is/AdamTowel
 Gui: Load<<{reuse L42.is/Gui}
 Main:{
@@ -1168,13 +1168,13 @@ Load is another decorator, here it modifies the library found in L42.is/Gui so t
 
 It is possible to iterate over a range of numbers:
 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 with i in 4Size.vals() (
   Debug(i)//prints 4,5,6,7 and so on forever
   )
 ]]></pre>
 
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 with i in 4Size.upTo(42Size) (
   Debug(i)//prints 4,5,6,7 and so on up to 42 excluded
   )
@@ -1182,7 +1182,7 @@ with i in 4Size.upTo(42Size) (
 
     
  -->	
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 {reuse L42.is/AdamTowel
 Collections: Load<<{reuse L42.is/Collections}
 Point:Data<<{Meter x, Meter y
@@ -1208,7 +1208,7 @@ Main:{
 </p><h2> Collections </h2> <p>
 Declaring and using collections is simple and easy in 42.
 For example, we can declare and use a list of  <span class="code"><![CDATA[Point]]></span> by writing
-<pre class="l42"><![CDATA[
+<pre class="l42Big"><![CDATA[
 Points:Collections.mutList(Point)
 
 ...
@@ -1223,7 +1223,7 @@ ps2=Points[zero;one]//contains zero, one
 
 
 
-<!--<pre class="l42"><![CDATA[ Library myCode={ method Int foo()} ]]></pre>
+<!--<pre class="l42Big"><![CDATA[ Library myCode={ method Int foo()} ]]></pre>
 A local binding of type Library initialized with a class with a single <span class="code"><![CDATA[foo()]]></span> method. Since there is no body, it is an abstract method.
  -->	 
 
@@ -1231,7 +1231,7 @@ A local binding of type Library initialized with a class with a single <span cla
 
 Let now starts showing the simplest 42 program: an empty library.
 
-<pre class="l42"><![CDATA[ {} ]]></pre>
+<pre class="l42Big"><![CDATA[ {} ]]></pre>
 
 If we save this valid program in a file <span class="code"><![CDATA[Test.L42]]></span> and we run <span class="code"><![CDATA[L42 Test]]></span>, we get an error.
 </p><p>
