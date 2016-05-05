@@ -651,10 +651,10 @@ There are however a couple of important differences:
 while implementing an interface method, you have not to repeat the
 typing.
 For example, in the following code, to implement <span class="code"><![CDATA[Shape.draw(that)]]></span> inside
-of <span class="code"><![CDATA[Square]]></span>, we do not repeat the types <span class="code"><![CDATA[Void]]></span> and <span class="code"><![CDATA[Canvas]]></span>
+of <span class="code"><![CDATA[Square]]></span>, we do not repeat the types <span class="code"><![CDATA[Void]]></span> and <span class="code"><![CDATA[mut Canvas]]></span>
 <pre class="l42"><![CDATA[
 Shape:{interface
-  method Void draw(Canvas that)
+  method Void draw(mut Canvas that)
   }
 Square:{implements Shape
   method draw(that){..}
@@ -666,7 +666,7 @@ implemented in <span class="code"><![CDATA[Square]]></span>
 <span style="color:#ff1111; font-weight: bold;"> is defined by </span>
 <span class="code"><![CDATA[Shape]]></span>.
 Each method is defined in a single point, either the class itself
-or a (transitivelly) implemented interface.
+or a (transitively) implemented interface.
 This means that a class can not implement multiple interfaces defining methods
 with the same name.
 For example, this code is ill-typed:
@@ -690,13 +690,13 @@ for the time.
 However, interface diamond is allowed, that is, the following code is correct:
 <pre class="l42"><![CDATA[
 Shape:{interface
-  method Void draw(Canvas that)
+  method Void draw(mut Canvas that)
   }
 Animal:{interface implements Shape
   method Meter run(){..}
   }
 Noisy:{interface implements Shape
-  method Void play(Audio that){..}
+  method Void play(mut Audio that){..}
   }
 LoudCat:{implements Animal, Noisy
   method draw(that){..}
@@ -728,27 +728,30 @@ be converted in human readable strings.
 In AdamTowel,
 Alphanumeric, Numeric and Units just print
 the string or the number as it is.
+
+</p><p>
 Other objects prints their fields content in square brackets.
-<span class="code"><![CDATA[Data]]></span> will automatically generate a valid
-<span class="code"><![CDATA[Concepts.ToS]]></span> implementation. For fields of interface type,
+<span class="code"><![CDATA[Data]]></span> generates a reasonable
+<span class="code"><![CDATA[Concepts.ToS]]></span> implementation, following this patter. For fields of interface type,
 the class name of the stored instance is also produced.
 Strings and numbers are enclosed with double quotes.
 
 </p><p>
 Another very well known interface is <span class="code"><![CDATA[Concepts.Equals]]></span>
 implemented by objects that can be compared with
-<span class="code"><![CDATA[method Bool equals(Concepts.Equals that)]]></span>.
-Such objects usully also define methods <span class="code"><![CDATA[==]]></span> and <span class="code"><![CDATA[!=]]></span>
+<span class="code"><![CDATA[read method Bool equals(Concepts.Equals that)]]></span>.
+Such objects usually also define methods <span class="code"><![CDATA[==]]></span> and <span class="code"><![CDATA[!=]]></span>
 based on <span class="code"><![CDATA[equals]]></span>, but is not required by the interface.
 
-WCode(Data) will automatically generate a valid <span class="code"><![CDATA[Concepts.Equals]]></span>
-implementation, and derived mehtods <span class="code"><![CDATA[==]]></span> and <span class="code"><![CDATA[!=]]></span>.
-The default implementaiton of <span class="code"><![CDATA[Data]]></span> do not takes in account circular object graphs, and will end up in loop in those cases. We will discuss later how to personalize the behaviour of <span class="code"><![CDATA[Data]]></span>.
+<span class="code"><![CDATA[Data]]></span> will automatically generate a valid <span class="code"><![CDATA[Concepts.Equals]]></span>
+implementation, and derived methods <span class="code"><![CDATA[==]]></span> and <span class="code"><![CDATA[!=]]></span>.
+The default implementation of 
+<span class="code"><![CDATA[Data]]></span> do not takes in account circular object graphs, and will end up in loop in those cases. We will discuss later how to personalize the behaviour of <span class="code"><![CDATA[Data]]></span>.
 
 </p><p>
 Finally, an interface that near every class or interface implements is <span class="code"><![CDATA[Concepts.Classable]]></span>.
 It allows to get the class object out of an ordinary instance.
-This is very usefull when wanting to create an instance based on another.
+This is very useful when wanting to create an instance based on another.
 For example, to create another shape of the same kind of a given shape,
 we could do the following:
 <pre class="l42"><![CDATA[
@@ -766,7 +769,7 @@ Square:{implements Shape
 Shape s=..
 s.clazz().newShape(Color.red())
 ]]></pre>
-Where the interface <span class="code"><![CDATA[Shape]]></span> defines an abstract factry method (that is,
+Where the interface <span class="code"><![CDATA[Shape]]></span> defines an abstract factory method (that is,
 an interface class method returning <span class="code"><![CDATA[This]]></span>)
 and class <span class="code"><![CDATA[Square]]></span> implements
  <span class="code"><![CDATA[Shape]]></span> (and thus also <span class="code"><![CDATA[Concepts.Classable]]></span>).
@@ -777,11 +780,12 @@ and class <span class="code"><![CDATA[Square]]></span> implements
 <span class="code"><![CDATA[Concepts.Invariant]]></span> is another interface implemented very often and
  that can be handled by <span class="code"><![CDATA[Data]]></span>, but in a different way with respect to the former ones:
  An instance of an object is more than just a record storing other objects of various types;
- those values are binded together by an invariant: a property that
+ those values are bond together by an invariant: a property that
  holds for all values of that type.
  AdamTowel and Data use <span class="code"><![CDATA[Concepts.Invariant]]></span> to represent this idea:
  A class that does not implement <span class="code"><![CDATA[Concepts.Invariant]]></span> just have the
- empty invariant enforced by type type of its fields, but the programmer can specify a more stringent invariant by implementing <span class="code"><![CDATA[Concepts.Invariant]]></span>, as 
+ empty invariant enforced by type type of its fields, but the programmer can specify a
+ more stringent invariant by implementing <span class="code"><![CDATA[Concepts.Invariant]]></span>, as 
  in the following code:
  
  <pre class="l42"><![CDATA[
@@ -801,7 +805,7 @@ states that the min coordinates have to be smaller that the max ones.
 <span class="code"><![CDATA[Data]]></span> will generate code so that the invariant is checked while the object is created
 and in any field update.
 <span class="code"><![CDATA[Data]]></span> guarantees that no <span class="code"><![CDATA[Margin]]></span> object that does not 
-satify the invariant will ever be visible outside of the scope of the <span class="code"><![CDATA[invariant()]]></span> method itself.
+satisfy the invariant will ever be visible outside of the scope of the <span class="code"><![CDATA[invariant()]]></span> method itself.
 
 See more about restrictions of this mechanism in (<a href="dataAndInvariants.xhtml">data and invariants</a>)
 (This will go in that link, but need more context to be understood: more explanation of Capsule field vs Capsule bindings, exposers and lent, also, is not implemented in 42 Yet)
@@ -811,7 +815,7 @@ and capsule fields.
 Then <span class="code"><![CDATA[Data]]></span> will additionally check that the
 lent exposers are all private and not used in internal nested classes,
 and that every method using the lent exposer do not return a lent result.
-It is unobvious why such requirents sufficie: the idea is that the only way a capsule value ...
+It is unobvious why such requirements suffice: the idea is that the only way a capsule value ...
 
 
 </p><h2> (5/5)Interfaces and Data, recall </h2> <p>
@@ -821,12 +825,10 @@ with a little bit of a twist in the details.
 
 The big news is that Decorators (<span class="code"><![CDATA[Data]]></span> in our examples) can
 help and provide implementations for free.
-This is much more powerfull with respect of traits, multiple inheritance or
+This is much more powerful with respect of traits, multiple inheritance or
 Java 8 default methods, since the implementation can be generated ad hoc
 by examining the class.
- 
-
-</p><h1> Errors and Exceptions: Messages in AdamTowel </h1> <p>
+ </p><h1> Errors and Exceptions: Messages in AdamTowel </h1> <p>
 
 </p><h2> (1/5)Errors, Messages, Asserts, Guards, .. so much terminology </h2> <p> 
 In 42 when something takes an unexpected turn,
@@ -846,15 +848,15 @@ former message in the chain.
 
 There are two main kinds of <span class="code"><![CDATA[Message]]></span>s:
 <span class="code"><![CDATA[Guard]]></span> and <span class="code"><![CDATA[Assert]]></span>.
-While Assertions are useful to observ bugs, the application
+While Assertions are useful to observe bugs, the application
 logic should not depend on them, since they may change
 in unpredictable ways during library evolutions, and can be
 enabled or disabled.
 A guard is guaranteed to be consistent across library evolution
 thus program logic can depend on them being thrown.
 
-Assertions are very convenients to check for pre/post conditions
-the following code show usages of <span class="code"><![CDATA[Assert.Pre]]></span> and <span class="code"><![CDATA[Assert.Bug]]></span>
+Assertions are very convenient to check for pre/post conditions.
+The following code show usages of <span class="code"><![CDATA[Assert.Pre]]></span> and <span class="code"><![CDATA[Assert.Bug]]></span>
 
 <pre class="l42"><![CDATA[
 Assert.Pre[ //preconditions
@@ -862,11 +864,11 @@ Assert.Pre[ //preconditions
   myVal>0Nat msg:S"here with personalized message";
   myVal expected:42Nat //call equals and do a better error reporting
   ]//in a bunch of assertions, they are all going to be checked together.
-Assert::Bug[ //postconditions/checks in the middle
+Assert.Bug[ //postconditions/checks in the middle
   res expected: 42Nat msg:S" message"
   ]
-if notGoodParameter (Assert::Pre"error message")
-if observedBug  (Assert::Bug"error message")
+if notGoodParameter (Assert.Pre"error message")
+if observedBug  (Assert.Bug"error message")
 ]]></pre>
 
 </p><h2> (2/5) create, throw and capture </h2> <p>
@@ -895,7 +897,7 @@ As you can see, since <span class="code"><![CDATA[Message]]></span> is an interf
 to create messages, however it has a service nested class called <span class="code"><![CDATA[$]]></span>, that
 is a class decorator helping us to create valid messages.
 As you can see we can create messages with text, and
-then we can optoinally add a reponse.
+then we can optionally add a response.
 Now, let see how to capture errors:
 
 <pre class="l42"><![CDATA[
@@ -904,7 +906,7 @@ Now, let see how to capture errors:
  understanding=myBrain.process(answer)
  catch error AnswerNotUnderstood msg (/*handle it*/)
  catch error Guard msg (/*something else gone wrong*/)
- //in the catch bodies, undestanding and answer are not defined
+ //in the catch bodies, 'understanding' and 'answer' are not defined
  myBrain.accept(understanding)//normal execution if no issue
  )
 ]]></pre>
@@ -929,7 +931,7 @@ res=(
 The following code can assign to <span class="code"><![CDATA[res]]></span> either 1,2,3 or 4.
 Note how every catch exits from the whole block.
 Errors guarantee a property called strong error safety
-(storng exception safety in the Java/C++ terminology)
+(strong exception safety in the Java/C++ terminology)
 This means that the body of a catch will observe the same 
 state present at the start of the block.
 This is enforced by disallowing catching errors if the (portion of the) block before can mutate visible objects.
@@ -961,10 +963,10 @@ res=(
 
 Exceptions are like checked exceptions in java.
 As for errors, every immutable object can be thrown as an exception.
-just write "exception" instead of "error" while trowing or capturing.
-Exceptions represent expected, documented and relayable behaviour,
+just write "exception" instead of "error" while throwing or capturing.
+Exceptions represent expected, documented and reliable behaviour,
 they are just another way to express control flow.
-They are useful to carachterize multiple outcomes for an operation,
+They are useful to characterize multiple outcomes for an operation,
 where is important to prevent the programmer from forgot about
 the many possible outcome and focus only on its preferred one.
 Exceptions are checked, so methods leaking exceptions have to
@@ -978,7 +980,7 @@ exception CancelPressed {
   }
 ]]></pre>
 Where the programmer using <span class="code"><![CDATA[promptUser]]></span> will have to handle 
-the possibilty that the cancel button was pressed.
+the possibility that the cancel button was pressed.
 
 Exceptions does not enforce strong exception safety as error do,
 so they can be used more flexibly, and since they are documented in
@@ -1001,14 +1003,14 @@ DoStuff()
 error on FileNotFound
   WTF"I just created it!"
 ]]></pre>
-The two sipplets of code behave identically: the first
-show a very common patter; 42 supports sintactic sugar to
-ease following that pattern, as you can see in the second snipplet.
+The two snippets of code behave identically: the first
+show a very common patter; 42 supports syntactic sugar to
+ease following that pattern, as you can see in the second snippet.
 <span class="code"><![CDATA[WTF]]></span> stands for what a terrible failure
-(as in android), and can be used to mark brances of code
+(as in android), and can be used to mark branches of code
 that the programmer believe would never be executed.
 <span class="code"><![CDATA[WTF]]></span> implements <span class="code"><![CDATA[Assert]]></span>, thus code capturing
-<span class="code"><![CDATA[WTF]]></span> is unrelayable.
+<span class="code"><![CDATA[WTF]]></span> is unreliable.
 
 
 
@@ -1017,8 +1019,8 @@ that the programmer believe would never be executed.
 </p><h2> (4/5) return </h2> <p>
 
 Return, as we have seen, can be used to exit from the inner
-most level of curly brakets.
-Also curly brakets can have catches, let see some examples
+most level of curly brackets.
+Also curly brackets can have catches, let see some examples
 <pre class="l42"><![CDATA[
 {
 x=DoStuff()
@@ -1035,8 +1037,8 @@ error on Guard
 }  
 ]]></pre>
 
-Moreover, curly brakets/return can be used
-to privide a different result if some computation fails:
+Moreover, curly brackets/return can be used
+to provide a different result if some computation fails:
 
 <pre class="l42"><![CDATA[
 res={return PlanA()
@@ -1046,15 +1048,16 @@ res={return PlanA()
 ]]></pre>
 
 </p><h2> return looks similar to error/exception </h2> <p>
-Return is actually anoher thing that can be thrown and captured.
+Return is actually another thing that can be thrown and captured.
 While only immutable values can be thrown as errors/exceptions,
 return can throw any kind of value, but returns can not flow
 outside of the scope of a method.
-Hold your head before it explodes, but curly brakets are just a syntactic sugar to capture returns; those two snipplets of code are equivalent
+Hold your head before it explodes, but curly brackets are just a syntactic sugar
+ to capture returns; those two snippets of code are equivalent
 
 <pre class="l42"><![CDATA[
 N res={if bla return e1
-return e2}
+  return e2}
 //---
 N res=(
   Void unused=(
@@ -1070,16 +1073,16 @@ Depending on how your brain works,
 knowing the desugaring of <span class="code"><![CDATA[{..return..}]]></span>
 can help you to use return better and understand why you can omit 
 <span class="code"><![CDATA[{..return..}]]></span> for simple method bodies, and why you can
-write multiple groups of curly brakets and have local returns.
+write multiple groups of curly brackets and have local returns.
 Or can just be very confusing. If you are in the second group, just
 never ever write <span class="code"><![CDATA[catch return]]></span> explicitly and continue
-your 42 experince ignoring the issue.
+your 42 experience ignoring the issue.
 
 
 </p><h2> (5/5) Errors, exceptions and return, recall </h2> <p>
 <ul><li>
 Whenever possible, try to detect if your code misbehave, and 
-terminate it with an <span class="code"><![CDATA[Assertion]]></span>
+terminate it with an <span class="code"><![CDATA[Assert]]></span>
 </li><li>
 Whenever something out of your
 control happen, Give it a name and throw it as an error, as in
@@ -1095,9 +1098,9 @@ Use errors as much as makes sense,
 but use exceptions sparsely: they are needed only in few 
 cases, mostly when designing public libraries.
 </li><li>
-To convert exception into errors or other exceptions, use the convienient short
-syntax <span class="code"><![CDATA[error on T1]]></span> or 
-<span class="code"><![CDATA[exception on T1]]></span>
+To convert exception into errors or other exceptions, use the convenient short
+syntax <span class="code"><![CDATA[error on T1,..,Tn  OtherMessage""]]></span> or 
+<span class="code"><![CDATA[exception on T1,..,Tn  OtherMessage""]]></span>
 </li><li>
 Sometimes it is possible to write elegant and correct code
 that is not covered in layers upon layers of error/exception checking,
