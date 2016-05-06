@@ -1108,8 +1108,216 @@ but often is not possible or is not convenient.
 Good 42 code can be composed for half of
 its content of just error/exception handling/lifting and management.
 Do not be scared of turning your code in it's own policemen.
-</li></ul>
-</p><h1> Collections and Data classes </h1> <p>
+</li></ul></p><h1> Sequences: Strings and Collections </h1> <p>
+
+</p><h2> (1/5)Vectors as Sequences </h2> <p>
+
+As we have seen before, vectors can be declared using <span class="code"><![CDATA[Collections.vector(of)]]></span>, as in the example below.
+
+<pre class="l42Big"><![CDATA[
+Nums:Collections.vector(of:Num)//declaration for vectors of nums
+/*..*/
+xs=Nums[10Num;20Num;30Num]//immutable vector
+
+ys=Nums.empty()//mutable vector
+ys.add(right:10Num)
+]]></pre>
+
+Immutable sequences are created with square brakets
+and can be combined with operators.
+The general idea is that operators 
+<span class="code"><![CDATA[+]]></span> works 
+on one sequences and one element,
+while the corresponding doubled-up operators
+<span class="code"><![CDATA[++]]></span>
+works on two sequences.
+In the details, as you can see in the code below:
+<pre class="l42Big"><![CDATA[
+Nums[a;b;c]+d==Nums[a;b;c;d]
+Nums[a;b]++Nums[c;d]==Nums[a;b;c;d]
+Nums[a;b;b;c]-b==Nums[a;c]
+Nums[a;b;b;c]--Nums[b;c]==Nums[a]
+Nums[a;b;c]>>Nums[a;c] //holds
+Nums[a;b;c]>>=Nums[a;c] //holds
+Nums[a;b]>>=Nums[a;c] //holds
+Nums[a;b]>>Nums[a;c] //not holds
+Nums[a;b]>b //holds
+b<Nums[a;b] //holds
+Nums[a;b]& Nums[b;c]//Nums[b] set intersection
+]]></pre>
+
+Mutable sequences are created with <span class="code"><![CDATA[.empty()]]></span> and
+mutated by methods, as in the example below.
+<pre class="l42Big"><![CDATA[
+//assuming foo.equals(Nums[a;b;c;d])
+//consider each following line independently:
+
+//setting a value in a position
+foo(2Size,val:b)//foo.equals(Nums[a;b;b;d])
+//setting at left or right
+foo.left(b)//foo.equals(Nums[b;b;c;d])
+foo.right(b)//foo.equals(Nums[a;b;c;b])
+
+//add a value in a position
+foo.add(2Size,val:b)//foo.equals(Nums[a;b;b;c;d])
+
+//add at left or right
+foo.add(left:b)//foo.equals(Nums[b;a;b;c;d])
+foo.add(right:b)//foo.equals(Nums[a;b;c;d;b])
+
+//removal
+foo.remove(index:2Size)//foo.equals(Nums[a;b;d])
+foo.removeLeft()//foo.equals(Nums[b;c;d])
+foo.removeRight()//foo.equals(Nums[a;b;c])
+
+//removal, if elements implements Concepts.Equals
+foo.removeAll(elem:b)//foo.equals(Nums[a;c;d])
+foo.removeLeft(elem:b)//remove the leftmost b
+foo.removeRight(elem:b)//remove the rightmost b
+
+]]></pre>
+
+Both immutable and mutable collections can be 
+accessed with the following methods:
+
+<pre class="l42Big"><![CDATA[
+//access
+foo.left()//a
+foo.right()//d
+foo.val(2Size)//c
+foo.size()//4Size
+foo.isEmpty()//not holds
+]]></pre>
+
+
+<!--
+When we will be able to mention those?
+mut method T #left()
+mut method T #right()
+mut method T #val(N that)
+-->
+
+In addition of operators, immutable collections can
+be manipulated by the following 
+
+<pre class="l42Big"><![CDATA[
+//filtering
+Nums[a;b;c;d].without(index:2Size)//Nums[a;b;d]
+Nums[a;b;c;d].withoutLeft()//Nums[b;c;d]
+Nums[a;b;c;d].withoutRight()//Nums[a;b;c]
+//filtering, if elements implements Concepts.Equals
+Nums[a;b;c;d].withoutAll(elem:b)//Nums[a;c;d]
+Nums[a;b;c;d].withoutLeft(elem:b)//filter out the leftmost b
+Nums[a;b;c;d].withoutRight(elem:b)//filter out the rightmost b
+
+//with replacement
+Nums[a;b;c;d].withLeft(b)//Nums[b;b;c;d]
+Nums[a;b;c;d].withRight()//Nums[a;b;c;b]
+Nums[a;b;c;d].with(2Size,d)//Nums[a;d;c;d]
+
+//appending
+Nums[a;b;c;d].withAlsoLeft(b)//Nums[b;a;b;c;d]
+Nums[a;b;c;d].withAlsoRight()//Nums[a;b;c;d;b]
+Nums[a;b;c;d].withAlso(2Size,b)//Nums[a;b;b;c;d]
+]]></pre>
+
+</p><h2> (2/5) <span class="code"><![CDATA[with]]></span>: a Swiss army knife to encode complex behaviour </h2> <p>
+
+
+There are two basic usage for the <span class="code"><![CDATA[with]]></span> statement: as for-each and as a typecase.
+
+<pre class="l42Big"><![CDATA[
+vec= Strings[S"foo"; S"bar"; S"beer"]
+var S result=S""
+with myElem in vec.vals() (result:=result++myElem)//like for(myElem:vec){..}
+//result==S"foobarbeer"
+with myData=foo.bar() (//like a typecase/switch/chain of instanceof
+  on S  ( Gui.alert(myData) )  //if is a string
+  on N case 2N.divides(myData) ( Gui.alert(...) ) //if is an even natural
+  )
+]]></pre>
+
+if <span class="code"><![CDATA[myData]]></span> is already declared one can simply write
+<pre class="l42Big"><![CDATA[
+with myData (
+  on S ( Gui.alert(myData) )  
+  default (error S"myData was not a string") 
+  )
+]]></pre>
+
+Those two modes can be combined
+<pre class="l42Big"><![CDATA[
+vec= AnyVector[S"foo"; 12N; S"beer";]
+var S result=S""
+with myElem in vec.vals() (on S ( result:=result++myElem ) ) 
+//result==S"foobeer", composed by all strings inside vec
+]]></pre>
+
+<span class="code"><![CDATA[with]]></span> can be used as list comprehension
+<pre class="l42Big"><![CDATA[
+vec=AnyVector[S"foo"; 12N; S"beer";]
+v=SVector[with myElem in vec.vals() (on S myElem )]//filter non strings
+//v==SVector[S"foo"; S"beer";]
+]]></pre>
+
+for multiple dispatch:
+
+<pre class="l42Big"><![CDATA[
+method N m(Shape x, Person y, Vehicle z) //example of method using with
+ with x y z (
+ on Square Student Car (...return ...)//x here is a Square
+ on Circle Person Airplane (...)//x here is a Circle
+ default (...)//default case, here x is just a Shape
+  )}
+]]></pre>
+
+Or to iterate over multiple collections at once
+<pre class="l42Big"><![CDATA[
+rs=Vector[1N;2N;3N;]
+as= Vector[10N;20N;30N;]
+bs= Vector[100N;200N;300N;]
+//here a, b and r iterate over my data
+with a in as.vals(), b in bs.vals(), var r in rs.vals() (r:=r+a+b)
+//now rs==Vector[111N;222N;333N;]
+]]></pre>
+
+While iterating on multiple collections, a dynamic error is usually raised if 
+<span class="code"><![CDATA[rs]]></span>,
+ <span class="code"><![CDATA[as]]></span> and
+ <span class="code"><![CDATA[bs]]></span> have different length.
+This behaviour can be tuned in many way, for example using <span class="code"><![CDATA[cut()]]></span> and <span class="code"><![CDATA[fill(...)]]></span>
+No, I have to update with the new version
+
+<pre class="l42Big"><![CDATA[
+rs=Vector[1N;2N;3N;]
+as= Vector[10N;20N;30N;40N;50N;]
+bs= Vector[100N;200N;]
+with a in as.valsCut(), b in bs.vals(fill:300N), var r in rs.vals() (
+  r:=r+a+b)
+//rs==Vector[111N;222N;333N;]
+]]></pre>
+
+
+This could go later
+Resources used within an iteration can be released after the iteration 
+since collections are notified when the iteration ends.
+
+<pre class="l42Big"><![CDATA[
+//a contains "foo1 \n foo2 \n foo3"
+//b contains "bar1 \n bar2"
+with 
+  input in LineStream.readFile(S"a"), 
+  var output in LineStream.readWriteFile(S"b",fill:S"None") (
+    output:= output +" : "+input)//line by line, add input in the file
+//b contains "bar1 : foo1 \n bar2 : foo2 \n None : foo3"
+]]></pre>
+
+
+
+
+
+
+
 
 A very large class of practically useful programs can be obtained by
 just declaring simple minded classes using Data and Collections.
