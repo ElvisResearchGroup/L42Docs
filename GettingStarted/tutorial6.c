@@ -13,7 +13,7 @@ ys=Nums.empty()//mutable vector
 ys.add(right:10Num)
 CCode
 
-Immutable sequences are created with square brakets
+Immutable sequences are created with square brackets
 and can be combined with operators.
 The general idea is that operators 
 Wcode(+,-,<,>) works 
@@ -25,8 +25,8 @@ In the details, as you can see in the code below:
 OBCode
 Nums[a;b;c]+d==Nums[a;b;c;d]
 Nums[a;b]++Nums[c;d]==Nums[a;b;c;d]
-Nums[a;b;b;c]-b==Nums[a;c]
-Nums[a;b;b;c]--Nums[b;c]==Nums[a]
+Nums[a;b;b;c]-b==Nums[a;c] //only if elements implements Concepts.Equals
+Nums[a;b;b;c]--Nums[b;c]==Nums[a] //same for all the operators under
 Nums[a;b;c]>>Nums[a;c] //holds
 Nums[a;b;c]>>=Nums[a;c] //holds
 Nums[a;b]>>=Nums[a;c] //holds
@@ -36,9 +36,36 @@ b<Nums[a;b] //holds
 Nums[a;b]& Nums[b;c]//Nums[b] set intersection
 CCode
 
+In addition of operators, immutable collections can
+be manipulated by the following methods:
+
+OBCode
+//filtering
+Nums[a;b;c;d].without(index:2Size)//Nums[a;b;d]
+Nums[a;b;c;d].withoutLeft()//Nums[b;c;d]
+Nums[a;b;c;d].withoutRight()//Nums[a;b;c]
+//filtering, if elements implements Concepts.Equals
+Nums[a;b;c;d].withoutAll(elem:b)//Nums[a;c;d]
+Nums[a;b;c;d].withoutLeft(elem:b)//filter out the leftmost b
+Nums[a;b;c;d].withoutRight(elem:b)//filter out the rightmost b
+
+//with replacement
+Nums[a;b;c;d].withLeft(b)//Nums[b;b;c;d]
+Nums[a;b;c;d].withRight()//Nums[a;b;c;b]
+Nums[a;b;c;d].with(2Size,d)//Nums[a;d;c;d]
+
+//appending
+Nums[a;b;c;d].withAlsoLeft(b)//Nums[b;a;b;c;d]
+Nums[a;b;c;d].withAlsoRight()//Nums[a;b;c;d;b]
+Nums[a;b;c;d].withAlso(2Size,b)//Nums[a;b;b;c;d]
+CCode
+
+
 Mutable sequences are created with Wcode(.empty()) and
 mutated by methods, as in the example below.
 OBCode
+foo=Nums.empty()
+foo.add(right:a) /*..*/ foo.add(right:d)
 //assuming foo.equals(Nums[a;b;c;d])
 //consider each following line independently:
 
@@ -80,6 +107,18 @@ foo.isEmpty()//not holds
 CCode
 
 
+Mutable collections can become immutable by promotion; for example,
+a method without mutable parameters returning a mutable collection 
+can be used to initialize a mutable one.
+You may need to explicit the type of the local binding to force the promotion.
+For example
+
+OBCode
+Nums myNums=DoIt.getMutableNums() //ok promotions happens, myNums is immutable
+
+myNums=DoIt.getMutableNums() //myNums type is inferred to be mut Nums
+CCode
+
 <!--
 When we will be able to mention those?
 mut method T #left()
@@ -87,135 +126,185 @@ mut method T #right()
 mut method T #val(N that)
 -->
 
-In addition of operators, immutable collections can
-be manipulated by the following 
+WTitle((2/5) `Suggested parameter values using "\"')
 
+In 42 is possible to use Wcode(\) while calling a method or using the square brackets,
+to ask the receiver for a suggestion about the parameter values.
+The library designer have full freedom to implement those suggestion in the more opportune way, however we
+recognize three important common patterns:
+WP
+When setting/updating a value, the old value is suggested.
+WP
+When adding a new value, the factory is suggested.
+WP
+When the parameter is a number from zero to a max, the maximum is suggested.
+WP
+For example:
 OBCode
-//filtering
-Nums[a;b;c;d].without(index:2Size)//Nums[a;b;d]
-Nums[a;b;c;d].withoutLeft()//Nums[b;c;d]
-Nums[a;b;c;d].withoutRight()//Nums[a;b;c]
-//filtering, if elements implements Concepts.Equals
-Nums[a;b;c;d].withoutAll(elem:b)//Nums[a;c;d]
-Nums[a;b;c;d].withoutLeft(elem:b)//filter out the leftmost b
-Nums[a;b;c;d].withoutRight(elem:b)//filter out the rightmost b
+Nums[a;b;c;d].add(left:42\) //the \ is Num
+Nums[a;b;c;d].without(index:\-1Size)//remove the last (the right-most)
+Nums[a;b;c;d].with(left:\ * 2Num)//the leftmost is now a*2
 
-//with replacement
-Nums[a;b;c;d].withLeft(b)//Nums[b;b;c;d]
-Nums[a;b;c;d].withRight()//Nums[a;b;c;b]
-Nums[a;b;c;d].with(2Size,d)//Nums[a;d;c;d]
+Points[\(x:12\ y: 0\)]==Points[Point(x:12Num, y:0Num)]
 
-//appending
-Nums[a;b;c;d].withAlsoLeft(b)//Nums[b;a;b;c;d]
-Nums[a;b;c;d].withAlsoRight()//Nums[a;b;c;d;b]
-Nums[a;b;c;d].withAlso(2Size,b)//Nums[a;b;b;c;d]
 CCode
 
-WTitle((2/5) `Wcode(with): a Swiss army knife to encode complex behaviour')
+WTitle((3/5) `Wcode(with): a Swiss army knife to encode complex behaviour')
 
 
 There are two basic usage for the Wcode(with) statement: as for-each and as a typecase.
 
 OBCode
+//as a for each
 vec= Strings[S"foo"; S"bar"; S"beer"]
 var S result=S""
 with myElem in vec.vals() (result:=result++myElem)//like for(myElem:vec){..}
 //result==S"foobarbeer"
+
+//as a typecase
 with myData=foo.bar() (//like a typecase/switch/chain of instanceof
-  on S  ( Gui.alert(myData) )  //if is a string
-  on N case 2N.divides(myData) ( Gui.alert(...) ) //if is an even natural
+  on S  Debug(S"A string "++myData)   //print strings
+  on Num  void //do nothing if is a number
+  on Concepts.ToS Debug(myData) //print stringables that are not numbers. 
   )
 CCode
 
 if Wcode(myData) is already declared one can simply write
 OBCode
 with myData (
-  on S ( Gui.alert(myData) )  
-  default (error S"myData was not a string") 
+  on S Debug(myData)
+  default error WTF"" 
   )
 CCode
 
 Those two modes can be combined
 OBCode
-vec= AnyVector[S"foo"; 12N; S"beer";]
+vec= Anys[S"foo"; 12Num; S"beer";]
 var S result=S""
-with myElem in vec.vals() (on S ( result:=result++myElem ) ) 
+with myElem in vec.vals() (on S  result:=result++myElem  ) 
 //result==S"foobeer", composed by all strings inside vec
 CCode
 
 Wcode(with) can be used as list comprehension
 OBCode
-vec=AnyVector[S"foo"; 12N; S"beer";]
-v=SVector[with myElem in vec.vals() (on S myElem )]//filter non strings
-//v==SVector[S"foo"; S"beer";]
+vec=Anys[S"foo"; 12Num; S"beer";]
+v=Strings[with myElem in vec.vals() (on S use[myElem] )]//filter non strings
+//v==Strings[S"foo"; S"beer";]
 CCode
 
 for multiple dispatch:
 
 OBCode
-method N m(Shape x, Person y, Vehicle z) //example of method using with
+method Num m(Shape x, Person y, Vehicle z) //example of method using with
  with x y z (
- on Square Student Car (...return ...)//x here is a Square
- on Circle Person Airplane (...)//x here is a Circle
- default (...)//default case, here x is just a Shape
+ on Square Student Car (..return ..)//x here is a Square
+ on Circle Person Airplane (..)//x here is a Circle
+ default (..)//default case, here x is just a Shape
   )}
 CCode
 
 Or to iterate over multiple collections at once
 OBCode
-rs=Vector[1N;2N;3N;]
-as= Vector[10N;20N;30N;]
-bs= Vector[100N;200N;300N;]
+rs=Nums[1\;2\;3\;]
+as= Nums[10\;20\;30\;]
+bs= Nums[100\;200\;300\;]
 //here a, b and r iterate over my data
 with a in as.vals(), b in bs.vals(), var r in rs.vals() (r:=r+a+b)
-//now rs==Vector[111N;222N;333N;]
+//now rs==Nums[111\;222\;333\;]
 CCode
 
 While iterating on multiple collections, a dynamic error is usually raised if 
 Wcode(rs),
  Wcode(as) and
  Wcode(bs) have different length.
-This behaviour can be tuned in many way, for example using Wcode(cut()) and Wcode(fill(...))
-No, I have to update with the new version
+This behaviour can be tuned in many way:
+iterators can be parametrized with
+Wcode(from:) , Wcode(to:), Wcode(fill:) and 
+Wcode(stopOk:) (I need a better name for this last one).
 
+Wcode(from:) and Wcode(to:) are on default zero and the sequence length,
+and can be specified to start from another value, like 1 or 2, and
+to end before the very end.
+
+Wcode(fill:) can be used in combination with 
+Wcode(from:) and Wcode(to:)
+to iterate outside of the sequence range.
+If Wcode(fill:) is used without specifying Wcode(to:), the
+sequence is considered infinite and iteration may go on forever.
+
+Wcode(stopOk:) is useful when multiple collections are iterated at once,
+and specify the minimal allowed iteration cycles (suggested value is 0).
+Let see some examples:
 OBCode
-rs=Vector[1N;2N;3N;]
-as= Vector[10N;20N;30N;40N;50N;]
-bs= Vector[100N;200N;]
-with a in as.valsCut(), b in bs.vals(fill:300N), var r in rs.vals() (
+with x in xs.vals(), y in ys.vals(fill:10N)
+//will iterate for as long as xs, even if ys is shorter
+//will stop after xs.size() cycles, and fail if xs.size()<ys.size()
+
+with x in xs.vals(), y in ys.vals(fill:10N stopOk:\)
+//will iterate for as long as xs, even if ys is shorter
+//will stop after xs.size() cycles
+
+with x in xs.vals(stopOk:\), y in ys.vals(stopOk:\)
+//will iterate for as long as both xs and ys have elements
+
+with x in xs.vals(fill:10N), y in ys.vals(fill:10N)
+//will go on forever
+
+with x in xs.vals(stopOk:5N), y in ys.vals(from:1N to: \-1N stopOk:3N )
+//will extract at least 5 elements from xs, will skip the first 
+//and the last element of ys and extract at least 2 elements from ys.
+CCode
+
+
+And, in a case similar of before:
+OBCode
+rs=Nums[1\;2\;3\;]
+as= Nums[10\;20\;30\;40\;50\;]
+bs= Nums[100\;200\;]
+with a in as.vals(stopOk:\), b in bs.vals(fill:300Num), var r in rs.vals() (
   r:=r+a+b)
-//rs==Vector[111N;222N;333N;]
+//rs==Nums[111\;222\;333\;]
 CCode
 
 
-This could go later
-Resources used within an iteration can be released after the iteration 
-since collections are notified when the iteration ends.
+WTitle(Strings)
 
+Alphanumeric classes and strings can be seen as immutable
+sequences of Strings of length 1.
+
+All the operators working on immutable sequences works on strings and alphanumerics.
+
+However, they can not be constructed with square brackets, that is Wcode(S[a;b;c]) does not compile.
+Square brackets can be used to interpolate strings and alphanumerics; as in:
 OBCode
-//a contains "foo1 \n foo2 \n foo3"
-//b contains "bar1 \n bar2"
-with 
-  input in LineStream.readFile(S"a"), 
-  var output in LineStream.readWriteFile(S"b",fill:S"None") (
-    output:= output +" : "+input)//line by line, add input in the file
-//b contains "bar1 : foo1 \n bar2 : foo2 \n None : foo3"
+S"hello "[name]", have a good day, and do not panic!"
+CCode
+However, also Wcode(with) can be used; this can make code very compact,
+for example assume we want to collect some names and numbers in a string:
+OBCode
+res=S"your info: "[with name in names.vals(), num in nums.vals()  (
+  use[ S"name:"[name]", num:"[num]""]
+  )]""//we always need the ending string, even if empty.
+CCode
+In order to put a semicolon between elements in our string, we can use Wcode(sep:)
+OBCode
+res=S"your info: "[with name in names.vals(), num in nums.vals()  (
+  use[ S"name:"[name]", num:"[num]"", sep:S"; "]
+  )]""//we always need the ending string, even if empty.
 CCode
 
 
 
+WTitle((5/5) Sequences, recall)
 
 
 
-
+WBigTitle(not ready to read yet)
 
 A very large class of practically useful programs can be obtained by
 just declaring simple minded classes using Data and Collections.
 
-WTitle(Libraries)
 
-
-WBigTitle(not ready to read yet Libraries)
 
 WTitle(Libraries)
 42 stands for the primate of libraries, so let see some libraries in action.
@@ -248,7 +337,7 @@ Load is another decorator, here it modifies the library found in L42.is/Gui so t
  Units and alphanumerics
  
  
- 
+
 
  
  Use Extends Refactor
@@ -277,6 +366,21 @@ with i in 4Size.upTo(42Size) (
   Debug(i)//prints 4,5,6,7 and so on up to 42 excluded
   )
 CCode
+
+
+Resources used within an iteration can be released after the iteration 
+since collections are notified when the iteration ends.
+
+OBCode
+//a contains "foo1 \n foo2 \n foo3"
+//b contains "bar1 \n bar2"
+with 
+  input in LineStream.readFile(S"a"), 
+  var output in LineStream.readWriteFile(S"b",fill:S"None") (
+    output:= output +" : "+input)//line by line, add input in the file
+//b contains "bar1 : foo1 \n bar2 : foo2 \n None : foo3"
+CCode
+
 
     
  -->	

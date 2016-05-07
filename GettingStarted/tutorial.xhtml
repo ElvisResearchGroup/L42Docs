@@ -1123,7 +1123,7 @@ ys=Nums.empty()//mutable vector
 ys.add(right:10Num)
 ]]></pre>
 
-Immutable sequences are created with square brakets
+Immutable sequences are created with square brackets
 and can be combined with operators.
 The general idea is that operators 
 <span class="code"><![CDATA[+]]></span> works 
@@ -1135,8 +1135,8 @@ In the details, as you can see in the code below:
 <pre class="l42Big"><![CDATA[
 Nums[a;b;c]+d==Nums[a;b;c;d]
 Nums[a;b]++Nums[c;d]==Nums[a;b;c;d]
-Nums[a;b;b;c]-b==Nums[a;c]
-Nums[a;b;b;c]--Nums[b;c]==Nums[a]
+Nums[a;b;b;c]-b==Nums[a;c] //only if elements implements Concepts.Equals
+Nums[a;b;b;c]--Nums[b;c]==Nums[a] //same for all the operators under
 Nums[a;b;c]>>Nums[a;c] //holds
 Nums[a;b;c]>>=Nums[a;c] //holds
 Nums[a;b]>>=Nums[a;c] //holds
@@ -1146,9 +1146,36 @@ b<Nums[a;b] //holds
 Nums[a;b]& Nums[b;c]//Nums[b] set intersection
 ]]></pre>
 
+In addition of operators, immutable collections can
+be manipulated by the following methods:
+
+<pre class="l42Big"><![CDATA[
+//filtering
+Nums[a;b;c;d].without(index:2Size)//Nums[a;b;d]
+Nums[a;b;c;d].withoutLeft()//Nums[b;c;d]
+Nums[a;b;c;d].withoutRight()//Nums[a;b;c]
+//filtering, if elements implements Concepts.Equals
+Nums[a;b;c;d].withoutAll(elem:b)//Nums[a;c;d]
+Nums[a;b;c;d].withoutLeft(elem:b)//filter out the leftmost b
+Nums[a;b;c;d].withoutRight(elem:b)//filter out the rightmost b
+
+//with replacement
+Nums[a;b;c;d].withLeft(b)//Nums[b;b;c;d]
+Nums[a;b;c;d].withRight()//Nums[a;b;c;b]
+Nums[a;b;c;d].with(2Size,d)//Nums[a;d;c;d]
+
+//appending
+Nums[a;b;c;d].withAlsoLeft(b)//Nums[b;a;b;c;d]
+Nums[a;b;c;d].withAlsoRight()//Nums[a;b;c;d;b]
+Nums[a;b;c;d].withAlso(2Size,b)//Nums[a;b;b;c;d]
+]]></pre>
+
+
 Mutable sequences are created with <span class="code"><![CDATA[.empty()]]></span> and
 mutated by methods, as in the example below.
 <pre class="l42Big"><![CDATA[
+foo=Nums.empty()
+foo.add(right:a) /*..*/ foo.add(right:d)
 //assuming foo.equals(Nums[a;b;c;d])
 //consider each following line independently:
 
@@ -1190,6 +1217,18 @@ foo.isEmpty()//not holds
 ]]></pre>
 
 
+Mutable collections can become immutable by promotion; for example,
+a method without mutable parameters returning a mutable collection 
+can be used to initialize a mutable one.
+You may need to explicit the type of the local binding to force the promotion.
+For example
+
+<pre class="l42Big"><![CDATA[
+Nums myNums=DoIt.getMutableNums() //ok promotions happens, myNums is immutable
+
+myNums=DoIt.getMutableNums() //myNums type is inferred to be mut Nums
+]]></pre>
+
 <!--
 When we will be able to mention those?
 mut method T #left()
@@ -1197,135 +1236,185 @@ mut method T #right()
 mut method T #val(N that)
 -->
 
-In addition of operators, immutable collections can
-be manipulated by the following 
+</p><h2> (2/5) Suggested parameter values using "\" </h2> <p>
 
+In 42 is possible to use <span class="code"><![CDATA[\]]></span> while calling a method or using the square brackets,
+to ask the receiver for a suggestion about the parameter values.
+The library designer have full freedom to implement those suggestion in the more opportune way, however we
+recognize three important common patterns:
+</p><p>
+When setting/updating a value, the old value is suggested.
+</p><p>
+When adding a new value, the factory is suggested.
+</p><p>
+When the parameter is a number from zero to a max, the maximum is suggested.
+</p><p>
+For example:
 <pre class="l42Big"><![CDATA[
-//filtering
-Nums[a;b;c;d].without(index:2Size)//Nums[a;b;d]
-Nums[a;b;c;d].withoutLeft()//Nums[b;c;d]
-Nums[a;b;c;d].withoutRight()//Nums[a;b;c]
-//filtering, if elements implements Concepts.Equals
-Nums[a;b;c;d].withoutAll(elem:b)//Nums[a;c;d]
-Nums[a;b;c;d].withoutLeft(elem:b)//filter out the leftmost b
-Nums[a;b;c;d].withoutRight(elem:b)//filter out the rightmost b
+Nums[a;b;c;d].add(left:42\) //the \ is Num
+Nums[a;b;c;d].without(index:\-1Size)//remove the last (the right-most)
+Nums[a;b;c;d].with(left:\ * 2Num)//the leftmost is now a*2
 
-//with replacement
-Nums[a;b;c;d].withLeft(b)//Nums[b;b;c;d]
-Nums[a;b;c;d].withRight()//Nums[a;b;c;b]
-Nums[a;b;c;d].with(2Size,d)//Nums[a;d;c;d]
+Points[\(x:12\ y: 0\)]==Points[Point(x:12Num, y:0Num)]
 
-//appending
-Nums[a;b;c;d].withAlsoLeft(b)//Nums[b;a;b;c;d]
-Nums[a;b;c;d].withAlsoRight()//Nums[a;b;c;d;b]
-Nums[a;b;c;d].withAlso(2Size,b)//Nums[a;b;b;c;d]
 ]]></pre>
 
-</p><h2> (2/5) <span class="code"><![CDATA[with]]></span>: a Swiss army knife to encode complex behaviour </h2> <p>
+</p><h2> (3/5) <span class="code"><![CDATA[with]]></span>: a Swiss army knife to encode complex behaviour </h2> <p>
 
 
 There are two basic usage for the <span class="code"><![CDATA[with]]></span> statement: as for-each and as a typecase.
 
 <pre class="l42Big"><![CDATA[
+//as a for each
 vec= Strings[S"foo"; S"bar"; S"beer"]
 var S result=S""
 with myElem in vec.vals() (result:=result++myElem)//like for(myElem:vec){..}
 //result==S"foobarbeer"
+
+//as a typecase
 with myData=foo.bar() (//like a typecase/switch/chain of instanceof
-  on S  ( Gui.alert(myData) )  //if is a string
-  on N case 2N.divides(myData) ( Gui.alert(...) ) //if is an even natural
+  on S  Debug(S"A string "++myData)   //print strings
+  on Num  void //do nothing if is a number
+  on Concepts.ToS Debug(myData) //print stringables that are not numbers. 
   )
 ]]></pre>
 
 if <span class="code"><![CDATA[myData]]></span> is already declared one can simply write
 <pre class="l42Big"><![CDATA[
 with myData (
-  on S ( Gui.alert(myData) )  
-  default (error S"myData was not a string") 
+  on S Debug(myData)
+  default error WTF"" 
   )
 ]]></pre>
 
 Those two modes can be combined
 <pre class="l42Big"><![CDATA[
-vec= AnyVector[S"foo"; 12N; S"beer";]
+vec= Anys[S"foo"; 12Num; S"beer";]
 var S result=S""
-with myElem in vec.vals() (on S ( result:=result++myElem ) ) 
+with myElem in vec.vals() (on S  result:=result++myElem  ) 
 //result==S"foobeer", composed by all strings inside vec
 ]]></pre>
 
 <span class="code"><![CDATA[with]]></span> can be used as list comprehension
 <pre class="l42Big"><![CDATA[
-vec=AnyVector[S"foo"; 12N; S"beer";]
-v=SVector[with myElem in vec.vals() (on S myElem )]//filter non strings
-//v==SVector[S"foo"; S"beer";]
+vec=Anys[S"foo"; 12Num; S"beer";]
+v=Strings[with myElem in vec.vals() (on S use[myElem] )]//filter non strings
+//v==Strings[S"foo"; S"beer";]
 ]]></pre>
 
 for multiple dispatch:
 
 <pre class="l42Big"><![CDATA[
-method N m(Shape x, Person y, Vehicle z) //example of method using with
+method Num m(Shape x, Person y, Vehicle z) //example of method using with
  with x y z (
- on Square Student Car (...return ...)//x here is a Square
- on Circle Person Airplane (...)//x here is a Circle
- default (...)//default case, here x is just a Shape
+ on Square Student Car (..return ..)//x here is a Square
+ on Circle Person Airplane (..)//x here is a Circle
+ default (..)//default case, here x is just a Shape
   )}
 ]]></pre>
 
 Or to iterate over multiple collections at once
 <pre class="l42Big"><![CDATA[
-rs=Vector[1N;2N;3N;]
-as= Vector[10N;20N;30N;]
-bs= Vector[100N;200N;300N;]
+rs=Nums[1\;2\;3\;]
+as= Nums[10\;20\;30\;]
+bs= Nums[100\;200\;300\;]
 //here a, b and r iterate over my data
 with a in as.vals(), b in bs.vals(), var r in rs.vals() (r:=r+a+b)
-//now rs==Vector[111N;222N;333N;]
+//now rs==Nums[111\;222\;333\;]
 ]]></pre>
 
 While iterating on multiple collections, a dynamic error is usually raised if 
 <span class="code"><![CDATA[rs]]></span>,
  <span class="code"><![CDATA[as]]></span> and
  <span class="code"><![CDATA[bs]]></span> have different length.
-This behaviour can be tuned in many way, for example using <span class="code"><![CDATA[cut()]]></span> and <span class="code"><![CDATA[fill(...)]]></span>
-No, I have to update with the new version
+This behaviour can be tuned in many way:
+iterators can be parametrized with
+<span class="code"><![CDATA[from:]]></span> , <span class="code"><![CDATA[to:]]></span>, <span class="code"><![CDATA[fill:]]></span> and 
+<span class="code"><![CDATA[stopOk:]]></span> (I need a better name for this last one).
 
+<span class="code"><![CDATA[from:]]></span> and <span class="code"><![CDATA[to:]]></span> are on default zero and the sequence length,
+and can be specified to start from another value, like 1 or 2, and
+to end before the very end.
+
+<span class="code"><![CDATA[fill:]]></span> can be used in combination with 
+<span class="code"><![CDATA[from:]]></span> and <span class="code"><![CDATA[to:]]></span>
+to iterate outside of the sequence range.
+If <span class="code"><![CDATA[fill:]]></span> is used without specifying <span class="code"><![CDATA[to:]]></span>, the
+sequence is considered infinite and iteration may go on forever.
+
+<span class="code"><![CDATA[stopOk:]]></span> is useful when multiple collections are iterated at once,
+and specify the minimal allowed iteration cycles (suggested value is 0).
+Let see some examples:
 <pre class="l42Big"><![CDATA[
-rs=Vector[1N;2N;3N;]
-as= Vector[10N;20N;30N;40N;50N;]
-bs= Vector[100N;200N;]
-with a in as.valsCut(), b in bs.vals(fill:300N), var r in rs.vals() (
+with x in xs.vals(), y in ys.vals(fill:10N)
+//will iterate for as long as xs, even if ys is shorter
+//will stop after xs.size() cycles, and fail if xs.size()<ys.size()
+
+with x in xs.vals(), y in ys.vals(fill:10N stopOk:\)
+//will iterate for as long as xs, even if ys is shorter
+//will stop after xs.size() cycles
+
+with x in xs.vals(stopOk:\), y in ys.vals(stopOk:\)
+//will iterate for as long as both xs and ys have elements
+
+with x in xs.vals(fill:10N), y in ys.vals(fill:10N)
+//will go on forever
+
+with x in xs.vals(stopOk:5N), y in ys.vals(from:1N to: \-1N stopOk:3N )
+//will extract at least 5 elements from xs, will skip the first 
+//and the last element of ys and extract at least 2 elements from ys.
+]]></pre>
+
+
+And, in a case similar of before:
+<pre class="l42Big"><![CDATA[
+rs=Nums[1\;2\;3\;]
+as= Nums[10\;20\;30\;40\;50\;]
+bs= Nums[100\;200\;]
+with a in as.vals(stopOk:\), b in bs.vals(fill:300Num), var r in rs.vals() (
   r:=r+a+b)
-//rs==Vector[111N;222N;333N;]
+//rs==Nums[111\;222\;333\;]
 ]]></pre>
 
 
-This could go later
-Resources used within an iteration can be released after the iteration 
-since collections are notified when the iteration ends.
+</p><h2> Strings </h2> <p>
 
+Alphanumeric classes and strings can be seen as immutable
+sequences of Strings of length 1.
+
+All the operators working on immutable sequences works on strings and alphanumerics.
+
+However, they can not be constructed with square brackets, that is <span class="code"><![CDATA[S[a;b;c]]]></span> does not compile.
+Square brackets can be used to interpolate strings and alphanumerics; as in:
 <pre class="l42Big"><![CDATA[
-//a contains "foo1 \n foo2 \n foo3"
-//b contains "bar1 \n bar2"
-with 
-  input in LineStream.readFile(S"a"), 
-  var output in LineStream.readWriteFile(S"b",fill:S"None") (
-    output:= output +" : "+input)//line by line, add input in the file
-//b contains "bar1 : foo1 \n bar2 : foo2 \n None : foo3"
+S"hello "[name]", have a good day, and do not panic!"
+]]></pre>
+However, also <span class="code"><![CDATA[with]]></span> can be used; this can make code very compact,
+for example assume we want to collect some names and numbers in a string:
+<pre class="l42Big"><![CDATA[
+res=S"your info: "[with name in names.vals(), num in nums.vals()  (
+  use[ S"name:"[name]", num:"[num]""]
+  )]""//we always need the ending string, even if empty.
+]]></pre>
+In order to put a semicolon between elements in our string, we can use <span class="code"><![CDATA[sep:]]></span>
+<pre class="l42Big"><![CDATA[
+res=S"your info: "[with name in names.vals(), num in nums.vals()  (
+  use[ S"name:"[name]", num:"[num]"", sep:S"; "]
+  )]""//we always need the ending string, even if empty.
 ]]></pre>
 
 
 
+</p><h2> (5/5) Sequences </h2> <p>
 
 
 
-
+</p><h1> not ready to read yet </h1> <p>
 
 A very large class of practically useful programs can be obtained by
 just declaring simple minded classes using Data and Collections.
 
-</p><h2> Libraries </h2> <p>
 
-
-</p><h1> not ready to read yet Libraries </h1> <p>
 
 </p><h2> Libraries </h2> <p>
 42 stands for the primate of libraries, so let see some libraries in action.
@@ -1358,7 +1447,7 @@ Load is another decorator, here it modifies the library found in L42.is/Gui so t
  Units and alphanumerics
  
  
- 
+
 
  
  Use Extends Refactor
@@ -1387,6 +1476,21 @@ with i in 4Size.upTo(42Size) (
   Debug(i)//prints 4,5,6,7 and so on up to 42 excluded
   )
 ]]></pre>
+
+
+Resources used within an iteration can be released after the iteration 
+since collections are notified when the iteration ends.
+
+<pre class="l42Big"><![CDATA[
+//a contains "foo1 \n foo2 \n foo3"
+//b contains "bar1 \n bar2"
+with 
+  input in LineStream.readFile(S"a"), 
+  var output in LineStream.readWriteFile(S"b",fill:S"None") (
+    output:= output +" : "+input)//line by line, add input in the file
+//b contains "bar1 : foo1 \n bar2 : foo2 \n None : foo3"
+]]></pre>
+
 
     
  -->	
