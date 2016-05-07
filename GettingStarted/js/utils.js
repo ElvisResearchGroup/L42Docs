@@ -8,19 +8,19 @@ function doOnLoad(){
   hide(allDivs);
   // Get every l42 Div
   setAllAs("l42",{
-      fontSize:"80%",
+      fontSize:"95%",
       maxLines:3000,
       mode:"ace/mode/l42",
       theme:"ace/theme/l42_eclipse"
       });
     setAllAs("l42Big",{
-      fontSize:"110%",
+      fontSize:"115%",
       maxLines:3000,
       mode:"ace/mode/l42",
       theme:"ace/theme/l42_eclipse"
       });
   setAllAs("java",{
-      fontSize:"80%",
+      fontSize:"95%",
       maxLines:3000,
       mode:"ace/mode/java",
       theme:"ace/theme/github"

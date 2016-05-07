@@ -73,7 +73,7 @@ and
 </p></Div>
 
 <Div id="b"><p>
-</p><h2> Syntax </h2> <p>
+</p><h2> Learn by examples </h2> <p>
 If you like to learn by examples, 
 here you can find snippets of code in 42 and their equivalent version in Java.
 We format the code so that, line by line, you can see the differences.
@@ -100,7 +100,7 @@ We format the code so that, line by line, you can see the differences.
 
 /*multiline comment*/
 
-reuse L42.is/adamTowel //importing code
+reuse L42.is/AdamsTowel  //importing code
 ]]></pre>
 
 <pre class="java"><![CDATA[
@@ -109,9 +109,9 @@ reuse L42.is/adamTowel //importing code
 
 /*multiline comment*/
 
-import java.utils.ArrayList; //importing code
-... //more and more importing code
-import java.utils.List; //eventually, end importing
+import java.utils.ArrayList;  //importing code
+...  //more and more importing code
+import java.utils.List;  //eventually, end importing
 ]]></pre>
 </div>
 
@@ -125,9 +125,9 @@ import java.utils.List; //eventually, end importing
 <div class="compare">
 <pre class="l42"><![CDATA[
 //42 code
-S"hello world" //String
+S"hello world"  //String
 
-Url"www.google.com"//Specially formatted string
+Url"www.google.com" //Specially formatted string
 
 
 Javascript"
@@ -135,31 +135,31 @@ Javascript"
 '  alert("hello world";)
 '  }
 ' x()
-"//multiline string
+" //multiline string
 
-14Index //number suitable to be an index
-100Meter //100 meter
-25Kg //25 kg, 
+14Size  //number suitable to be an index
+100Meter  //100 meter
+25Kg  //25 kg, 
 //25Kg+100Meter do not compile
 ]]></pre>
 
 <pre class="java"><![CDATA[
 //(sort of) equivalent Java code 
-"hello world" //String
+"hello world"  //String
 
-URI.create("www.google.com")//explicit parsing
-//(and URL is broken)
+URI.create("www.google.com") //explicit parsing
+//(and Java URL class is discouraged)
 
-Javascript.create(//poor man solution
+Javascript.create( //poor man solution
 "x=function(){",
 "  alert(\"hello world\";)",
 "  }",
 " x()"
-)//painful. Note how we need to escape "
+) //painful. Note how we need to escape "
 
-14 //general purpose int
-100L // may be we want long distances
-25d //may be we want high precision weight
+14  //general purpose int
+100L  // may be we want long distances
+25d  //may be we want high precision weight
 //25d+100L is a double :)
 ]]></pre>
 </div>
@@ -176,8 +176,8 @@ Javascript.create(//poor man solution
 </p><h2> Hello world </h2> <p>
 <div class="compare">
 <pre class="l42"><![CDATA[
-{reuse L42.is/AdamTowel
-Main:{
+{reuse L42.is/AdamsTowel
+Main:{ //Note: Main is not a method, just a 'task'
   Debug(S"Hello world")
   return ExitCode.success()
   }
@@ -185,6 +185,7 @@ Main:{
 ]]></pre>
 
 <pre class="java"><![CDATA[
+//implicitly imports java.lang
 class MyClassName{
   public static void main(String[] args){
     System.out.println("Hello world");
@@ -210,30 +211,30 @@ class MyClassName{
 <div class="compare">
 <pre class="l42"><![CDATA[
 //42 code
-class method//class method definition
-S answer()//return type and method name
-  S"42"//simple bodies do not need {..return..}
+class method //class method definition
+S answer() //return type and method name
+  S"42" //simple bodies do not need {..return..}
 
-class method//class method definition
-S compose(S left, S right)//paramters
-  left++right//sequence concatenation
+class method //class method definition
+S compose(S left, S right) //paramters
+  left++right //sequence concatenation
 
-Person:Data<<{//declare a class Person
-  S name //fields
+Person:Data<<{ //declare a class Person
+  S name  //fields
   Year age
 //in 42 fields are seen as getters and setters,
 //thus there is no need to declare those.
 //Also, no need to write down a constructor:
-//Data declares a name,field factory for us.
+//Data declares a 'name, age' factory for us.
 
 //Data generates implementations for methods like
 //equality, hashCode and conversion to string.
 
-  method//instance method
-  S sayHi(S to){ //here we use {..return..}
-    if to==this.name() (//no parenthesis on if/while
+  method //instance method definition
+  S sayHi(S to){  //here we use {..return..}
+    if to==this.name() ( //no parenthesis on if/while
       return S"Oh, you are called "[this.name()]" too?"
-      ) //string interpolation
+      )  //string interpolation
     return S"Hi, my name is "[this.name()]
       " and  I'm "[this.age()]" years old"
     }
@@ -242,22 +243,22 @@ Person:Data<<{//declare a class Person
 
 <pre class="java"><![CDATA[
 //(sort of) equivalent Java code 
-static String answer(){//static method definition
+static String answer(){ //static method definition
   return "42";
   }
 
 static String compose(S left, S right){
-  return left+right;//magically specially overriden +
+  return left+right; //magically specially overriden +
   }
 
-class Person{//declare a class Person
-  String name; //fields
+class Person{ //declare a class Person
+  String name;  //fields
   int age;
   String getName(){return this.name;}
   int getAge(){return this.age;}
   public Person(String name, int age){
-    this.name=name;this.age=age;//even longer
-  }//if standard formatting is used
+    this.name=name;this.age=age; //even longer
+  } //if standard formatting is used
   public boolean equals(Object other){/*...*/}
   public int hashCode(){/*was int or long?*/}
   public String toString(){/*...*/}
@@ -265,7 +266,7 @@ class Person{//declare a class Person
   public String sayHi(String to){
     if (to.equals(this.getName()) {
       return "Oh, you are called "+name+" too?";
-    }//is 'name' better then 'this.getName()'?
+    } //is 'name' better then 'this.getName()'?
     return "Hi, my name is "+this.getName()
       +" and  I'm "+this.getAge()+" years old";
   }
@@ -284,10 +285,10 @@ class Person{//declare a class Person
 <div class="compare">
 <pre class="l42"><![CDATA[
 if a>b (return /*...*/)
-var S acc=S"" //explicit 'var': can be updated
-while Bool.true() (//booleans are not constants
-  if acc.size()>50Size (//Size: type of sequence indexes 
-    error void//like java break, rarelly used in 42
+var S acc=S""  //explicit 'var': can be updated
+while Bool.true() ( //booleans are not constants
+  if acc.size()>50Size ( //Size: type of sequence indexes 
+    exception void //like java break, rarelly used in 42
     )
   acc++=S"step"
   )
@@ -295,7 +296,7 @@ while Bool.true() (//booleans are not constants
 
 <pre class="java"><![CDATA[
 if (a>b) {return /*...*/;}
-S acc="";//updatable is default, but can be final
+S acc=""; //updatable is default, but can be final
 while (true) {
   if (acc.length()>50) {
     break;
@@ -318,26 +319,27 @@ while (true) {
 <pre class="l42"><![CDATA[
 names=Strings[S"Fred";S"Mary";S"Mark"]
 
-Years:Collection.vector(of:Year)//we need to declare it
+Years:Collection.vector(of:Year) //we need to declare it
 
 ages=Years[20Year;23Year;22Year]
-agesShort=Years[20\;23\;22\]//the symbol \ is a shortcut
+agesShort=Years[20\;23\;22\] //the symbol \ is a shortcut
 //Years resolve it as 'Year' since Years contains 'Year'
 
-with n in names.vals() (//like a for each
+with n in names.vals() ( //like a for each
   Debug(n)
   )
 
 with n in names.vals(), a in ages.vals() (
-  Debug(Person(name:n, age:a))//print all the persons
-  )//fails with error if names.size()!=ages.size()
+//parallel iteration of names and ages
+  Debug(Person(name:n, age:a)) //print all the persons
+  ) //fails with error if names.size()!=ages.size()
 
 Persons:Collection.vector(of:Person)
 
 friends=Persons[
-  Person(name:S"Fred", age:20Year);//long version
+  Person(name:S"Fred", age:20Year); //long version
   Person(name:S"Mary", age:23Year);
-  \(name:\"Mark", age:22\);//short version
+  \(name:\"Mark", age:22\); //short version
   ]
 
 moreFriends=Persons[
@@ -350,7 +352,7 @@ moreFriends=Persons[
 stringFriends=S"my friends ages are"[
   with n in names.vals(), a in ages.vals() (
     use[ a++S":"++n, sep:S", ") ]
-  )]""//== S"20:Fred, 23:Mary, 22:Mark"
+  )]"" //== S"20:Fred, 23:Mary, 22:Mark"
 ]]></pre>
 
 <pre class="java"><![CDATA[
@@ -359,7 +361,7 @@ List<String> names=new ArrayList<>(Arrays.asList(
 
 
 List<Integer> ages=new ArrayList<>(Arrays.asList(
-  20,23,22Year));
+  20,23,22));
 
 
 for(String n :names){
@@ -367,9 +369,10 @@ for(String n :names){
 }
 
 for(int i=0; i<names.size(); i++){
+//iterate 0 to size, and manualy use .get(i)
   System.out.println(
     new Person(names.get(i), ages.get(i)));
-  );//silently buggy if names.size()<ages.size()
+  ); //silently buggy if names.size()<ages.size()
 }
 
 List<Person> friends=new ArrayList<>(Arrays.asList(
@@ -382,7 +385,7 @@ List<Person> moreFriends=new ArrayList<>();
 for(int i=0; i<names.size(); i++){
   moreFriends.add(
     new Person(names.get(i), ages.get(i)));
-}//silently buggy if names.size()<ages.size()
+} //silently buggy if names.size()<ages.size()
 
 //again, silently buggy if names.size()<ages.size()
 String stringFriends="my friends ages are";
@@ -409,31 +412,32 @@ where every value is an object. This means that:
 Numbers are objects, 
 so thay can have methods like <span class="code"><![CDATA[.sqrt()]]></span> or <span class="code"><![CDATA[.abs()]]></span>. 
 </li><li>
-All operators are just method calls, thus <span class="code"><![CDATA[a + b]]></span> is sugar for <span class="code"><![CDATA[a.operator+(b)]]></span>, and so on. Note how <span class="code"><![CDATA[operator+]]></span> is a valid method name.
-Any class that offers that method supports the operator.
+All operators are just method calls, thus <span class="code"><![CDATA[a + b]]></span> is sugar for <span class="code"><![CDATA[a.#plus(b)]]></span>, 
+and so on. Note how <span class="code"><![CDATA[#plus]]></span> is a ordinary method name.
+Any class that offers the method supports the operator.
 
 </li><li>
 Classes are objects, so when you write <span class="code"><![CDATA[Foo.bar()]]></span> you refer to the method <span class="code"><![CDATA[.bar()]]></span> offered by the object denoted by <span class="code"><![CDATA[Foo]]></span>.
 class objects are just objects, and you can also store them in local bindings if you wish, as in <span class="code"><![CDATA[x=Foo]]></span>
 </li><li>
 The code is an object, but only at the granularity of 
-Libraries, that is, balanced pairs of curly brackets representing classes (or interfaces) with methods and nested libraries.
-This is useful for meta-programming which we will see later.
-Meta-programming is the most important feature of 42.
+Libraries; that is, balanced pairs of curly brackets representing classes (or interfaces) with methods and nested libraries.
+This is useful for meta-programming, which we will see later.
+First class meta-programming is the most important feature of 42.
 
 
 </li><li>
 Differently from other pure object oriented languages, in 42
 all objects have the same treatment, both syntactically and semantically.
 For example <span class="code"><![CDATA[x = S"Hello " ++ S"World"]]></span>
-This is a declaration for a local binding <span class="code"><![CDATA[x]]></span>, using the string class <span class="code"><![CDATA[S]]></span> and the operator <span class="code"><![CDATA[++]]></span>,
+This is a declaration for a local binding <span class="code"><![CDATA[x]]></span>, using the string class <span class="code"><![CDATA[S]]></span> and the method operator <span class="code"><![CDATA[++]]></span>,
 used as string (or in general sequence/collection) concatenation.
 
 Coming from another programming language, you may be surprised that we have to write <span class="code"><![CDATA[S]]></span> before <span class="code"><![CDATA["Hello "]]></span> and <span class="code"><![CDATA["World"]]></span>.
 This extra verbosity is needed to provide fair treatment to all classes. (<a href="note1.xhtml">see more</a>)
 In 42 we do not give preferential treatment
 to special objects/classes. In this sense, we consider
-most other languages to be racist.
+most other languages to be discriminatory/racist.
 They give priority to their "preferred" version of numbers and strings, and this puts into a position of unfair disadvantage library code trying to define its own kinds of numbers/strings.
 Instead in 42 you may encounter strings like <span class="code"><![CDATA[URL"www.google.com"]]></span> or
  <span class="code"><![CDATA[EMAIL"Arthur.Dent@gmail.com"]]></span>.
@@ -452,7 +456,7 @@ Moreover, 42 does not offer many controversial features usually found in other p
 languages, including:
 (method) overloading; threading; numeric conversions and coercions;
 casts; var-args; primitive types and automatic (un-)boxing;
-inner classes; arrays; generics; hiding of methods, fields and local variable;
+inner classes; arrays; generics; scope-hiding of local variables/bindings, methods and fields;
 closures/lambdas and null.
 
 

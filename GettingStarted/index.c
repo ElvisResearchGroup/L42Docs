@@ -56,31 +56,32 @@ where every value is an object. This means that:
 Numbers are objects, 
 so thay can have methods like Wcode(.sqrt()) or Wcode(.abs()). 
 </li><li>
-All operators are just method calls, thus Wcode(a + b) is sugar for Wcode(a.operator+(b)), and so on. Note how Wcode(operator+) is a valid method name.
-Any class that offers that method supports the operator.
+All operators are just method calls, thus Wcode(a + b) is sugar for Wcode(`a.#plus(b)'), 
+and so on. Note how Wcode(`#plus') is a ordinary method name.
+Any class that offers the method supports the operator.
 
 </li><li>
 Classes are objects, so when you write Wcode(Foo.bar()) you refer to the method Wcode(.bar()) offered by the object denoted by Wcode(Foo).
 class objects are just objects, and you can also store them in local bindings if you wish, as in Wcode(x=Foo)
 </li><li>
 The code is an object, but only at the granularity of 
-Libraries, that is, balanced pairs of curly brackets representing classes (or interfaces) with methods and nested libraries.
-This is useful for meta-programming which we will see later.
-Meta-programming is the most important feature of 42.
+Libraries; that is, balanced pairs of curly brackets representing classes (or interfaces) with methods and nested libraries.
+This is useful for meta-programming, which we will see later.
+First class meta-programming is the most important feature of 42.
 
 
 </li><li>
 Differently from other pure object oriented languages, in 42
 all objects have the same treatment, both syntactically and semantically.
 For example Wcode(x = S"Hello " ++ S"World")
-This is a declaration for a local binding Wcode(x), using the string class Wcode(S) and the operator Wcode(++),
+This is a declaration for a local binding Wcode(x), using the string class Wcode(S) and the method operator Wcode(++),
 used as string (or in general sequence/collection) concatenation.
 
 Coming from another programming language, you may be surprised that we have to write Wcode(S) before Wcode("Hello ") and Wcode("World").
 This extra verbosity is needed to provide fair treatment to all classes. (Wlink(note1,see more))
 In 42 we do not give preferential treatment
 to special objects/classes. In this sense, we consider
-most other languages to be racist.
+most other languages to be discriminatory/racist.
 They give priority to their "preferred" version of numbers and strings, and this puts into a position of unfair disadvantage library code trying to define its own kinds of numbers/strings.
 Instead in 42 you may encounter strings like Wcode(URL"www.google.com") or
  Wcode(EMAIL"Arthur.Dent@gmail.com").
@@ -99,7 +100,7 @@ Moreover, 42 does not offer many controversial features usually found in other p
 languages, including:
 (method) overloading; threading; numeric conversions and coercions;
 casts; var-args; primitive types and automatic (un-)boxing;
-inner classes; arrays; generics; hiding of methods, fields and local variable;
+inner classes; arrays; generics; scope-hiding of local variables/bindings, methods and fields;
 closures/lambdas and null.
 
 
