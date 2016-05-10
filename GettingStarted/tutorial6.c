@@ -1,4 +1,4 @@
-WBigTitle(`Sequences: Strings and Collections')
+WBigTitle(`Sequences high level manipulation')
 
 WTitle((1/5)Vectors as Sequences, listing the basic operations)
 
@@ -7,10 +7,9 @@ As we have seen before, vectors can be declared using Wcode(Collections.vector(o
 OBCode
 Nums:Collections.vector(of:Num)//declaration for vectors of nums
 /*..*/
-xs=Nums[10Num;20Num;30Num]//immutable vector
-
-ys=Nums.empty()//mutable vector
-ys.add(right:10Num)
+Nums xs=Nums[10Num;20Num;30Num]//immutable vector
+//note how we declare the type explicitly,
+//the default vector would be mutable.
 CCode
 
 Immutable sequences are created with square brackets
@@ -60,15 +59,100 @@ Nums[a;b;c;d].withAlsoRight()//Nums[a;b;c;d;b]
 Nums[a;b;c;d].withAlso(2Size,b)//Nums[a;b;b;c;d]
 CCode
 
+Immutable collections (and also mutable ones, as we will see later)
+can be accessed with the following methods:
 
-Mutable sequences are created with Wcode(.empty()) and
-mutated by methods, as in the example below.
 OBCode
-foo=Nums.empty()
-foo.add(right:a) /*..*/ foo.add(right:d)
-//assuming foo.equals(Nums[a;b;c;d])
-//consider each following line independently:
+//access
+foo.left()//a
+foo.right()//d
+foo.val(2Size)//c
+foo.size()//4Size
+foo.isEmpty()//not holds
+CCode
 
+
+
+
+
+WTitle((2/5) `Suggested parameter values using "\"')
+
+In 42 is possible to use Wcode(\) while calling a method or using the square brackets,
+to ask the receiver for a suggestion about the parameter values.
+The library designer have full freedom to implement those suggestion in the more opportune way, however we
+recognize three important common patterns:
+WP
+When setting/updating a value, the old value is suggested.
+WP
+When adding a new value, the factory is suggested.
+WP
+When the parameter is a number from zero to a max, the maximum is suggested.
+WP
+For example:
+OBCode
+Nums[a;b;c;d].withAlso(left:42\) //the \ is Num
+Nums[a;b;c;d].without(index:\-1Size)//remove the last (the right-most)
+Nums[a;b;c;d].with(left:\ * 2Num)//the leftmost is now a*2
+
+Points[\(x:12\ y: 0\)]==Points[Point(x:12Num, y:0Num)]
+CCode
+Sometime, using Wcode(\) makes a huge difference,
+for example, for the animal example of before:
+OBCode
+horse.location(\.with(x:\+20\)
+//is equivalent to the much longer
+horse.location(horse.location().with(
+  x:horse.location().x()+20Num)
+CCode
+
+Is also possible to use Wcode(\) followed by an identifier, that will denote the method
+with the same name on the receiver.
+For example, if we want to reflect a point, and invert x and y coordinate, we can write
+
+OBCode
+p=point.with(x:\y, y:\x)
+//is equivalent to
+p=point.with(x:point.y(), y:point.x())
+CCode
+
+The Wcode(\) is very convenient also while initializing list/set of enumerated values.
+For example
+
+OBCode
+Direction=Enumeration"north, east, south, west"
+Direction.Set[\north;\east]//the bitflag corresponding
+//to the set of north and east.
+//is equivalent to the much longer
+Direction.Set[Direction.north();Direction.east()]
+
+p=point.with(x:point.y(), y:point.x())
+CCode
+
+
+
+
+
+
+
+
+WTitle((3/5) `Mutable sequences')
+
+
+Mutable sequences can be more efficient that 
+immutable ones, and are more general, since they 
+can handled mutable objects.
+The square brackets creates mutable sequences/collections,
+so 
+
+OBCode
+foo=Nums[a;b;c;d]
+//equivalent to 
+mut Nums foo=Nums[a;b;c;d]
+CCode
+
+
+Now we show some methods over mutable collections, consider each following line independently:
+OBCode
 //setting a value in a position
 foo(2Size,val:b)//foo.equals(Nums[a;b;b;d])
 //setting at left or right
@@ -91,20 +175,8 @@ foo.removeRight()//foo.equals(Nums[a;b;c])
 foo.removeAll(elem:b)//foo.equals(Nums[a;c;d])
 foo.removeLeft(elem:b)//remove the leftmost b
 foo.removeRight(elem:b)//remove the rightmost b
-
 CCode
 
-Both immutable and mutable collections can be 
-accessed with the following methods:
-
-OBCode
-//access
-foo.left()//a
-foo.right()//d
-foo.val(2Size)//c
-foo.size()//4Size
-foo.isEmpty()//not holds
-CCode
 
 
 Mutable collections can become immutable by promotion; for example,
@@ -119,37 +191,17 @@ Nums myNums=DoIt.getMutableNums() //ok promotions happens, myNums is immutable
 myNums=DoIt.getMutableNums() //myNums type is inferred to be mut Nums
 CCode
 
-<!--
-When we will be able to mention those?
-mut method T #left()
-mut method T #right()
-mut method T #val(N that)
--->
+Mutable collections can contains mutable objects.
+While this can be useful in special circumstances, it can create aliasing issues similar to the
+ones of the animals example of before.
+To warn against such issues, methods Wcode(left()), Wcode(right()) and Wcode(val(that)) return 
+readable references of the mutable objects. In order to obtain 
+the actual mutable reference, the user need to use the methods
+Wcode(`#left()'), Wcode(`#right()') and Wcode(`#val(that)').
 
-WTitle((2/5) `Suggested parameter values using "\"')
 
-In 42 is possible to use Wcode(\) while calling a method or using the square brackets,
-to ask the receiver for a suggestion about the parameter values.
-The library designer have full freedom to implement those suggestion in the more opportune way, however we
-recognize three important common patterns:
-WP
-When setting/updating a value, the old value is suggested.
-WP
-When adding a new value, the factory is suggested.
-WP
-When the parameter is a number from zero to a max, the maximum is suggested.
-WP
-For example:
-OBCode
-Nums[a;b;c;d].add(left:42\) //the \ is Num
-Nums[a;b;c;d].without(index:\-1Size)//remove the last (the right-most)
-Nums[a;b;c;d].with(left:\ * 2Num)//the leftmost is now a*2
 
-Points[\(x:12\ y: 0\)]==Points[Point(x:12Num, y:0Num)]
-
-CCode
-
-WTitle((3/5) `Wcode(with): a Swiss army knife to encode complex behaviour')
+WTitle((4/5) `Wcode(with): a Swiss army knife to encode complex behaviour')
 
 
 There are two basic usage for the Wcode(with) statement: as for-each and as a typecase.
@@ -267,7 +319,7 @@ with a in as.vals(stopOk:\), b in bs.vals(fill:300Num), var r in rs.vals() (
 CCode
 
 
-WTitle(Strings)
+WTitle(`Strings interpolation, even better with Wcode(with)')
 
 Alphanumeric classes and strings can be seen as immutable
 sequences of Strings of length 1.
@@ -294,10 +346,25 @@ res=S"your info: "[with name in names.vals(), num in nums.vals()  (
 CCode
 
 
+WTitle(`(5/5) Collections recall')
 
-WTitle((5/5) Sequences, recall)
-
-
+<ul><li>
+There are a tons of methods and operators to know, but since most code works 
+around collections, it is worth the effort to memorize them.
+</li><li>
+Immutable collections are easy to play with, using operators and with methods.
+</li><li>
+Mutable collections can be more efficient and flexible, but they come with additional
+difficulties.
+</li><li>
+Most methods have a general version that works with an index, and specialized Wcode(left) and
+Wcode(right) variants.
+</li><li>
+Wcode(/) can help remove a lot of boilerplate, but is not trivial to get used to it.
+</li><li>
+Wcode(with) is very useful and flexible. It is common to find methods composed be just a large
+Wcode(with) statement plus a little pre and post processing around it.
+</li></ul>
 
 WBigTitle(not ready to read yet)
 

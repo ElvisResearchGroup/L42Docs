@@ -81,7 +81,7 @@ Coming from another programming language, you may be surprised that we have to w
 This extra verbosity is needed to provide fair treatment to all classes. (Wlink(note1,see more))
 In 42 we do not give preferential treatment
 to special objects/classes. In this sense, we consider
-most other languages to be discriminatory/racist.
+most other languages to be discriminatory.
 They give priority to their "preferred" version of numbers and strings, and this puts into a position of unfair disadvantage library code trying to define its own kinds of numbers/strings.
 Instead in 42 you may encounter strings like Wcode(URL"www.google.com") or
  Wcode(EMAIL"Arthur.Dent@gmail.com").

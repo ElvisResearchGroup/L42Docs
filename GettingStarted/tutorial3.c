@@ -1,4 +1,11 @@
-WBigTitle(Units of Measure)
+WBigTitle(Unitary)
+
+An immutable class is Unitary
+if is logically not composed by other elements,
+and can be instantiated by a single operations that takes no parameters.
+For examples numbers and strings are unitaries, while
+collections are not simple data, since you need to provide the elements.
+
 
 WTitle((1/5) Num and Size)
 Wcode(Num) is a general number type,
@@ -88,10 +95,10 @@ takes the support and not a unit.
 Units provide method Wcode(div(that)) for this aim.
 Units also provide method  Wcode(`#'inner()),
 this is just extracting the value of the support from the unit.
-This can be convenient during programming bud 
-does not makes a lot of sense mathematically.
-Methods like that, require to be used with care, they start with
-Wcode(`#') to underline that they should be used with care.
+This can be convenient during programming but 
+does not make a lot of sense mathematically.
+Methods like that are required to be used with care, so they start with
+Wcode(`#') to underline that.
 
 OBCode
 Num n1=42Meter.div(2Meter)//=21Num
@@ -100,7 +107,7 @@ CCode
 
 
 
-WTitle((3/5) Composite Units)
+WTitle(Composite Units)
 
 Wcode(Units) supports composite units:
 OBCode
@@ -142,7 +149,7 @@ the original unit.
 
 
 
-WTitle((4/5) Alphanumeric)
+WTitle((3/5) Alphanumeric)
 In the same way Wcode(Units) allows easy creation of
 arithmetic classes,
 Wcode(Alphanumeric) allows easy creation of alphanumeric classes:
@@ -189,6 +196,33 @@ Email:Alphanumeric<<{/*..*/
 myEmail=Email"arthur.dent@gmail.com"
 Assert.$[myEmail.toS() expected:S"arthurdent@gmail.com"]
 CCode
+
+
+WTitle((4/5) Enumerations)
+
+Enumerations can be obtained with the Wcode(Enumeration) class, as in the following code.
+
+OBCode
+Direction: Enumeration"north, east, south, west"
+/*..*/
+n=Direction.north()
+s=Direction.south()
+Direction.names()==Strings[S"north,S"east",S"south",S"west"]
+
+if n.isNorth() (/*..*/)
+else if n.isEast() (/*..*/)
+
+Debug(n)//prints north
+
+e=Direction.fromS(S"east")
+
+with d in Direction.all().vals() (
+  Debug(d)//prints all the directions in order.
+  )
+
+CCode
+Enumerations also come with their customized set and vector type,
+we will see more about that when we discuss collections.
 
 WTitle((5/5) Recall)
 

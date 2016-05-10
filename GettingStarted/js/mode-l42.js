@@ -97,13 +97,13 @@ var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
 var L42HighlightRules = function() {
     var keywords = (
-        "method|interface|reuse|return|error|exception|in|if|while|with|on|catch|class|mut|lent|read|capsule|var|default|use|check|loop|else|void|implements"
+        "refine|method|interface|reuse|return|error|exception|in|if|while|with|on|catch|class|mut|lent|read|capsule|var|default|use|check|loop|else|void|implements"
     );
 
     var buildinConstants = ("null|Infinity|NaN|undefined");
 
     var keywordMapper = this.createKeywordMapper({
-        "variable.language": "this",
+        //"variable.language": "this",
         "keyword": keywords,
         "constant.language": buildinConstants,
     }, "identifier");

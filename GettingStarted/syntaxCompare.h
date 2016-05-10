@@ -214,7 +214,7 @@ if a>b (return /*...*/)
 var S acc=S""  //explicit 'var': can be updated
 while Bool.true() ( //booleans are not constants
   if acc.size()>50Size ( //Size: type of sequence indexes 
-    exception void //like java break, rarelly used in 42
+    exception void //like java break, rarely used in 42
     )
   acc++=S"step"
   )

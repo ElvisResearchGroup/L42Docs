@@ -22,7 +22,7 @@ Wcode(L42.is) is the main website of 42, where most commonly used libraries are 
 need an internet connection; but this also means that you will never have to manually import any code. Required code will be transitively downloaded and cached on your machine, so you need not to be aware of the existence of this mechanism.
 WP
 We do not need to always start from AdamTowel, there are many interesting towels out there, and you may also become skilled in the 
-advance technique of towel embroidery.
+advanced technique of towel embroidery.
 WP
 
 WTitle((2/5)Method declaration and call)

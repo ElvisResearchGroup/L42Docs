@@ -51,7 +51,7 @@ AdamTowel is our Towel, that is the set of classes and interfaces that we wish t
 need an internet connection; but this also means that you will never have to manually import any code. Required code will be transitively downloaded and cached on your machine, so you need not to be aware of the existence of this mechanism.
 </p><p>
 We do not need to always start from AdamTowel, there are many interesting towels out there, and you may also become skilled in the 
-advance technique of towel embroidery.
+advanced technique of towel embroidery.
 </p><p>
 
 </p><h2> (2/5)Method declaration and call </h2> <p>
@@ -267,7 +267,7 @@ This code models an animal following a path. It can be used like this.
 ]]></pre>
 
 In this code the first dog goes to 12:20.
-The secon dog goes to 0:0. 
+The second dog goes to 0:0. 
 
 This code involves a mutable animal with a mutable field. This is often
 a terrible idea, since its behaviour may depend on aliasing: what happens if two dogs follow the same path?
@@ -309,7 +309,7 @@ The "capsule" modifier <span style="color:#ff1111; font-weight: bold;"> forces <
  the <span class="code"><![CDATA[Animal]]></span> data is well encapsulated.
 </p><p>
 
-Now the code of before would not compile. However we can still write the following variant
+Now the code from before would not compile. However we can still write the following variant
 <pre class="l42Big"><![CDATA[
   zero=Point(x:0Num, y:0Num)
   capsule Points ps=Points[ Point(x:12Num, y:20Num);Point(x:1Num, y:2Num)]
@@ -321,7 +321,7 @@ Now the code of before would not compile. However we can still write the followi
 Where the <span class="code"><![CDATA[ps]]></span> local binding is declared capsule; 
 it can satisfy the Animal.path requirement, but it can be used only once.
 <span class="code"><![CDATA[dog2]]></span>
-has to use another capsule. It is ok to just write the object creation in place as is done.
+has to use another capsule. It is okay to just write the object creation in place as is done.
 Alternatively, most classes offer a <span class="code"><![CDATA[clone()]]></span> method,
 so in this case we could write
 
@@ -436,7 +436,14 @@ They can be referred by capsule, mutable, lent and read references.
 class: objects are instances of themselves.
 They can be referred only by class references, either of their class or of one transitively implemented interface.
 </li></ul>
-</p><h1> Units of Measure </h1> <p>
+</p><h1> Unitary </h1> <p>
+
+An immutable class is Unitary
+if is logically not composed by other elements,
+and can be instantiated by a single operations that takes no parameters.
+For examples numbers and strings are unitaries, while
+collections are not simple data, since you need to provide the elements.
+
 
 </p><h2> (1/5) Num and Size </h2> <p>
 <span class="code"><![CDATA[Num]]></span> is a general number type,
@@ -526,10 +533,10 @@ takes the support and not a unit.
 Units provide method <span class="code"><![CDATA[div(that)]]></span> for this aim.
 Units also provide method  <span class="code"><![CDATA[#inner()]]></span>,
 this is just extracting the value of the support from the unit.
-This can be convenient during programming bud 
-does not makes a lot of sense mathematically.
-Methods like that, require to be used with care, they start with
-<span class="code"><![CDATA[#]]></span> to underline that they should be used with care.
+This can be convenient during programming but 
+does not make a lot of sense mathematically.
+Methods like that are required to be used with care, so they start with
+<span class="code"><![CDATA[#]]></span> to underline that.
 
 <pre class="l42Big"><![CDATA[
 Num n1=42Meter.div(2Meter)//=21Num
@@ -538,7 +545,7 @@ Num n2=42Meter.#inner()//=42Num
 
 
 
-</p><h2> (3/5) Composite Units </h2> <p>
+</p><h2> Composite Units </h2> <p>
 
 <span class="code"><![CDATA[Units]]></span> supports composite units:
 <pre class="l42Big"><![CDATA[
@@ -580,7 +587,7 @@ the original unit.
 
 
 
-</p><h2> (4/5) Alphanumeric </h2> <p>
+</p><h2> (3/5) Alphanumeric </h2> <p>
 In the same way <span class="code"><![CDATA[Units]]></span> allows easy creation of
 arithmetic classes,
 <span class="code"><![CDATA[Alphanumeric]]></span> allows easy creation of alphanumeric classes:
@@ -627,6 +634,33 @@ Email:Alphanumeric<<{/*..*/
 myEmail=Email"arthur.dent@gmail.com"
 Assert.$[myEmail.toS() expected:S"arthurdent@gmail.com"]
 ]]></pre>
+
+
+</p><h2> (4/5) Enumerations </h2> <p>
+
+Enumerations can be obtained with the <span class="code"><![CDATA[Enumeration]]></span> class, as in the following code.
+
+<pre class="l42Big"><![CDATA[
+Direction: Enumeration"north, east, south, west"
+/*..*/
+n=Direction.north()
+s=Direction.south()
+Direction.names()==Strings[S"north,S"east",S"south",S"west"]
+
+if n.isNorth() (/*..*/)
+else if n.isEast() (/*..*/)
+
+Debug(n)//prints north
+
+e=Direction.fromS(S"east")
+
+with d in Direction.all().vals() (
+  Debug(d)//prints all the directions in order.
+  )
+
+]]></pre>
+Enumerations also come with their customized set and vector type,
+we will see more about that when we discuss collections.
 
 </p><h2> (5/5) Recall </h2> <p>
 
@@ -1108,7 +1142,7 @@ but often is not possible or is not convenient.
 Good 42 code can be composed for half of
 its content of just error/exception handling/lifting and management.
 Do not be scared of turning your code in it's own policemen.
-</li></ul></p><h1> Sequences: Strings and Collections </h1> <p>
+</li></ul></p><h1> Sequences high level manipulation </h1> <p>
 
 </p><h2> (1/5)Vectors as Sequences </h2> <p>
 
@@ -1117,10 +1151,9 @@ As we have seen before, vectors can be declared using <span class="code"><![CDAT
 <pre class="l42Big"><![CDATA[
 Nums:Collections.vector(of:Num)//declaration for vectors of nums
 /*..*/
-xs=Nums[10Num;20Num;30Num]//immutable vector
-
-ys=Nums.empty()//mutable vector
-ys.add(right:10Num)
+Nums xs=Nums[10Num;20Num;30Num]//immutable vector
+//note how we declare the type explicitly,
+//the default vector would be mutable.
 ]]></pre>
 
 Immutable sequences are created with square brackets
@@ -1170,15 +1203,100 @@ Nums[a;b;c;d].withAlsoRight()//Nums[a;b;c;d;b]
 Nums[a;b;c;d].withAlso(2Size,b)//Nums[a;b;b;c;d]
 ]]></pre>
 
+Immutable collections (and also mutable ones, as we will see later)
+can be accessed with the following methods:
 
-Mutable sequences are created with <span class="code"><![CDATA[.empty()]]></span> and
-mutated by methods, as in the example below.
 <pre class="l42Big"><![CDATA[
-foo=Nums.empty()
-foo.add(right:a) /*..*/ foo.add(right:d)
-//assuming foo.equals(Nums[a;b;c;d])
-//consider each following line independently:
+//access
+foo.left()//a
+foo.right()//d
+foo.val(2Size)//c
+foo.size()//4Size
+foo.isEmpty()//not holds
+]]></pre>
 
+
+
+
+
+</p><h2> (2/5) Suggested parameter values using "\" </h2> <p>
+
+In 42 is possible to use <span class="code"><![CDATA[\]]></span> while calling a method or using the square brackets,
+to ask the receiver for a suggestion about the parameter values.
+The library designer have full freedom to implement those suggestion in the more opportune way, however we
+recognize three important common patterns:
+</p><p>
+When setting/updating a value, the old value is suggested.
+</p><p>
+When adding a new value, the factory is suggested.
+</p><p>
+When the parameter is a number from zero to a max, the maximum is suggested.
+</p><p>
+For example:
+<pre class="l42Big"><![CDATA[
+Nums[a;b;c;d].withAlso(left:42\) //the \ is Num
+Nums[a;b;c;d].without(index:\-1Size)//remove the last (the right-most)
+Nums[a;b;c;d].with(left:\ * 2Num)//the leftmost is now a*2
+
+Points[\(x:12\ y: 0\)]==Points[Point(x:12Num, y:0Num)]
+]]></pre>
+Sometime, using <span class="code"><![CDATA[\]]></span> makes a huge difference,
+for example, for the animal example of before:
+<pre class="l42Big"><![CDATA[
+horse.location(\.with(x:\+20\)
+//is equivalent to the much longer
+horse.location(horse.location().with(
+  x:horse.location().x()+20Num)
+]]></pre>
+
+Is also possible to use <span class="code"><![CDATA[\]]></span> followed by an identifier, that will denote the method
+with the same name on the receiver.
+For example, if we want to reflect a point, and invert x and y coordinate, we can write
+
+<pre class="l42Big"><![CDATA[
+p=point.with(x:\y, y:\x)
+//is equivalent to
+p=point.with(x:point.y(), y:point.x())
+]]></pre>
+
+The <span class="code"><![CDATA[\]]></span> is very convenient also while initializing list/set of enumerated values.
+For example
+
+<pre class="l42Big"><![CDATA[
+Direction=Enumeration"north, east, south, west"
+Direction.Set[\north;\east]//the bitflag corresponding
+//to the set of north and east.
+//is equivalent to the much longer
+Direction.Set[Direction.north();Direction.east()]
+
+p=point.with(x:point.y(), y:point.x())
+]]></pre>
+
+
+
+
+
+
+
+
+</p><h2> (3/5) Mutable sequences </h2> <p>
+
+
+Mutable sequences can be more efficient that 
+immutable ones, and are more general, since they 
+can handled mutable objects.
+The square brackets creates mutable sequences/collections,
+so 
+
+<pre class="l42Big"><![CDATA[
+foo=Nums[a;b;c;d]
+//equivalent to 
+mut Nums foo=Nums[a;b;c;d]
+]]></pre>
+
+
+Now we show some methods over mutable collections, consider each following line independently:
+<pre class="l42Big"><![CDATA[
 //setting a value in a position
 foo(2Size,val:b)//foo.equals(Nums[a;b;b;d])
 //setting at left or right
@@ -1201,20 +1319,8 @@ foo.removeRight()//foo.equals(Nums[a;b;c])
 foo.removeAll(elem:b)//foo.equals(Nums[a;c;d])
 foo.removeLeft(elem:b)//remove the leftmost b
 foo.removeRight(elem:b)//remove the rightmost b
-
 ]]></pre>
 
-Both immutable and mutable collections can be 
-accessed with the following methods:
-
-<pre class="l42Big"><![CDATA[
-//access
-foo.left()//a
-foo.right()//d
-foo.val(2Size)//c
-foo.size()//4Size
-foo.isEmpty()//not holds
-]]></pre>
 
 
 Mutable collections can become immutable by promotion; for example,
@@ -1229,37 +1335,17 @@ Nums myNums=DoIt.getMutableNums() //ok promotions happens, myNums is immutable
 myNums=DoIt.getMutableNums() //myNums type is inferred to be mut Nums
 ]]></pre>
 
-<!--
-When we will be able to mention those?
-mut method T #left()
-mut method T #right()
-mut method T #val(N that)
--->
+Mutable collections can contains mutable objects.
+While this can be useful in special circumstances, it can create aliasing issues similar to the
+ones of the animals example of before.
+To warn against such issues, methods <span class="code"><![CDATA[left()]]></span>, <span class="code"><![CDATA[right()]]></span> and <span class="code"><![CDATA[val(that)]]></span> return 
+readable references of the mutable objects. In order to obtain 
+the actual mutable reference, the user need to use the methods
+<span class="code"><![CDATA[#left()]]></span>, Wcode(`#right()') and Wcode(`#val(that)').
 
-</p><h2> (2/5) Suggested parameter values using "\" </h2> <p>
 
-In 42 is possible to use <span class="code"><![CDATA[\]]></span> while calling a method or using the square brackets,
-to ask the receiver for a suggestion about the parameter values.
-The library designer have full freedom to implement those suggestion in the more opportune way, however we
-recognize three important common patterns:
-</p><p>
-When setting/updating a value, the old value is suggested.
-</p><p>
-When adding a new value, the factory is suggested.
-</p><p>
-When the parameter is a number from zero to a max, the maximum is suggested.
-</p><p>
-For example:
-<pre class="l42Big"><![CDATA[
-Nums[a;b;c;d].add(left:42\) //the \ is Num
-Nums[a;b;c;d].without(index:\-1Size)//remove the last (the right-most)
-Nums[a;b;c;d].with(left:\ * 2Num)//the leftmost is now a*2
 
-Points[\(x:12\ y: 0\)]==Points[Point(x:12Num, y:0Num)]
-
-]]></pre>
-
-</p><h2> (3/5) <span class="code"><![CDATA[with]]></span>: a Swiss army knife to encode complex behaviour </h2> <p>
+</p><h2> (4/5) <span class="code"><![CDATA[with]]></span>: a Swiss army knife to encode complex behaviour </h2> <p>
 
 
 There are two basic usage for the <span class="code"><![CDATA[with]]></span> statement: as for-each and as a typecase.
@@ -1377,7 +1463,7 @@ with a in as.vals(stopOk:\), b in bs.vals(fill:300Num), var r in rs.vals() (
 ]]></pre>
 
 
-</p><h2> Strings </h2> <p>
+</p><h2> Strings interpolation, even better with <span class="code"><![CDATA[with]]></span> </h2> <p>
 
 Alphanumeric classes and strings can be seen as immutable
 sequences of Strings of length 1.
@@ -1404,10 +1490,25 @@ res=S"your info: "[with name in names.vals(), num in nums.vals()  (
 ]]></pre>
 
 
+</p><h2> (5/5) Collections recall </h2> <p>
 
-</p><h2> (5/5) Sequences </h2> <p>
-
-
+<ul><li>
+There are a tons of methods and operators to know, but since most code works 
+around collections, it is worth the effort to memorize them.
+</li><li>
+Immutable collections are easy to play with, using operators and with methods.
+</li><li>
+Mutable collections can be more efficient and flexible, but they come with additional
+difficulties.
+</li><li>
+Most methods have a general version that works with an index, and specialized <span class="code"><![CDATA[left]]></span> and
+<span class="code"><![CDATA[right]]></span> variants.
+</li><li>
+<span class="code"><![CDATA[/]]></span> can help remove a lot of boilerplate, but is not trivial to get used to it.
+</li><li>
+<span class="code"><![CDATA[with]]></span> is very useful and flexible. It is common to find methods composed be just a large
+<span class="code"><![CDATA[with]]></span> statement plus a little pre and post processing around it.
+</li></ul>
 
 </p><h1> not ready to read yet </h1> <p>
 

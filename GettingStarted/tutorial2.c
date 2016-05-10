@@ -78,7 +78,7 @@ OBCode
 CCode
 
 In this code the first dog goes to 12:20.
-The secon dog goes to 0:0. 
+The second dog goes to 0:0. 
 
 This code involves a mutable animal with a mutable field. This is often
 a terrible idea, since its behaviour may depend on aliasing: what happens if two dogs follow the same path?
@@ -120,7 +120,7 @@ The "capsule" modifier WEmph(forces) the users to provide well encapsulated valu
  the Wcode(Animal) data is well encapsulated.
 WP
 
-Now the code of before would not compile. However we can still write the following variant
+Now the code from before would not compile. However we can still write the following variant
 OBCode
   zero=Point(x:0Num, y:0Num)
   capsule Points ps=Points[ Point(x:12Num, y:20Num);Point(x:1Num, y:2Num)]
@@ -132,7 +132,7 @@ CCode
 Where the Wcode(ps) local binding is declared capsule; 
 it can satisfy the Animal.path requirement, but it can be used only once.
 Wcode(dog2)
-has to use another capsule. It is ok to just write the object creation in place as is done.
+has to use another capsule. It is okay to just write the object creation in place as is done.
 Alternatively, most classes offer a Wcode(clone()) method,
 so in this case we could write
 
