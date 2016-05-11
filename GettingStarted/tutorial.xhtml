@@ -38,21 +38,35 @@ Main:{
   }
 }
 ]]></pre>
-At the right of <span class="code"><![CDATA[Main:]]></span> we write the expression that
-we wish to execute; in this case a sequence of two statements.
-<span class="code"><![CDATA[Main]]></span> is not a method, and <span class="code"><![CDATA[Main]]></span> is not special name either. In 42 there is no concept of main method as in
-Java or C. For now you can think of <span class="code"><![CDATA[Main:]]></span> as a top level command, we will understand later how this fits with the general language design.
 
 When we write <span class="code"><![CDATA[reuse L42.is/AdamTowel]]></span> we are asking 42 to
 reuse the code offered by the library offered in the internet address 
 <span class="code"><![CDATA[L42.is/AdamTowel]]></span>.
 AdamTowel is our Towel, that is the set of classes and interfaces that we wish to start from (<a href="towel.xhtml">see more on towels</a>).
 <span class="code"><![CDATA[L42.is]]></span> is the main website of 42, where most commonly used libraries are hosted. To reuse code you 
-need an internet connection; but this also means that you will never have to manually import any code. Required code will be transitively downloaded and cached on your machine, so you need not to be aware of the existence of this mechanism.
+need an internet connection; but this also means that you will never have to manually import any code.
+Required code will be transitively downloaded and cached on your machine, so you need not to be aware of the existence of this mechanism.
 </p><p>
 We do not need to always start from AdamTowel, there are many interesting towels out there, and you may also become skilled in the 
 advanced technique of towel embroidery.
 </p><p>
+
+At the right of <span class="code"><![CDATA[Main:]]></span> we write the expression that
+we wish to execute; in this case a sequence of two statements.
+<span class="code"><![CDATA[Main]]></span> is not a method, and <span class="code"><![CDATA[Main]]></span> is not special name either, you can replace it with <span class="code"><![CDATA[Task]]></span> or any other valid
+uppercase identifier. In 42 there is no concept of main method as in
+Java or C. For now you can think of <span class="code"><![CDATA[Main:]]></span> as a top level command, we will understand later how this fits with the general language design.
+</p><p>
+<span class="code"><![CDATA[Debug]]></span>
+is a simple class offering methods to prod the system to understand what is going on.
+The most important method of <span class="code"><![CDATA[Debug]]></span> is to just print a message on the console.
+In 42, when a class has a "most important" method, it is conventional to name it so that can be used as if the
+class name was a function, that is
+we write <span class="code"><![CDATA[Debug(S"Hello world")]]></span> instead
+of a more verbouse <span class="code"><![CDATA[Debug.println(S"Hello world")]]></span>. We call <span style="color:#ff1111; font-weight: bold;"> funtors </span> objects and classes that can be used as functions.
+
+Finally, our code ends by returning "success" as exit status.
+
 
 </p><h2> (2/5)Method declaration and call </h2> <p>
 Let's now declare a method and call it.
@@ -60,25 +74,26 @@ Let's now declare a method and call it.
 {reuse L42.is/AdamTowel
 MyCode:{
   class method
-  S hello(S name){
-    return S"hello "++name
+  S hello(S nickName){
+    return S"Hello "++nickName
     } 
   }
 Main:{
-  Debug(MyCode.hello(name:S"world"))
+  Debug(MyCode.hello(nickName:S"Marvin"))
   return ExitCode.success()
   }
 }
 ]]></pre>
 Here we declare a class to host our <span class="code"><![CDATA[hello(name)]]></span> method.
-We write <span class="code"><![CDATA[class method]]></span> to declare a method that can be called on the class object, as in <span class="code"><![CDATA[MyCode.hello(name:S"world")]]></span>. This is roughly equivalent to a static method in languages like Java or C++, or class methods in Python.
+We write <span class="code"><![CDATA[class method]]></span> to declare a method that can be called on the class object, as in <span class="code"><![CDATA[MyCode.hello(name:S"world")]]></span>.
+This is roughly equivalent to a static method in languages like Java or C++, or class methods in Python.
 
 </p><p>
 Note how the method is called using the parameter name explicitly.
 We believe this increases readability.
 </p><p>
-You can also notice how there are two different usages for curly brackets: if there is at least a return keyword it is a set of statements,
-otherwise is a library literal, and can contains methods and nesteds.
+You may also notice how there are two different usages for curly brackets: if there is at least one <span class="code"><![CDATA[return]]></span> keyword then the expression is a block of statements,
+otherwise the expression is a library literal, witch can contains methods and <span style="color:#ff1111; font-weight: bold;"> nesteds </span>.
 A nested (class or interface) is denoted by an upper-case name, and can be obtained by a library literal or an expression producing a library literal.
 A library can be a class (default case) or an interface (starts with the <span class="code"><![CDATA[interface]]></span> keyword).
 A nested in 42 is similar to a static inner class in Java, or a nested class in C++. It is just a convenient way to divide in a tree shape the various components of our program.
