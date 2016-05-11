@@ -5,4 +5,5 @@ m4_include(`tutorial3.c')m4_dnl
 m4_include(`tutorial4.c')m4_dnl
 m4_include(`tutorial5.c')m4_dnl
 m4_include(`tutorial6.c')m4_dnl
+m4_include(`tutorial7.c')m4_dnl
 m4_include(`footer.h')m4_dnl

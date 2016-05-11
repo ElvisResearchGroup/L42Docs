@@ -1508,16 +1508,19 @@ Most methods have a general version that works with an index, and specialized <s
 </li><li>
 <span class="code"><![CDATA[with]]></span> is very useful and flexible. It is common to find methods composed be just a large
 <span class="code"><![CDATA[with]]></span> statement plus a little pre and post processing around it.
-</li></ul>
-
-</p><h1> not ready to read yet </h1> <p>
+</li></ul></p><h1> Exercises </h1> <p>
 
 A very large class of practically useful programs can be obtained by
-just declaring simple minded classes using Data and Collections.
+just declaring
+elemental classes, collections
+and simple Data classes.
+
+Insert exercises here
 
 
+</p><h1> Example of Libraries </h1> <p>
 
-</p><h2> Libraries </h2> <p>
+</p><h2> (1/5)Gui </h2> <p>
 42 stands for the primate of libraries, so let see some libraries in action.
 We have already see how to chose a towel, and many classes that are likely to be present in such towel, like
 <span class="code"><![CDATA[S]]></span> and <span class="code"><![CDATA[Data]]></span>.
@@ -1531,38 +1534,122 @@ Main:{
   }
 }
 ]]></pre>
-Load is another decorator, here it modifies the library found in L42.is/Gui so that it can be used easly from AdamTowel.
+Load is another decorator, here it modifies the library found in L42.is/Gui
+ so that it can be used easily from AdamTowel.
+
+Gui allows to create graphical user interfaces using html.
+
+<pre class="l42Big"><![CDATA[
+{reuse L42.is/AdamTowel
+Gui: Load<<{reuse L42.is/Gui}
+MyGui:Gui(
+  title:S"My Gui"
+  basePath:S"base/path/for/my/files"// use / on all op systems
+  x:600Gui.Pixel//seek for index.html in your basePath
+  y:400Gui.Pixel
+  )<<{
+  method Void event_quit(Gui gui, S msg)
+    gui.close()
+  method Void event_sayHi(Gui gui, S msg)
+    Gui.alert(S"hi")
+  method Void event_say(Gui gui, S msg) (
+    //msg is going to be a multiline string,
+    //first line equal to "say", other lines give more info
+    Strings ss=msg.split(S.nl())
+    Gui.alert(S"hi dear "+ss.val(1\))
+    )
+  }
+
+Main:MyGui()
+}
+]]></pre>
+And the file <span class="code"><![CDATA[index.html]]></span>
+would look like:
+<pre class="l42Big"><![CDATA[
+//add html, css and javascript formatting
+<html>
+<head>
+</head>
+<body>
+Hi, buttons here
+<Button onclick='event42("quit");'> Quit</Button>
+<Button onclick='event42("sayHi");'> Say Hi</Button>
+<Button onclick='event42("say\ncaterpillar");'> Say Hi</Button>
+</body>
+</html>
+]]></pre>
+Do not forget the two layers of quotes: you need to quote both the call to <span class="code"><![CDATA[event42]]></span>
+and the string codifying the event itself.
+
+To make something happen in the gui, you can use 
+<span class="code"><![CDATA[gui.executeJs(cmd)]]></span>.
+For example
+<pre class="l42Big"><![CDATA[
+method event_writeOnTextArea(Gui gui, S msg) (
+  Strings ss=msg.split(S.nl())
+  js1=Gui.JavaScript"document.getElementById('myTextAreaId').value = 'Hi! event happened';"
+  //or, to use information in the message
+  js2=Gui.JavaScript"document.getElementById('"[ss.val(1\)]"').value = '"[ss.val(2\)]"';"
+  gui.executeJS(js2)
+  )
+]]></pre>
+
+</p><h2> (2/5) Files </h2> <p>
+In 42 you can import <span class="code"><![CDATA[FSystem]]></span> to read and write files.
+
+
+<pre class="l42Big"><![CDATA[
+{reuse L42.is/AdamTowel
+FSystem: Load<<{reuse L42.is/FSystem}
+
+Main:{
+  files=FSystem()
+  files.write(S"foo.txt",S"foo foo foo!")
+  S foos=files.read(S"foo.txt")//most likely, it contains 'foo foo foo!'
+  return ExitCode.normal()
+  }
+}
+]]></pre>
+
+42 can execute every closed expression early, even at compile time, if it could give 
+a performance boost, thus you may want to pass a files object around to functions that do
+I/O. Otherwise you may end up with unexpected early effects:
+
+<pre class="l42Big"><![CDATA[
+
+method S readFoo()
+ FSystem().read(S"foo.txt") //may read foo once and for all
+//at compile time, and then return the same value every time
+//it can be useful for loading resources, like image files
+//in a simple game.
+
+method S readFoo(mut FSystem that)
+ that.read(S"foo.txt") //need the parameter to act, thus
+ //will wait until a parameter is provided
+]]></pre>
+
+In general, all the system interaction that happens over the same system object are
+chronologically sorted with respect to each other, but there is no guarantee 
+of ordering between different system objects.
+
+
+</p><h1> Refactor and Extend </h1> <p>
+
+</p><h2> Refactor </h2> <p>
+<span class="code"><![CDATA[Refactor]]></span> is a class supporting modification of
+library literals.
+For example, you may want to 
+
+</p><h2> Extend </h2> <p>
+
+
+
  <!--
  
- Data invariants
- interface
-  
- Sequences
- Strings
- Collections
- iterations 
- 
- Exceptions
- Assertions
- 
- Units and alphanumerics
- 
- 
-
-
  
  Use Extends Refactor
  
-    //Meter dx=this.x()-that.x();
-    //Meter dy=this.y()-that.y();
-    //m2=Meter2[dx;dx]+Meter2[dy;dy]
-    //return Meter[root:2Unit of:m2]
-    //dx=dx.unit()
-    //Meter.fromUnit(((dx*dx)+(dy*dy)).sqrt())
-    
-    
-    
-    </p><h2> (2/5) Iteration </h2> <p>
+
 
 It is possible to iterate over a range of numbers:
 
@@ -1660,8 +1747,11 @@ as an initializer for you need to put the code into an expression
 -->
 
 <!-- LATER?
-<span class="code"><![CDATA[MyCode.hello(..)]]></span> use directly the <span class="code"><![CDATA[MyCode]]></span> class instance as receiver. We can also give it a name 
-e se vuoi puoi anche salvarlo su un binding locale, tipo x=MyCode  x.hello(...)
+<span class="code"><![CDATA[MyCode.hello(..)]]></span> 
+use directly the <span class="code"><![CDATA[MyCode]]></span> class instance as
+receiver. We can also give it a name 
+e se vuoi puoi anche salvarlo su un binding locale, 
+tipo x=MyCode  x.hello(...)
 -->
         </p>
         </div>
