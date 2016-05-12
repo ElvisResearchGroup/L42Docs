@@ -171,7 +171,7 @@ var L42HighlightRules = function() {
 
                 },                
 //		token : "upperIdentifiers",
-                regex : /[0-9]*[A-Z$]+[a-zA-Z0-9_$%]*/ //[A-Z$][a-zA-Z0-9_$%] should be same
+                regex : /[0-9]*[A-Z$][a-zA-Z0-9_$%]*/ //[A-Z$]+[a-zA-Z0-9_$%] should be same
             }, {
                 token : function(val) {
                     if (val[val.length - 1] == ":") {

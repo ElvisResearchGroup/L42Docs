@@ -491,13 +491,16 @@ transitively implemented interfaces.
 Some programmers found the fact that class objects are instances of themselves deeply concerning
 or disturbing, while for others it is just a good story to tell to break the ice at parties.
 </li></ul>
-</p><h1> Unitary </h1> <p>
+</p><h1> Base </h1> <p>
 
-An immutable class is Unitary
+An immutable class is <span style="color:#ff1111; font-weight: bold;">  </span>{base/basic}
 if is logically not composed by other elements,
 and can be instantiated by a single operations that takes no parameters.
-For examples numbers and strings are unitaries, while
-collections are not simple data, since you need to provide the elements.
+For examples numbers and strings are basics, while
+collections are not: you need to provide the elements and they are logically
+composed by their elements.
+In the examples of before, <span class="code"><![CDATA[Point]]></span> and 
+<span class="code"><![CDATA[Animal]]></span> are not basic, since they are logically composed by their fields.
 
 
 </p><h2> (1/5) Num and Size </h2> <p>
@@ -548,13 +551,16 @@ reuse keyword imports the code from the web.
 
 </p><h2> Conversions </h2> <p>
 Conversions between various numeric classes must be performed explicitly.
-All numeric classes implements 
-the <span class="code"><![CDATA[Numeric]]></span> interface and offer the <span class="code"><![CDATA[.from(numeric)]]></span> method.
+
+AdamTowel offers a simple way to convert between numeric classes, and more in general
+between base classes.
+All numeric  classes implements
+the <span class="code"><![CDATA[Base]]></span> interface and offering the <span class="code"><![CDATA[.from(base)]]></span> method.
 So, for example 
 <pre class="l42Big"><![CDATA[
 Double:Load<<{reuse L42.is/Numbers/Double}
 size=S"hello".size()
-myDouble=Double.from(numeric:size)
+myDouble=Double.from(base:size)
 ]]></pre>
 converts from <span class="code"><![CDATA[Size]]></span> to <span class="code"><![CDATA[Double]]></span>.
 This avoid precision loss as much as possible.
@@ -720,6 +726,10 @@ we will see more about that when we discuss collections.
 </p><h2> (5/5) Recall </h2> <p>
 
 <ul><li>
+Base classes are the basic building block for your program;
+be sure to declare all the right base classes to establish a convenient vocabulary
+to talk about your problem domain.
+</li><li>
 Use <span class="code"><![CDATA[Num]]></span> as your first guess for numeric types,
 if you have special needs, can consider loading a numeric library.
 </li><li>
@@ -761,10 +771,10 @@ with the same name.
 For example, this code is ill-typed:
 <pre class="l42Big"><![CDATA[
 Card:{interface
-  method N draw()//the value of the drawn card
+  method Num draw()//the value of the drawn card
   }
 Gun:{interface
-  method N draw()//the time it takes to drawn the gun
+  method Num draw()//the time it takes to drawn the gun
   }
 Wrong:{implements Card,Gun//not allowed
   }
@@ -772,7 +782,8 @@ Wrong:{implements Card,Gun//not allowed
 
 
 Note that that would be bad 42 code anyway, you should define an
-enumeration (see later) for your cards and use a <span class="code"><![CDATA[Second]]></span> unit of measure
+enumeration (or an alphanumeric)
+ for your cards and use a <span class="code"><![CDATA[Second]]></span> unit of measure
 for the time.
 
 </p><h2> (2/5)Interfaces </h2> <p>
@@ -814,8 +825,7 @@ The most well known one is
 <span class="code"><![CDATA[Concepts.ToS]]></span>, implemented by all objects that can
 be converted in human readable strings.
 
-In AdamTowel,
-Alphanumeric, Numeric and Units just print
+In AdamTowel, all basic classes (as alphanumeric, numeric and units) just print
 the string or the number as it is.
 
 </p><p>
@@ -851,12 +861,12 @@ Square:{implements Shape
   Color color
   method newShape(that)//implemented from Shape
     This(color:that)
-  method clazz()//implemented from Concept.Classable
+  method class()//implemented from Concept.Classable
     This//this implementation can be omitted if "Data<<" is used
   }
 /*..*/
 Shape s=..
-s.clazz().newShape(Color.red())
+s.class().newShape(Color.red())
 ]]></pre>
 Where the interface <span class="code"><![CDATA[Shape]]></span> defines an abstract factory method (that is,
 an interface class method returning <span class="code"><![CDATA[This]]></span>)
@@ -897,17 +907,23 @@ and in any field update.
 satisfy the invariant will ever be visible outside of the scope of the <span class="code"><![CDATA[invariant()]]></span> method itself.
 
 See more about restrictions of this mechanism in (<a href="dataAndInvariants.xhtml">data and invariants</a>)
-(This will go in that link, but need more context to be understood: more explanation of Capsule field vs Capsule bindings, exposers and lent, also, is not implemented in 42 Yet)
+
 The current example shows a class with all immutable fields.
 It is possible to enforce the invariant also on classes with immutable
 and capsule fields.
 Then <span class="code"><![CDATA[Data]]></span> will additionally check that the
-lent exposers are all private and not used in internal nested classes,
-and that every method using the lent exposer do not return a lent result.
-It is unobvious why such requirements suffice: the idea is that the only way a capsule value ...
+lent exposers are used in a safe pattern:
+they are used only on the <span class="code"><![CDATA[this]]></span> receiver,
+and every method using the lent exposer do not return
+a lent result.
+It is unobvious why such requirements suffice: the idea is that the only way a mutable/lent reference
+to the content of a capsule field can be
+accessed is by the exposer. The reference produced by the lent exposer can only be returned as lent,
+or wrapped inside of freshly created objects referred to by lent references.
+(<span style="color:#ff1111; font-weight: bold;"> note for marco: </span> this means no more lent/read fields)
 
 
-</p><h2> (5/5)Interfaces and Data, recall </h2> <p>
+</p><h2> (5/5)Interfaces and Data, summary </h2> <p>
 
 Interfaces in 42 serves the same role they serve in other languages,
 with a little bit of a twist in the details.
@@ -926,7 +942,7 @@ This is similar to Java unchecked exceptions.
 Every immutable object can be thrown as an error.
 While it is possible to thrown informative strings, they do no offer enough
 structure to fully take advantage of the error mechanism.
-AdamTowel define the interface <span class="code"><![CDATA[Message]]></span>:
+AdamTowel defines the interface <span class="code"><![CDATA[Message]]></span>:
 a structured way to provide a certain kind of message to the user.
 <span class="code"><![CDATA[Message]]></span>s has <span class="code"><![CDATA[.text()]]></span> ,
 <span class="code"><![CDATA[.isResponse()]]></span> and <span class="code"><![CDATA[.responseOf()]]></span>.
@@ -1168,7 +1184,7 @@ never ever write <span class="code"><![CDATA[catch return]]></span> explicitly a
 your 42 experience ignoring the issue.
 
 
-</p><h2> (5/5) Errors, exceptions and return, recall </h2> <p>
+</p><h2> (5/5) Errors, exceptions and return, summary </h2> <p>
 <ul><li>
 Whenever possible, try to detect if your code misbehave, and 
 terminate it with an <span class="code"><![CDATA[Assert]]></span>
@@ -1204,9 +1220,9 @@ Do not be scared of turning your code in it's own policemen.
 As we have seen before, vectors can be declared using <span class="code"><![CDATA[Collections.vector(of)]]></span>, as in the example below.
 
 <pre class="l42Big"><![CDATA[
-Nums:Collections.vector(of:Num)//declaration for vectors of nums
+Nums:Collections.vector(of:Num) //declaration for vectors of nums
 /*..*/
-Nums xs=Nums[10Num;20Num;30Num]//immutable vector
+Nums xs=Nums[10Num;20Num;30Num] //immutable vector
 //note how we declare the type explicitly,
 //the default vector would be mutable.
 ]]></pre>
@@ -1223,51 +1239,62 @@ In the details, as you can see in the code below:
 <pre class="l42Big"><![CDATA[
 Nums[a;b;c]+d==Nums[a;b;c;d]
 Nums[a;b]++Nums[c;d]==Nums[a;b;c;d]
-Nums[a;b;b;c]-b==Nums[a;c] //only if elements implements Concepts.Equals
-Nums[a;b;b;c]--Nums[b;c]==Nums[a] //same for all the operators under
+Nums[a;b;b;c] - b==Nums[a;c] //only if elements implements Concepts.Equals
+Nums[a;b;b;c] -- Nums[b;c]==Nums[a] //same for all the operators under
 Nums[a;b;c]>>Nums[a;c] //holds
 Nums[a;b;c]>>=Nums[a;c] //holds
 Nums[a;b]>>=Nums[a;c] //holds
 Nums[a;b]>>Nums[a;c] //not holds
 Nums[a;b]>b //holds
 b<Nums[a;b] //holds
-Nums[a;b]& Nums[b;c]//Nums[b] set intersection
+Nums[a;b]& Nums[b;c] //Nums[b] set intersection
 ]]></pre>
 
 In addition of operators, immutable collections can
 be manipulated by the following methods:
 
 <pre class="l42Big"><![CDATA[
-//filtering
-Nums[a;b;c;d].without(index:2Size)//Nums[a;b;d]
-Nums[a;b;c;d].withoutLeft()//Nums[b;c;d]
-Nums[a;b;c;d].withoutRight()//Nums[a;b;c]
-//filtering, if elements implements Concepts.Equals
-Nums[a;b;c;d].withoutAll(elem:b)//Nums[a;c;d]
-Nums[a;b;c;d].withoutLeft(elem:b)//filter out the leftmost b
-Nums[a;b;c;d].withoutRight(elem:b)//filter out the rightmost b
-
 //with replacement
-Nums[a;b;c;d].withLeft(b)//Nums[b;b;c;d]
-Nums[a;b;c;d].withRight()//Nums[a;b;c;b]
-Nums[a;b;c;d].with(2Size,d)//Nums[a;d;c;d]
+Nums[a;b;c;d].withLeft(b) //Nums[b;b;c;d]
+Nums[a;b;c;d].withRight() //Nums[a;b;c;b]
+Nums[a;b;c;d].with(2Size,d) //Nums[a;d;c;d]
 
 //appending
-Nums[a;b;c;d].withAlsoLeft(b)//Nums[b;a;b;c;d]
-Nums[a;b;c;d].withAlsoRight()//Nums[a;b;c;d;b]
-Nums[a;b;c;d].withAlso(2Size,b)//Nums[a;b;b;c;d]
+Nums[a;b;c;d].withAlsoLeft(b) //Nums[b;a;b;c;d]
+Nums[a;b;c;d].withAlsoRight() //Nums[a;b;c;d;b]
+Nums[a;b;c;d].withAlso(2Size,b) //Nums[a;b;b;c;d]
+
+//filtering
+Nums[a;b;c;d].without(index:2Size) //Nums[a;b;d]
+Nums[a;b;c;d].withoutLeft() //Nums[b;c;d]
+Nums[a;b;c;d].withoutRight() //Nums[a;b;c]
+
+//filtering, if elements implements Concepts.Equals
+Nums[a;b;c;d].withoutAll(elem:b) //Nums[a;c;d]
+Nums[a;b;c;d].withoutLeft(elem:b) //filter out the leftmost b
+Nums[a;b;c;d].withoutRight(elem:b) //filter out the rightmost b
 ]]></pre>
+As you notice, there are three different kind of actions:
+replace an element ((<span class="code"><![CDATA[with]]></span>),
+append an element (<span class="code"><![CDATA[withAlso]]></span>)
+and filtering an element out (<span class="code"><![CDATA[without]]></span>).
+Then, elements can be specified by (<span class="code"><![CDATA[index]]></span>), by being
+the leftmost or the rightmost. To filter elements
+out, you can also just provide the element.
+
+</p><p>
+
 
 Immutable collections (and also mutable ones, as we will see later)
 can be accessed with the following methods:
 
 <pre class="l42Big"><![CDATA[
 //access
-foo.left()//a
-foo.right()//d
-foo.val(2Size)//c
-foo.size()//4Size
-foo.isEmpty()//not holds
+foo.left() //a
+foo.right() //d
+foo.val(2Size) //c
+foo.size() //4Size
+foo.isEmpty() //not holds
 ]]></pre>
 
 
@@ -1290,8 +1317,8 @@ When the parameter is a number from zero to a max, the maximum is suggested.
 For example:
 <pre class="l42Big"><![CDATA[
 Nums[a;b;c;d].withAlso(left:42\) //the \ is Num
-Nums[a;b;c;d].without(index:\-1Size)//remove the last (the right-most)
-Nums[a;b;c;d].with(left:\ * 2Num)//the leftmost is now a*2
+Nums[a;b;c;d].without(index:\ - 1Size) //remove the last (the right-most)
+Nums[a;b;c;d].with(left:\ * 2Num) //the leftmost is now a*2
 
 Points[\(x:12\ y: 0\)]==Points[Point(x:12Num, y:0Num)]
 ]]></pre>
@@ -1319,7 +1346,7 @@ For example
 
 <pre class="l42Big"><![CDATA[
 Direction=Enumeration"north, east, south, west"
-Direction.Set[\north;\east]//the bitflag corresponding
+Direction.Set[\north;\east] //the bitflag corresponding
 //to the set of north and east.
 //is equivalent to the much longer
 Direction.Set[Direction.north();Direction.east()]
@@ -1353,27 +1380,27 @@ mut Nums foo=Nums[a;b;c;d]
 Now we show some methods over mutable collections, consider each following line independently:
 <pre class="l42Big"><![CDATA[
 //setting a value in a position
-foo(2Size,val:b)//foo.equals(Nums[a;b;b;d])
+foo(2Size,val:b) //foo.equals(Nums[a;b;b;d])
 //setting at left or right
-foo.left(b)//foo.equals(Nums[b;b;c;d])
-foo.right(b)//foo.equals(Nums[a;b;c;b])
+foo.left(b) //foo.equals(Nums[b;b;c;d])
+foo.right(b) //foo.equals(Nums[a;b;c;b])
 
 //add a value in a position
-foo.add(2Size,val:b)//foo.equals(Nums[a;b;b;c;d])
+foo.add(2Size,val:b) //foo.equals(Nums[a;b;b;c;d])
 
 //add at left or right
-foo.add(left:b)//foo.equals(Nums[b;a;b;c;d])
-foo.add(right:b)//foo.equals(Nums[a;b;c;d;b])
+foo.add(left:b) //foo.equals(Nums[b;a;b;c;d])
+foo.add(right:b) //foo.equals(Nums[a;b;c;d;b])
 
 //removal
-foo.remove(index:2Size)//foo.equals(Nums[a;b;d])
-foo.removeLeft()//foo.equals(Nums[b;c;d])
-foo.removeRight()//foo.equals(Nums[a;b;c])
+foo.remove(index:2Size) //foo.equals(Nums[a;b;d])
+foo.removeLeft() //foo.equals(Nums[b;c;d])
+foo.removeRight() //foo.equals(Nums[a;b;c])
 
 //removal, if elements implements Concepts.Equals
-foo.removeAll(elem:b)//foo.equals(Nums[a;c;d])
-foo.removeLeft(elem:b)//remove the leftmost b
-foo.removeRight(elem:b)//remove the rightmost b
+foo.removeAll(elem:b) //foo.equals(Nums[a;c;d])
+foo.removeLeft(elem:b) //remove the leftmost b
+foo.removeRight(elem:b) //remove the rightmost b
 ]]></pre>
 
 
@@ -1409,12 +1436,12 @@ There are two basic usage for the <span class="code"><![CDATA[with]]></span> sta
 //as a for each
 vec= Strings[S"foo"; S"bar"; S"beer"]
 var S result=S""
-with myElem in vec.vals() (result:=result++myElem)//like for(myElem:vec){..}
+with myElem in vec.vals() (result:=result++myElem) //like for(myElem:vec){..}
 //result==S"foobarbeer"
 
 //as a typecase
-with myData=foo.bar() (//like a typecase/switch/chain of instanceof
-  on S  Debug(S"A string "++myData)   //print strings
+with myData=foo.bar() ( //like a typecase/switch/chain of instanceof
+  on S  Debug(S"A string "++myData) //print strings
   on Num  void //do nothing if is a number
   on Concepts.ToS Debug(myData) //print stringables that are not numbers. 
   )
@@ -1439,7 +1466,7 @@ with myElem in vec.vals() (on S  result:=result++myElem  )
 <span class="code"><![CDATA[with]]></span> can be used as list comprehension
 <pre class="l42Big"><![CDATA[
 vec=Anys[S"foo"; 12Num; S"beer";]
-v=Strings[with myElem in vec.vals() (on S use[myElem] )]//filter non strings
+v=Strings[with myElem in vec.vals() (on S use[myElem] )] //filter non strings
 //v==Strings[S"foo"; S"beer";]
 ]]></pre>
 
@@ -1448,9 +1475,9 @@ for multiple dispatch:
 <pre class="l42Big"><![CDATA[
 method Num m(Shape x, Person y, Vehicle z) //example of method using with
  with x y z (
- on Square Student Car (..return ..)//x here is a Square
- on Circle Person Airplane (..)//x here is a Circle
- default (..)//default case, here x is just a Shape
+ on Square Student Car (..return ..) //x here is a Square
+ on Circle Person Airplane (..) //x here is a Circle
+ default (..) //default case, here x is just a Shape
   )}
 ]]></pre>
 
@@ -1501,7 +1528,7 @@ with x in xs.vals(stopOk:\), y in ys.vals(stopOk:\)
 with x in xs.vals(fill:10N), y in ys.vals(fill:10N)
 //will go on forever
 
-with x in xs.vals(stopOk:5N), y in ys.vals(from:1N to: \-1N stopOk:3N )
+with x in xs.vals(stopOk:5N), y in ys.vals(from:1N to: \ - 1N stopOk:3N )
 //will extract at least 5 elements from xs, will skip the first 
 //and the last element of ys and extract at least 2 elements from ys.
 ]]></pre>
@@ -1535,17 +1562,17 @@ for example assume we want to collect some names and numbers in a string:
 <pre class="l42Big"><![CDATA[
 res=S"your info: "[with name in names.vals(), num in nums.vals()  (
   use[ S"name:"[name]", num:"[num]""]
-  )]""//we always need the ending string, even if empty.
+  )]"" //we always need the ending string, even if empty.
 ]]></pre>
 In order to put a semicolon between elements in our string, we can use <span class="code"><![CDATA[sep:]]></span>
 <pre class="l42Big"><![CDATA[
 res=S"your info: "[with name in names.vals(), num in nums.vals()  (
   use[ S"name:"[name]", num:"[num]"", sep:S"; "]
-  )]""//we always need the ending string, even if empty.
+  )]"" //we always need the ending string, even if empty.
 ]]></pre>
 
 
-</p><h2> (5/5) Collections recall </h2> <p>
+</p><h2> (5/5) Collections summary </h2> <p>
 
 <ul><li>
 There are a tons of methods and operators to know, but since most code works 

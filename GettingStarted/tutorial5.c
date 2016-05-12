@@ -7,7 +7,7 @@ This is similar to Java unchecked exceptions.
 Every immutable object can be thrown as an error.
 While it is possible to thrown informative strings, they do no offer enough
 structure to fully take advantage of the error mechanism.
-AdamTowel define the interface Wcode(Message):
+AdamTowel defines the interface Wcode(Message):
 a structured way to provide a certain kind of message to the user.
 Wcode(Message)s has Wcode(.text()) ,
 Wcode(.isResponse()) and Wcode(.responseOf()).
@@ -249,7 +249,7 @@ never ever write Wcode(catch return) explicitly and continue
 your 42 experience ignoring the issue.
 
 
-WTitle(`(5/5) Errors, exceptions and return, recall')
+WTitle(`(5/5) Errors, exceptions and return, summary')
 <ul><li>
 Whenever possible, try to detect if your code misbehave, and 
 terminate it with an Wcode(Assert)

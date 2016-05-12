@@ -29,10 +29,10 @@ with the same name.
 For example, this code is ill-typed:
 OBCode
 Card:{interface
-  method N draw()//the value of the drawn card
+  method Num draw()//the value of the drawn card
   }
 Gun:{interface
-  method N draw()//the time it takes to drawn the gun
+  method Num draw()//the time it takes to drawn the gun
   }
 Wrong:{implements Card,Gun//not allowed
   }
@@ -40,7 +40,8 @@ CCode
 
 
 Note that that would be bad 42 code anyway, you should define an
-enumeration (see later) for your cards and use a Wcode(Second) unit of measure
+enumeration (or an alphanumeric)
+ for your cards and use a Wcode(Second) unit of measure
 for the time.
 
 WTitle((2/5)Interfaces, Details)
@@ -82,8 +83,7 @@ The most well known one is
 Wcode(Concepts.ToS), implemented by all objects that can
 be converted in human readable strings.
 
-In AdamTowel,
-Alphanumeric, Numeric and Units just print
+In AdamTowel, all basic classes (as alphanumeric, numeric and units) just print
 the string or the number as it is.
 
 WP
@@ -119,12 +119,12 @@ Square:{implements Shape
   Color color
   method newShape(that)//implemented from Shape
     This(color:that)
-  method clazz()//implemented from Concept.Classable
+  method class()//implemented from Concept.Classable
     This//this implementation can be omitted if "Data<<" is used
   }
 /*..*/
 Shape s=..
-s.clazz().newShape(Color.red())
+s.class().newShape(Color.red())
 CCode
 Where the interface Wcode(Shape) defines an abstract factory method (that is,
 an interface class method returning Wcode(This))
@@ -166,17 +166,23 @@ satisfy the invariant will ever be visible outside of the scope of the Wcode(inv
 
 See more about restrictions of this mechanism in (Wlink(dataAndInvariants,
 `data and invariants'))
-(This will go in that link, but need more context to be understood: more explanation of Capsule field vs Capsule bindings, exposers and lent, also, is not implemented in 42 Yet)
+
 The current example shows a class with all immutable fields.
 It is possible to enforce the invariant also on classes with immutable
 and capsule fields.
 Then Wcode(Data) will additionally check that the
-lent exposers are all private and not used in internal nested classes,
-and that every method using the lent exposer do not return a lent result.
-It is unobvious why such requirements suffice: the idea is that the only way a capsule value ...
+lent exposers are used in a safe pattern:
+they are used only on the Wcode(this) receiver,
+and every method using the lent exposer do not return
+a lent result.
+It is unobvious why such requirements suffice: the idea is that the only way a mutable/lent reference
+to the content of a capsule field can be
+accessed is by the exposer. The reference produced by the lent exposer can only be returned as lent,
+or wrapped inside of freshly created objects referred to by lent references.
+(WEmph(note for marco:) this means no more lent/read fields)
 
 
-WTitle((5/5)`Interfaces and Data, recall')
+WTitle((5/5)`Interfaces and Data, summary')
 
 Interfaces in 42 serves the same role they serve in other languages,
 with a little bit of a twist in the details.
