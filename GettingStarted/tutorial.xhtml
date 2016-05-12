@@ -29,100 +29,116 @@
 <p>
 </p><h1> Basics </h1> <p>
 </p><h2> (1/5)Simple hello world program </h2> <p>
-Let's look at a simple hello world program:
+Let's look at a simple hello world program: 
+
 <pre class="l42Big"><![CDATA[ 
 {reuse L42.is/AdamTowel
-Main:{
+Main: {
   Debug(S"Hello world")
   return ExitCode.success()
   }
 }
 ]]></pre>
-At the right of <span class="code"><![CDATA[Main:]]></span> we write the expression that
-we wish to execute; in this case a sequence of two statements.
-<span class="code"><![CDATA[Main]]></span> is not a method, and <span class="code"><![CDATA[Main]]></span> is not special name either. In 42 there is no concept of main method as in
-Java or C. For now you can think of <span class="code"><![CDATA[Main:]]></span> as a top level command, we will understand later how this fits with the general language design.
 
 When we write <span class="code"><![CDATA[reuse L42.is/AdamTowel]]></span> we are asking 42 to
 reuse the code offered by the library offered in the internet address 
 <span class="code"><![CDATA[L42.is/AdamTowel]]></span>.
 AdamTowel is our Towel, that is the set of classes and interfaces that we wish to start from (<a href="towel.xhtml">see more on towels</a>).
 <span class="code"><![CDATA[L42.is]]></span> is the main website of 42, where most commonly used libraries are hosted. To reuse code you 
-need an internet connection; but this also means that you will never have to manually import any code. Required code will be transitively downloaded and cached on your machine, so you need not to be aware of the existence of this mechanism.
+need an internet connection; but this also means that you will never have to manually import any code.
+Required code will be transitively downloaded and cached on your machine, so you need not to be aware of the existence of this mechanism.
 </p><p>
 We do not need to always start from AdamTowel, there are many interesting towels out there, and you may also become skilled in the 
 advanced technique of towel embroidery.
 </p><p>
 
+At the right of <span class="code"><![CDATA[Main: ]]></span> we write the expression that
+we wish to execute; in this case a sequence of two statements.
+<span class="code"><![CDATA[Main]]></span> is not a method, and <span class="code"><![CDATA[Main]]></span> is not special name either, you can replace it with <span class="code"><![CDATA[Task]]></span> or any other valid
+upper-case name. In 42 there is no concept of main method as in
+Java or C. For now you can think of <span class="code"><![CDATA[Main: ]]></span> as a top level command, we will understand later how this fits with the general language design.
+</p><p>
+<span class="code"><![CDATA[Debug]]></span>
+is a simple class offering methods to prod the system to understand what is going on.
+The most important method of <span class="code"><![CDATA[Debug]]></span> is to just print a message on the console.
+In 42, when a class has a "most important" method, it is conventional to name it so that can be used as if the
+class name was a function, that is
+we write <span class="code"><![CDATA[Debug(S"Hello world")]]></span> instead
+of a more verbouse <span class="code"><![CDATA[Debug.println(S"Hello world")]]></span>. We call <span style="color:#ff1111; font-weight: bold;"> funtors </span> objects and classes that can be used as functions.
+
+Finally, our code ends by returning "success" as exit status.
+
+
 </p><h2> (2/5)Method declaration and call </h2> <p>
 Let's now declare a method and call it.
 <pre class="l42Big"><![CDATA[
 {reuse L42.is/AdamTowel
-MyCode:{
+MyCode: {
   class method
-  S hello(S name){
-    return S"hello "++name
+  S hello(S nickName){
+    return S"Hello " ++ nickName
     } 
   }
-Main:{
-  Debug(MyCode.hello(name:S"world"))
+Main: {
+  Debug(MyCode.hello(nickName: S"Marvin"))
   return ExitCode.success()
   }
 }
 ]]></pre>
 Here we declare a class to host our <span class="code"><![CDATA[hello(name)]]></span> method.
-We write <span class="code"><![CDATA[class method]]></span> to declare a method that can be called on the class object, as in <span class="code"><![CDATA[MyCode.hello(name:S"world")]]></span>. This is roughly equivalent to a static method in languages like Java or C++, or class methods in Python.
+We write <span class="code"><![CDATA[class method]]></span> to declare a method that can be called on the class object, as in <span class="code"><![CDATA[MyCode.hello(name: S"world")]]></span>.
+This is roughly equivalent to a static method in languages like Java or C++ , or class methods in Python.
 
 </p><p>
 Note how the method is called using the parameter name explicitly.
 We believe this increases readability.
 </p><p>
-You can also notice how there are two different usages for curly brackets: if there is at least a return keyword it is a set of statements,
-otherwise is a library literal, and can contains methods and nesteds.
-A nested (class or interface) is denoted by an upper-case name, and can be obtained by a library literal or an expression producing a library literal.
-A library can be a class (default case) or an interface (starts with the <span class="code"><![CDATA[interface]]></span> keyword).
-A nested in 42 is similar to a static inner class in Java, or a nested class in C++. It is just a convenient way to divide in a tree shape the various components of our program.
+You may also notice how there are two different usages for curly brackets:  if there is at least one <span class="code"><![CDATA[return]]></span> keyword then the expression is a block of statements,
+otherwise the expression is a library literal, witch can contains methods and nested libraries.
+A Wemph(nested library)
+is denoted by an upper-case name, and can be obtained by a library literal or an expression producing a library literal.
+A library literal can be a class (default case) or an interface (starts with the <span class="code"><![CDATA[interface]]></span> keyword).
+A nested library in 42 is similar to a static inner class in Java, or a nested class in C++. It is just a convenient way to organize the various components of our program into a tree shape.
 </p><p>
-The class <span class="code"><![CDATA[MyCode]]></span> from before offers a single class method, has no fields and you can not create instances of <span class="code"><![CDATA[MyCode]]></span>, since no factory is present; you can think about it as a module.
-In 42 we do not have constructors. Objects are created by factory methods. We believe this is a much simpler and more consistent approach to object initialization.
+The class <span class="code"><![CDATA[MyCode]]></span> from before offers a single class method, has no fields and you can not create instances of <span class="code"><![CDATA[MyCode]]></span>, since no <span class="code"><![CDATA[factory]]></span> is present; you can think about it as a module.
+In 42 we do not have constructors. Objects are created by factory methods, that are just normal methods that happen to return an instance of their class. We believe this is a much simpler and more consistent approach to object initialization.
 
 </p><h2> (3/5)Simple class with internal state </h2> <p>
-Let's create now a class with state and factory:
+Let's create now a class with state and factory: 
 <pre class="l42Big"><![CDATA[
-Point:Data<<{
+Point: Data<<{
   Num x
   Num y
   method
   Point add(Num x)
-    Point(x:x+this.x(), y:this.y())
+    Point(x: x + this.x(), y: this.y())
   Point add(Num y)
-    this.with(y:y+this.y())
+    this.with(y: y + this.y())
   }
 ]]></pre>
-Here you can see we declare a <span class="code"><![CDATA[Point]]></span> class with coordinates <span class="code"><![CDATA[x]]></span> and <span class="code"><![CDATA[y]]></span> of type <span class="code"><![CDATA[Num]]></span>,
- unlimited precision rational number.
+Here you can see we declare a <span class="code"><![CDATA[Point]]></span> class with <span class="code"><![CDATA[x]]></span> and <span class="code"><![CDATA[y]]></span> <span class="code"><![CDATA[Num]]></span> (unlimited precision rational number) coordinates.
 <span class="code"><![CDATA[Data]]></span> is a decorator. Decorators are classes/objects that offer an operator <span class="code"><![CDATA[<<]]></span>, called the babel fish operator,
 whose goal is to translate a library into a "better" library.
 In this case, <span class="code"><![CDATA[Data]]></span> is translating the class <span class="code"><![CDATA[{Num x, Num y}]]></span> into a much longer class, with
-a factory method taking in input the fields and initializing them; but also containing
+a factory method taking in input the fields and initializing them, but also containing
  boring but useful definitions for
 equality, inequality, conversions from and to human readable strings, XML and binary representations for (de)serialization.
 </p><p>
-Finally, we declare a method to add to each of the coordinates.
-For very short methods we can omit the curly brackets and <span class="code"><![CDATA[return]]></span>.
-Indeed, method bodies are just expressions, and the curly brackets turn a block of statements into one expression. 
+Finally, we declare methods to add to a single coordinate.
+For very short methods we can omit the curly brackets and return.
+Indeed, method bodies are just expressions, and the curly brackets turn statements into expressions. 
 
 In the method <span class="code"><![CDATA[add(x)]]></span> we show a constructor call and getters.
-In the method <span class="code"><![CDATA[add(y)]]></span> we show an improved version, using the <span class="code"><![CDATA[with]]></span> method, another gift of Data, that allows us to easily create a clone with 
-one or more fields updated.
+In the method <span class="code"><![CDATA[add(y)]]></span> we show an improved version, using the <span class="code"><![CDATA[with]]></span> method, another gift of Data, that allows us to easily create a clone with a
+single field updated.
 We can declare two methods, <span class="code"><![CDATA[add(x)]]></span> and <span class="code"><![CDATA[add(y)]]></span> with the same name, if parameter names are different.
 </p><p>
 Note how we always use getters and we never access fields directly.
-In many other languages we can use write <span class="code"><![CDATA[a.fieldName]]></span> and <span class="code"><![CDATA[a.fieldName=newValue]]></span>. Such syntax does not exists in 42. The same goes for object instantiation; in many languages there is a special <span class="code"><![CDATA[new ClassName(..)]]></span> dedicated syntax, while in 42 it is just a method call.
+In many other languages we can use write <span class="code"><![CDATA[a.fieldName]]></span> and <span class="code"><![CDATA[a.fieldName: newValue]]></span>. Such syntax does not exists in 42. The same goes for object instantiation; in many languages there is a special <span class="code"><![CDATA[new ClassName(..)]]></span> dedicated syntax, while in 42 it is just a method call.
 </p><p>
 Also, similarly to what happens in Python, we need to use <span class="code"><![CDATA[this.methodName()]]></span> to call methods when the receiver is <span class="code"><![CDATA[this]]></span>.
-While this makes some code more verbose, it saves us from the burden of  method scope-hiding; that
-is, we do not need to worry about scoping and nesting for method resolution.
+While this makes some code more verbose, it saves us from the burden of  method hiding.   
+
 
 
 </p><h2> Decorators </h2> <p>
@@ -137,26 +153,22 @@ For now, just get used to the pattern of writing
 Vectors can be declared using <span class="code"><![CDATA[Collections.vector(of)]]></span>, as in the example below.
 
 <pre class="l42Big"><![CDATA[
-Nums:Collections.vector(of:Num) //declaration for vectors of nums
-Points:Collections.vector(of:Point) //same for points
+Nums: Collections.vector(of: Num)//declaration for vectors of nums
+Points: Collections.vector(of: Point)//same for points
 /*..*/
 xs=Nums[10Num;20Num;30Num]
 ys=Nums[1Num;2Num;3Num]
 points=Points[with x in xs.vals(), y in ys.vals() (
-  use[Point(x:x, y:y)]
+  use[Point(x: x, y: y)]
   )]
-//points=Points[ Point(x:10Num, y:1Num);
-// Point(x:20Num, y:2Num); Point(x:30Num, y:3Num)]
 ]]></pre>
 
 Vectors can be initialized with the <span class="code"><![CDATA[[_;_;_]]]></span>
-syntax or with the <span class="code"><![CDATA[[with _ ( _ use[ _ ]_ )]]]></span> syntax, allowing to build
-a collection by committing values obtained during an iteration.
-
+syntax or with the <span class="code"><![CDATA[[with _ ( _ use[ _ ]_ )]]]></span> syntax.
 We will discuss all the variation of <span class="code"><![CDATA[with]]></span> later.
-Note that to express numeric literals we need to specify their class.
+Note how to express number literal we need to specify their class.
 
-</p><h2> (5/5)Basis summary </h2> <p>
+</p><h2> (5/5)Basis Recall </h2> <p>
 
 <ul><li>
 At the start of your program, import a towel using 
@@ -164,7 +176,7 @@ At the start of your program, import a towel using
 </li><li>
 To declare a simple class exposing its state and 
 some methods working with those, use <span class="code"><![CDATA[Data]]></span>, as in
-<span class="code"><![CDATA[Point:Data<<{Num x, Num y}]]></span>.
+<span class="code"><![CDATA[Point: Data<<{Num x]]></span>.
 </li><li>
 You can declare methods in classes with the <span class="code"><![CDATA[method]]></span> keyword,
 as in <span class="code"><![CDATA[method ReturnType myName(ParType parName) body]]></span>.
@@ -173,25 +185,25 @@ Use <span class="code"><![CDATA[class method]]></span> for methods that can be c
 To define a vector of a type, use 
 <span class="code"><![CDATA[Collections.vector(of)]]></span>
 as in 
-<span class="code"><![CDATA[Points:Collections.vector(of:Point)]]></span>
+<span class="code"><![CDATA[Points: Collections.vector(of: Point)]]></span>
 </li></ul>
 
 
-</p><h2> Object creation summary </h2> <p>
-42 supports many different syntactic forms that are convenient for creating objects:
+</p><h2> Object creation recall </h2> <p>
+42 supports many different syntactic forms that are convenient to create objects: 
 <ul><li>
-12Num: from a numeric representation
+12Num:  from a numeric representation
 </li><li>
-S"foo": from a string representation
+S"foo":  from a string representation
 </li><li>
-Point(x:_,y:_): from the parameter values
+Point(x: _,y: _):  from the parameter values
 </li><li>
-Points[_;_;_]: from a variable length sequence of values.
+Points[_;_;_]:  from a variable length sequence of values; for example <span class="code"><![CDATA[Points]]></span> can be a list of <span class="code"><![CDATA[Point]]></span>. We can instantiate <span class="code"><![CDATA[Points]]></span> by using the square brackets as shown later. 
 </li></ul>
 
 Note that in 42 those are all just expressions, and represent methods in the named class.
-Sometimes it is convenient to reuse this kind of syntax to get better syntactic support for certain operations; for example, as we will see later, the string class uses square brackets to support string formatting.
-<a href="S.xhtml">To understand it better: a guide to the S class</a>
+Sometimes it is convenient to reuse this kind of syntax to get better syntactic support for certain operations; for example, the string class uses square brackets to support string formatting.
+<a href="S.xhtml">To understand it better:  a guide to the S class</a>
 </p><h1> Keep control:  Modifiers, kinds of classes/references/objects </h1> <p>
 
 </p><h2> (1/5)Kinds of classes </h2> <p>
@@ -1630,11 +1642,16 @@ MyGui:Gui(
   x:600Gui.Pixel//seek for index.html in your basePath
   y:400Gui.Pixel
   )<<{
-  method Void event_quit(Gui gui, S msg)
+  mut method
+  Void event_quit(mut Gui gui, S msg)
     gui.close()
-  method Void event_sayHi(Gui gui, S msg)
+
+  mut method
+  Void event_sayHi(mut Gui gui, S msg)
     Gui.alert(S"hi")
-  method Void event_say(Gui gui, S msg) (
+
+  mut method
+  Void event_say(mut Gui gui, S msg) (
     //msg is going to be a multiline string,
     //first line equal to "say", other lines give more info
     Strings ss=msg.split(S.nl())
@@ -1667,13 +1684,39 @@ To make something happen in the gui, you can use
 <span class="code"><![CDATA[gui.executeJs(cmd)]]></span>.
 For example
 <pre class="l42Big"><![CDATA[
-method event_writeOnTextArea(Gui gui, S msg) (
+mut method
+Void event_writeOnTextArea(mut Gui gui, S msg) (
   Strings ss=msg.split(S.nl())
   js1=Gui.JavaScript"document.getElementById('myTextAreaId').value = 'Hi! event happened';"
   //or, to use information in the message
   js2=Gui.JavaScript"document.getElementById('"[ss.val(1\)]"').value = '"[ss.val(2\)]"';"
   gui.executeJS(js2)
   )
+]]></pre>
+
+Gui provide help to visualize datastructures of various kind, 
+for example vectors of Data classes can be shown as tables in the following way:
+<pre class="l42Big"><![CDATA[
+Person:Data<<{Size id, Name name, Name surname, Year age}
+Persons:Collections.vector(of:Person)
+ShowPersons:Gui.widget(table:Persons)
+InputPerson:Gui.input(dialogForm:Person)//rely on JQuery UI
+MyGui:Gui(/*..*/)<<{ mut Persons persons //field
+  /*..*/
+  mut method
+  Void eventLoad(mut Gui gui, S msg) ( //no underscore for system events
+    gui.add(ShowPersons(this.#persons(), into:Gui.Id"divLeft"))
+    //the element with that id will contain the table
+    )
+  mut method
+  Void event_addPerson(mut Gui gui,S msg) (
+    Person p=InputPerson(gui,title:S"New Person details")
+    catch exception InputPerson.Cancelled void
+    this.persons().add(left:p)
+    gui.refresh()
+    )
+  }
+Main:MyGui(persons:Persons[])
 ]]></pre>
 
 </p><h2> (2/5) Files </h2> <p>
@@ -1714,13 +1757,146 @@ In general, all the system interaction that happens over the same system object 
 chronologically sorted with respect to each other, but there is no guarantee 
 of ordering between different system objects.
 
+</p><h2> (3/5) Db </h2> <p>
+In AdamTowel, databases can be access in two ways:
+Raw access (similar to what is supported by
+<span class="code"><![CDATA[DBC]]></span> or <span class="code"><![CDATA[JDBC]]></span> libraries) 
+and Structured access.
+<pre class="l42Big"><![CDATA[
+{reuse L42.is/AdamTowel
+Db: Load<<{reuse L42.is/Db}//Db can do Raw access
+UnivDb:Db.importStructure(Db.ConnectionS"...")
+QueryCountry:UnivDb.Query"select * from students where country=@country"
+Main:{
+  connection=UnivDb.connect()
+  UnivDb.Student.Table ss=QueryCountry(connection, country:S"Italy")
+  /*..*/
+  }
+}
+]]></pre>
+Here
+we use <span class="code"><![CDATA[Db]]></span> to 
+import the structure of the database. This means that 
+<span class="code"><![CDATA[UnivDb]]></span> will contain a class for each table-row of the database,
+every class will have a nested type representing 
+multiple rows (that is, a table).
+<span class="code"><![CDATA[UnivDb.Query]]></span> allows prepared queryes.
+In the case in the example, we can use
+<span class="code"><![CDATA[QueryCountry(that,country)]]></span>
+to get the italian students.
+Note how <span class="code"><![CDATA[country]]></span> is a parameter of the method: in this way the  query users are informed of the query expectations.
+Our query used <span class="code"><![CDATA[*]]></span>, so the type <span class="code"><![CDATA[UnivDb.Student.Table]]></span>
+could be reused.
+In other cases a new type would be generated.
+
+</p><h2> (4/5) example Gui and Db together </h2> <p>
+
+
+
+</p><h2> (5/5) Libraries </h2> <p>
 
 </p><h1> Refactor and Extend </h1> <p>
 
 </p><h2> Refactor </h2> <p>
 <span class="code"><![CDATA[Refactor]]></span> is a class supporting modification of
 library literals.
-For example, you may want to 
+For example, you may want to rename the method <span class="code"><![CDATA[importStructure(that)]]></span> in just <span class="code"><![CDATA[import(that)]]></span>.
+You can do the following:
+<pre class="l42Big"><![CDATA[
+{reuse L42.is/AdamTowel
+Db:Refactor.RenameMethod(Selector"importStructure(that)" 
+  to:Selector"import(that)")<<Load<<{reuse L42.is/Db}
+UnivDb:Db.import(Db.ConnectionS"...")
+/*..*/
+}
+]]></pre>
+The type <span class="code"><![CDATA[Selector]]></span> represent method selectors;
+in the same way the type <span class="code"><![CDATA[Path]]></span> represent 
+paths, as in <span class="code"><![CDATA[Path"Refactor.RenameMethod"]]></span> or
+<span class="code"><![CDATA[Path"This"]]></span>.
+
+There are a lot of refactoring operations nested under <span class="code"><![CDATA[Refactor]]></span>:
+<ul><li>
+<span class="code"><![CDATA[RenameSelector]]></span>
+and 
+<span class="code"><![CDATA[RenamePath]]></span>
+rename methods either at top level (as we just did) or
+in an arbitrary nested library;
+or rename paths in other paths
+</li><li>
+
+<span class="code"><![CDATA[Redirect]]></span>
+allowing to remove a nested library and redirect all its references to
+an external one. This allows to emulate generics, as we will see later.
+</li><li>
+<span class="code"><![CDATA[UpdateDocumentationSelector]]></span>
+and <span class="code"><![CDATA[UpdateDocumentationPath]]></span>
+to add to/alter/delete the documentation of methods/paths.
+</li><li>
+<span class="code"><![CDATA[MakeAbstractSelector]]></span>
+and <span class="code"><![CDATA[MakeAbstractPath]]></span>
+to remove all the implementation out of a method or path,
+leaving only the public scheleton
+</li><li>
+<span class="code"><![CDATA[HideSelector]]></span>
+andWcode(HidePath)
+To mark methods or paths as private.
+We have not seen details on private members, the main idea is that
+they are renamed in invisible names that you can never guess, and automatically renamed on need by refactoring operations.
+</li></ul>
+</p><p>
+In addition to all those nested classes,
+<span class="code"><![CDATA[Refactor]]></span> offers <span class="code"><![CDATA[Refactor.compose(left,right)]]></span>
+allowing a simmetric sum of two library literals.
+The main idea is that members with the same name are recoursivelly summed
+
+</p><h2> Traits and Metaprogramming </h2> <p>
+
+Metaprogramming is the most important feature of 42,
+all the decorators that you have seen up to now are implemented with metaprogramming, that in 42 offers a good balance of freedom and
+safety.
+The main idea of 42 metaprogramming is that only library literals can
+be manipulated, and that once a library literal has a name, it can not be directly metaprogrammed any more.
+Thus, we call traits methods that return reusable (unnamed) code.
+For example
+<pre class="l42Big"><![CDATA[
+ReusableCode:{
+  Library traitEnsureTransaction() {
+    class method //without name: can be called as a funtor
+    Void(mut Db.Connection connection)
+    exception Db.Query.Failure //no body: abstract method
+
+    class method
+    Void doAction(mut Db.Connection that)
+    exception Db.Query.Failure (
+      that.openTransaction()
+      This(connection:that)//here we call us as a funtor
+      catch exception Db.Query.Failure x (
+        that.rollback()
+        exception x
+        )
+      that.commitTransaction()
+      )
+    }
+  }
+
+MyAction:Refactor.compose(
+  left:ReusableCode.traitEnsureTransaction()
+  right:{ //and now the missing implementation
+    Void(mut Db.Connection connection)
+    exception Db.Query.Failure {
+      /*..my operation..*/
+      }
+    })
+
+Main:{
+  /*..*/
+  MyAction(conn)//do the operation in a transaction
+  /*..*/
+  }
+]]></pre>
+
+
 
 </p><h2> Extend </h2> <p>
 
