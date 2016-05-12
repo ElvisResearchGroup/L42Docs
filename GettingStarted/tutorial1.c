@@ -70,29 +70,30 @@ Point:Data<<{
     this.with(y:y+this.y())
   }
 CCode
-Here you can see we declare a Wcode(Point) class with Wcode(x) and Wcode(y) Wcode(Num) (unlimited precision rational number) coordinates.
+Here you can see we declare a Wcode(Point) class with coordinates Wcode(x) and Wcode(y) of type Wcode(Num),
+ unlimited precision rational number.
 Wcode(Data) is a decorator. Decorators are classes/objects that offer an operator Wcode(<<), called the babel fish operator,
 whose goal is to translate a library into a "better" library.
 In this case, Wcode(Data) is translating the class Wcode(`{Num x, Num y}') into a much longer class, with
-a factory method taking in input the fields and initializing them, but also containing
+a factory method taking in input the fields and initializing them; but also containing
  boring but useful definitions for
 equality, inequality, conversions from and to human readable strings, XML and binary representations for (de)serialization.
 WP
-Finally, we declare methods to add to a single coordinate.
-For very short methods we can omit the curly brackets and return.
-Indeed, method bodies are just expressions, and the curly brackets turn statements into expressions. 
+Finally, we declare a method to add to each of the coordinates.
+For very short methods we can omit the curly brackets and Wcode(return).
+Indeed, method bodies are just expressions, and the curly brackets turn a block of statements into one expression. 
 
 In the method Wcode(add(x)) we show a constructor call and getters.
-In the method Wcode(add(y)) we show an improved version, using the Wcode(with) method, another gift of Data, that allows us to easily create a clone with a
-single field updated.
+In the method Wcode(add(y)) we show an improved version, using the Wcode(with) method, another gift of Data, that allows us to easily create a clone with 
+one or more fields updated.
 We can declare two methods, Wcode(add(x)) and Wcode(add(y)) with the same name, if parameter names are different.
 WP
 Note how we always use getters and we never access fields directly.
-In many other languages we can use write Wcode(a.fieldName) and Wcode(a.fieldName:newValue). Such syntax does not exists in 42. The same goes for object instantiation; in many languages there is a special Wcode(new ClassName(..)) dedicated syntax, while in 42 it is just a method call.
+In many other languages we can use write Wcode(a.fieldName) and Wcode(a.fieldName=newValue). Such syntax does not exists in 42. The same goes for object instantiation; in many languages there is a special Wcode(new ClassName(..)) dedicated syntax, while in 42 it is just a method call.
 WP
 Also, similarly to what happens in Python, we need to use Wcode(this.methodName()) to call methods when the receiver is Wcode(this).
-While this makes some code more verbose, it saves us from the burden of  method hiding.   
-
+While this makes some code more verbose, it saves us from the burden of  method scope-hiding; that
+is, we do not need to worry about scoping and nesting for method resolution.
 
 
 WTitle(Decorators)
@@ -107,22 +108,26 @@ WTitle((4/5)Vectors)
 Vectors can be declared using Wcode(Collections.vector(of)), as in the example below.
 
 OBCode
-Nums:Collections.vector(of:Num)//declaration for vectors of nums
-Points:Collections.vector(of:Point)//same for points
+Nums:Collections.vector(of:Num) //declaration for vectors of nums
+Points:Collections.vector(of:Point) //same for points
 /*..*/
 xs=Nums[10Num;20Num;30Num]
 ys=Nums[1Num;2Num;3Num]
 points=Points[with x in xs.vals(), y in ys.vals() (
   use[Point(x:x, y:y)]
   )]
+//points=Points[ Point(x:10Num, y:1Num);
+// Point(x:20Num, y:2Num); Point(x:30Num, y:3Num)]
 CCode
 
 Vectors can be initialized with the Wcode([_;_;_])
-syntax or with the Wcode([with _ ( _ use[ _ ]_ )]) syntax.
-We will discuss all the variation of Wcode(with) later.
-Note how to express number literal we need to specify their class.
+syntax or with the Wcode([with _ ( _ use[ _ ]_ )]) syntax, allowing to build
+a collection by committing values obtained during an iteration.
 
-WTitle(`(5/5)Basis Recall')
+We will discuss all the variation of Wcode(with) later.
+Note that to express numeric literals we need to specify their class.
+
+WTitle(`(5/5)Basis summary')
 
 <ul><li>
 At the start of your program, import a towel using 
@@ -130,7 +135,7 @@ At the start of your program, import a towel using
 </li><li>
 To declare a simple class exposing its state and 
 some methods working with those, use Wcode(Data), as in
-Wcode(Point:Data<<{Num x, Num y}).
+Wcode(`Point:Data<<{Num x, Num y}').
 </li><li>
 You can declare methods in classes with the Wcode(method) keyword,
 as in Wcode(method ReturnType myName(ParType parName) body).
@@ -143,8 +148,8 @@ Wcode(Points:Collections.vector(of:Point))
 </li></ul>
 
 
-WTitle(`Object creation recall')
-42 supports many different syntactic forms that are convenient to create objects:
+WTitle(`Object creation summary')
+42 supports many different syntactic forms that are convenient for creating objects:
 <ul><li>
 12Num: from a numeric representation
 </li><li>
@@ -152,9 +157,9 @@ S"foo": from a string representation
 </li><li>
 Point(x:_,y:_): from the parameter values
 </li><li>
-Points[_;_;_]: from a variable length sequence of values; for example Wcode(Points) can be a list of Wcode(Point). We can instantiate Wcode(Points) by using the square brackets as shown later. 
+Points[_;_;_]: from a variable length sequence of values.
 </li></ul>
 
 Note that in 42 those are all just expressions, and represent methods in the named class.
-Sometimes it is convenient to reuse this kind of syntax to get better syntactic support for certain operations; for example, the string class uses square brackets to support string formatting.
+Sometimes it is convenient to reuse this kind of syntax to get better syntactic support for certain operations; for example, as we will see later, the string class uses square brackets to support string formatting.
 Wlink(S, To understand it better: a guide to the S class)
