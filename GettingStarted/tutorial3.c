@@ -1,10 +1,13 @@
-WBigTitle(Unitary)
+WBigTitle(Base)
 
-An immutable class is Unitary
+An immutable class is WEmph{base/basic}
 if is logically not composed by other elements,
 and can be instantiated by a single operations that takes no parameters.
-For examples numbers and strings are unitaries, while
-collections are not simple data, since you need to provide the elements.
+For examples numbers and strings are basics, while
+collections are not: you need to provide the elements and they are logically
+composed by their elements.
+In the examples of before, Wcode(Point) and 
+Wcode(Animal) are not basic, since they are logically composed by their fields.
 
 
 WTitle((1/5) Num and Size)
@@ -55,13 +58,16 @@ reuse keyword imports the code from the web.
 
 WTitle(Conversions)
 Conversions between various numeric classes must be performed explicitly.
-All numeric classes implements 
-the Wcode(Numeric) interface and offer the Wcode(.from(numeric)) method.
+
+AdamTowel offers a simple way to convert between numeric classes, and more in general
+between base classes.
+All numeric  classes implements
+the Wcode(Base) interface and offering the Wcode(.from(base)) method.
 So, for example 
 OBCode
 Double:Load<<{reuse L42.is/Numbers/Double}
 size=S"hello".size()
-myDouble=Double.from(numeric:size)
+myDouble=Double.from(base:size)
 CCode
 converts from Wcode(Size) to Wcode(Double).
 This avoid precision loss as much as possible.
@@ -227,6 +233,10 @@ we will see more about that when we discuss collections.
 WTitle((5/5) Recall)
 
 <ul><li>
+Base classes are the basic building block for your program;
+be sure to declare all the right base classes to establish a convenient vocabulary
+to talk about your problem domain.
+</li><li>
 Use Wcode(Num) as your first guess for numeric types,
 if you have special needs, can consider loading a numeric library.
 </li><li>

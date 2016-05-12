@@ -206,8 +206,15 @@ h1{
    margin: auto;
    height: 200px;
    width: 100%;
-   }
+   }   
+
 .scrollmargin {
   height: 40px;
   text-align: center;
   }
+  
+@media print {
+  .ace_editor { 
+    page-break-inside: avoid;
+  }
+}

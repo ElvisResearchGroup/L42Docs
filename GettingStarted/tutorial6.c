@@ -5,9 +5,9 @@ WTitle((1/5)Vectors as Sequences, listing the basic operations)
 As we have seen before, vectors can be declared using Wcode(Collections.vector(of)), as in the example below.
 
 OBCode
-Nums:Collections.vector(of:Num)//declaration for vectors of nums
+Nums:Collections.vector(of:Num) //declaration for vectors of nums
 /*..*/
-Nums xs=Nums[10Num;20Num;30Num]//immutable vector
+Nums xs=Nums[10Num;20Num;30Num] //immutable vector
 //note how we declare the type explicitly,
 //the default vector would be mutable.
 CCode
@@ -24,51 +24,62 @@ In the details, as you can see in the code below:
 OBCode
 Nums[a;b;c]+d==Nums[a;b;c;d]
 Nums[a;b]++Nums[c;d]==Nums[a;b;c;d]
-Nums[a;b;b;c]-b==Nums[a;c] //only if elements implements Concepts.Equals
-Nums[a;b;b;c]--Nums[b;c]==Nums[a] //same for all the operators under
+Nums[a;b;b;c] - b==Nums[a;c] //only if elements implements Concepts.Equals
+Nums[a;b;b;c] -- Nums[b;c]==Nums[a] //same for all the operators under
 Nums[a;b;c]>>Nums[a;c] //holds
 Nums[a;b;c]>>=Nums[a;c] //holds
 Nums[a;b]>>=Nums[a;c] //holds
 Nums[a;b]>>Nums[a;c] //not holds
 Nums[a;b]>b //holds
 b<Nums[a;b] //holds
-Nums[a;b]& Nums[b;c]//Nums[b] set intersection
+Nums[a;b]& Nums[b;c] //Nums[b] set intersection
 CCode
 
 In addition of operators, immutable collections can
 be manipulated by the following methods:
 
 OBCode
-//filtering
-Nums[a;b;c;d].without(index:2Size)//Nums[a;b;d]
-Nums[a;b;c;d].withoutLeft()//Nums[b;c;d]
-Nums[a;b;c;d].withoutRight()//Nums[a;b;c]
-//filtering, if elements implements Concepts.Equals
-Nums[a;b;c;d].withoutAll(elem:b)//Nums[a;c;d]
-Nums[a;b;c;d].withoutLeft(elem:b)//filter out the leftmost b
-Nums[a;b;c;d].withoutRight(elem:b)//filter out the rightmost b
-
 //with replacement
-Nums[a;b;c;d].withLeft(b)//Nums[b;b;c;d]
-Nums[a;b;c;d].withRight()//Nums[a;b;c;b]
-Nums[a;b;c;d].with(2Size,d)//Nums[a;d;c;d]
+Nums[a;b;c;d].withLeft(b) //Nums[b;b;c;d]
+Nums[a;b;c;d].withRight() //Nums[a;b;c;b]
+Nums[a;b;c;d].with(2Size,d) //Nums[a;d;c;d]
 
 //appending
-Nums[a;b;c;d].withAlsoLeft(b)//Nums[b;a;b;c;d]
-Nums[a;b;c;d].withAlsoRight()//Nums[a;b;c;d;b]
-Nums[a;b;c;d].withAlso(2Size,b)//Nums[a;b;b;c;d]
+Nums[a;b;c;d].withAlsoLeft(b) //Nums[b;a;b;c;d]
+Nums[a;b;c;d].withAlsoRight() //Nums[a;b;c;d;b]
+Nums[a;b;c;d].withAlso(2Size,b) //Nums[a;b;b;c;d]
+
+//filtering
+Nums[a;b;c;d].without(index:2Size) //Nums[a;b;d]
+Nums[a;b;c;d].withoutLeft() //Nums[b;c;d]
+Nums[a;b;c;d].withoutRight() //Nums[a;b;c]
+
+//filtering, if elements implements Concepts.Equals
+Nums[a;b;c;d].withoutAll(elem:b) //Nums[a;c;d]
+Nums[a;b;c;d].withoutLeft(elem:b) //filter out the leftmost b
+Nums[a;b;c;d].withoutRight(elem:b) //filter out the rightmost b
 CCode
+As you notice, there are three different kind of actions:
+replace an element ((Wcode(with)),
+append an element (Wcode(withAlso))
+and filtering an element out (Wcode(without)).
+Then, elements can be specified by (Wcode(index)), by being
+the leftmost or the rightmost. To filter elements
+out, you can also just provide the element.
+
+WP
+
 
 Immutable collections (and also mutable ones, as we will see later)
 can be accessed with the following methods:
 
 OBCode
 //access
-foo.left()//a
-foo.right()//d
-foo.val(2Size)//c
-foo.size()//4Size
-foo.isEmpty()//not holds
+foo.left() //a
+foo.right() //d
+foo.val(2Size) //c
+foo.size() //4Size
+foo.isEmpty() //not holds
 CCode
 
 
@@ -91,8 +102,8 @@ WP
 For example:
 OBCode
 Nums[a;b;c;d].withAlso(left:42\) //the \ is Num
-Nums[a;b;c;d].without(index:\-1Size)//remove the last (the right-most)
-Nums[a;b;c;d].with(left:\ * 2Num)//the leftmost is now a*2
+Nums[a;b;c;d].without(index:\ - 1Size) //remove the last (the right-most)
+Nums[a;b;c;d].with(left:\ * 2Num) //the leftmost is now a*2
 
 Points[\(x:12\ y: 0\)]==Points[Point(x:12Num, y:0Num)]
 CCode
@@ -120,7 +131,7 @@ For example
 
 OBCode
 Direction=Enumeration"north, east, south, west"
-Direction.Set[\north;\east]//the bitflag corresponding
+Direction.Set[\north;\east] //the bitflag corresponding
 //to the set of north and east.
 //is equivalent to the much longer
 Direction.Set[Direction.north();Direction.east()]
@@ -154,27 +165,27 @@ CCode
 Now we show some methods over mutable collections, consider each following line independently:
 OBCode
 //setting a value in a position
-foo(2Size,val:b)//foo.equals(Nums[a;b;b;d])
+foo(2Size,val:b) //foo.equals(Nums[a;b;b;d])
 //setting at left or right
-foo.left(b)//foo.equals(Nums[b;b;c;d])
-foo.right(b)//foo.equals(Nums[a;b;c;b])
+foo.left(b) //foo.equals(Nums[b;b;c;d])
+foo.right(b) //foo.equals(Nums[a;b;c;b])
 
 //add a value in a position
-foo.add(2Size,val:b)//foo.equals(Nums[a;b;b;c;d])
+foo.add(2Size,val:b) //foo.equals(Nums[a;b;b;c;d])
 
 //add at left or right
-foo.add(left:b)//foo.equals(Nums[b;a;b;c;d])
-foo.add(right:b)//foo.equals(Nums[a;b;c;d;b])
+foo.add(left:b) //foo.equals(Nums[b;a;b;c;d])
+foo.add(right:b) //foo.equals(Nums[a;b;c;d;b])
 
 //removal
-foo.remove(index:2Size)//foo.equals(Nums[a;b;d])
-foo.removeLeft()//foo.equals(Nums[b;c;d])
-foo.removeRight()//foo.equals(Nums[a;b;c])
+foo.remove(index:2Size) //foo.equals(Nums[a;b;d])
+foo.removeLeft() //foo.equals(Nums[b;c;d])
+foo.removeRight() //foo.equals(Nums[a;b;c])
 
 //removal, if elements implements Concepts.Equals
-foo.removeAll(elem:b)//foo.equals(Nums[a;c;d])
-foo.removeLeft(elem:b)//remove the leftmost b
-foo.removeRight(elem:b)//remove the rightmost b
+foo.removeAll(elem:b) //foo.equals(Nums[a;c;d])
+foo.removeLeft(elem:b) //remove the leftmost b
+foo.removeRight(elem:b) //remove the rightmost b
 CCode
 
 
@@ -210,12 +221,12 @@ OBCode
 //as a for each
 vec= Strings[S"foo"; S"bar"; S"beer"]
 var S result=S""
-with myElem in vec.vals() (result:=result++myElem)//like for(myElem:vec){..}
+with myElem in vec.vals() (result:=result++myElem) //like for(myElem:vec){..}
 //result==S"foobarbeer"
 
 //as a typecase
-with myData=foo.bar() (//like a typecase/switch/chain of instanceof
-  on S  Debug(S"A string "++myData)   //print strings
+with myData=foo.bar() ( //like a typecase/switch/chain of instanceof
+  on S  Debug(S"A string "++myData) //print strings
   on Num  void //do nothing if is a number
   on Concepts.ToS Debug(myData) //print stringables that are not numbers. 
   )
@@ -240,7 +251,7 @@ CCode
 Wcode(with) can be used as list comprehension
 OBCode
 vec=Anys[S"foo"; 12Num; S"beer";]
-v=Strings[with myElem in vec.vals() (on S use[myElem] )]//filter non strings
+v=Strings[with myElem in vec.vals() (on S use[myElem] )] //filter non strings
 //v==Strings[S"foo"; S"beer";]
 CCode
 
@@ -249,9 +260,9 @@ for multiple dispatch:
 OBCode
 method Num m(Shape x, Person y, Vehicle z) //example of method using with
  with x y z (
- on Square Student Car (..return ..)//x here is a Square
- on Circle Person Airplane (..)//x here is a Circle
- default (..)//default case, here x is just a Shape
+ on Square Student Car (..return ..) //x here is a Square
+ on Circle Person Airplane (..) //x here is a Circle
+ default (..) //default case, here x is just a Shape
   )}
 CCode
 
@@ -302,7 +313,7 @@ with x in xs.vals(stopOk:\), y in ys.vals(stopOk:\)
 with x in xs.vals(fill:10N), y in ys.vals(fill:10N)
 //will go on forever
 
-with x in xs.vals(stopOk:5N), y in ys.vals(from:1N to: \-1N stopOk:3N )
+with x in xs.vals(stopOk:5N), y in ys.vals(from:1N to: \ - 1N stopOk:3N )
 //will extract at least 5 elements from xs, will skip the first 
 //and the last element of ys and extract at least 2 elements from ys.
 CCode
@@ -336,17 +347,17 @@ for example assume we want to collect some names and numbers in a string:
 OBCode
 res=S"your info: "[with name in names.vals(), num in nums.vals()  (
   use[ S"name:"[name]", num:"[num]""]
-  )]""//we always need the ending string, even if empty.
+  )]"" //we always need the ending string, even if empty.
 CCode
 In order to put a semicolon between elements in our string, we can use Wcode(sep:)
 OBCode
 res=S"your info: "[with name in names.vals(), num in nums.vals()  (
   use[ S"name:"[name]", num:"[num]"", sep:S"; "]
-  )]""//we always need the ending string, even if empty.
+  )]"" //we always need the ending string, even if empty.
 CCode
 
 
-WTitle(`(5/5) Collections recall')
+WTitle(`(5/5) Collections summary')
 
 <ul><li>
 There are a tons of methods and operators to know, but since most code works 
