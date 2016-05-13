@@ -1793,9 +1793,9 @@ In other cases a new type would be generated.
 
 
 
-</p><h2> (5/5) Libraries </h2> <p>
+</p><h2> (5/5) Libraries </h2> <p></p><h1> Refactor and Extend </h1> <p>
 
-</p><h1> Refactor and Extend </h1> <p>
+</p><h2> (1/5)Refactor and Introspection </h2> <p>
 
 </p><h2> Refactor </h2> <p>
 <span class="code"><![CDATA[Refactor]]></span> is a class supporting modification of
@@ -1836,7 +1836,7 @@ to add to/alter/delete the documentation of methods/paths.
 <span class="code"><![CDATA[MakeAbstractSelector]]></span>
 and <span class="code"><![CDATA[MakeAbstractPath]]></span>
 to remove all the implementation out of a method or path,
-leaving only the public scheleton
+leaving only the public skeleton
 </li><li>
 <span class="code"><![CDATA[HideSelector]]></span>
 andWcode(HidePath)
@@ -1848,9 +1848,23 @@ they are renamed in invisible names that you can never guess, and automatically 
 In addition to all those nested classes,
 <span class="code"><![CDATA[Refactor]]></span> offers <span class="code"><![CDATA[Refactor.compose(left,right)]]></span>
 allowing a simmetric sum of two library literals.
-The main idea is that members with the same name are recoursivelly summed
+The main idea is that members with the same name are recursively summed
 
-</p><h2> Traits and Metaprogramming </h2> <p>
+</p><h2> Introspection </h2> <p>
+<span class="code"><![CDATA[Introspection]]></span> is
+a class allowing to explore libraries, to discover what methods they have and so on.
+
+The main classes inside of Introspection are
+<span class="code"><![CDATA[Introspection.NestedLibrary]]></span>,
+ <span class="code"><![CDATA[Introspection.Method]]></span> and
+<span class="code"><![CDATA[Introspection.Type]]></span>.
+You can obtain a nested library by calling the factory methods 
+<span class="code"><![CDATA[Introspection(lib)]]></span> and <span class="code"><![CDATA[Introspection(classObj)]]></span>,
+respectively for library literals or class objects.
+We will see later some example of use of <span class="code"><![CDATA[Introspection]]></span>.
+
+
+</p><h2> (2/5)Traits and Metaprogramming </h2> <p>
 
 Metaprogramming is the most important feature of 42,
 all the decorators that you have seen up to now are implemented with metaprogramming, that in 42 offers a good balance of freedom and
@@ -1860,17 +1874,19 @@ be manipulated, and that once a library literal has a name, it can not be direct
 Thus, we call traits methods that return reusable (unnamed) code.
 For example
 <pre class="l42Big"><![CDATA[
-ReusableCode:{
+Transaction:{
+  class method
   Library traitEnsureTransaction() {
-    class method //without name: can be called as a funtor
+
+    class method //without name: can be called as a functor
     Void(mut Db.Connection connection)
     exception Db.Query.Failure //no body: abstract method
 
-    class method
-    Void doAction(mut Db.Connection that)
+    class method //without name: can be called as a functor
+    Void (mut Db.Connection that)
     exception Db.Query.Failure (
       that.openTransaction()
-      This(connection:that)//here we call us as a funtor
+      This(connection:that)//here we call us as a functor
       catch exception Db.Query.Failure x (
         that.rollback()
         exception x
@@ -1881,8 +1897,9 @@ ReusableCode:{
   }
 
 MyAction:Refactor.compose(
-  left:ReusableCode.traitEnsureTransaction()
+  left:Transaction.traitEnsureTransaction()
   right:{ //and now the missing implementation
+    class method
     Void(mut Db.Connection connection)
     exception Db.Query.Failure {
       /*..my operation..*/
@@ -1896,18 +1913,200 @@ Main:{
   }
 ]]></pre>
 
+Note how <span class="code"><![CDATA[traitEnsureTransaction()]]></span> is just a normal 
+class method that directly return a library literal.
+Traits in 42 are nothing fancier than that.
+
+Now <span class="code"><![CDATA[MyAction]]></span> will execute the operation inside of a transaction.
+However, as you can see declaring <span class="code"><![CDATA[MyAction]]></span> using 
+<span class="code"><![CDATA[Refactor.compose]]></span> is verbose.
+Let see how we can improve our code and make <span class="code"><![CDATA[Transaction]]></span>
+into a real class decorator.
+First we want to check that the provided code has an 
+
+<pre class="l42Big"><![CDATA[
+Transaction:{
+  class method
+  Library traitEnsureTransaction() {/*.. as before ..*/}
+  
+  InvalidAction:Message.$<<{implements MetaGuard}
+  //meta guard is the root of all the metaprogramming guards
+  class method //using << to define the babelfish operator
+  Library << (Library that) 
+  exception InvalidAction {
+    i=Introspection(lib:that)
+    if !i.hasMethod(Selector"(connection)") (exception InvalidAction"Action method missing")
+    composed=Refactor.compose(left: This.traitEnsureTransaction(), right: that)
+    exception on MetaGuard
+      InvalidAction"
+        'Action invalid:type of '(connection)' 
+        'do not fit or already defined '(that)'
+        "
+    return Refactor.HideSelector(Selector"(connection)")<<composed
+    error on Metaguard
+      WTF"(connection) is there, ready to be hidden"
+    }  
+  }
+MyAction:Transaction<<{
+  class method
+  Void(mut Db.Connection connection)
+  exception Db.Query.Failure {
+    /*..my operation..*/
+    }
+  }
+
+]]></pre>
+
+Note how we check some well formedness of the parameter
+in an <span class="code"><![CDATA[if]]></span>, then we catch and wrap the exceptions of <span class="code"><![CDATA[compose(left,right)]]></span>,
+and finally we state our assumption that <span class="code"><![CDATA[HideSelector]]></span> can not fail in
+that context.
+
+Now we can use Transaction as a decorator.
+
+</p><h2> (3/5)Extend </h2> <p>
+
+<span class="code"><![CDATA[Extend]]></span>
+ is a decorator implemented using 
+<span class="code"><![CDATA[Refactor]]></span> and
+<span class="code"><![CDATA[Introspection]]></span>
+and provide in AdamTowel a flexible model of multiple inheritance with super calls.
+As an example, in a game we can have a chest, that contains objects in a certain position,
+a boat that can host humanoids and
+a cargo boat, that can host humanoids and can contains objects like a chest.
+We want to reuse the code of chest and boat to obtain the cargo boat.
+For example
+<pre class="l42Big"><![CDATA[
+Traits:{
+  class method
+  Library chest(){
+    mut Objects objects
+    /*.. methods to validate access to objects..*/
+    read method
+    Kg weight() {
+      var Kg res=0Kg
+      with o in this.objects().vals() (res+=o.weight() )
+      return res
+      }
+    }
+
+  class method
+  Library boat() {
+    mut Humanoids crew
+    Kg maxCapacity
+    /*.. methods to validate access to crew..*/
+    read method
+    Kg weight() {/*..with-loop on the crew..*/}
+
+    read method
+    Kg capacityLeft()
+      this.maxCapacity()-this.weight()    
+    }
+  }
+
+Chest:Data<<Traits.chest()
+Boat:Data<<Traits.boat()
+CargoBoat:Data<<Extend[Traits.chest();Traits.boat() ]<<{
+  read method @override
+  Kg weight() this.#1weight()+this.#2weight()
+  }
+]]></pre>
+
+As you see, we annotate with <span class="code"><![CDATA[@override]]></span> to 
+override the <span class="code"><![CDATA[weight()]]></span> method, and we use 
+<span class="code"><![CDATA[#1weight()]]></span> and 
+<span class="code"><![CDATA[#2weight()]]></span> to refer to the super implementations.
+As an alternative to <span class="code"><![CDATA[@override]]></span>,
+we could use <span class="code"><![CDATA[@hide]]></span> to just hide the old methods and put our new
+version on top. There are two main difference between <span class="code"><![CDATA[@override]]></span> and 
+<span class="code"><![CDATA[@hide]]></span>.
+With override internal references will refer to the new implementation,
+while with hide they will refer to the old one.
+With override the method type must be identical,
+while with hide they can be completely different.
 
 
-</p><h2> Extend </h2> <p>
+</p><h2> (4/5)Exercise: extending vector </h2> <p>
+
+As an exercise, lets try to use what we learned to add a <span class="code"><![CDATA[sum()]]></span> method to
+a vector.
+
+<pre class="l42Big"><![CDATA[
+Nums:Extends[Collections.vector(of:Num)]<<{
+  read method
+  Num sum(){
+    var Num res=0Num
+    with n in this.vals() (res+=n )
+    return res
+    }
+  }
+]]></pre>
+
+Easy.
+</p><p>
+However, we have done an extension only on our specific Nums vector, we would have to repeat
+such code for each vector.
+Can we produce vectors that will have a <span class="code"><![CDATA[sum()]]></span> method?
+Well, this can only work for vectors of elements with a <span class="code"><![CDATA[+]]></span> operator, and a zero concept.
+
+This is not trivial and require us to learn many concepts.
+Our first attempt could be to use ...no....
+<pre class="l42Big"><![CDATA[
+Summable:{
+  class method
+  Library vector(class Any of)
+    Refactor.Redirect(Path"T" Extends[Collections.vector(of:of)]<<{
+      read method
+      of sum(){
+      var of res=0of
+      with n in this.vals() (res+=n )
+      return res
+      }
+    }
+  }
+]]></pre>
 
 
+</p><h2> (5/5)Metaprogramming summary </h2> <p>
 
  <!--
- 
- 
- Use Extends Refactor
- 
 
+<pre class="l42Big"><![CDATA[
+Observer:{interface
+  mut method update()
+  }
+Observers:Collection.vector(ofMut:Observer)
+
+Traits:{
+
+  class method
+  Library subject(){
+    mut Observers observers
+
+    class method
+    mut Observers #default_observers()
+      Observers[]
+
+    mut method
+    Void register(Observer that)
+      this.#observers().add(right:that)
+
+    mut method
+    Void notify() 
+      with Observer o in this.#observers().vals() (
+        o.update()
+        )
+  }
+  class method
+  Library widget(){ /*..*/}
+
+}
+
+MyObservableWidget:Extends[Traits.subject(); Traits.widget()] <<{
+  mut method @override
+  Void repaint() (this.#2repaint() this.notify())
+  }
+]]></pre>
 
 It is possible to iterate over a range of numbers:
 
