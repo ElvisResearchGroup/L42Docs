@@ -5,7 +5,45 @@ just declaring
 elemental classes, collections
 and simple Data classes.
 
-Insert exercises here
+Let's see some exercses and solutions 
+to understand better how 42 code looks like
+
+WTitle(max method)
+write a class method max returning the max from a list of numbers
+WP
+Solution:
+OBCode
+
+CCode
+
+WTitle(write a class method map producing a string from to lists of stirngs of the same lenght.
+– For example
+map(keys:Strings[S"a";S"b";S"c"],vals:Strings[S"z";S"y";S"z"])
+should produce S"a->z, b->y, c->z"
+– [c] write a class method Strings upTo(Strings that, N size) that filters out from a list of strings the ones longer
+than size.
+– For example upTo(Strings[S"a";S"ab";S"abc"],size:2N)
+==Strings[S"a";S"ab"]
+– [d] declare a class person with String name and N age, declare a list of persons Persons.
+write a class method from(names,ages) producing a list of persons from a list of strings and a list of
+ages.
+Completion (B):
+As for before, for each of the following task, create a class method with the required behavior and a main testing such
+class method. Here you are going to be required to use the class decorators.
+– [a] This is a variation of Core.d We ask you to to two changes:
+Using Use or Extends declare Persons so that the class method from(names,ages) is a member of
+Persons.
+Using Invariant declare Person so that valid persons only have positive ages and not empty names. Add more
+test cases to check the invariant is holding.
+– [b] Define a new kind of list generator, producing lists that also offers
+operators >>, <<. >>= and <<= for strictly superset/subset and superset/subset
+Challenge(A+)
+– [a] try to edit Collecitons.vector(of:) so that it behaves like Collecitons.vector(ofEq:) when possible.
+– [b] In the current state TestGui does not work. The reason is that there is a *very* long string literal, that forces
+us to generate code that is larger that what javac can handle.
+ Add in PlgAlu a plugin method S fileRead(S filename) that can read a file, import this functionality in
+AdamTowel01/ AdamTowel02. (look at MfileDebug£xfileName£xcontent)
+After that, modify the Gui libr
 
 
 WBigTitle(Example of Libraries)

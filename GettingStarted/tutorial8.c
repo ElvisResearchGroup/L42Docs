@@ -1,4 +1,4 @@
-WBigTitle(Refactor and Extend)
+WBigTitle(`A taste of Metaprogramming')
 
 WTitle((1/5)Refactor and Introspection)
 
@@ -123,17 +123,37 @@ class method that directly return a library literal.
 Traits in 42 are nothing fancier than that.
 
 Now Wcode(MyAction) will execute the operation inside of a transaction.
+
 However, as you can see declaring Wcode(MyAction) using 
-Wcode(Refactor.compose) is verbose.
-Let see how we can improve our code and make Wcode(Transaction)
+Wcode(Refactor.compose) is verbose, we now show how to improve.
+
+Manually declaring a class just to declare a single trait mehtod
+returning a library literal is verbose.
+In AdamTowel we can use the class Wcode(Resource)
+that automate this process.
+For example
+OBCode
+TraitEnsureTransaction:Resource<<{
+  class method
+  Void(mut Db.Connection connection)
+  exception Db.Query.Failure
+
+  class method
+  Void (mut Db.Connection that)
+  exception Db.Query.Failure (/*..as before..*/)
+  }
+
+MyAction:Refactor.compose(
+  left:TraitEnsureTransaction()
+  right:{ /*..as before..*/})
+CCode
+
+This let us save just a couple of lines. 
+We can improve further and make Wcode(Transaction)
 into a real class decorator.
-First we want to check that the provided code has an 
 
 OBCode
 Transaction:{
-  class method
-  Library traitEnsureTransaction() {/*.. as before ..*/}
-  
   InvalidAction:Message.$<<{implements MetaGuard}
   //meta guard is the root of all the metaprogramming guards
   class method //using << to define the babelfish operator
@@ -141,7 +161,8 @@ Transaction:{
   exception InvalidAction {
     i=Introspection(lib:that)
     if !i.hasMethod(Selector"(connection)") (exception InvalidAction"Action method missing")
-    composed=Refactor.compose(left: This.traitEnsureTransaction(), right: that)
+    composed=Refactor.compose(
+      left:TraitEnsureTransaction(), right: that)
     exception on MetaGuard
       InvalidAction"
         'Action invalid:type of '(connection)' 
@@ -169,6 +190,7 @@ that context.
 
 Now we can use Transaction as a decorator.
 
+
 WTitle((3/5)Extend)
 
 Wcode(Extend)
@@ -182,36 +204,32 @@ a cargo boat, that can host humanoids and can contains objects like a chest.
 We want to reuse the code of chest and boat to obtain the cargo boat.
 For example
 OBCode
-Traits:{
-  class method
-  Library chest(){
-    mut Objects objects
-    /*.. methods to validate access to objects..*/
-    read method
-    Kg weight() {
-      var Kg res=0Kg
-      with o in this.objects().vals() (res+=o.weight() )
-      return res
-      }
-    }
-
-  class method
-  Library boat() {
-    mut Humanoids crew
-    Kg maxCapacity
-    /*.. methods to validate access to crew..*/
-    read method
-    Kg weight() {/*..with-loop on the crew..*/}
-
-    read method
-    Kg capacityLeft()
-      this.maxCapacity()-this.weight()    
+ChestTrait:Resource<<{
+  mut Objects objects
+  /*.. methods to validate access to objects..*/
+  read method
+  Kg weight() {
+    var Kg res=0Kg
+    with o in this.objects().vals() (res+=o.weight() )
+    return res
     }
   }
 
-Chest:Data<<Traits.chest()
-Boat:Data<<Traits.boat()
-CargoBoat:Data<<Extend[Traits.chest();Traits.boat() ]<<{
+BoatTrait:Resource<<{
+  mut Humanoids crew
+  Kg maxCapacity
+  /*.. methods to validate access to crew..*/
+  read method
+  Kg weight() {/*..with-loop on the crew..*/}
+  
+  read method
+  Kg capacityLeft()
+    this.maxCapacity()-this.weight()    
+  }
+
+Chest:Data<<ChestTrait()
+Boat:Data<<BoatTrait()
+CargoBoat:Data<<Extend[ChestTrait();BoatTrait()]<<{
   read method @override
   Kg weight() this.#1weight()+this.#2weight()
   }
@@ -231,7 +249,7 @@ With override the method type must be identical,
 while with hide they can be completely different.
 
 
-WTitle((4/5)Exercise: extending vector)
+WTitle((4/5)An intollerant type system)
 
 As an exercise, lets try to use what we learned to add a Wcode(sum()) method to
 a vector.
@@ -248,170 +266,112 @@ Nums:Extends[Collections.vector(of:Num)]<<{
 CCode
 
 Easy.
+However, note that we are calling Wcode(this.vals()) to
+do the iteration, and we are not declaring a Wcode(vals())
+method.
+The idea is that while computing Wcode(Nums), the type system is temporarly allowing for incomplete/untypable code at the right of the 'Wcode(:)'.
+The typesystem will check that all is ok when the declaration of Wcode(Nums) is complete.
 WP
 However, we have done an extension only on our specific Nums vector, we would have to repeat
 such code for each vector.
 Can we produce vectors that will have a Wcode(sum()) method?
-Well, this can only work for vectors of elements with a Wcode(+) operator, and a zero concept.
+Well, this can only work for vectors of elements with a Wcode(+) operator, and a zero concept. Luky, all numeric classes offers a Wcode(zero()) and Wcode(one()) method.
 
-This is not trivial and require us to learn many concepts.
-Our first attempt could be to use ...no....
+
+A good, partial solution would be the following:
 OBCode
-Summable:{
+MyCollection:{
   class method
-  Library vector(class Any of)
-    Refactor.Redirect(Path"T" Extends[Collections.vector(of:of)]<<{
-      read method
-      of sum(){
-      var of res=0of
-      with n in this.vals() (res+=n )
+  Library traitSum(){
+    T:{
+      class method T zero()
+      method T +(T that)
+      }
+    read method
+    Num sum(){
+      var T res=T.zero()
+      with n in this.vals() (res+=n ) //error here, vals() undefined
       return res
       }
     }
-  }
+  class method
+  Library vector(class Any of) {
+    oldPart=Collection.vector(of:of)
+    newPart=Refactor.Redirect(Path"T" to:of)<<this.traitSum()
+    return Refactor.compose(left:oldPart, right:newPart)
+    }
 CCode
+
+Conceptually, we declare a new trait for the sum method,
+and we make it general introducing Wcode(T) and our
+needed requirements.
+Sadly, this is not going to compile, since 
+in the method Wcode(sum()) we call Wcode(this.vals()),
+and there is no definition for such method.
+Similar code worked in the former example, but here
+the definition of Wcode(MyCollection) get completed,
+and the code in the method Wcode(traitSum()) is still 
+incomplete.
+We could just repeat there the definition of Wcode(vals()),
+but that would be duplicating code; moreover, Wcode(vals()) return an iterator, that have its methods too...
+
+Wcode(Collection) does offer a solution: a trait contaning
+the minimal code scheleton to make Wcode(vals()), the idea is that
+the composition of Wcode(traitSum()) and
+Wcode(Collection.traitVals()) is complete code.
+However, even declaring Wcode(traitSum()) as
+OBCode
+class method
+Library traitSum() 
+  Extend[Collections.traitSequence()]<<{/*as before*/}
+CCode
+Whould not work: the Wcode(<<) method would
+be called when Wcode(traitSum()) runs, leaving incomplete code in the source.
+We need to force the computation to happen before
+Wcode(MyColleciton) is completed.
+A solution is to use Wcode(Resource).
+
+OBCode
+TraitSum:Resource<<Extend[Collections.traitSequence()]<<{ /*as before traitSum()*/}
+MyCollection:{
+  class method
+  Library vector(class Any of) (
+    oldPart=Collection.vector(of:of)//surelly works
+    {newPart=Refactor.Redirect(Path"T" to:of)<<TraitSum()
+    return Extend[oldPart]<<newPart
+    catch exception MetaGuard g return oldPart
+    })
+CCode
+
+By the way, before we also forgot to handle exceptions!
+In case our parameter does not support zero and plus,
+we will just return a normal collection. We need to insert additional brakets otherwise the 
+binding Wcode(oldPart) would not be visible in the catch body.
+
+As you may notice there is some incoherence in our programming style:
+should trait be methods in a class or funtor classes?
+should we use 
+the more primitive
+Wcode(Refactor.compose(left,right))
+or the more flexible Wcode(Extend[]<<)?
+At the current state we do not have an answer to what is the best in 42. Indeed, we still do not understand the quesiton.
 
 
 WTitle((5/5)Metaprogramming summary)
-
- <!--
-
-OBCode
-Observer:{interface
-  mut method update()
-  }
-Observers:Collection.vector(ofMut:Observer)
-
-Traits:{
-
-  class method
-  Library subject(){
-    mut Observers observers
-
-    class method
-    mut Observers #default_observers()
-      Observers[]
-
-    mut method
-    Void register(Observer that)
-      this.#observers().add(right:that)
-
-    mut method
-    Void notify() 
-      with Observer o in this.#observers().vals() (
-        o.update()
-        )
-  }
-  class method
-  Library widget(){ /*..*/}
-
-}
-
-MyObservableWidget:Extends[Traits.subject(); Traits.widget()] <<{
-  mut method @override
-  Void repaint() (this.#2repaint() this.notify())
-  }
-CCode
-
-It is possible to iterate over a range of numbers:
-
-OBCode
-with i in 4Size.vals() (
-  Debug(i)//prints 4,5,6,7 and so on forever
-  )
-CCode
-
-OBCode
-with i in 4Size.upTo(42Size) (
-  Debug(i)//prints 4,5,6,7 and so on up to 42 excluded
-  )
-CCode
+<ul><li>
+Metaprogramming is hard, 42 tries to make it simpler, but not trivial.
+</li><li>
+Error handlying is important while writing decorators.
+More then half of decorators code should be dedicated
+to handle errors and lift them into a more understendable
+form for the sake of the final user.
+</li><li>
+we are just scratching the surface of what we
+can do with metaprogramming.
+If you are interested to become a Magrathean
+refer to the metaprogramming painful guide (link);
+otherwise just use metaprogramming libraries 
+and use Wcode(Refactor) only when all the other options feel more painful.
+</li></ul>
 
 
-Resources used within an iteration can be released after the iteration 
-since collections are notified when the iteration ends.
-
-OBCode
-//a contains "foo1 \n foo2 \n foo3"
-//b contains "bar1 \n bar2"
-with 
-  input in LineStream.readFile(S"a"), 
-  var output in LineStream.readWriteFile(S"b",fill:S"None") (
-    output:= output +" : "+input)//line by line, add input in the file
-//b contains "bar1 : foo1 \n bar2 : foo2 \n None : foo3"
-CCode
-
-
-    
- -->	
-OBCode
-{reuse L42.is/AdamTowel
-Collections: Load<<{reuse L42.is/Collections}
-Point:Data<<{Meter x, Meter y
-  method 
-  Meter distance(Point from){/*...*/}
-  }
-Points:Collections.vector(of:Point)
-Main:{
-  zero=Point(0Meter,0Meter)
-  ps=Points[ Point(x=12Meter, y=20Meter);Point(x=1Meter, y=2Meter);]
-  var Meter tot=0Meter
-  with p in ps.vals() (
-    tot+=p.distance(from:zero)
-    )
-  return ExitCode.success()
-  }
-}
-CCode
-
-
-
-
-WTitle(Collections)
-Declaring and using collections is simple and easy in 42.
-For example, we can declare and use a list of  Wcode(Point) by writing
-OBCode
-Points:Collections.mutList(Point)
-
-...
-
-zero=Point(x=0Int, y=0Int)
-one=Point(x=1Int, y=1Int)
-ps0=Points[]//the empty list
-ps1=Points[zero;one]//contains zero, one
-ps2=Points[zero;one]//contains zero, one
-
-CCode
-
-
-
-<!--OBCode Library myCode={ method Int foo()} CCode
-A local binding of type Library initialized with a class with a single Wcode(foo()) method. Since there is no body, it is an abstract method.
- -->	 
-
- <!--WTitle(Simpler complete program)
-
-Let now starts showing the simplest 42 program: an empty library.
-
-OBCode {} CCode
-
-If we save this valid program in a file Wcode(Test.L42) and we run Wcode(L42 Test), we get an error.
-WP
-As you see 42 is very intuitive, as you would expect from your former life experiences, most simple things just does not work.
-Note how valid programs can produce errors.
-We will soon learn how to produce errors in controlled and elegant ways.
--->
-<!--A 42 program execution WEmph(is) the generation of all its nested classes/interface.
-, code is simply executed from top to bottom as in 
-Python, Javascript or Php. However, the
-top level expression is a Library, and code can go in libraries 
-as an initializer for you need to put the code into an expression
--->
-
-<!-- LATER?
-Wcode(MyCode.hello(..)) 
-use directly the Wcode(MyCode) class instance as
-receiver. We can also give it a name 
-e se vuoi puoi anche salvarlo su un binding locale, 
-tipo x=MyCode  x.hello(...)
--->
