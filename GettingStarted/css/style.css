@@ -213,6 +213,28 @@ h1{
   text-align: center;
   }
   
+ol {
+  counter-reset: olCounter;
+}
+ol li:before {
+  content: counter(olCounter);
+  counter-increment: olCounter;
+  font-weight: bold;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  min-width: 2em;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1.1em;
+}
+ol li {
+  border: 0.1em;
+  border-left-style: solid;
+  border-top-style: solid;
+  border-color: darkgray;  
+  max-width: 20em;
+  }
 @media print {
   .ace_editor { 
     page-break-inside: avoid;
