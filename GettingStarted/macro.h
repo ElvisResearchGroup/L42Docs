@@ -13,3 +13,6 @@ m4_define(`WMS',`<span style="color:#ff0000">Marco:$1</span>')m4_dnl
 m4_define(`WEmph',`<span style="color:#ff1111; font-weight: bold;"> $1 </span>')m4_dnl
 m4_define(`WChapter',` </p><p id="$1"> m4_include(`$2')')m4_dnl
 m4_define(`WMenuItem',` <li><a href="$1"> $2 </a></li>')m4_dnl
+m4_define(`OFloatClass',`<div class="$1"><div class="wrapFloat">')m4_dnl
+m4_define(`OFloat',`<div><div class="wrapFloat">')m4_dnl
+m4_define(`CFloat',`</div><div class="finishFloat"></div></div>')m4_dnl

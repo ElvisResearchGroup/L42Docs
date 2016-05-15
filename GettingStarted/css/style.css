@@ -113,6 +113,21 @@ p { padding: 10px;}
     color: rgb(150,150,150);
 }
 
+.wrapFloat{//see macro WFloat
+  display: block;
+  clear: both;
+  float: left; 
+  position: relative;
+  }
+
+.inFloat{
+  float: left;
+  }
+
+.finishFloat{
+  clear: both;
+  }
+
 
 
 ul{padding-left: 30px;
@@ -215,6 +230,8 @@ h1{
   
 ol {
   counter-reset: olCounter;
+  padding-left: 3em;
+  margin-left:-200px;
 }
 ol li:before {
   content: counter(olCounter);
@@ -228,13 +245,38 @@ ol li:before {
   display: inline-block;
   font-size: 1.1em;
 }
+
 ol li {
+  z-index:1;
+  position: relative;
   border: 0.1em;
   border-left-style: solid;
   border-top-style: solid;
   border-color: darkgray;  
   max-width: 20em;
   }
+
+.index{
+  background: linear-gradient(to right, rgb(100,100,150), white,white,white,white);
+  display: inline-block;
+  border-top:2px;
+  border-bottom:2px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-color: #a1a1a1;
+  border-style: solid;
+}
+
+.rotate90 {
+  width: 200px;
+  height: 200px;
+  margin:0px;
+  padding:2px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 1.2em;
+  transform: rotate(-90deg);
+ }
 @media print {
   .ace_editor { 
     page-break-inside: avoid;

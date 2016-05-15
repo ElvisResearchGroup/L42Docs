@@ -1,5 +1,7 @@
 m4_include(`header.h')m4_dnl
-<ol>
+OFloatClass(index)
+<div class="rotate90 inFloat"> Index of Content</div>
+<ol class="inFloat">
 WMenuItem(`#Basics',`Basics')
 WMenuItem(`#ModifiersIntro',`ModifiersIntro')
 WMenuItem(`#BasicClasses',`BasicClasses')
@@ -11,6 +13,8 @@ WMenuItem(`#ExamplesOfLibraries',`ExamplesOfLibraries')
 WMenuItem(`#MetaprogrammingIntro',`MetaprogrammingIntro')
 WMenuItem(`#DeployCode',`DeployCode')
 </ol>
+CFloat
+
 WChapter(`Basics',`tutorial1Basics.c')
 WChapter(`ModifiersIntro',`tutorial2ModifiersIntro.c')
 WChapter(`BasicClasses',`tutorial3BasicClasses.c')
