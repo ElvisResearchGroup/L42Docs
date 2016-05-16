@@ -46,7 +46,8 @@ OBCode
 {reuse L42.is/AdamTowel
 MyCode: {
   class method
-  S hello(S nickName){
+  S hello(S nickName){//we can use usual if/while
+    if nickName.isEmpty() (return S"Hello!")
     return S"Hello " ++ nickName
     } 
   }
@@ -139,7 +140,7 @@ syntax or with the Wcode([with _ ( _ use[ _ ]_ )]) syntax.
 We will discuss all the variation of Wcode(with) later.
 Note how to express number literal we need to specify their class.
 
-WTitle(`(5/5)Basis Recall')
+WTitle(`(5/5)Basis summary')
 
 <ul><li>
 At the start of your program, import a towel using 
@@ -160,7 +161,7 @@ Wcode(Points: Collections.vector(of: Point))
 </li></ul>
 
 
-WTitle(`Object creation recall')
+WTitle(`Object creation summary')
 42 supports many different syntactic forms that are convenient to create objects: 
 <ul><li>
 12Num:  from a numeric representation

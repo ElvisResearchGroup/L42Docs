@@ -1,4 +1,4 @@
-WBigTitle(Certainties and Philosophy)
+WBigTitle(Guarantees and Philosophy)
 
 WTitle((1/5)Language invariants)
 42 guarantee a set of language invariants: properties that are always true
@@ -248,6 +248,8 @@ of 42, you can now read, in any order,
 42 Core language design, for programming language experts
 </li><li>
 42 syntactic sugar, detailed explanations
+</li><li>
+42 type system, exact rules for promotions and usage of fwd types
 </li><li>
 42 metaprogramming guide and how there is no state
 </li><li>

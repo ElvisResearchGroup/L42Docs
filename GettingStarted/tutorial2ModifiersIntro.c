@@ -217,7 +217,7 @@ Debug(dog1.hasArrived())
 Debug(dog2.hasArrived())
 CCode
 
-WTitle(`(5/5) Recall')
+WTitle(`(5/5) Summary')
   
 WTitle(`Kinds of classes, summary')
   

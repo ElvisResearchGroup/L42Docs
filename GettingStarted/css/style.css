@@ -114,10 +114,7 @@ p { padding: 10px;}
 }
 
 .wrapFloat{//see macro WFloat
-  display: block;
-  clear: both;
-  float: left; 
-  position: relative;
+  clear: both; 
   }
 
 .inFloat{
@@ -253,7 +250,6 @@ ol li {
   border-left-style: solid;
   border-top-style: solid;
   border-color: darkgray;  
-  max-width: 20em;
   }
 
 .index{

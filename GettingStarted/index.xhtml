@@ -32,13 +32,16 @@
 <Button class='button' type='button' onclick='selectDiv("a");'>
 Why 42
 </Button>
-<Button class='button' type='button' onclick='selectDiv("b");'>
-Learn by examples
-</Button>
 
 <Button class='button' type='button' onclick='selectDiv("c");'>
 Pure OO
 </Button>
+
+
+<Button class='button' type='button' onclick='selectDiv("b");'>
+Learn through examples
+</Button>
+
 
 <Button class='button' type='button' onclick='showAll(allDivs);'>
 Show all content
@@ -72,8 +75,68 @@ and
 
 </p></Div>
 
+
+<Div id="c"><p>
+</p><h2> Pure and fair Object Oriented language </h2> <p>
+42 is a pure object oriented language,
+where every value is an object. This means that:
+<ul>
+<li>
+Numbers are objects, 
+so thay can have methods like <span class="code"><![CDATA[.sqrt()]]></span> or <span class="code"><![CDATA[.abs()]]></span>. 
+</li><li>
+All operators are just method calls, thus <span class="code"><![CDATA[a + b]]></span> is sugar for <span class="code"><![CDATA[a.#plus(b)]]></span>, 
+and so on. Note how <span class="code"><![CDATA[#plus]]></span> is a ordinary method name.
+Any class that offers the method supports the operator.
+
+</li><li>
+Classes are objects, so when you write <span class="code"><![CDATA[Foo.bar()]]></span> you refer to the method <span class="code"><![CDATA[.bar()]]></span> offered by the object denoted by <span class="code"><![CDATA[Foo]]></span>.
+class objects are just objects, and you can also store them in local bindings if you wish, as in <span class="code"><![CDATA[x=Foo]]></span>
+</li><li>
+The code is an object, but only at the granularity of 
+Libraries; that is, balanced pairs of curly brackets representing classes (or interfaces) with methods and nested libraries.
+This is useful for meta-programming, which we will see later.
+First class meta-programming is the most important feature of 42.
+
+
+</li><li>
+Differently from other pure object oriented languages, in 42
+all objects have the same treatment, both syntactically and semantically.
+For example <span class="code"><![CDATA[x = S"Hello " ++ S"World"]]></span>
+This is a declaration for a local binding <span class="code"><![CDATA[x]]></span>, using the string class <span class="code"><![CDATA[S]]></span> and the method operator <span class="code"><![CDATA[++]]></span>,
+used as string (or in general sequence/collection) concatenation.
+
+Coming from another programming language, you may be surprised that we have to write <span class="code"><![CDATA[S]]></span> before <span class="code"><![CDATA["Hello "]]></span> and <span class="code"><![CDATA["World"]]></span>.
+This extra verbosity is needed to provide fair treatment to all classes. (<a href="note1.xhtml">see more</a>)
+In 42 we do not give preferential treatment
+to special objects/classes. In this sense, we consider
+most other languages to be discriminatory.
+They give priority to their "preferred" version of numbers and strings, and this puts into a position of unfair disadvantage library code trying to define its own kinds of numbers/strings.
+Instead in 42 you may encounter strings like <span class="code"><![CDATA[URL"www.google.com"]]></span> or
+ <span class="code"><![CDATA[EMAIL"Arthur.Dent@gmail.com"]]></span>.
+The same for numeric classes: to talk about a street, 20 meters long, you would write
+<span class="code"><![CDATA[streetLength=20Meter]]></span>.
+Note that we write the class name after the number,
+while usually the class name is before.
+42 is a little incoherent in this point, both for better readability and because <span class="code"><![CDATA[Meter20]]></span> would be considered an identifier by the parser.
+You may encounter <span class="code"><![CDATA[Int]]></span>, <span class="code"><![CDATA[UInt]]></span>, <span class="code"><![CDATA[Float]]></span>,<span class="code"><![CDATA[Size]]></span>, <span class="code"><![CDATA[Meter]]></span>, <span class="code"><![CDATA[Kg]]></span>, <span class="code"><![CDATA[Second]]></span>, <span class="code"><![CDATA[Year]]></span>, <span class="code"><![CDATA[PhoneNumber]]></span> and many other numeric classes.
+</li></ul>
+
+</p><h2> A simple language </h2> <p>
+We believe 42 is a simple language,
+where all classes are final and interfaces are the only instrument to obtain subtyping.
+Moreover, 42 does not offer many controversial features usually found in other programming
+languages, including:
+(method) overloading; threading; numeric conversions and coercions;
+casts; var-args; primitive types and automatic (un-)boxing;
+inner classes; arrays; generics; scope-hiding of local variables/bindings, methods and fields;
+closures/lambdas and null.
+
+
+</p></Div>
+
 <Div id="b"><p>
-</p><h2> Learn by examples </h2> <p>
+</p><h2> Learn through examples </h2> <p>
 If you like to learn by examples, 
 here you can find snippets of code in 42 and their equivalent version in Java.
 We format the code so that, line by line, you can see the differences.
@@ -287,7 +350,7 @@ class Person{ //declare a class Person
 if a>b (return /*...*/)
 var S acc=S""  //explicit 'var': can be updated
 while Bool.true() ( //booleans are not constants
-  if acc.size()>50Size ( //Size: type of sequence indexes 
+  if acc.size()>50Size ( //Size: type of indexes 
     exception void //like java break, rarely used in 42
     )
   acc++=S"step"
@@ -322,8 +385,7 @@ names=Strings[S"Fred";S"Mary";S"Mark"]
 Years:Collection.vector(of:Year) //we need to declare it
 
 ages=Years[20Year;23Year;22Year]
-agesShort=Years[20\;23\;22\] //the symbol \ is a shortcut
-//Years resolve it as 'Year' since Years contains 'Year'
+
 
 with n in names.vals() ( //like a for each
   Debug(n)
@@ -337,9 +399,9 @@ with n in names.vals(), a in ages.vals() (
 Persons:Collection.vector(of:Person)
 
 friends=Persons[
-  Person(name:S"Fred", age:20Year); //long version
+  Person(name:S"Fred", age:20Year);
   Person(name:S"Mary", age:23Year);
-  \(name:\"Mark", age:22\); //short version
+  Person(name:S"Mark", age:22Year);
   ]
 
 moreFriends=Persons[
@@ -362,7 +424,6 @@ List<String> names=new ArrayList<>(Arrays.asList(
 
 List<Integer> ages=new ArrayList<>(Arrays.asList(
   20,23,22));
-
 
 for(String n :names){
   System.out.println(n);
@@ -401,66 +462,6 @@ for(int i=0; i<names.size(); i++){
 
 </p></Div>
  
-
-
-<Div id="c"><p>
-</p><h2> Pure and fair Object Oriented language </h2> <p>
-42 is a pure object oriented language,
-where every value is an object. This means that:
-<ul>
-<li>
-Numbers are objects, 
-so thay can have methods like <span class="code"><![CDATA[.sqrt()]]></span> or <span class="code"><![CDATA[.abs()]]></span>. 
-</li><li>
-All operators are just method calls, thus <span class="code"><![CDATA[a + b]]></span> is sugar for <span class="code"><![CDATA[a.#plus(b)]]></span>, 
-and so on. Note how <span class="code"><![CDATA[#plus]]></span> is a ordinary method name.
-Any class that offers the method supports the operator.
-
-</li><li>
-Classes are objects, so when you write <span class="code"><![CDATA[Foo.bar()]]></span> you refer to the method <span class="code"><![CDATA[.bar()]]></span> offered by the object denoted by <span class="code"><![CDATA[Foo]]></span>.
-class objects are just objects, and you can also store them in local bindings if you wish, as in <span class="code"><![CDATA[x=Foo]]></span>
-</li><li>
-The code is an object, but only at the granularity of 
-Libraries; that is, balanced pairs of curly brackets representing classes (or interfaces) with methods and nested libraries.
-This is useful for meta-programming, which we will see later.
-First class meta-programming is the most important feature of 42.
-
-
-</li><li>
-Differently from other pure object oriented languages, in 42
-all objects have the same treatment, both syntactically and semantically.
-For example <span class="code"><![CDATA[x = S"Hello " ++ S"World"]]></span>
-This is a declaration for a local binding <span class="code"><![CDATA[x]]></span>, using the string class <span class="code"><![CDATA[S]]></span> and the method operator <span class="code"><![CDATA[++]]></span>,
-used as string (or in general sequence/collection) concatenation.
-
-Coming from another programming language, you may be surprised that we have to write <span class="code"><![CDATA[S]]></span> before <span class="code"><![CDATA["Hello "]]></span> and <span class="code"><![CDATA["World"]]></span>.
-This extra verbosity is needed to provide fair treatment to all classes. (<a href="note1.xhtml">see more</a>)
-In 42 we do not give preferential treatment
-to special objects/classes. In this sense, we consider
-most other languages to be discriminatory.
-They give priority to their "preferred" version of numbers and strings, and this puts into a position of unfair disadvantage library code trying to define its own kinds of numbers/strings.
-Instead in 42 you may encounter strings like <span class="code"><![CDATA[URL"www.google.com"]]></span> or
- <span class="code"><![CDATA[EMAIL"Arthur.Dent@gmail.com"]]></span>.
-The same for numeric classes: to talk about a street, 20 meters long, you would write
-<span class="code"><![CDATA[streetLength=20Meter]]></span>.
-Note that we write the class name after the number,
-while usually the class name is before.
-42 is a little incoherent in this point, both for better readability and because <span class="code"><![CDATA[Meter20]]></span> would be considered an identifier by the parser.
-You may encounter <span class="code"><![CDATA[Int]]></span>, <span class="code"><![CDATA[UInt]]></span>, <span class="code"><![CDATA[Float]]></span>,<span class="code"><![CDATA[Size]]></span>, <span class="code"><![CDATA[Meter]]></span>, <span class="code"><![CDATA[Kg]]></span>, <span class="code"><![CDATA[Second]]></span>, <span class="code"><![CDATA[Year]]></span>, <span class="code"><![CDATA[PhoneNumber]]></span> and many other numeric classes.
-</li></ul>
-
-</p><h2> A simple language </h2> <p>
-We believe 42 is a simple language,
-where all classes are final and interfaces are the only instrument to obtain subtyping.
-Moreover, 42 does not offer many controversial features usually found in other programming
-languages, including:
-(method) overloading; threading; numeric conversions and coercions;
-casts; var-args; primitive types and automatic (un-)boxing;
-inner classes; arrays; generics; scope-hiding of local variables/bindings, methods and fields;
-closures/lambdas and null.
-
-
-</p></Div>
 
 </p><h2> Now, dig into the tutorial! </h2> <p>
 

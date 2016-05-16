@@ -236,7 +236,7 @@ if Wcode(myData) is already declared one can simply write
 OBCode
 with myData (
   on S Debug(myData)
-  default error WTF"" 
+  default Debug(S"Your data is not a string")
   )
 CCode
 

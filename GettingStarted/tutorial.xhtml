@@ -30,17 +30,17 @@
 <div class="index"><div class="wrapFloat">
 <div class="rotate90 inFloat"> Index of Content</div>
 <ol class="inFloat">
- <li><a href="#Basics"> Basics </a></li>
- <li><a href="#ModifiersIntro"> ModifiersIntro </a></li>
- <li><a href="#BasicClasses"> BasicClasses </a></li>
- <li><a href="#InterfacesAndData"> InterfacesAndData </a></li>
- <li><a href="#ErrorsAndExceptions"> ErrorsAndExceptions </a></li>
- <li><a href="#Sequences"> Sequences </a></li>
+ <li><a href="#Basics"> Basic concepts </a></li>
+ <li><a href="#ModifiersIntro"> Introduction to modifiers </a></li>
+ <li><a href="#BasicClasses"> Basic Classes </a></li>
+ <li><a href="#InterfacesAndData"> Interfaces and Data </a></li>
+ <li><a href="#Sequences"> Collections and Sequences </a></li>
+ <li><a href="#ErrorsAndExceptions"> Errors and Exceptions </a></li>
  <li><a href="#Exercises"> Exercises </a></li>
- <li><a href="#ExamplesOfLibraries"> ExamplesOfLibraries </a></li>
- <li><a href="#MetaprogrammingIntro"> MetaprogrammingIntro </a></li>
- <li><a href="#DeployCode"> DeployCode </a></li>
- <li><a href="#Philosophy"> Philosophy </a></li>
+ <li><a href="#ExamplesOfLibraries"> Examples of libraries </a></li>
+ <li><a href="#MetaprogrammingIntro"> Introduction to Metaprogramming </a></li>
+ <li><a href="#DeployCode"> Deploy code </a></li>
+ <li><a href="#Philosophy"> Guaranties and Philosophy </a></li>
 </ol>
 </div><div class="finishFloat"></div></div>
 
@@ -92,7 +92,8 @@ Let's now declare a method and call it.
 {reuse L42.is/AdamTowel
 MyCode: {
   class method
-  S hello(S nickName){
+  S hello(S nickName){//we can use usual if/while
+    if nickName.isEmpty() (return S"Hello!")
     return S"Hello " ++ nickName
     } 
   }
@@ -185,7 +186,7 @@ syntax or with the <span class="code"><![CDATA[[with _ ( _ use[ _ ]_ )]]]></span
 We will discuss all the variation of <span class="code"><![CDATA[with]]></span> later.
 Note how to express number literal we need to specify their class.
 
-</p><h2> (5/5)Basis Recall </h2> <p>
+</p><h2> (5/5)Basis summary </h2> <p>
 
 <ul><li>
 At the start of your program, import a towel using 
@@ -206,7 +207,7 @@ as in
 </li></ul>
 
 
-</p><h2> Object creation recall </h2> <p>
+</p><h2> Object creation summary </h2> <p>
 42 supports many different syntactic forms that are convenient to create objects: 
 <ul><li>
 12Num:  from a numeric representation
@@ -441,7 +442,7 @@ Debug(dog1.hasArrived())
 Debug(dog2.hasArrived())
 ]]></pre>
 
-</p><h2> (5/5) Recall </h2> <p>
+</p><h2> (5/5) Summary </h2> <p>
   
 </p><h2> Kinds of classes, summary </h2> <p>
   
@@ -754,7 +755,7 @@ with d in Direction.all().vals() (
 Enumerations also come with their customized set and vector type,
 we will see more about that when we discuss collections.
 
-</p><h2> (5/5) Recall </h2> <p>
+</p><h2> (5/5) Summary </h2> <p>
 
 <ul><li>
 Base classes are the basic building block for your program;
@@ -966,6 +967,384 @@ This is much more powerful with respect of traits, multiple inheritance or
 Java 8 default methods, since the implementation can be generated ad hoc
 by examining the class.
  
+ </p><p id="Sequences"> </p><h1> Sequences high level manipulation </h1> <p>
+
+</p><h2> (1/5)Vectors as Sequences </h2> <p>
+
+As we have seen before, vectors can be declared using <span class="code"><![CDATA[Collections.vector(of)]]></span>, as in the example below.
+
+<pre class="l42Big"><![CDATA[
+Nums:Collections.vector(of:Num) //declaration for vectors of nums
+/*..*/
+Nums xs=Nums[10Num;20Num;30Num] //immutable vector
+//note how we declare the type explicitly,
+//the default vector would be mutable.
+]]></pre>
+
+Immutable sequences are created with square brackets
+and can be combined with operators.
+The general idea is that operators 
+<span class="code"><![CDATA[+]]></span> works 
+on one sequences and one element,
+while the corresponding doubled-up operators
+<span class="code"><![CDATA[++]]></span>
+works on two sequences.
+In the details, as you can see in the code below:
+<pre class="l42Big"><![CDATA[
+Nums[a;b;c]+d==Nums[a;b;c;d]
+Nums[a;b]++Nums[c;d]==Nums[a;b;c;d]
+Nums[a;b;b;c] - b==Nums[a;c] //only if elements implements Concepts.Equals
+Nums[a;b;b;c] -- Nums[b;c]==Nums[a] //same for all the operators under
+Nums[a;b;c]>>Nums[a;c] //holds
+Nums[a;b;c]>>=Nums[a;c] //holds
+Nums[a;b]>>=Nums[a;c] //holds
+Nums[a;b]>>Nums[a;c] //not holds
+Nums[a;b]>b //holds
+b<Nums[a;b] //holds
+Nums[a;b]& Nums[b;c] //Nums[b] set intersection
+]]></pre>
+
+In addition of operators, immutable collections can
+be manipulated by the following methods:
+
+<pre class="l42Big"><![CDATA[
+//with replacement
+Nums[a;b;c;d].withLeft(b) //Nums[b;b;c;d]
+Nums[a;b;c;d].withRight() //Nums[a;b;c;b]
+Nums[a;b;c;d].with(2Size,d) //Nums[a;d;c;d]
+
+//appending
+Nums[a;b;c;d].withAlsoLeft(b) //Nums[b;a;b;c;d]
+Nums[a;b;c;d].withAlsoRight() //Nums[a;b;c;d;b]
+Nums[a;b;c;d].withAlso(2Size,b) //Nums[a;b;b;c;d]
+
+//filtering
+Nums[a;b;c;d].without(index:2Size) //Nums[a;b;d]
+Nums[a;b;c;d].withoutLeft() //Nums[b;c;d]
+Nums[a;b;c;d].withoutRight() //Nums[a;b;c]
+
+//filtering, if elements implements Concepts.Equals
+Nums[a;b;c;d].withoutAll(elem:b) //Nums[a;c;d]
+Nums[a;b;c;d].withoutLeft(elem:b) //filter out the leftmost b
+Nums[a;b;c;d].withoutRight(elem:b) //filter out the rightmost b
+]]></pre>
+As you notice, there are three different kind of actions:
+replace an element ((<span class="code"><![CDATA[with]]></span>),
+append an element (<span class="code"><![CDATA[withAlso]]></span>)
+and filtering an element out (<span class="code"><![CDATA[without]]></span>).
+Then, elements can be specified by (<span class="code"><![CDATA[index]]></span>), by being
+the leftmost or the rightmost. To filter elements
+out, you can also just provide the element.
+
+</p><p>
+
+
+Immutable collections (and also mutable ones, as we will see later)
+can be accessed with the following methods:
+
+<pre class="l42Big"><![CDATA[
+//access
+foo.left() //a
+foo.right() //d
+foo.val(2Size) //c
+foo.size() //4Size
+foo.isEmpty() //not holds
+]]></pre>
+
+
+
+
+
+</p><h2> (2/5) Suggested parameter values using "\" </h2> <p>
+
+In 42 is possible to use <span class="code"><![CDATA[\]]></span> while calling a method or using the square brackets,
+to ask the receiver for a suggestion about the parameter values.
+The library designer have full freedom to implement those suggestion in the more opportune way, however we
+recognize three important common patterns:
+</p><p>
+When setting/updating a value, the old value is suggested.
+</p><p>
+When adding a new value, the factory is suggested.
+</p><p>
+When the parameter is a number from zero to a max, the maximum is suggested.
+</p><p>
+For example:
+<pre class="l42Big"><![CDATA[
+Nums[a;b;c;d].withAlso(left:42\) //the \ is Num
+Nums[a;b;c;d].without(index:\ - 1Size) //remove the last (the right-most)
+Nums[a;b;c;d].with(left:\ * 2Num) //the leftmost is now a*2
+
+Points[\(x:12\ y: 0\)]==Points[Point(x:12Num, y:0Num)]
+]]></pre>
+Sometime, using <span class="code"><![CDATA[\]]></span> makes a huge difference,
+for example, for the animal example of before:
+<pre class="l42Big"><![CDATA[
+horse.location(\.with(x:\+20\)
+//is equivalent to the much longer
+horse.location(horse.location().with(
+  x:horse.location().x()+20Num)
+]]></pre>
+
+Is also possible to use <span class="code"><![CDATA[\]]></span> followed by an identifier, that will denote the method
+with the same name on the receiver.
+For example, if we want to reflect a point, and invert x and y coordinate, we can write
+
+<pre class="l42Big"><![CDATA[
+p=point.with(x:\y, y:\x)
+//is equivalent to
+p=point.with(x:point.y(), y:point.x())
+]]></pre>
+
+The <span class="code"><![CDATA[\]]></span> is very convenient also while initializing list/set of enumerated values.
+For example
+
+<pre class="l42Big"><![CDATA[
+Direction=Enumeration"north, east, south, west"
+Direction.Set[\north;\east] //the bitflag corresponding
+//to the set of north and east.
+//is equivalent to the much longer
+Direction.Set[Direction.north();Direction.east()]
+
+p=point.with(x:point.y(), y:point.x())
+]]></pre>
+
+
+
+
+
+
+
+
+</p><h2> (3/5) Mutable sequences </h2> <p>
+
+
+Mutable sequences can be more efficient that 
+immutable ones, and are more general, since they 
+can handled mutable objects.
+The square brackets creates mutable sequences/collections,
+so 
+
+<pre class="l42Big"><![CDATA[
+foo=Nums[a;b;c;d]
+//equivalent to 
+mut Nums foo=Nums[a;b;c;d]
+]]></pre>
+
+
+Now we show some methods over mutable collections, consider each following line independently:
+<pre class="l42Big"><![CDATA[
+//setting a value in a position
+foo(2Size,val:b) //foo.equals(Nums[a;b;b;d])
+//setting at left or right
+foo.left(b) //foo.equals(Nums[b;b;c;d])
+foo.right(b) //foo.equals(Nums[a;b;c;b])
+
+//add a value in a position
+foo.add(2Size,val:b) //foo.equals(Nums[a;b;b;c;d])
+
+//add at left or right
+foo.add(left:b) //foo.equals(Nums[b;a;b;c;d])
+foo.add(right:b) //foo.equals(Nums[a;b;c;d;b])
+
+//removal
+foo.remove(index:2Size) //foo.equals(Nums[a;b;d])
+foo.removeLeft() //foo.equals(Nums[b;c;d])
+foo.removeRight() //foo.equals(Nums[a;b;c])
+
+//removal, if elements implements Concepts.Equals
+foo.removeAll(elem:b) //foo.equals(Nums[a;c;d])
+foo.removeLeft(elem:b) //remove the leftmost b
+foo.removeRight(elem:b) //remove the rightmost b
+]]></pre>
+
+
+
+Mutable collections can become immutable by promotion; for example,
+a method without mutable parameters returning a mutable collection 
+can be used to initialize a mutable one.
+You may need to explicit the type of the local binding to force the promotion.
+For example
+
+<pre class="l42Big"><![CDATA[
+Nums myNums=DoIt.getMutableNums() //ok promotions happens, myNums is immutable
+
+myNums=DoIt.getMutableNums() //myNums type is inferred to be mut Nums
+]]></pre>
+
+Mutable collections can contains mutable objects.
+While this can be useful in special circumstances, it can create aliasing issues similar to the
+ones of the animals example of before.
+To warn against such issues, methods <span class="code"><![CDATA[left()]]></span>, <span class="code"><![CDATA[right()]]></span> and <span class="code"><![CDATA[val(that)]]></span> return 
+readable references of the mutable objects. In order to obtain 
+the actual mutable reference, the user need to use the methods
+<span class="code"><![CDATA[#left()]]></span>, Wcode(`#right()') and Wcode(`#val(that)').
+
+
+
+</p><h2> (4/5) <span class="code"><![CDATA[with]]></span>: a Swiss army knife to encode complex behaviour </h2> <p>
+
+
+There are two basic usage for the <span class="code"><![CDATA[with]]></span> statement: as for-each and as a typecase.
+
+<pre class="l42Big"><![CDATA[
+//as a for each
+vec= Strings[S"foo"; S"bar"; S"beer"]
+var S result=S""
+with myElem in vec.vals() (result:=result++myElem) //like for(myElem:vec){..}
+//result==S"foobarbeer"
+
+//as a typecase
+with myData=foo.bar() ( //like a typecase/switch/chain of instanceof
+  on S  Debug(S"A string "++myData) //print strings
+  on Num  void //do nothing if is a number
+  on Concepts.ToS Debug(myData) //print stringables that are not numbers. 
+  )
+]]></pre>
+
+if <span class="code"><![CDATA[myData]]></span> is already declared one can simply write
+<pre class="l42Big"><![CDATA[
+with myData (
+  on S Debug(myData)
+  default Debug(S"Your data is not a string")
+  )
+]]></pre>
+
+Those two modes can be combined
+<pre class="l42Big"><![CDATA[
+vec= Anys[S"foo"; 12Num; S"beer";]
+var S result=S""
+with myElem in vec.vals() (on S  result:=result++myElem  ) 
+//result==S"foobeer", composed by all strings inside vec
+]]></pre>
+
+<span class="code"><![CDATA[with]]></span> can be used as list comprehension
+<pre class="l42Big"><![CDATA[
+vec=Anys[S"foo"; 12Num; S"beer";]
+v=Strings[with myElem in vec.vals() (on S use[myElem] )] //filter non strings
+//v==Strings[S"foo"; S"beer";]
+]]></pre>
+
+for multiple dispatch:
+
+<pre class="l42Big"><![CDATA[
+method Num m(Shape x, Person y, Vehicle z) //example of method using with
+ with x y z (
+ on Square Student Car (..return ..) //x here is a Square
+ on Circle Person Airplane (..) //x here is a Circle
+ default (..) //default case, here x is just a Shape
+  )}
+]]></pre>
+
+Or to iterate over multiple collections at once
+<pre class="l42Big"><![CDATA[
+rs=Nums[1\;2\;3\;]
+as= Nums[10\;20\;30\;]
+bs= Nums[100\;200\;300\;]
+//here a, b and r iterate over my data
+with a in as.vals(), b in bs.vals(), var r in rs.vals() (r:=r+a+b)
+//now rs==Nums[111\;222\;333\;]
+]]></pre>
+
+While iterating on multiple collections, a dynamic error is usually raised if 
+<span class="code"><![CDATA[rs]]></span>,
+ <span class="code"><![CDATA[as]]></span> and
+ <span class="code"><![CDATA[bs]]></span> have different length.
+This behaviour can be tuned in many way:
+iterators can be parametrized with
+<span class="code"><![CDATA[from:]]></span> , <span class="code"><![CDATA[to:]]></span>, <span class="code"><![CDATA[fill:]]></span> and 
+<span class="code"><![CDATA[stopOk:]]></span> (I need a better name for this last one).
+
+<span class="code"><![CDATA[from:]]></span> and <span class="code"><![CDATA[to:]]></span> are on default zero and the sequence length,
+and can be specified to start from another value, like 1 or 2, and
+to end before the very end.
+
+<span class="code"><![CDATA[fill:]]></span> can be used in combination with 
+<span class="code"><![CDATA[from:]]></span> and <span class="code"><![CDATA[to:]]></span>
+to iterate outside of the sequence range.
+If <span class="code"><![CDATA[fill:]]></span> is used without specifying <span class="code"><![CDATA[to:]]></span>, the
+sequence is considered infinite and iteration may go on forever.
+
+<span class="code"><![CDATA[stopOk:]]></span> is useful when multiple collections are iterated at once,
+and specify the minimal allowed iteration cycles (suggested value is 0).
+Let see some examples:
+<pre class="l42Big"><![CDATA[
+with x in xs.vals(), y in ys.vals(fill:10N)
+//will iterate for as long as xs, even if ys is shorter
+//will stop after xs.size() cycles, and fail if xs.size()<ys.size()
+
+with x in xs.vals(), y in ys.vals(fill:10N stopOk:\)
+//will iterate for as long as xs, even if ys is shorter
+//will stop after xs.size() cycles
+
+with x in xs.vals(stopOk:\), y in ys.vals(stopOk:\)
+//will iterate for as long as both xs and ys have elements
+
+with x in xs.vals(fill:10N), y in ys.vals(fill:10N)
+//will go on forever
+
+with x in xs.vals(stopOk:5N), y in ys.vals(from:1N to: \ - 1N stopOk:3N )
+//will extract at least 5 elements from xs, will skip the first 
+//and the last element of ys and extract at least 2 elements from ys.
+]]></pre>
+
+
+And, in a case similar of before:
+<pre class="l42Big"><![CDATA[
+rs=Nums[1\;2\;3\;]
+as= Nums[10\;20\;30\;40\;50\;]
+bs= Nums[100\;200\;]
+with a in as.vals(stopOk:\), b in bs.vals(fill:300Num), var r in rs.vals() (
+  r:=r+a+b)
+//rs==Nums[111\;222\;333\;]
+]]></pre>
+
+
+</p><h2> Strings interpolation, even better with <span class="code"><![CDATA[with]]></span> </h2> <p>
+
+Alphanumeric classes and strings can be seen as immutable
+sequences of Strings of length 1.
+
+All the operators working on immutable sequences works on strings and alphanumerics.
+
+However, they can not be constructed with square brackets, that is <span class="code"><![CDATA[S[a;b;c]]]></span> does not compile.
+Square brackets can be used to interpolate strings and alphanumerics; as in:
+<pre class="l42Big"><![CDATA[
+S"hello "[name]", have a good day, and do not panic!"
+]]></pre>
+However, also <span class="code"><![CDATA[with]]></span> can be used; this can make code very compact,
+for example assume we want to collect some names and numbers in a string:
+<pre class="l42Big"><![CDATA[
+res=S"your info: "[with name in names.vals(), num in nums.vals()  (
+  use[ S"name:"[name]", num:"[num]""]
+  )]"" //we always need the ending string, even if empty.
+]]></pre>
+In order to put a semicolon between elements in our string, we can use <span class="code"><![CDATA[sep:]]></span>
+<pre class="l42Big"><![CDATA[
+res=S"your info: "[with name in names.vals(), num in nums.vals()  (
+  use[ S"name:"[name]", num:"[num]"", sep:S"; "]
+  )]"" //we always need the ending string, even if empty.
+]]></pre>
+
+
+</p><h2> (5/5) Collections summary </h2> <p>
+
+<ul><li>
+There are a tons of methods and operators to know, but since most code works 
+around collections, it is worth the effort to memorize them.
+</li><li>
+Immutable collections are easy to play with, using operators and with methods.
+</li><li>
+Mutable collections can be more efficient and flexible, but they come with additional
+difficulties.
+</li><li>
+Most methods have a general version that works with an index, and specialized <span class="code"><![CDATA[left]]></span> and
+<span class="code"><![CDATA[right]]></span> variants.
+</li><li>
+<span class="code"><![CDATA[/]]></span> can help remove a lot of boilerplate, but is not trivial to get used to it.
+</li><li>
+<span class="code"><![CDATA[with]]></span> is very useful and flexible. It is common to find methods composed be just a large
+<span class="code"><![CDATA[with]]></span> statement plus a little pre and post processing around it.
+</li></ul>
  </p><p id="ErrorsAndExceptions"> </p><h1> Errors and Exceptions: Messages in AdamTowel </h1> <p>
 
 </p><h2> (1/5)Errors, Messages, Asserts, Guards, .. so much terminology </h2> <p> 
@@ -1246,384 +1625,6 @@ but often is not possible or is not convenient.
 Good 42 code can be composed for half of
 its content of just error/exception handling/lifting and management.
 Do not be scared of turning your code in it's own policemen.
-</li></ul>
- </p><p id="Sequences"> </p><h1> Sequences high level manipulation </h1> <p>
-
-</p><h2> (1/5)Vectors as Sequences </h2> <p>
-
-As we have seen before, vectors can be declared using <span class="code"><![CDATA[Collections.vector(of)]]></span>, as in the example below.
-
-<pre class="l42Big"><![CDATA[
-Nums:Collections.vector(of:Num) //declaration for vectors of nums
-/*..*/
-Nums xs=Nums[10Num;20Num;30Num] //immutable vector
-//note how we declare the type explicitly,
-//the default vector would be mutable.
-]]></pre>
-
-Immutable sequences are created with square brackets
-and can be combined with operators.
-The general idea is that operators 
-<span class="code"><![CDATA[+]]></span> works 
-on one sequences and one element,
-while the corresponding doubled-up operators
-<span class="code"><![CDATA[++]]></span>
-works on two sequences.
-In the details, as you can see in the code below:
-<pre class="l42Big"><![CDATA[
-Nums[a;b;c]+d==Nums[a;b;c;d]
-Nums[a;b]++Nums[c;d]==Nums[a;b;c;d]
-Nums[a;b;b;c] - b==Nums[a;c] //only if elements implements Concepts.Equals
-Nums[a;b;b;c] -- Nums[b;c]==Nums[a] //same for all the operators under
-Nums[a;b;c]>>Nums[a;c] //holds
-Nums[a;b;c]>>=Nums[a;c] //holds
-Nums[a;b]>>=Nums[a;c] //holds
-Nums[a;b]>>Nums[a;c] //not holds
-Nums[a;b]>b //holds
-b<Nums[a;b] //holds
-Nums[a;b]& Nums[b;c] //Nums[b] set intersection
-]]></pre>
-
-In addition of operators, immutable collections can
-be manipulated by the following methods:
-
-<pre class="l42Big"><![CDATA[
-//with replacement
-Nums[a;b;c;d].withLeft(b) //Nums[b;b;c;d]
-Nums[a;b;c;d].withRight() //Nums[a;b;c;b]
-Nums[a;b;c;d].with(2Size,d) //Nums[a;d;c;d]
-
-//appending
-Nums[a;b;c;d].withAlsoLeft(b) //Nums[b;a;b;c;d]
-Nums[a;b;c;d].withAlsoRight() //Nums[a;b;c;d;b]
-Nums[a;b;c;d].withAlso(2Size,b) //Nums[a;b;b;c;d]
-
-//filtering
-Nums[a;b;c;d].without(index:2Size) //Nums[a;b;d]
-Nums[a;b;c;d].withoutLeft() //Nums[b;c;d]
-Nums[a;b;c;d].withoutRight() //Nums[a;b;c]
-
-//filtering, if elements implements Concepts.Equals
-Nums[a;b;c;d].withoutAll(elem:b) //Nums[a;c;d]
-Nums[a;b;c;d].withoutLeft(elem:b) //filter out the leftmost b
-Nums[a;b;c;d].withoutRight(elem:b) //filter out the rightmost b
-]]></pre>
-As you notice, there are three different kind of actions:
-replace an element ((<span class="code"><![CDATA[with]]></span>),
-append an element (<span class="code"><![CDATA[withAlso]]></span>)
-and filtering an element out (<span class="code"><![CDATA[without]]></span>).
-Then, elements can be specified by (<span class="code"><![CDATA[index]]></span>), by being
-the leftmost or the rightmost. To filter elements
-out, you can also just provide the element.
-
-</p><p>
-
-
-Immutable collections (and also mutable ones, as we will see later)
-can be accessed with the following methods:
-
-<pre class="l42Big"><![CDATA[
-//access
-foo.left() //a
-foo.right() //d
-foo.val(2Size) //c
-foo.size() //4Size
-foo.isEmpty() //not holds
-]]></pre>
-
-
-
-
-
-</p><h2> (2/5) Suggested parameter values using "\" </h2> <p>
-
-In 42 is possible to use <span class="code"><![CDATA[\]]></span> while calling a method or using the square brackets,
-to ask the receiver for a suggestion about the parameter values.
-The library designer have full freedom to implement those suggestion in the more opportune way, however we
-recognize three important common patterns:
-</p><p>
-When setting/updating a value, the old value is suggested.
-</p><p>
-When adding a new value, the factory is suggested.
-</p><p>
-When the parameter is a number from zero to a max, the maximum is suggested.
-</p><p>
-For example:
-<pre class="l42Big"><![CDATA[
-Nums[a;b;c;d].withAlso(left:42\) //the \ is Num
-Nums[a;b;c;d].without(index:\ - 1Size) //remove the last (the right-most)
-Nums[a;b;c;d].with(left:\ * 2Num) //the leftmost is now a*2
-
-Points[\(x:12\ y: 0\)]==Points[Point(x:12Num, y:0Num)]
-]]></pre>
-Sometime, using <span class="code"><![CDATA[\]]></span> makes a huge difference,
-for example, for the animal example of before:
-<pre class="l42Big"><![CDATA[
-horse.location(\.with(x:\+20\)
-//is equivalent to the much longer
-horse.location(horse.location().with(
-  x:horse.location().x()+20Num)
-]]></pre>
-
-Is also possible to use <span class="code"><![CDATA[\]]></span> followed by an identifier, that will denote the method
-with the same name on the receiver.
-For example, if we want to reflect a point, and invert x and y coordinate, we can write
-
-<pre class="l42Big"><![CDATA[
-p=point.with(x:\y, y:\x)
-//is equivalent to
-p=point.with(x:point.y(), y:point.x())
-]]></pre>
-
-The <span class="code"><![CDATA[\]]></span> is very convenient also while initializing list/set of enumerated values.
-For example
-
-<pre class="l42Big"><![CDATA[
-Direction=Enumeration"north, east, south, west"
-Direction.Set[\north;\east] //the bitflag corresponding
-//to the set of north and east.
-//is equivalent to the much longer
-Direction.Set[Direction.north();Direction.east()]
-
-p=point.with(x:point.y(), y:point.x())
-]]></pre>
-
-
-
-
-
-
-
-
-</p><h2> (3/5) Mutable sequences </h2> <p>
-
-
-Mutable sequences can be more efficient that 
-immutable ones, and are more general, since they 
-can handled mutable objects.
-The square brackets creates mutable sequences/collections,
-so 
-
-<pre class="l42Big"><![CDATA[
-foo=Nums[a;b;c;d]
-//equivalent to 
-mut Nums foo=Nums[a;b;c;d]
-]]></pre>
-
-
-Now we show some methods over mutable collections, consider each following line independently:
-<pre class="l42Big"><![CDATA[
-//setting a value in a position
-foo(2Size,val:b) //foo.equals(Nums[a;b;b;d])
-//setting at left or right
-foo.left(b) //foo.equals(Nums[b;b;c;d])
-foo.right(b) //foo.equals(Nums[a;b;c;b])
-
-//add a value in a position
-foo.add(2Size,val:b) //foo.equals(Nums[a;b;b;c;d])
-
-//add at left or right
-foo.add(left:b) //foo.equals(Nums[b;a;b;c;d])
-foo.add(right:b) //foo.equals(Nums[a;b;c;d;b])
-
-//removal
-foo.remove(index:2Size) //foo.equals(Nums[a;b;d])
-foo.removeLeft() //foo.equals(Nums[b;c;d])
-foo.removeRight() //foo.equals(Nums[a;b;c])
-
-//removal, if elements implements Concepts.Equals
-foo.removeAll(elem:b) //foo.equals(Nums[a;c;d])
-foo.removeLeft(elem:b) //remove the leftmost b
-foo.removeRight(elem:b) //remove the rightmost b
-]]></pre>
-
-
-
-Mutable collections can become immutable by promotion; for example,
-a method without mutable parameters returning a mutable collection 
-can be used to initialize a mutable one.
-You may need to explicit the type of the local binding to force the promotion.
-For example
-
-<pre class="l42Big"><![CDATA[
-Nums myNums=DoIt.getMutableNums() //ok promotions happens, myNums is immutable
-
-myNums=DoIt.getMutableNums() //myNums type is inferred to be mut Nums
-]]></pre>
-
-Mutable collections can contains mutable objects.
-While this can be useful in special circumstances, it can create aliasing issues similar to the
-ones of the animals example of before.
-To warn against such issues, methods <span class="code"><![CDATA[left()]]></span>, <span class="code"><![CDATA[right()]]></span> and <span class="code"><![CDATA[val(that)]]></span> return 
-readable references of the mutable objects. In order to obtain 
-the actual mutable reference, the user need to use the methods
-<span class="code"><![CDATA[#left()]]></span>, Wcode(`#right()') and Wcode(`#val(that)').
-
-
-
-</p><h2> (4/5) <span class="code"><![CDATA[with]]></span>: a Swiss army knife to encode complex behaviour </h2> <p>
-
-
-There are two basic usage for the <span class="code"><![CDATA[with]]></span> statement: as for-each and as a typecase.
-
-<pre class="l42Big"><![CDATA[
-//as a for each
-vec= Strings[S"foo"; S"bar"; S"beer"]
-var S result=S""
-with myElem in vec.vals() (result:=result++myElem) //like for(myElem:vec){..}
-//result==S"foobarbeer"
-
-//as a typecase
-with myData=foo.bar() ( //like a typecase/switch/chain of instanceof
-  on S  Debug(S"A string "++myData) //print strings
-  on Num  void //do nothing if is a number
-  on Concepts.ToS Debug(myData) //print stringables that are not numbers. 
-  )
-]]></pre>
-
-if <span class="code"><![CDATA[myData]]></span> is already declared one can simply write
-<pre class="l42Big"><![CDATA[
-with myData (
-  on S Debug(myData)
-  default error WTF"" 
-  )
-]]></pre>
-
-Those two modes can be combined
-<pre class="l42Big"><![CDATA[
-vec= Anys[S"foo"; 12Num; S"beer";]
-var S result=S""
-with myElem in vec.vals() (on S  result:=result++myElem  ) 
-//result==S"foobeer", composed by all strings inside vec
-]]></pre>
-
-<span class="code"><![CDATA[with]]></span> can be used as list comprehension
-<pre class="l42Big"><![CDATA[
-vec=Anys[S"foo"; 12Num; S"beer";]
-v=Strings[with myElem in vec.vals() (on S use[myElem] )] //filter non strings
-//v==Strings[S"foo"; S"beer";]
-]]></pre>
-
-for multiple dispatch:
-
-<pre class="l42Big"><![CDATA[
-method Num m(Shape x, Person y, Vehicle z) //example of method using with
- with x y z (
- on Square Student Car (..return ..) //x here is a Square
- on Circle Person Airplane (..) //x here is a Circle
- default (..) //default case, here x is just a Shape
-  )}
-]]></pre>
-
-Or to iterate over multiple collections at once
-<pre class="l42Big"><![CDATA[
-rs=Nums[1\;2\;3\;]
-as= Nums[10\;20\;30\;]
-bs= Nums[100\;200\;300\;]
-//here a, b and r iterate over my data
-with a in as.vals(), b in bs.vals(), var r in rs.vals() (r:=r+a+b)
-//now rs==Nums[111\;222\;333\;]
-]]></pre>
-
-While iterating on multiple collections, a dynamic error is usually raised if 
-<span class="code"><![CDATA[rs]]></span>,
- <span class="code"><![CDATA[as]]></span> and
- <span class="code"><![CDATA[bs]]></span> have different length.
-This behaviour can be tuned in many way:
-iterators can be parametrized with
-<span class="code"><![CDATA[from:]]></span> , <span class="code"><![CDATA[to:]]></span>, <span class="code"><![CDATA[fill:]]></span> and 
-<span class="code"><![CDATA[stopOk:]]></span> (I need a better name for this last one).
-
-<span class="code"><![CDATA[from:]]></span> and <span class="code"><![CDATA[to:]]></span> are on default zero and the sequence length,
-and can be specified to start from another value, like 1 or 2, and
-to end before the very end.
-
-<span class="code"><![CDATA[fill:]]></span> can be used in combination with 
-<span class="code"><![CDATA[from:]]></span> and <span class="code"><![CDATA[to:]]></span>
-to iterate outside of the sequence range.
-If <span class="code"><![CDATA[fill:]]></span> is used without specifying <span class="code"><![CDATA[to:]]></span>, the
-sequence is considered infinite and iteration may go on forever.
-
-<span class="code"><![CDATA[stopOk:]]></span> is useful when multiple collections are iterated at once,
-and specify the minimal allowed iteration cycles (suggested value is 0).
-Let see some examples:
-<pre class="l42Big"><![CDATA[
-with x in xs.vals(), y in ys.vals(fill:10N)
-//will iterate for as long as xs, even if ys is shorter
-//will stop after xs.size() cycles, and fail if xs.size()<ys.size()
-
-with x in xs.vals(), y in ys.vals(fill:10N stopOk:\)
-//will iterate for as long as xs, even if ys is shorter
-//will stop after xs.size() cycles
-
-with x in xs.vals(stopOk:\), y in ys.vals(stopOk:\)
-//will iterate for as long as both xs and ys have elements
-
-with x in xs.vals(fill:10N), y in ys.vals(fill:10N)
-//will go on forever
-
-with x in xs.vals(stopOk:5N), y in ys.vals(from:1N to: \ - 1N stopOk:3N )
-//will extract at least 5 elements from xs, will skip the first 
-//and the last element of ys and extract at least 2 elements from ys.
-]]></pre>
-
-
-And, in a case similar of before:
-<pre class="l42Big"><![CDATA[
-rs=Nums[1\;2\;3\;]
-as= Nums[10\;20\;30\;40\;50\;]
-bs= Nums[100\;200\;]
-with a in as.vals(stopOk:\), b in bs.vals(fill:300Num), var r in rs.vals() (
-  r:=r+a+b)
-//rs==Nums[111\;222\;333\;]
-]]></pre>
-
-
-</p><h2> Strings interpolation, even better with <span class="code"><![CDATA[with]]></span> </h2> <p>
-
-Alphanumeric classes and strings can be seen as immutable
-sequences of Strings of length 1.
-
-All the operators working on immutable sequences works on strings and alphanumerics.
-
-However, they can not be constructed with square brackets, that is <span class="code"><![CDATA[S[a;b;c]]]></span> does not compile.
-Square brackets can be used to interpolate strings and alphanumerics; as in:
-<pre class="l42Big"><![CDATA[
-S"hello "[name]", have a good day, and do not panic!"
-]]></pre>
-However, also <span class="code"><![CDATA[with]]></span> can be used; this can make code very compact,
-for example assume we want to collect some names and numbers in a string:
-<pre class="l42Big"><![CDATA[
-res=S"your info: "[with name in names.vals(), num in nums.vals()  (
-  use[ S"name:"[name]", num:"[num]""]
-  )]"" //we always need the ending string, even if empty.
-]]></pre>
-In order to put a semicolon between elements in our string, we can use <span class="code"><![CDATA[sep:]]></span>
-<pre class="l42Big"><![CDATA[
-res=S"your info: "[with name in names.vals(), num in nums.vals()  (
-  use[ S"name:"[name]", num:"[num]"", sep:S"; "]
-  )]"" //we always need the ending string, even if empty.
-]]></pre>
-
-
-</p><h2> (5/5) Collections summary </h2> <p>
-
-<ul><li>
-There are a tons of methods and operators to know, but since most code works 
-around collections, it is worth the effort to memorize them.
-</li><li>
-Immutable collections are easy to play with, using operators and with methods.
-</li><li>
-Mutable collections can be more efficient and flexible, but they come with additional
-difficulties.
-</li><li>
-Most methods have a general version that works with an index, and specialized <span class="code"><![CDATA[left]]></span> and
-<span class="code"><![CDATA[right]]></span> variants.
-</li><li>
-<span class="code"><![CDATA[/]]></span> can help remove a lot of boilerplate, but is not trivial to get used to it.
-</li><li>
-<span class="code"><![CDATA[with]]></span> is very useful and flexible. It is common to find methods composed be just a large
-<span class="code"><![CDATA[with]]></span> statement plus a little pre and post processing around it.
 </li></ul>
  </p><p id="Exercises"> </p><h1> Exercises </h1> <p>
 
@@ -2752,7 +2753,7 @@ e se vuoi puoi anche salvarlo su un binding locale,
 tipo x=MyCode  x.hello(...)
 -->
 
- </p><p id="Philosophy"> </p><h1> Certainties and Philosophy </h1> <p>
+ </p><p id="Philosophy"> </p><h1> Guarantees and Philosophy </h1> <p>
 
 </p><h2> (1/5)Language invariants </h2> <p>
 42 guarantee a set of language invariants: properties that are always true
@@ -2978,10 +2979,11 @@ element, and the option of no element will be produced in case of an empty list.
 This is not great, certain conditions can not be expressed in the type system,
 some other conditions could be expressed but it would be too cumbersome,
 and they prefer to code in some way that dodge the problem.
-In our vision, the purpose of the type system is to help making the adhere to
+In our vision, the purpose of the type system is to help making the program adhere to
 its intended behaviour or break fast.
 We do not want to bend our intended behaviour so that code never breaks by construction;
 such code can still behave unexpectedly (with respect to the original intended behaviour).
+
 
 
 
@@ -3001,6 +3003,8 @@ of 42, you can now read, in any order,
 42 Core language design, for programming language experts
 </li><li>
 42 syntactic sugar, detailed explanations
+</li><li>
+42 type system, exact rules for promotions and usage of fwd types
 </li><li>
 42 metaprogramming guide and how there is no state
 </li><li>

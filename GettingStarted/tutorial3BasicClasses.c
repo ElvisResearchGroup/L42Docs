@@ -230,7 +230,7 @@ CCode
 Enumerations also come with their customized set and vector type,
 we will see more about that when we discuss collections.
 
-WTitle((5/5) Recall)
+WTitle((5/5) Summary)
 
 <ul><li>
 Base classes are the basic building block for your program;

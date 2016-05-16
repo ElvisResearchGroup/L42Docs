@@ -4,13 +4,16 @@ WTitle(`First, read in any order those introductions')
 <Button class='button' type='button' onclick='selectDiv("a");'>
 Why 42
 </Button>
-<Button class='button' type='button' onclick='selectDiv("b");'>
-Learn by examples
-</Button>
 
 <Button class='button' type='button' onclick='selectDiv("c");'>
 Pure OO
 </Button>
+
+
+<Button class='button' type='button' onclick='selectDiv("b");'>
+Learn through examples
+</Button>
+
 
 <Button class='button' type='button' onclick='showAll(allDivs);'>
 Show all content
@@ -43,8 +46,6 @@ WP
 42 offers (well, will offer) automatic parallelism: thanks to immutability and aliasing control, many patterns of normal sequential code will be safely executed in parallel.
 
 </p></Div>
-
-m4_include(`syntaxCompare.h')m4_dnl
 
 
 <Div id="c"><p>
@@ -105,6 +106,8 @@ closures/lambdas and null.
 
 
 </p></Div>
+
+m4_include(`syntaxCompare.h')m4_dnl
 
 WTitle(`Now, dig into the tutorial!')
 

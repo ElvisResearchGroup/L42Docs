@@ -1,5 +1,5 @@
 <Div id="b"><p>
-WTitle(Learn by examples)
+WTitle(Learn through examples)
 If you like to learn by examples, 
 here you can find snippets of code in 42 and their equivalent version in Java.
 We format the code so that, line by line, you can see the differences.
@@ -213,7 +213,7 @@ OCode
 if a>b (return /*...*/)
 var S acc=S""  //explicit 'var': can be updated
 while Bool.true() ( //booleans are not constants
-  if acc.size()>50Size ( //Size: type of sequence indexes 
+  if acc.size()>50Size ( //Size: type of indexes 
     exception void //like java break, rarely used in 42
     )
   acc++=S"step"
@@ -248,8 +248,7 @@ names=Strings[S"Fred";S"Mary";S"Mark"]
 Years:Collection.vector(of:Year) //we need to declare it
 
 ages=Years[20Year;23Year;22Year]
-agesShort=Years[20\;23\;22\] //the symbol \ is a shortcut
-//Years resolve it as 'Year' since Years contains 'Year'
+
 
 with n in names.vals() ( //like a for each
   Debug(n)
@@ -263,9 +262,9 @@ with n in names.vals(), a in ages.vals() (
 Persons:Collection.vector(of:Person)
 
 friends=Persons[
-  Person(name:S"Fred", age:20Year); //long version
+  Person(name:S"Fred", age:20Year);
   Person(name:S"Mary", age:23Year);
-  \(name:\"Mark", age:22\); //short version
+  Person(name:S"Mark", age:22Year);
   ]
 
 moreFriends=Persons[
@@ -288,7 +287,6 @@ List<String> names=new ArrayList<>(Arrays.asList(
 
 List<Integer> ages=new ArrayList<>(Arrays.asList(
   20,23,22));
-
 
 for(String n :names){
   System.out.println(n);
