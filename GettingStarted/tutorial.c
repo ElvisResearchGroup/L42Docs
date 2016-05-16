@@ -12,6 +12,7 @@ WMenuItem(`#Exercises',`Exercises')
 WMenuItem(`#ExamplesOfLibraries',`ExamplesOfLibraries')
 WMenuItem(`#MetaprogrammingIntro',`MetaprogrammingIntro')
 WMenuItem(`#DeployCode',`DeployCode')
+WMenuItem(`#Philosophy',`Philosophy')
 </ol>
 CFloat
 
@@ -25,4 +26,5 @@ WChapter(`Exercises',`tutorial7Exercises.c')
 WChapter(`ExamplesOfLibraries',`tutorial8ExamplesOfLibraries.c')
 WChapter(`MetaprogrammingIntro',`tutorial9MetaprogrammingIntro.c')
 WChapter(`DeployCode',`tutorial10DeployCode.c')
+WChapter(`Philosophy',`tutorial11Philosophy.c')
 m4_include(`footer.h')
