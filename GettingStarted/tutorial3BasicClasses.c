@@ -1,11 +1,11 @@
-WBigTitle(Base)
+WBigTitle(Basic classes)
 
-An immutable class is WEmph{base/basic}
+An immutable class is WEmph(base/basic)
 if is logically not composed by other elements,
 and can be instantiated by a single operations that takes no parameters.
 For examples numbers and strings are basics, while
-collections are not: you need to provide the elements and they are logically
-composed by their elements.
+a collections is not: you need to provide the elements and the collection is logically
+composed by its elements.
 In the examples of before, Wcode(Point) and 
 Wcode(Animal) are not basic, since they are logically composed by their fields.
 
@@ -21,14 +21,14 @@ little=123Num
 stillLittle=4567890Num
 big=100000000000000000Num
 bigger=100000000000000000.0001Num
-fraction=Num"123/4567890"
-hold= fraction == little/stillLittle
+fraction=Num"1234567/890"
+fraction == little/stillLittle //holds
 Debug(fraction)
 Debug(Num"12/4") //will print "3"
 CCode
 
 Another useful numeric type is Wcode(Size).
-It represents sizes and indexes in sequences.
+It corresponds to sizes and indexes in sequences.
 Wcode(Size)s are returned by Wcode(size()) methods
 and are expected as parameter by indexing methods.
 Wcode(Size) represent 32 bit numbers with the usual 
@@ -119,13 +119,14 @@ Wcode(Units) supports composite units:
 OBCode
 Speed:Units.of(Meter per:Second)
 fast1=Speed(42Meter per:0.1Second)
-fast2=Speed"42/0.1"
-distance1=fast1.per(60Second)
+fast2=Speed"420"//equivalent ways to initialize it
+fast3=Speed"840/2"
+distance1=fast1.right(left:60Second)
 
 Acc:Units.of(Speed per:Second)
 g=Acc"9.8"
-speedAfter=g.per(10Second)//98 m/s
-distance2=speedAfter.per(10Second)/2Num //490 m after 10s free fall
+speedAfter=g.right(left:10Second)//98 m/s
+distance2=speedAfter.right(left:10Second)/2Num //490 m after 10s free fall
 
 Kg:Units.of(Num)
 Newton:Units.of(Kg and:Acc)//Kg*m/s2
@@ -133,13 +134,14 @@ myRoket=900Newton
 gForceOnMe=Newton(78Kg and:g)//little less than 780
 myLift=myRoket-gForceOnMe
 if myLift>0Newton (Debug(S"I can fly"))
-myAcc=myLift.div1(78Kg)//get second component
-reachedHeight=myAcc.per(10Second).per(10Second)/2Num //after 10 sec
+myAcc=myLift.right(left:78Kg)//get second component
+reachedHeight=myAcc.right(left:10Second).right(left:10Second)/2Num //after 10 sec
 CCode
-Note how we can use Wcode(.per()),
- Wcode(.div1()) 
- and Wcode(.div2()) to extract the first or the second component
- in a composed unit.
+Note how in a cmposite unit we can use Wcode(right(left)) and
+ Wcode(left(right)) 
+ to extract the right component providing a value 
+for the left one, or we can extract the left component providing a value for the right one.
+ 
 WP
 We can also declare aliasing units:
 
@@ -159,7 +161,7 @@ WTitle((3/5) Alphanumeric)
 In the same way Wcode(Units) allows easy creation of
 arithmetic classes,
 Wcode(Alphanumeric) allows easy creation of alphanumeric classes:
-classes that can be istantiated from a string literal that follow certain 
+classes that can be instantiated from a string literal that follow certain 
 properties.
 
 
@@ -170,19 +172,17 @@ Email:Alphanumeric<<{//not supported yet
   class method
   This parse(S that) {
     index=that.indexOf(S"@")//works only for simple emails
-    if index==-1 (error this.parseError(S"@ not found"))
+    if index.positive() (error Alphanumeric.ParseError"@ not found")
     local=that(end:index)//string slicing
-    domain=that(start:index+1/ )//string slicing
+    domain=that(start:index+1Size )//string slicing
     if domain.contains(S"@") (error this.parseError(S"multiple @ found"))
     return This(that,local:local,domain:domain)
     }//call the factory with fields plus the original string
 }
 myEmail=Email"arthur.dent@gmail.com"
-Assert.$[// assertions check the truth of some statementes
-  myEmail.local() expected:S"arthur.dent";
-  myEmail.domain() expected:S"gmail.com";
-  myEmail.toS() expected:S"arthur.dent@gmail.com";
-  ]
+myEmail.local() ==S"arthur.dent" //holds
+myEmail.domain() ==S"gmail.com" //holds
+myEmail.toS() =="arthur.dent@gmail.com" //holds
 CCode
 
 Note how we can raise an error if the string does not have the shape we expected.
@@ -193,14 +193,15 @@ it is not mandatory, for example you could apply some form of normalization, as 
 
 OBCode
 Email:Alphanumeric<<{/*..*/
-  This parse(S that) {/*..google ignore dots anyway..*/
+  This parse(S that) {//google ignore dots anyway
+    /*..*/
     local=that(end:index).replaceAll(S"." with:S"")
     /*..*/
-    return This(local++S"@"+domain,local:local,domain:domain)
+    return This(local++S"@"++domain,local:local,domain:domain)
     } 
   }
 myEmail=Email"arthur.dent@gmail.com"
-Assert.$[myEmail.toS() expected:S"arthurdent@gmail.com"]
+myEmail.toS() ==S"arthurdent@gmail.com" //holds
 CCode
 
 
@@ -220,30 +221,30 @@ else if n.isEast() (/*..*/)
 
 Debug(n)//prints north
 
-e=Direction.fromS(S"east")
+e=Direction.from(base:S"east")
 
 with d in Direction.all().vals() (
   Debug(d)//prints all the directions in order.
   )
 
 CCode
-Enumerations also come with their customized set and vector type,
+Enumerations also come with their customized set (nested) class,
 we will see more about that when we discuss collections.
 
 WTitle((5/5) Summary)
 
 <ul><li>
-Base classes are the basic building block for your program;
+Base classes are the minimal building block for your program;
 be sure to declare all the right base classes to establish a convenient vocabulary
 to talk about your problem domain.
 </li><li>
 Use Wcode(Num) as your first guess for numeric types,
-if you have special needs, can consider loading a numeric library.
+if you have special needs, consider loading a numeric library.
 </li><li>
 Use Wcode(Size) for indexing linear datastructures like vectors and strings.
 Beware of the tricky modulo arithmetic.
 </li><li>
 Use Wcode(Units) 
 and Wcode(Alphanumeric) to give meaning to your constants.
-In this way the type system will help you to use values with the semantic you decided.
+In this way, the type system will help you to use values with the semantics you decided.
 </li></ul>
