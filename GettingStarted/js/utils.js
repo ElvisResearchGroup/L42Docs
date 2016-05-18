@@ -25,6 +25,12 @@ function doOnLoad(){
       mode:"ace/mode/java",
       theme:"ace/theme/github"
       });
+  setAllAs("html",{
+      fontSize:"115%",
+      maxLines:3000,
+      mode:"ace/mode/html",
+      theme:"ace/theme/github"
+      });
   }
 function setAllAs(className,options){
   var list = document.getElementsByClassName(className);

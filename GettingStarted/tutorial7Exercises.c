@@ -5,11 +5,11 @@ just declaring
 elemental classes, collections
 and simple Data classes.
 
-Let's see some exercses and solutions 
+Let's see some exercises and solutions 
 to understand better how 42 code looks like
 
 WTitle((1/5) Max method)
-write a class method max returning the max from a list of numbers
+Write a class method Wcode(max) returning the max from a list of numbers
 WP
 Solution:
 OBCode
@@ -25,7 +25,7 @@ Num max(Nums that) {
   //there is no such thing like a minimum number,
   //we need to select one element from the list.
   with n in that.vals() (
-    //we could write that.withoutLeft().vals()
+    //we could write 'that.withoutLeft().vals()'
     //to avoid cheching on the first again
     if maxCandidate<n (maxCandidate:=n)
     //update the variable to keep track of the max so far.
@@ -35,22 +35,23 @@ Num max(Nums that) {
 CCode
 
 WTitle((2/5) Merge two lists of strings)
-Write a class method map producing a string from to lists of stirngs of the same lenght.
+Write a class method map producing a string from to lists of strings of the same length.
  For example
 Wcode(`map(keys:Strings[S"a";S"b";S"c"],vals:Strings[S"z";S"y";S"z"])')
 should produce Wcode(`S"[a->z, b->y, c->z]"')
-
+WP
 Solution:
 OBCode
 UnequalSize:Message.$<<{implements Guard}
 class method
-S map(Strings keys, Strings values) (
-  if keys.size() != values.size() (error UnequalSize"keys="[keys.size()]", values="[values.size()]"" )
-  S"["[with k in keys.vals(), v in values.vals() (
+S map(Strings keys, Strings values) {
+  if keys.size() != values.size() (error UnequalSize
+    "keys="[keys.size()]", values="[values.size()]"" )
+  //the former formatting allows us to keep a whole line for the error message
+  return S"["[with k in keys.vals(), v in values.vals() (
     use[k++S"->"++v, sep:S", "]
     )]"]"
-  //no need to use return, the result is the last element in round brakets
-  )
+  }
 CCode
 
 WTitle((3/5) Filtering)
@@ -58,29 +59,31 @@ Write a Wcode(`class method Strings upTo(Strings that, Size size)') that filters
 than size.
 For example 
 Wcode(`upTo(Strings[S"a";S"ab";S"abc"],size:2Size)==Strings[S"a";S"ab"]')
+WP
 Precondition: size is not negative
+WP
 Solution:
 OBCode
 class method
-Strings upTo(Strings that, Size size) (
+Strings upTo(Strings that, Size size) (//no need of '{..return..}' for simple methods
   Assert.Pre[size>=0Size]
-  Strings[with s in that.vals() (
-    if s.size()<=size (use[s])
-    )]
+  Strings[with s in that.vals() (  if s.size()<=size (use[s]) )]
   )
 CCode
 
 WTitle((4/5) Random mole)
-For a longer example, represent a piece of land as a 80*80 bidimensional vector,
+For a longer example, represent a piece of land as a 80*80 bi-dimensional vector,
 where every cell can be full of dirt (90%) or rock (10%).
 Then a mole start from the left top corner and attempts to
-digs throught dirt randomly.
+digs through dirt randomly.
 After 100 steps the mole stops.
 declare the opportune classes and write a randomDig
-method. You can use the library Wcode(L42.is/Random)
+method. 
+WP
+You can use the library Wcode(L42.is/Random)
 for randomness. You can use Wcode(Range(stop)) to iterate over
 all (Wcode(Size)) nubers from 0 to Wcode(stop)-1 included.
-
+WP
 A possible solution:
 OBCode
 Random:Load<<{reuse L42.is/Random}
@@ -90,7 +93,8 @@ Cell:Enumeration"dirt, rock, empty, mole"
 Direction:Enumeration"up, down, left, right"
 
 Point:Data<<{implements Concept.Invariant
-  Size x,Size y
+  Size x, Size y
+
   method invariant()
     x>=0Size & x<80Size & y>=0Size & y<80Size
   This go(Direction that) {
@@ -99,12 +103,13 @@ Point:Data<<{implements Concept.Invariant
     if that.isLeft() (return this.with(y:\-1Size))
     Assert.Bug[that.isRight()]
     return this.with(y:\+1Size)
-    catch error Concept.Invariant.Failure err
-      return this
+    catch error Concept.Invariant.Failure err  (return this)
     }
   }
 
-Land:Data<<{(mut Cell.List cells)
+Land:Data<<{//we may want to put the field and the predefined factory private;
+  //we will learn how to do that later.
+  mut Cell.List cells
   
   class method
   mut This ()
@@ -117,17 +122,16 @@ Land:Data<<{(mut Cell.List cells)
 
   mut method
   Void randomDig() (
-    dirs=Directions.List.all()
     var Point current=Point(x:0Size,y:0Size)
     with i in Range(stop:100Size) (
       this.set(current,val:Cell.empty())
-      d=dirs.val(Random(4Size))
+      d=Direction.from(index:Random(4Size)
       newPoint=current.go(d)
       if !this.get(d).isRock() (//no digging in rock
         current:=newPoint
         )
       )
-    this.set(current,val:Cell.mole())
+    this.set(current,val:Cell.mole())//finally, the mole is where we ends up
     )
   
   //implementation of the matrix as an example,
@@ -140,8 +144,7 @@ Land:Data<<{(mut Cell.List cells)
   Cell get(Point that)
     this.#cells().val(that.y()*80Size+that.x())    
   
-  toS()(//since we define it explicitly, Data will leave it alone :)
-    S""[with x in Range(stop:80Size)
+  toS() S""[with x in Range(stop:80Size) (
       use[S.nl()]//newline
       with y in Range(stop:80Size) (
         p=Point(x:x,y:y)
@@ -149,7 +152,8 @@ Land:Data<<{(mut Cell.List cells)
         else if this.get(p).isDirt() (use[S"%"])
         else if this.get(p).isEmpty() (use[S" "])
         else (Assert.Bug[this.get(p).isMole()] use[S"M"])         
-      )]"")
+      ))]""
+  //since we define it explicitly, Data will leave it alone :)
   }
 CCode
 
@@ -163,7 +167,7 @@ errors/issues and then using a Wcode(with)
 </li><li>
 Before heading into a problem,
 spend some time to define your problem domain.
-We dogded a lot of headeches by defining
+We dodged a lot of headaches by defining
 points with invariants.
 </li></ul>
 
@@ -174,10 +178,10 @@ avoid the cascades of ifs.
 We have mixed feelings about this:
 shorter code is better and more maintainable then longer code, and the version with subtyping would have been much longer.
 
-The crucial point is that that code is not designed to be used by other programmers as a library.
+The crucial point is that the 'random mole' code is not designed to be used by other programmers as a library.
 Libraries should have well modularize code,
-and provide covenient hooks for adaptation.
+and provide convenient hooks for adaptation.
 Metaprogramming and interfaces are the right tool for this task.
 
-We should not counfond adaptability (without touching the original source, make it so that a new problem can be tackled), with maintenability (change the original source to keep it up to date
-with the everchaning set of requirements).
+We should not confound adaptability (without touching the original source, make it so that a new problem can be tackled), with maintenability (change the original source to keep it up to date
+with the ever-changing set of requirements).
