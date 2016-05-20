@@ -8,27 +8,26 @@ and then save the result somewhere, like on the website where you users can down
 
 OBCode
 {reuse L42.is/AdamTowel
-ToDeploy:Resource<<{
-  reuse L42.is/AdamTowel
+ToDeploy:Resource << {reuse L42.is/AdamTowel
   //yes, we repeat the reuse
   /*..lots of code here..*/
   }
-Task:DeployOut.asExecutableJar(
-  main:Selector"aClassMethod"
-  location:URL"..."
+Task:Deploy.asExecutableJar(
+  main:Selector"aClassMethod()"
+  location:URL".."
   )<<ToDeploy()
 }
 CCode
 
-Note that we reuse adamTowel both outside Wcode(MyProgram)
+Note that we reuse AdamTowel both outside Wcode(MyProgram)
 and inside of it;
 The two towels do not need to be the same.
 The outermost just have to support the deployment process
-Wcode(DeployOut), while the inner one is needed to make
+Wcode(Deploy), while the inner one is needed to make
 Wcode(MyProgram) a close library: only libraries that do not refer to external classes can be deployed.
 
 WTitle(42 projects)
-In order to write any sizable program, it would be great
+In order to write any sizeable program, it would be great
 to be able to organize our code in multiple files spanning a hierarcky of folders.
 In 42, we can obtain this by using 'Wcode(...)'.
 A 42 project can be either a file
@@ -40,7 +39,7 @@ WP
 In the 42 code, when using 'Wcode(...)' we refer
 to a folder/file with the name of the innermost nested library and we import its content.
 
-For example in the following, we refer to the file/folder Wcode(MyProgram).
+For example in the following, we refer to the file/folder Wcode(Main).
 OBCode
 {reuse L42.is/AdamTowel
 ToDeploy:Resource<<{
@@ -50,8 +49,8 @@ ToDeploy:Resource<<{
   Void main()
     Main.runStuff()
   }
-Task:DeployOut.asExecutableJar(
-  location:URL"...")<<ToDeploy()
+Task:Deploy.asExecutableJar(
+  location:URL"..")<<ToDeploy()
 }
 CCode
 
@@ -62,10 +61,10 @@ and then various files providing testing and deploying functionalities.
 In general, for medium size projects is a good idea to keep executing the tests before the deployment; for example
 directly under Wcode(Main:...) we could add
 Wcode(TestsRunner: ...)
-Do not panick, If the test are not reachable from Wcode(myMainMethod), they are not going to be included in the
+Do not panic, If the test are not reachable from Wcode(myMainMethod), they are not going to be included in the
 executable jar.
 WP
-42 can support varius kinds of unit testing and mocking,
+42 can support various kinds of unit testing and mocking,
 but there is no support at this stage in AdamTowel.
 
 WTitle((2/5)Towels embroidery)
@@ -81,15 +80,15 @@ primitive things that 42 offers are Library literals
 and the types Wcode(Library), Wcode(Void) and Wcode(Any).
 WP
 
-The distinction between towels and other libraries is just psicological;
+The distinction between towels and other libraries is just psychological;
 we generally call towels libraries that are expected to provide standard
-functionalities and types, such as numbers, booleans Bool,
-strings S and various kinds of decorators and system errors.
+functionalities and types, such as numbers, booleans,
+strings and various kinds of decorators and system errors.
 
 WP
 However, we do not expect all L42 programs to reuse the same towel.
 For hygienic reasons, in real life everyone tends to use their own towel.
-For similar reasons, any sizable 42 program will use its own towel.
+For similar reasons, any sizeable 42 program will use its own towel.
 
 WP
 
@@ -104,14 +103,12 @@ Towels shines when multiple towels are used at the same time.
 
 OBCode
 {reuse L42.is/AdamsTowel
-//here you can access to lots of
-//utility classes declared inside the towel
+//here you can access to lots of utility classes declared inside the towel
 //including numbers, strings and so on.
 C:{reuse L42.is/FordTowel
 //here you can access a different set of classes.
 //For example, Num would refer to the number in FordTowel
-//and to see the number declared in AdamsTowel
-//you have to write This1.N
+//and to see the number declared in AdamsTowel you have to write This1.N
   }
 }
 CCode
@@ -137,7 +134,7 @@ ToDeploy:Resource<<{
   Meter:Units.of(Num)
   /*..*/  
   }
-Task:DeployTowel(
+Task:Deploy.asTowel(
   url:Url"https://github.com/MyProjectName/MyTowel.L42"
   permissions:S".."
   )<<ToDeploy()
@@ -148,16 +145,19 @@ The former code would create your towel and update it
 on your github repository every time you
 run it.
 WP
-The idea of modifying a towel to create a variation is caled
-WEmph(Towel Embroidery).
+The idea of modifying a towel to create a variation is called
+WEmph(Towel Embroidery.)
 Wcode(MyTowel)
  is just a variation of AdamTowel, with more stuff added at the bottom.
+While adding stuff in this way is very useful,
 We can do much more than that.
 
 One useful tool to modify the content of a towel
 is Wcode(Extend.patch(that)).
 The idea is that we extend a library using a part of itself
-as a path. As an example
+as a patch.
+WBR
+As an example
 OBCode
 Code:Extend.patch(Path"Fix")<<{
   class method
@@ -184,7 +184,7 @@ ToDeploy:Resource<<Extend.patch(Path"Fix")<<{
   }
 CCode
 
-The advantage with respect to compose two separated
+The advantage with respect to composing two separated
 libraries is that the scope is the same,
 that is the implementation of Wcode(reverse()) will be able to use Wcode(Bool), Wcode(Num) and so on.
 
@@ -194,33 +194,38 @@ that is the implementation of Wcode(reverse()) will be able to use Wcode(Bool), 
 WTitle((3/5)Library deployment)
 
 If you start writing in 42, you will soon feel the need
-of factorizing your project into libraries, that could
+of factorizing your project into libraries that could
 be independently tested, deployed and loaded.
-While successfull libraries are used by multiple 
+While successful libraries are used by multiple 
 independent projects and developers,
-most libraries exists just as a developement tool in 
+most libraries exists just as a development tool in 
 order to keep under control the complexity of big projects.
-In 42 is easy to code with multiple libraries.
+WP
+In 42 is easy to code with multiple libraries, and libraries can be much smaller.
+WBR
 In 42 is possible to employ a programming model where every developer (or every pair of developers in a pair programming style) is the
-only responsable of one (or more) library and its mainentence process, while the group leader give specifications and tests to be met to the varius library developers and will glue all the code together.
+only responsible of one (or more) library and its maintenance process, while the group leader give specifications and tests to be met to the various library developers and will glue all the code together.
 
 WP
 
-Most L42 libraries are not towels.
-All 42 libraries are closed code.
+Most L42 libraries are not towels, but all 42 libraries are closed code.
+WBR
 Thus, most non-towel 42 library are generic
-(have abstract classes/methods) that can be rebinded
-to a moltitute of towels.
+(have abstract classes/methods) that can be rebound
+to a multitude of towels.
+WBR
 
-Libraries can be deployed in a way similar to towel deployment.
+Libraries can be deployed in a way similar to towel deployment;
 Wcode(Load) is used to load libraries,
 but it also contains all the knowledge to deploy
 them.
+WBR
+For example:
 OBCode
 {reuse L42.is/AdamTowel
 ToDeploy:Resource<<{
   reuse L42.is/MyTowel
-    MyLib:...
+  MyLib:...
   }
 }
 Task:Load.DeployLibrary(
@@ -230,8 +235,12 @@ Task:Load.DeployLibrary(
 }
 CCode
 
+This code deploy Wcode(MyLib) on an url as a library,
+
 If there was any nested library unreachable from public classes
 in Wcode(MyLib), it will be pruned away.
+
+WP
 
 Note how in this example we use towels Wcode(AdamTowel)
  and Wcode(MyTowel).
@@ -256,6 +265,7 @@ If we wish to expand the Loading/deployment process, we
 need to patch Wcode(ConceptMap)
 as in the following example:
 OBCode
+{reuse L42.is/AdamTowel
 ToDeploy:Resource<<Extend.patch(Path"Fix")<<{
   reuse L42.is/AdamTowel
   Kg:Units.of(Num)
@@ -265,9 +275,22 @@ ToDeploy:Resource<<Extend.patch(Path"Fix")<<{
       method Kg _Kg()
       method Gui _Gui()
       }
+    S:{
+      method
+      S reverse() {/*..*/}
+      }
     }
   }
+
+Task:Deploy.asTowel(
+  url:Url"https://github.com/MyProjectName/MyTowel.L42"
+  permissions:S".."
+  )<<ToDeploy()
+}
 CCode
+Now Wcode(MyTowel) can be used  as a towel,
+and can be used to deploy libraries that can be loaded by 
+Wcode(MyTowel).
 
 In this simple case, we can just use the class name to encode the
 WEmph(conceptual names) for the newly added classes.

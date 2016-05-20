@@ -4,7 +4,7 @@ WTitle((1/5)Language invariants)
 42 guarantee a set of language invariants: properties that are always true
 
 WTitle(Immutability)
-In 42, once an object has becomed immutable,
+In 42, once an object become immutable,
 it will never change again.
 It's whole reachable object graph is frozen forever.
 This is what in some languages is called value semantic.
@@ -14,17 +14,17 @@ A capsule binding (not a capsule field)
 is encapsulated, that is:
 such capsule binding is the only way to reach
 that object and its whole (mutable) object graph.
-It is irrelevant is immutable leaves are shared or not.
+It is irrelevant if immutable leaves are shared or not.
 
 
 WTitle(Hygienic aliasing)
 If some references points to disjoint object graphs (modulo immutable leaves)
 then after any operation that takes in input one or zero mutable references,
 those original references will still point to disjoint object graphs (modulo immutable leaves).
-That is, (listing for all the non mutable kinds of references)
+That is:
 <ul><li>
-capsule references can be used only onece, so they will not be available any more,
-so it is irrelevant what they refers to;
+capsule references can be used only once, so they will not be available any more,
+so it is irrelevant what they referred to;
 </li><li>
 class and immutable references  are irrelevant since it can not be observed if two references are the same object or
 an identical clone;
@@ -62,7 +62,7 @@ Wcode(Num); this will cause a type error in the result, that can be traced back 
 in the initial library literal.
 
 
-Wcode(Object always fully initialized)
+WTitle(Object always fully initialized)
 In 42 all object are born with all the field containing a
 value of the right type, and this will hold for the whole lifespan of the object.
 There are no null and no uninitialized values.

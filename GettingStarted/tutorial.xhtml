@@ -2093,15 +2093,15 @@ For example, you may want to rename the method <span class="code"><![CDATA[impor
 You can do the following:
 <pre class="l42Big"><![CDATA[
 {reuse L42.is/AdamTowel
-Db:Refactor.RenameMethod(Selector"importStructure(that)" 
-  to:Selector"import(that)")<<Load<<{reuse L42.is/Db}
+Db:Refactor.RenameSelector(
+  Selector"importStructure(that)" to:Selector"import(that)")<<Load<<{reuse L42.is/Db}
 UnivDb:Db.import(Db.ConnectionS"...")
 /*..*/
 }
 ]]></pre>
 The type <span class="code"><![CDATA[Selector]]></span> represent method selectors;
 in the same way the type <span class="code"><![CDATA[Path]]></span> represent 
-paths, as in <span class="code"><![CDATA[Path"Refactor.RenameMethod"]]></span> or
+local paths, as in <span class="code"><![CDATA[Path"MyNested.MyNestedNested"]]></span> or
 <span class="code"><![CDATA[Path"This"]]></span>.
 
 There are a lot of refactoring operations nested under <span class="code"><![CDATA[Refactor]]></span>:
@@ -2115,21 +2115,21 @@ or rename paths in other paths
 </li><li>
 
 <span class="code"><![CDATA[Redirect]]></span>
-allowing to remove a nested library and redirect all its references to
+allows to remove a nested library and redirect all its references to
 an external one. This allows to emulate generics, as we will see later.
 </li><li>
 <span class="code"><![CDATA[UpdateDocumentationSelector]]></span>
 and <span class="code"><![CDATA[UpdateDocumentationPath]]></span>
-to add to/alter/delete the documentation of methods/paths.
+add to/alter/delete the documentation of methods/paths.
 </li><li>
 <span class="code"><![CDATA[MakeAbstractSelector]]></span>
 and <span class="code"><![CDATA[MakeAbstractPath]]></span>
-to remove all the implementation out of a method or path,
+remove all the implementation out of a method or path,
 leaving only the public skeleton
 </li><li>
 <span class="code"><![CDATA[HideSelector]]></span>
-andWcode(HidePath)
-To mark methods or paths as private.
+and <span class="code"><![CDATA[HidePath]]></span>
+mark methods or paths as private.
 We have not seen details on private members, the main idea is that
 they are renamed in invisible names that you can never guess, and automatically renamed on need by refactoring operations.
 </li></ul>
@@ -2178,7 +2178,7 @@ Transaction:{
       This(connection:that)//here we call us as a functor
       catch exception Db.Query.Failure x (
         that.rollback()
-        exception x
+        exception x //no 'finally' needed thanks to strong error safety, more on this later
         )
       that.commitTransaction()
       )
@@ -2209,9 +2209,13 @@ Traits in 42 are nothing fancier than that.
 Now <span class="code"><![CDATA[MyAction]]></span> will execute the operation inside of a transaction.
 
 However, as you can see declaring <span class="code"><![CDATA[MyAction]]></span> using 
-<span class="code"><![CDATA[Refactor.compose]]></span> is verbose, we now show how to improve.
+<span class="code"><![CDATA[Refactor.compose]]></span> is verbose,
+and we need to know the code of <span class="code"><![CDATA[traitEnsureTransaction()]]></span>
+to use it;
+we now show how to improve.
+</p><p>
 
-Manually declaring a class just to declare a single trait mehtod
+Manually declaring a class just to declare a single trait method
 returning a library literal is verbose.
 In AdamTowel we can use the class <span class="code"><![CDATA[Resource]]></span>
 that automate this process.
@@ -2233,8 +2237,8 @@ MyAction:Refactor.compose(
 ]]></pre>
 
 This let us save just a couple of lines. 
-We can improve further and make <span class="code"><![CDATA[Transaction]]></span>
-into a real class decorator.
+We can improve further and make a <span class="code"><![CDATA[Transaction]]></span>
+class decorator:
 
 <pre class="l42Big"><![CDATA[
 Transaction:{
@@ -2244,17 +2248,14 @@ Transaction:{
   Library << (Library that) 
   exception InvalidAction {
     i=Introspection(lib:that)
-    if !i.hasMethod(Selector"(connection)") (exception InvalidAction"Action method missing")
-    composed=Refactor.compose(
-      left:TraitEnsureTransaction(), right: that)
-    exception on MetaGuard
-      InvalidAction"
-        'Action invalid:type of '(connection)' 
-        'do not fit or already defined '(that)'
-        "
-    return Refactor.HideSelector(Selector"(connection)")<<composed
+    if !i.hasMethod(\"(connection)") (exception InvalidAction
+      "Action method '(connection)' missing")
+    composed=Refactor.compose(  left: TraitEnsureTransaction(), right: that  )
+    exception on MetaGuard ( InvalidAction"
+      "Action invalid:type of '(connection)' do not fit or already defined '(that)'")
+    return Refactor.HideSelector(\"(connection)")<<composed
     error on Metaguard
-      WTF"(connection) is there, ready to be hidden"
+      WTF"'(connection)' is there, ready to be hidden"
     }  
   }
 MyAction:Transaction<<{
@@ -2353,16 +2354,17 @@ Easy.
 However, note that we are calling <span class="code"><![CDATA[this.vals()]]></span> to
 do the iteration, and we are not declaring a <span class="code"><![CDATA[vals()]]></span>
 method.
-The idea is that while computing <span class="code"><![CDATA[Nums]]></span>, the type system is temporarly allowing for incomplete/untypable code at the right of the '<span class="code"><![CDATA[:]]></span>'.
+The idea is that while computing <span class="code"><![CDATA[Nums]]></span>, the type system is temporary allowing for incomplete/untypable code at the right of the '<span class="code"><![CDATA[:]]></span>'.
 The typesystem will check that all is ok when the declaration of <span class="code"><![CDATA[Nums]]></span> is complete.
 </p><p>
-However, we have done an extension only on our specific Nums vector, we would have to repeat
+However, we have done an extension only on our specific <span class="code"><![CDATA[Nums]]></span> vector, we would have to repeat
 such code for each vector.
 Can we produce vectors that will have a <span class="code"><![CDATA[sum()]]></span> method?
-Well, this can only work for vectors of elements with a <span class="code"><![CDATA[+]]></span> operator, and a zero concept. Luky, all numeric classes offers a <span class="code"><![CDATA[zero()]]></span> and <span class="code"><![CDATA[one()]]></span> method.
-
-
-A good, partial solution would be the following:
+Well, this can only work for vectors of elements with a <span class="code"><![CDATA[+]]></span> operator, and a zero concept. Luckily, all 
+numeric classes offers a <span class="code"><![CDATA[zero()]]></span> 
+and <span class="code"><![CDATA[one()]]></span> method.
+<br/>
+Building on that, we could attempt the following, invalid solution:
 <pre class="l42Big"><![CDATA[
 MyCollection:{
   class method
@@ -2399,8 +2401,8 @@ incomplete.
 We could just repeat there the definition of <span class="code"><![CDATA[vals()]]></span>,
 but that would be duplicating code; moreover, <span class="code"><![CDATA[vals()]]></span> return an iterator, that have its methods too...
 
-<span class="code"><![CDATA[Collection]]></span> does offer a solution: a trait contaning
-the minimal code scheleton to make <span class="code"><![CDATA[vals()]]></span>, the idea is that
+<span class="code"><![CDATA[Collection]]></span> does offer a solution: a trait containing
+the minimal code skeleton to make <span class="code"><![CDATA[vals()]]></span>, the idea is that
 the composition of <span class="code"><![CDATA[traitSum()]]></span> and
 <span class="code"><![CDATA[Collection.traitVals()]]></span> is complete code.
 However, even declaring <span class="code"><![CDATA[traitSum()]]></span> as
@@ -2429,30 +2431,30 @@ MyCollection:{
 
 By the way, before we also forgot to handle exceptions!
 In case our parameter does not support zero and plus,
-we will just return a normal collection. We need to insert additional brakets otherwise the 
+we will just return a normal collection. We need to insert additional brackets otherwise the 
 binding <span class="code"><![CDATA[oldPart]]></span> would not be visible in the catch body.
 
 As you may notice there is some incoherence in our programming style:
-should trait be methods in a class or funtor classes?
+should trait be methods in a class or Resources?
 should we use 
 the more primitive
 <span class="code"><![CDATA[Refactor.compose(left,right)]]></span>
 or the more flexible <span class="code"><![CDATA[Extend[]<<]]></span>?
-At the current state we do not have an answer to what is the best in 42. Indeed, we still do not understand the quesiton.
+At the current state we do not have an answer to what is the best in 42. Indeed, we still do not understand the question.
 
 
 </p><h2> (5/5)Metaprogramming summary </h2> <p>
 <ul><li>
 Metaprogramming is hard, 42 tries to make it simpler, but not trivial.
 </li><li>
-Error handlying is important while writing decorators.
+Error handling is important while writing decorators.
 More then half of decorators code should be dedicated
-to handle errors and lift them into a more understendable
+to handle errors and lift them into a more understandable
 form for the sake of the final user.
 </li><li>
 we are just scratching the surface of what we
 can do with metaprogramming.
-If you are interested to become a Magrathean
+If you are interested to become a Magrathean, then
 refer to the metaprogramming painful guide (link);
 otherwise just use metaprogramming libraries 
 and use <span class="code"><![CDATA[Refactor]]></span> only when all the other options feel more painful.
@@ -2470,27 +2472,26 @@ and then save the result somewhere, like on the website where you users can down
 
 <pre class="l42Big"><![CDATA[
 {reuse L42.is/AdamTowel
-ToDeploy:Resource<<{
-  reuse L42.is/AdamTowel
+ToDeploy:Resource << {reuse L42.is/AdamTowel
   //yes, we repeat the reuse
   /*..lots of code here..*/
   }
-Task:DeployOut.asExecutableJar(
-  main:Selector"aClassMethod"
-  location:URL"..."
+Task:Deploy.asExecutableJar(
+  main:Selector"aClassMethod()"
+  location:URL".."
   )<<ToDeploy()
 }
 ]]></pre>
 
-Note that we reuse adamTowel both outside <span class="code"><![CDATA[MyProgram]]></span>
+Note that we reuse AdamTowel both outside <span class="code"><![CDATA[MyProgram]]></span>
 and inside of it;
 The two towels do not need to be the same.
 The outermost just have to support the deployment process
-<span class="code"><![CDATA[DeployOut]]></span>, while the inner one is needed to make
+<span class="code"><![CDATA[Deploy]]></span>, while the inner one is needed to make
 <span class="code"><![CDATA[MyProgram]]></span> a close library: only libraries that do not refer to external classes can be deployed.
 
 </p><h2> 42 projects </h2> <p>
-In order to write any sizable program, it would be great
+In order to write any sizeable program, it would be great
 to be able to organize our code in multiple files spanning a hierarcky of folders.
 In 42, we can obtain this by using '<span class="code"><![CDATA[...]]></span>'.
 A 42 project can be either a file
@@ -2502,7 +2503,7 @@ Folders can contain other files <span class="code"><![CDATA[.L42]]></span> or fo
 In the 42 code, when using '<span class="code"><![CDATA[...]]></span>' we refer
 to a folder/file with the name of the innermost nested library and we import its content.
 
-For example in the following, we refer to the file/folder <span class="code"><![CDATA[MyProgram]]></span>.
+For example in the following, we refer to the file/folder <span class="code"><![CDATA[Main]]></span>.
 <pre class="l42Big"><![CDATA[
 {reuse L42.is/AdamTowel
 ToDeploy:Resource<<{
@@ -2512,8 +2513,8 @@ ToDeploy:Resource<<{
   Void main()
     Main.runStuff()
   }
-Task:DeployOut.asExecutableJar(
-  location:URL"...")<<ToDeploy()
+Task:Deploy.asExecutableJar(
+  location:URL"..")<<ToDeploy()
 }
 ]]></pre>
 
@@ -2524,10 +2525,10 @@ and then various files providing testing and deploying functionalities.
 In general, for medium size projects is a good idea to keep executing the tests before the deployment; for example
 directly under <span class="code"><![CDATA[Main:...]]></span> we could add
 <span class="code"><![CDATA[TestsRunner: ...]]></span>
-Do not panick, If the test are not reachable from <span class="code"><![CDATA[myMainMethod]]></span>, they are not going to be included in the
+Do not panic, If the test are not reachable from <span class="code"><![CDATA[myMainMethod]]></span>, they are not going to be included in the
 executable jar.
 </p><p>
-42 can support varius kinds of unit testing and mocking,
+42 can support various kinds of unit testing and mocking,
 but there is no support at this stage in AdamTowel.
 
 </p><h2> (2/5)Towels embroidery </h2> <p>
@@ -2543,15 +2544,15 @@ primitive things that 42 offers are Library literals
 and the types <span class="code"><![CDATA[Library]]></span>, <span class="code"><![CDATA[Void]]></span> and <span class="code"><![CDATA[Any]]></span>.
 </p><p>
 
-The distinction between towels and other libraries is just psicological;
+The distinction between towels and other libraries is just psychological;
 we generally call towels libraries that are expected to provide standard
-functionalities and types, such as numbers, booleans Bool,
-strings S and various kinds of decorators and system errors.
+functionalities and types, such as numbers, booleans,
+strings and various kinds of decorators and system errors.
 
 </p><p>
 However, we do not expect all L42 programs to reuse the same towel.
 For hygienic reasons, in real life everyone tends to use their own towel.
-For similar reasons, any sizable 42 program will use its own towel.
+For similar reasons, any sizeable 42 program will use its own towel.
 
 </p><p>
 
@@ -2566,14 +2567,12 @@ Towels shines when multiple towels are used at the same time.
 
 <pre class="l42Big"><![CDATA[
 {reuse L42.is/AdamsTowel
-//here you can access to lots of
-//utility classes declared inside the towel
+//here you can access to lots of utility classes declared inside the towel
 //including numbers, strings and so on.
 C:{reuse L42.is/FordTowel
 //here you can access a different set of classes.
 //For example, Num would refer to the number in FordTowel
-//and to see the number declared in AdamsTowel
-//you have to write This1.N
+//and to see the number declared in AdamsTowel you have to write This1.N
   }
 }
 ]]></pre>
@@ -2599,7 +2598,7 @@ ToDeploy:Resource<<{
   Meter:Units.of(Num)
   /*..*/  
   }
-Task:DeployTowel(
+Task:Deploy.asTowel(
   url:Url"https://github.com/MyProjectName/MyTowel.L42"
   permissions:S".."
   )<<ToDeploy()
@@ -2610,16 +2609,19 @@ The former code would create your towel and update it
 on your github repository every time you
 run it.
 </p><p>
-The idea of modifying a towel to create a variation is caled
-<span style="color:#ff1111; font-weight: bold;"> Towel Embroidery </span>.
+The idea of modifying a towel to create a variation is called
+<span style="color:#ff1111; font-weight: bold;"> Towel Embroidery. </span>
 <span class="code"><![CDATA[MyTowel]]></span>
  is just a variation of AdamTowel, with more stuff added at the bottom.
+While adding stuff in this way is very useful,
 We can do much more than that.
 
 One useful tool to modify the content of a towel
 is <span class="code"><![CDATA[Extend.patch(that)]]></span>.
 The idea is that we extend a library using a part of itself
-as a path. As an example
+as a patch.
+<br/>
+As an example
 <pre class="l42Big"><![CDATA[
 Code:Extend.patch(Path"Fix")<<{
   class method
@@ -2646,7 +2648,7 @@ ToDeploy:Resource<<Extend.patch(Path"Fix")<<{
   }
 ]]></pre>
 
-The advantage with respect to compose two separated
+The advantage with respect to composing two separated
 libraries is that the scope is the same,
 that is the implementation of <span class="code"><![CDATA[reverse()]]></span> will be able to use <span class="code"><![CDATA[Bool]]></span>, <span class="code"><![CDATA[Num]]></span> and so on.
 
@@ -2656,33 +2658,38 @@ that is the implementation of <span class="code"><![CDATA[reverse()]]></span> wi
 </p><h2> (3/5)Library deployment </h2> <p>
 
 If you start writing in 42, you will soon feel the need
-of factorizing your project into libraries, that could
+of factorizing your project into libraries that could
 be independently tested, deployed and loaded.
-While successfull libraries are used by multiple 
+While successful libraries are used by multiple 
 independent projects and developers,
-most libraries exists just as a developement tool in 
+most libraries exists just as a development tool in 
 order to keep under control the complexity of big projects.
-In 42 is easy to code with multiple libraries.
+</p><p>
+In 42 is easy to code with multiple libraries, and libraries can be much smaller.
+<br/>
 In 42 is possible to employ a programming model where every developer (or every pair of developers in a pair programming style) is the
-only responsable of one (or more) library and its mainentence process, while the group leader give specifications and tests to be met to the varius library developers and will glue all the code together.
+only responsible of one (or more) library and its maintenance process, while the group leader give specifications and tests to be met to the various library developers and will glue all the code together.
 
 </p><p>
 
-Most L42 libraries are not towels.
-All 42 libraries are closed code.
+Most L42 libraries are not towels, but all 42 libraries are closed code.
+<br/>
 Thus, most non-towel 42 library are generic
-(have abstract classes/methods) that can be rebinded
-to a moltitute of towels.
+(have abstract classes/methods) that can be rebound
+to a multitude of towels.
+<br/>
 
-Libraries can be deployed in a way similar to towel deployment.
+Libraries can be deployed in a way similar to towel deployment;
 <span class="code"><![CDATA[Load]]></span> is used to load libraries,
 but it also contains all the knowledge to deploy
 them.
+<br/>
+For example:
 <pre class="l42Big"><![CDATA[
 {reuse L42.is/AdamTowel
 ToDeploy:Resource<<{
   reuse L42.is/MyTowel
-    MyLib:...
+  MyLib:...
   }
 }
 Task:Load.DeployLibrary(
@@ -2692,8 +2699,12 @@ Task:Load.DeployLibrary(
 }
 ]]></pre>
 
+This code deploy <span class="code"><![CDATA[MyLib]]></span> on an url as a library,
+
 If there was any nested library unreachable from public classes
 in <span class="code"><![CDATA[MyLib]]></span>, it will be pruned away.
+
+</p><p>
 
 Note how in this example we use towels <span class="code"><![CDATA[AdamTowel]]></span>
  and <span class="code"><![CDATA[MyTowel]]></span>.
@@ -2718,6 +2729,7 @@ If we wish to expand the Loading/deployment process, we
 need to patch <span class="code"><![CDATA[ConceptMap]]></span>
 as in the following example:
 <pre class="l42Big"><![CDATA[
+{reuse L42.is/AdamTowel
 ToDeploy:Resource<<Extend.patch(Path"Fix")<<{
   reuse L42.is/AdamTowel
   Kg:Units.of(Num)
@@ -2727,9 +2739,22 @@ ToDeploy:Resource<<Extend.patch(Path"Fix")<<{
       method Kg _Kg()
       method Gui _Gui()
       }
+    S:{
+      method
+      S reverse() {/*..*/}
+      }
     }
   }
+
+Task:Deploy.asTowel(
+  url:Url"https://github.com/MyProjectName/MyTowel.L42"
+  permissions:S".."
+  )<<ToDeploy()
+}
 ]]></pre>
+Now <span class="code"><![CDATA[MyTowel]]></span> can be used  as a towel,
+and can be used to deploy libraries that can be loaded by 
+<span class="code"><![CDATA[MyTowel]]></span>.
 
 In this simple case, we can just use the class name to encode the
 <span style="color:#ff1111; font-weight: bold;"> conceptual names </span> for the newly added classes.
@@ -2850,7 +2875,7 @@ tipo x=MyCode  x.hello(...)
 42 guarantee a set of language invariants: properties that are always true
 
 </p><h2> Immutability </h2> <p>
-In 42, once an object has becomed immutable,
+In 42, once an object become immutable,
 it will never change again.
 It's whole reachable object graph is frozen forever.
 This is what in some languages is called value semantic.
@@ -2860,17 +2885,17 @@ A capsule binding (not a capsule field)
 is encapsulated, that is:
 such capsule binding is the only way to reach
 that object and its whole (mutable) object graph.
-It is irrelevant is immutable leaves are shared or not.
+It is irrelevant if immutable leaves are shared or not.
 
 
 </p><h2> Hygienic aliasing </h2> <p>
 If some references points to disjoint object graphs (modulo immutable leaves)
 then after any operation that takes in input one or zero mutable references,
 those original references will still point to disjoint object graphs (modulo immutable leaves).
-That is, (listing for all the non mutable kinds of references)
+That is:
 <ul><li>
-capsule references can be used only onece, so they will not be available any more,
-so it is irrelevant what they refers to;
+capsule references can be used only once, so they will not be available any more,
+so it is irrelevant what they referred to;
 </li><li>
 class and immutable references  are irrelevant since it can not be observed if two references are the same object or
 an identical clone;
@@ -2908,7 +2933,7 @@ In the case of our example, we mistakenly used the <span class="code"><![CDATA[S
 in the initial library literal.
 
 
-<span class="code"><![CDATA[Object always fully initialized]]></span>
+</p><h2> Object always fully initialized </h2> <p>
 In 42 all object are born with all the field containing a
 value of the right type, and this will hold for the whole lifespan of the object.
 There are no null and no uninitialized values.
