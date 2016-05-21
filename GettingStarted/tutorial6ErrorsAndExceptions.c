@@ -14,7 +14,8 @@ Wcode(.isResponse()) and Wcode(.responseOf()).
 The text is the informative string, while if there is
 a response (Wcode(msg.isResponse()==Bool.true()) 
 then Wcode(msg.responseOf()) will be the 
-former message in the chain.
+former message in the chain, else Wcode(msg.responseOf())
+will produce a run time error.
 
 There are two main kinds of Wcode(Message)s:
 Wcode(Guard) and Wcode(Assert).
@@ -31,7 +32,7 @@ The following code show usages of Wcode(Assert.Pre) and Wcode(Assert.Bug)
 OBCode
 Assert.Pre[ //preconditions
   myVal>0Nat;//simplest form
-  myVal>0Nat msg:S"here with personalized message";
+  myVal>0Nat msg:S"here with personalized message myVal="[myVal]"";
   myVal expected:42Nat //call equals and do a better error reporting
   ]//in a bunch of assertions, they are all going to be checked together.
 Assert.Bug[ //postconditions/checks in the middle
@@ -42,6 +43,8 @@ if observedBug  (Assert.Bug"error message")
 CCode
 
 WTitle(`(2/5) create, throw and capture')
+
+WTitle(create and throw)
 
 You can create new kinds of messages using the 
 service class of the message interface:
@@ -64,48 +67,54 @@ if this.iWasDistracted() (
 CCode
 
 As you can see, since Wcode(Message) is an interface, it can not help us directly
-to create messages, however it has a service nested class called Wcode($), that
+to create messages, however it has a service nested class called Wcode($), which
 is a class decorator helping us to create valid messages.
-As you can see we can create messages with text, and
-then we can optionally add a response.
-Now, let see how to capture errors:
+As you can see we can create messages with text, in which we can optionally include a response.
 
-OBCode
-(myWait=7.5MillionYear
- answer=DeepThought.answer()
- understanding=myBrain.process(answer)
- catch error AnswerNotUnderstood msg (/*handle it*/)
- catch error Guard msg (/*something else gone wrong*/)
- //in the catch bodies, 'understanding' and 'answer' are not defined
- myBrain.accept(understanding)//normal execution if no issue
- )
-CCode
+WTitle(capturing errors and exceptions)
 
-As you see, in 42 there is no explicit Wcode(try) statement,
+In 42 there is no explicit Wcode(try) statement,
 but any block of code can contain Wcode(catch).
-The catch capture errors in the block before the last (group of) catches.
-Catches can not see local variables declared in the scope of a possible error.
-The following example explain the control flow more in detail:
+This logically separe any block of code into WEmph(paragraphs.)
 
+For example, in the following code we have 3 paragraphs: line 2-3,
+ line 6-7 and line 9.
 OBCode
 res=(
  b1=CanGoWrong()
  b2=CanGoWrong()//see b1
- catch error Wrong msg1  1Nat//not see b1,b2
- catch error Guard msg2  2Nat//not see b1,b2
+ catch error Wrong msg1  S"hi 1"//not see b1,b2
+ catch error Guard msg2  S"hi 2"//not see b1,b2
  b3=CanGoWrong()//can see b1, b2
- catch error Wrong msg3  3Nat//see b1,b2, not see b3
- 4Nat//see b1,b2,b3
+ b4=CanGoWrong()//can see b1, b2
+ catch error Wrong msg3  S"hi 3"//see b1,b2, not see b3,b4
+ S"hi 4"//see b1,b2,b3
  )
 CCode
-The following code can assign to Wcode(res) either 1,2,3 or 4.
-Note how every catch exits from the whole block.
+
+Paragraphs are separed by catches.
+Each catch capture only exceptions/errors that happens inside of
+the paragraph directly above, and can not see the local binding
+declared in such paragraph.
+If a catch is successfull, then the result of its catch expression
+will be the result of the whole code block.
+In this way, blocks with catches behave like conditions.
+That is, The code above can assign to Wcode(res) either 
+Wcode(S"hi 1"),
+Wcode(S"hi 2"),
+Wcode(S"hi 3") or
+Wcode(S"hi 4").
+
+
+WTitle(Strong error safety)
+
+
 Errors guarantee a property called strong error safety
 (strong exception safety in the Java/C++ terminology)
 This means that the body of a catch will observe the same 
-state present at the start of the block.
-This is enforced by disallowing catching errors if the (portion of the) block before can mutate visible objects.
-
+state present at the start of the paragraph before.
+This is enforced by disallowing catching errors if the paragraph can mutate objects visible in the catch expression.
+WBR
 That is, the following code do not compile
 OBCode
 p=Person(name:S"Bill" age:23Year)
@@ -132,15 +141,15 @@ CCode
 WTitle(`(3/5) exceptions and errors')
 
 Exceptions are like checked exceptions in java.
-As for errors, every immutable object can be thrown as an exception.
+As with errors, every immutable object can be thrown as an exception.
 just write "exception" instead of "error" while throwing or capturing.
 Exceptions represent expected, documented and reliable behaviour,
 they are just another way to express control flow.
-They are useful to characterize multiple outcomes for an operation,
-where is important to prevent the programmer from forgot about
-the many possible outcome and focus only on its preferred one.
+They are useful to characterize multiple outcomes of an operation,
+where is important to prevent the programmer from forgetting about
+the many possible outcome and focusing only on their preferred one.
 Exceptions are checked, so methods leaking exceptions have to
-declare so in their header, as in the following.
+declare this in their header, as in the following.
 OBCode
 /*somewhere in a GUI library*/
 method

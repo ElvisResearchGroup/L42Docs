@@ -63,9 +63,8 @@ in the initial library literal.
 
 
 WTitle(Object always fully initialized)
-In 42 all object are born with all the field containing a
-value of the right type, and this will hold for the whole lifespan of the object.
-There are no null and no uninitialized values.
+In 42 all object are born with all the fields containing objects of the right types, and this will hold for the whole lifespan of the object.
+There is no Wcode(null) and no uninitialized values.
 To allow for the initialization of circular object graph 
 you can use a feature called Wcode(fwd) references, that we have not explored in this tutorial.
 See (link)
@@ -136,7 +135,7 @@ You can use modifiers in a disciplined way to express meaning:
 <ul><li>
 Immutable references are abstract/mathematical concepts, there are used to model the world 
 of your program but are not materialized in your world.
-For example, a Wcode(Car) can a Wcode(Kg) weight, but Wcode(25Kg) is not an actual
+For example, a Wcode(Car) has a Wcode(Kg) weight, but Wcode(25Kg) is not an actual
 thing in the world of cars.
 </li><li>
 Class objects models kinds of things, and you can use
@@ -208,22 +207,25 @@ We love to check for additional constraints at run time.
 The important think is that a code that behave differently on how we expected should
 never be allowed to produce a result.
 
-This mindset is different with respect to the one found in many other language community:
+This mindset is different with respect to the one found in many other language communities.
+WBR
 For example languages supporting flexible silent automatic conversions between different 
 datatypes (as string, bools and numbers) are clearly searching for a possible
 way to interpret a possible confusing programmer request and give it a meaning.
 For example Wcode("2"+2) may mean Wcode("22") while Wcode(2+"2") may mean Wcode(4).
 Reasonable interpretations, possibly motivated by certain examples, but they can not possibly scale to
 the general case.
+WBR
 On the other side, programmers coming from languages supporting very strong type systems
 and encouraging type safety as a way of mind, 
-would prefer either encode a precondition at the type level, 
-or to encode a generalize behaviour where such precondition is not needed.
-For example under this mindset, Wcode(max) should not return an element, but an optional
+would prefer to either encode a precondition at the type level, 
+or to encode a generalize behaviour where such precondition is not needed, to dodge the problem.
+For example under their mindset, Wcode(max) should not return an element, but an optional
 element, and the option of no element will be produced in case of an empty list.
-This is not great, certain conditions can not be expressed in the type system,
-some other conditions could be expressed but it would be too cumbersome,
-and they prefer to code in some way that dodge the problem.
+This approach do not scale:
+certain conditions can not be expressed in the type system,
+some other conditions could be expressed but it would be too cumbersome.
+WBR
 In our vision, the purpose of the type system is to help making the program adhere to
 its intended behaviour or break fast.
 We do not want to bend our intended behaviour so that code never breaks by construction;

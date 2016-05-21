@@ -776,7 +776,8 @@ In this way, the type system will help you to use values with the semantics you 
 
  </p><p id="InterfacesAndData"> </p><h1> Interfaces, Concepts and Data </h1> <p>
 
-</p><h2> (1/5)Interfaces </h2> <p>
+</p><h2> (1/5)Interfaces, Basis and Details </h2> <p>
+</p><h2> Interfaces Basis </h2> <p>
 In 42 interfaces are quite similar to interfaces in other OO languages.
 There are however a couple of important differences:
 
@@ -820,7 +821,7 @@ enumeration (or an alphanumeric)
  for your cards and use a <span class="code"><![CDATA[Second]]></span> unit of measure
 for the time.
 
-</p><h2> (2/5)Interfaces </h2> <p>
+</p><h2> Interfaces Details </h2> <p>
 However, interface diamond is allowed, that is, the following code is correct:
 <pre class="l42Big"><![CDATA[
 Shape:{interface
@@ -851,6 +852,74 @@ BigMonster:{implements Monster
 ]]></pre>
 
 However, the parameter types can not be refined.
+
+</p><h2> (2/5) Interfaces and class methods </h2> <p>
+
+Interface methods in 42 are all abstract, that is, without body.
+A version of the body will be provided by all classes implementing the interface.
+<span style="color:#ff1111; font-weight: bold;"> This also include class methods. </span>
+<br/>
+For example, consider the following code:
+<pre class="l42Big"><![CDATA[
+Shape:{interface
+  class method 
+  Int numberOfSides()
+  class method
+  This newShape(Color that)
+  method
+  Void draw(Canvas that)
+  }
+
+Square:Data<<{implements Shape
+  Color color
+  method numberOfSides() //class method implemented
+    4Int
+  method newShape(that) //class method implemented
+    This(color:that)
+  method draw(that) (//method implemented
+    /*..*/)
+  }
+/*..*/
+class Shape kindOfShape=Square
+kindOfShape.numberOfSides()==4Int //holds
+Shape s=kindOfShape.newShape(Color.red())
+]]></pre>
+
+The pattern in the code above allows to encode the abstract factory 
+pattern in a much simpler way:
+the binding <span class="code"><![CDATA[kindOfShape]]></span> serve the role of
+an instance of an abstract factory, and can create instances of
+a specific kind of shape.
+
+
+In 42 interfaces can not have 
+implemented static methods.
+Sometimes there is the need of semanticaly associate some behaviour with an interface.
+For example we could check intersections between shapes using
+the draw method.
+
+This can be done, since interfaces can have nested classes, that can have (class) methods.
+Conventionally, if you need behaviour associated with the concept represented by the interface, you can just declare a nested class,
+convetionally called '<span class="code"><![CDATA[$]]></span>', containing you needed methods.
+<br/>
+For example
+
+
+<pre class="l42Big"><![CDATA[
+Shape:{interface
+  /*..*/
+  $:{
+    class method
+    Bool intersect(Shape left,Shape right) {
+      /*..*/
+      }
+    }
+  }
+]]></pre>
+
+Such '<span class="code"><![CDATA[$]]></span>' classes are referred as service classes.
+They are needed by the language but do not serve any role
+in the abstract model of the application.
 
 </p><h2> (3/5)Concepts: ToS, Equals, Classable, ... </h2> <p>
 <span class="code"><![CDATA[Concepts]]></span> is a class defined in AdamTowel,
@@ -892,11 +961,11 @@ This is very useful when wanting to create an instance based on another.
 For example, to create another shape of the same kind as a given shape,
 we could do the following:
 <pre class="l42Big"><![CDATA[
-Shape:{implements Concepts.Classable
+Shape:{interface implements Concepts.Classable
   class method This newShape(Color that)
   refine method This class()
   }
-Square:{implements Shape
+Square:Data<<{implements Shape
   Color color
   method newShape(that)//implemented from Shape
     This(color:that)
@@ -1370,7 +1439,8 @@ a structured way to provide a certain kind of message to the user.
 The text is the informative string, while if there is
 a response (<span class="code"><![CDATA[msg.isResponse()==Bool.true()]]></span> 
 then <span class="code"><![CDATA[msg.responseOf()]]></span> will be the 
-former message in the chain.
+former message in the chain, else <span class="code"><![CDATA[msg.responseOf()]]></span>
+will produce a run time error.
 
 There are two main kinds of <span class="code"><![CDATA[Message]]></span>s:
 <span class="code"><![CDATA[Guard]]></span> and <span class="code"><![CDATA[Assert]]></span>.
@@ -1387,7 +1457,7 @@ The following code show usages of <span class="code"><![CDATA[Assert.Pre]]></spa
 <pre class="l42Big"><![CDATA[
 Assert.Pre[ //preconditions
   myVal>0Nat;//simplest form
-  myVal>0Nat msg:S"here with personalized message";
+  myVal>0Nat msg:S"here with personalized message myVal="[myVal]"";
   myVal expected:42Nat //call equals and do a better error reporting
   ]//in a bunch of assertions, they are all going to be checked together.
 Assert.Bug[ //postconditions/checks in the middle
@@ -1398,6 +1468,8 @@ if observedBug  (Assert.Bug"error message")
 ]]></pre>
 
 </p><h2> (2/5) create, throw and capture </h2> <p>
+
+</p><h2> create and throw </h2> <p>
 
 You can create new kinds of messages using the 
 service class of the message interface:
@@ -1420,48 +1492,54 @@ if this.iWasDistracted() (
 ]]></pre>
 
 As you can see, since <span class="code"><![CDATA[Message]]></span> is an interface, it can not help us directly
-to create messages, however it has a service nested class called <span class="code"><![CDATA[$]]></span>, that
+to create messages, however it has a service nested class called <span class="code"><![CDATA[$]]></span>, which
 is a class decorator helping us to create valid messages.
-As you can see we can create messages with text, and
-then we can optionally add a response.
-Now, let see how to capture errors:
+As you can see we can create messages with text, in which we can optionally include a response.
 
-<pre class="l42Big"><![CDATA[
-(myWait=7.5MillionYear
- answer=DeepThought.answer()
- understanding=myBrain.process(answer)
- catch error AnswerNotUnderstood msg (/*handle it*/)
- catch error Guard msg (/*something else gone wrong*/)
- //in the catch bodies, 'understanding' and 'answer' are not defined
- myBrain.accept(understanding)//normal execution if no issue
- )
-]]></pre>
+</p><h2> capturing errors and exceptions </h2> <p>
 
-As you see, in 42 there is no explicit <span class="code"><![CDATA[try]]></span> statement,
+In 42 there is no explicit <span class="code"><![CDATA[try]]></span> statement,
 but any block of code can contain <span class="code"><![CDATA[catch]]></span>.
-The catch capture errors in the block before the last (group of) catches.
-Catches can not see local variables declared in the scope of a possible error.
-The following example explain the control flow more in detail:
+This logically separe any block of code into <span style="color:#ff1111; font-weight: bold;"> paragraphs. </span>
 
+For example, in the following code we have 3 paragraphs: line 2-3,
+ line 6-7 and line 9.
 <pre class="l42Big"><![CDATA[
 res=(
  b1=CanGoWrong()
  b2=CanGoWrong()//see b1
- catch error Wrong msg1  1Nat//not see b1,b2
- catch error Guard msg2  2Nat//not see b1,b2
+ catch error Wrong msg1  S"hi 1"//not see b1,b2
+ catch error Guard msg2  S"hi 2"//not see b1,b2
  b3=CanGoWrong()//can see b1, b2
- catch error Wrong msg3  3Nat//see b1,b2, not see b3
- 4Nat//see b1,b2,b3
+ b4=CanGoWrong()//can see b1, b2
+ catch error Wrong msg3  S"hi 3"//see b1,b2, not see b3,b4
+ S"hi 4"//see b1,b2,b3
  )
 ]]></pre>
-The following code can assign to <span class="code"><![CDATA[res]]></span> either 1,2,3 or 4.
-Note how every catch exits from the whole block.
+
+Paragraphs are separed by catches.
+Each catch capture only exceptions/errors that happens inside of
+the paragraph directly above, and can not see the local binding
+declared in such paragraph.
+If a catch is successfull, then the result of its catch expression
+will be the result of the whole code block.
+In this way, blocks with catches behave like conditions.
+That is, The code above can assign to <span class="code"><![CDATA[res]]></span> either 
+<span class="code"><![CDATA[S"hi 1"]]></span>,
+<span class="code"><![CDATA[S"hi 2"]]></span>,
+<span class="code"><![CDATA[S"hi 3"]]></span> or
+<span class="code"><![CDATA[S"hi 4"]]></span>.
+
+
+</p><h2> Strong error safety </h2> <p>
+
+
 Errors guarantee a property called strong error safety
 (strong exception safety in the Java/C++ terminology)
 This means that the body of a catch will observe the same 
-state present at the start of the block.
-This is enforced by disallowing catching errors if the (portion of the) block before can mutate visible objects.
-
+state present at the start of the paragraph before.
+This is enforced by disallowing catching errors if the paragraph can mutate objects visible in the catch expression.
+<br/>
 That is, the following code do not compile
 <pre class="l42Big"><![CDATA[
 p=Person(name:S"Bill" age:23Year)
@@ -1488,15 +1566,15 @@ res=(
 </p><h2> (3/5) exceptions and errors </h2> <p>
 
 Exceptions are like checked exceptions in java.
-As for errors, every immutable object can be thrown as an exception.
+As with errors, every immutable object can be thrown as an exception.
 just write "exception" instead of "error" while throwing or capturing.
 Exceptions represent expected, documented and reliable behaviour,
 they are just another way to express control flow.
-They are useful to characterize multiple outcomes for an operation,
-where is important to prevent the programmer from forgot about
-the many possible outcome and focus only on its preferred one.
+They are useful to characterize multiple outcomes of an operation,
+where is important to prevent the programmer from forgetting about
+the many possible outcome and focusing only on their preferred one.
 Exceptions are checked, so methods leaking exceptions have to
-declare so in their header, as in the following.
+declare this in their header, as in the following.
 <pre class="l42Big"><![CDATA[
 /*somewhere in a GUI library*/
 method
@@ -2934,9 +3012,8 @@ in the initial library literal.
 
 
 </p><h2> Object always fully initialized </h2> <p>
-In 42 all object are born with all the field containing a
-value of the right type, and this will hold for the whole lifespan of the object.
-There are no null and no uninitialized values.
+In 42 all object are born with all the fields containing objects of the right types, and this will hold for the whole lifespan of the object.
+There is no <span class="code"><![CDATA[null]]></span> and no uninitialized values.
 To allow for the initialization of circular object graph 
 you can use a feature called <span class="code"><![CDATA[fwd]]></span> references, that we have not explored in this tutorial.
 See (link)
@@ -3007,7 +3084,7 @@ You can use modifiers in a disciplined way to express meaning:
 <ul><li>
 Immutable references are abstract/mathematical concepts, there are used to model the world 
 of your program but are not materialized in your world.
-For example, a <span class="code"><![CDATA[Car]]></span> can a <span class="code"><![CDATA[Kg]]></span> weight, but <span class="code"><![CDATA[25Kg]]></span> is not an actual
+For example, a <span class="code"><![CDATA[Car]]></span> has a <span class="code"><![CDATA[Kg]]></span> weight, but <span class="code"><![CDATA[25Kg]]></span> is not an actual
 thing in the world of cars.
 </li><li>
 Class objects models kinds of things, and you can use
@@ -3079,22 +3156,25 @@ We love to check for additional constraints at run time.
 The important think is that a code that behave differently on how we expected should
 never be allowed to produce a result.
 
-This mindset is different with respect to the one found in many other language community:
+This mindset is different with respect to the one found in many other language communities.
+<br/>
 For example languages supporting flexible silent automatic conversions between different 
 datatypes (as string, bools and numbers) are clearly searching for a possible
 way to interpret a possible confusing programmer request and give it a meaning.
 For example <span class="code"><![CDATA["2"+2]]></span> may mean <span class="code"><![CDATA["22"]]></span> while <span class="code"><![CDATA[2+"2"]]></span> may mean <span class="code"><![CDATA[4]]></span>.
 Reasonable interpretations, possibly motivated by certain examples, but they can not possibly scale to
 the general case.
+<br/>
 On the other side, programmers coming from languages supporting very strong type systems
 and encouraging type safety as a way of mind, 
-would prefer either encode a precondition at the type level, 
-or to encode a generalize behaviour where such precondition is not needed.
-For example under this mindset, <span class="code"><![CDATA[max]]></span> should not return an element, but an optional
+would prefer to either encode a precondition at the type level, 
+or to encode a generalize behaviour where such precondition is not needed, to dodge the problem.
+For example under their mindset, <span class="code"><![CDATA[max]]></span> should not return an element, but an optional
 element, and the option of no element will be produced in case of an empty list.
-This is not great, certain conditions can not be expressed in the type system,
-some other conditions could be expressed but it would be too cumbersome,
-and they prefer to code in some way that dodge the problem.
+This approach do not scale:
+certain conditions can not be expressed in the type system,
+some other conditions could be expressed but it would be too cumbersome.
+<br/>
 In our vision, the purpose of the type system is to help making the program adhere to
 its intended behaviour or break fast.
 We do not want to bend our intended behaviour so that code never breaks by construction;

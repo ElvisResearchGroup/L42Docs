@@ -1,6 +1,7 @@
 WBigTitle(`Interfaces, Concepts and Data')
 
-WTitle((1/5)Interfaces, Basis)
+WTitle((1/5)`Interfaces, Basis and Details')
+WTitle( Interfaces Basis)
 In 42 interfaces are quite similar to interfaces in other OO languages.
 There are however a couple of important differences:
 
@@ -44,7 +45,7 @@ enumeration (or an alphanumeric)
  for your cards and use a Wcode(Second) unit of measure
 for the time.
 
-WTitle((2/5)Interfaces, Details)
+WTitle(Interfaces Details)
 However, interface diamond is allowed, that is, the following code is correct:
 OBCode
 Shape:{interface
@@ -75,6 +76,74 @@ BigMonster:{implements Monster
 CCode
 
 However, the parameter types can not be refined.
+
+WTitle((2/5) Interfaces and class methods)
+
+Interface methods in 42 are all abstract, that is, without body.
+A version of the body will be provided by all classes implementing the interface.
+WEmph(This also include class methods.)
+WBR
+For example, consider the following code:
+OBCode
+Shape:{interface
+  class method 
+  Int numberOfSides()
+  class method
+  This newShape(Color that)
+  method
+  Void draw(Canvas that)
+  }
+
+Square:Data<<{implements Shape
+  Color color
+  method numberOfSides() //class method implemented
+    4Int
+  method newShape(that) //class method implemented
+    This(color:that)
+  method draw(that) (//method implemented
+    /*..*/)
+  }
+/*..*/
+class Shape kindOfShape=Square
+kindOfShape.numberOfSides()==4Int //holds
+Shape s=kindOfShape.newShape(Color.red())
+CCode
+
+The pattern in the code above allows to encode the abstract factory 
+pattern in a much simpler way:
+the binding Wcode(kindOfShape) serve the role of
+an instance of an abstract factory, and can create instances of
+a specific kind of shape.
+
+
+In 42 interfaces can not have 
+implemented static methods.
+Sometimes there is the need of semanticaly associate some behaviour with an interface.
+For example we could check intersections between shapes using
+the draw method.
+
+This can be done, since interfaces can have nested classes, that can have (class) methods.
+Conventionally, if you need behaviour associated with the concept represented by the interface, you can just declare a nested class,
+convetionally called 'Wcode($)', containing you needed methods.
+WBR
+For example
+
+
+OBCode
+Shape:{interface
+  /*..*/
+  $:{
+    class method
+    Bool intersect(Shape left,Shape right) {
+      /*..*/
+      }
+    }
+  }
+CCode
+
+Such 'Wcode($)' classes are referred as service classes.
+They are needed by the language but do not serve any role
+in the abstract model of the application.
 
 WTitle((3/5)`Concepts: ToS, Equals, Classable, ...')
 Wcode(Concepts) is a class defined in AdamTowel,
@@ -116,11 +185,11 @@ This is very useful when wanting to create an instance based on another.
 For example, to create another shape of the same kind as a given shape,
 we could do the following:
 OBCode
-Shape:{implements Concepts.Classable
+Shape:{interface implements Concepts.Classable
   class method This newShape(Color that)
   refine method This class()
   }
-Square:{implements Shape
+Square:Data<<{implements Shape
   Color color
   method newShape(that)//implemented from Shape
     This(color:that)
