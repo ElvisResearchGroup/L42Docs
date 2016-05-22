@@ -1,7 +1,8 @@
 m4_include(`header.h')m4_dnl
 OFloatClass(index)
-<div class="rotate90 inFloat"> Index of Content</div>
-<ol class="inFloat">
+<div class="rotate90"> Index of Content</div>
+ContinueFloat
+<ol>
 WMenuItem(`#Basics',`Basic concepts')
 WMenuItem(`#ModifiersIntro',`Introduction to modifiers')
 WMenuItem(`#BasicClasses',`Basic Classes')

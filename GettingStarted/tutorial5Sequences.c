@@ -1,4 +1,4 @@
-WBigTitle(`Sequences high level manipulation')
+WBigTitle(`High level sequences manipulation')
 
 WTitle((1/5)Vectors as Sequences, listing the basic operations)
 
@@ -8,11 +8,11 @@ OBCode
 Nums:Collections.vector(of:Num) //declaration for vectors of nums
 /*..*/
 Nums xs=Nums[10Num;20Num;30Num] //immutable vector
-//note how we declare the type explicitly,
-//the default vector would be mutable.
+//note that we declare the type of 'xs' explicitly,
+//otherwise the vector would be mutable.
 CCode
 
-Immutable sequences are created with square brackets
+Sequences can be created with square brackets,
 and can be combined with operators.
 The general idea is that operators 
 Wcode(+,-,<,>) works 
@@ -20,49 +20,55 @@ on one sequences and one element,
 while the corresponding doubled-up operators
 Wcode(++,--,<<,>>, >>=,<<=,==)
 works on two sequences.
-In the details, as you can see in the code below:
+You can see the details of this below.
 OBCode
+//element addition
 Nums[a;b;c]+d==Nums[a;b;c;d]
+//sequence concatenation
 Nums[a;b]++Nums[c;d]==Nums[a;b;c;d]
+//element removal
 Nums[a;b;b;c] - b==Nums[a;c] //only if elements implements Concepts.Equals
+//set subtraction
 Nums[a;b;b;c] -- Nums[b;c]==Nums[a] //same for all the operators under
+//set intersection
+Nums[a;b]& Nums[b;c]==Nums[b]
+//superset
 Nums[a;b;c]>>Nums[a;c] //holds
-Nums[a;b;c]>>=Nums[a;c] //holds
-Nums[a;b]>>=Nums[a;c] //holds
-Nums[a;b]>>Nums[a;c] //not holds
+//superseteq
+Nums[a;b]>>=Nums[a;c] //holds but [a;b]>>Nums[a;c] does not
+//contains element
 Nums[a;b]>b //holds
+//is element contained
 b<Nums[a;b] //holds
-Nums[a;b]& Nums[b;c] //Nums[b] set intersection
 CCode
-
-In addition of operators, immutable collections can
+In addition of operators, many sequences can
 be manipulated by the following methods:
 
 OBCode
-//with replacement
-Nums[a;b;c;d].withLeft(b) //Nums[b;b;c;d]
-Nums[a;b;c;d].withRight() //Nums[a;b;c;b]
-Nums[a;b;c;d].with(2Size,d) //Nums[a;d;c;d]
+//replacement
+Nums[a;b;c;d].withLeft(e) == Nums[e;b;c;d]
+Nums[a;b;c;d].withRight(e) == Nums[a;b;c;e]
+Nums[a;b;c;d].with(2Size,val:e) == Nums[a;b;e;d]
 
-//appending
-Nums[a;b;c;d].withAlsoLeft(b) //Nums[b;a;b;c;d]
-Nums[a;b;c;d].withAlsoRight() //Nums[a;b;c;d;b]
-Nums[a;b;c;d].withAlso(2Size,b) //Nums[a;b;b;c;d]
+//insertion
+Nums[a;b;c;d].withAlsoLeft(e) == Nums[e;a;b;c;d]
+Nums[a;b;c;d].withAlsoRight(e) == Nums[a;b;c;d;e]
+Nums[a;b;c;d].withAlso(2Size,val:e) == Nums[a;b;e;c;d]
 
-//filtering
-Nums[a;b;c;d].without(index:2Size) //Nums[a;b;d]
-Nums[a;b;c;d].withoutLeft() //Nums[b;c;d]
-Nums[a;b;c;d].withoutRight() //Nums[a;b;c]
+//skipping/filtering
+Nums[a;b;c;d].without(index:2Size) == Nums[a;b;d]
+Nums[a;b;c;d].withoutLeft() == Nums[b;c;d]
+Nums[a;b;c;d].withoutRight() == Nums[a;b;c]
 
 //filtering, if elements implements Concepts.Equals
-Nums[a;b;c;d].withoutAll(elem:b) //Nums[a;c;d]
-Nums[a;b;c;d].withoutLeft(elem:b) //filter out the leftmost b
-Nums[a;b;c;d].withoutRight(elem:b) //filter out the rightmost b
+Nums[a;b;c;b;d].withoutAll(val:b) == Nums[a;c;d]
+Nums[a;b;c;b;d].withoutLeft(val:b) == Nums[a;c;b;d]//filter out the leftmost b
+Nums[a;b;c;b;d].withoutRight(val:b) == Nums[a;b;c;d]//filter out the rightmost b
 CCode
-As you notice, there are three different kind of actions:
-replace an element ((Wcode(with)),
-append an element (Wcode(withAlso))
-and filtering an element out (Wcode(without)).
+As you notice, there are different kind of actions:
+replace an element (Wcode(with)),
+insert an element (Wcode(withAlso))
+and skipping/filtering elements out (Wcode(without)).
 Then, elements can be specified by (Wcode(index)), by being
 the leftmost or the rightmost. To filter elements
 out, you can also just provide the element.
@@ -75,11 +81,11 @@ can be accessed with the following methods:
 
 OBCode
 //access
-foo.left() //a
-foo.right() //d
-foo.val(2Size) //c
-foo.size() //4Size
-foo.isEmpty() //not holds
+Nums[a;b;c;d].left() //a
+Nums[a;b;c;d].right() //d
+Nums[a;b;c;d].val(2Size) //c
+Nums[a;b;c;d].size() //4Size
+Nums[a;b;c;d].isEmpty() //does not hold
 CCode
 
 
@@ -88,9 +94,9 @@ CCode
 
 WTitle((2/5) `Suggested parameter values using "\"')
 
-In 42 is possible to use Wcode(\) while calling a method or using the square brackets,
+In 42 is possible to use 'Wcode(\)' while calling a method or using the square brackets,
 to ask the receiver for a suggestion about the parameter values.
-The library designer have full freedom to implement those suggestion in the more opportune way, however we
+The library designer has full freedom to implement those suggestion in the most opportune way, however we
 recognize three important common patterns:
 WP
 When setting/updating a value, the old value is suggested.

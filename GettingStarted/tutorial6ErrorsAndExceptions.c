@@ -165,31 +165,40 @@ Exceptions does not enforce strong exception safety as error do,
 so they can be used more flexibly, and since they are documented in
 the types, we can take their existence in account while writing imperative programs.
 Wcode(Assert)ions should not be thrown as exceptions, but only as errors.
-
-Often, the programmer wants to just turn exceptions in errors or other exceptions.
+WP
+Often, the programmer wants to just turn exceptions into errors or other exceptions.
 This is possible with the following code:
 
 
 OBCode
 //long version
 DoStuff()
-catch exception FileNotFound fnf (
+catch exception FileNotFound fnf 
   error WTF"I just created it!"(fnf)
-  )
 
 //short version
 DoStuff()
 error on FileNotFound
   WTF"I just created it!"
 CCode
+
 The two snippets of code behave identically: the first
 show a very common patter; 42 supports syntactic sugar to
 ease following that pattern, as you can see in the second snippet.
+WBR
+This short form exists only for wrapping exceptions, and there is no
+corresponding short form for the much less common case of 
+wrapping errors.
+WP
+
 Wcode(WTF) stands for what a terrible failure
 (as in android), and can be used to mark branches of code
-that the programmer believe would never be executed.
+that the programmer believes would never be executed.
 Wcode(WTF) implements Wcode(Assert), thus code capturing
-Wcode(WTF) is unreliable.
+Wcode(WTF) is unreliable: as explained before, programmers are free
+to change when and how assertion violations are detected.
+For the case of Wcode(WTF), the programmer may recognize that
+such branch could be actually executed, and thus replace the error with correct behaviour.
 
 
 
@@ -199,7 +208,7 @@ WTitle(`(4/5) return')
 
 Return, as we have seen, can be used to exit from the inner
 most level of curly brackets.
-Also curly brackets can have catches, let see some examples
+Also curly brackets can have catches. let's see some examples:
 OBCode
 {
 x=DoStuff()
@@ -232,15 +241,23 @@ While only immutable values can be thrown as errors/exceptions,
 return can throw any kind of value, but returns can not flow
 outside of the scope of a method.
 Hold your head before it explodes, but curly brackets are just a syntactic sugar
- to capture returns; those two snippets of code are equivalent
-
+ to capture returns; these two snippets of code are equivalent:
+<div class="compare">
 OBCode
-N res={if bla return e1
-  return e2}
-//---
+N res={
+  
+  if bla (return e1)
+  return e2
+  
+
+
+  
+  }
+CCode
+OBCode
 N res=(
   Void unused=(
-    if bla return e1
+    if bla (return e1)
     return e2
     )
   catch return N x
@@ -248,19 +265,21 @@ N res=(
   error void//this line is never executed
   )
 CCode
+</div>
+WP
 Depending on how your brain works,
 knowing the desugaring of Wcode({..return..})
 can help you to use return better and understand why you can omit 
 Wcode({..return..}) for simple method bodies, and why you can
 write multiple groups of curly brackets and have local returns.
-Or can just be very confusing. If you are in the second group, just
+Or it may just be very confusing. If you are in the second group, just
 never ever write Wcode(catch return) explicitly and continue
 your 42 experience ignoring the issue.
 
 
 WTitle(`(5/5) Errors, exceptions and return, summary')
 <ul><li>
-Whenever possible, try to detect if your code misbehave, and 
+Always detect if your code misbehaves, and 
 terminate it with an Wcode(Assert)
 </li><li>
 Whenever something out of your
@@ -273,7 +292,7 @@ CCode
 It just take 2 lines, and will make debugging your code so much 
 easier.
 </li><li>
-Use errors as much as makes sense, 
+Use errors intensivelly, 
 but use exceptions sparsely: they are needed only in few 
 cases, mostly when designing public libraries.
 </li><li>
@@ -281,10 +300,10 @@ To convert exception into errors or other exceptions, use the convenient short
 syntax Wcode(`error on T1,..,Tn  OtherMessage""') or 
 Wcode(`exception on T1,..,Tn  OtherMessage""')
 </li><li>
-Sometimes it is possible to write elegant and correct code
+It is sometimes possible to write elegant and correct code
 that is not covered in layers upon layers of error/exception checking,
-but often is not possible or is not convenient.
-Good 42 code can be composed for half of
-its content of just error/exception handling/lifting and management.
+but often is not possible or not convenient.
+Up to half of good 42 code will be composed of
+just error/exception handling/lifting and management.
 Do not be scared of turning your code in it's own policemen.
 </li></ul>
