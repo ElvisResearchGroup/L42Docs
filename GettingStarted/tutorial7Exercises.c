@@ -1,8 +1,8 @@
 WBigTitle(Exercises)
 
-A very large class of practically useful programs can be obtained by
-just declaring
-elemental classes, collections
+A very large class of practically useful programs can be obtained
+just by declaring
+basic classes, collections
 and simple Data classes.
 
 Let's see some exercises and solutions 
@@ -81,8 +81,8 @@ declare the opportune classes and write a randomDig
 method. 
 WP
 You can use the library Wcode(L42.is/Random)
-for randomness. You can use Wcode(Range(stop)) to iterate over
-all (Wcode(Size)) nubers from 0 to Wcode(stop)-1 included.
+for pseudo randomness. You can use Wcode(Range(stop)) to iterate over
+all (Wcode(Size)) numbers from 0 to Wcode(stop)-1 included.
 WP
 A possible solution:
 OBCode
@@ -92,16 +92,19 @@ Cell:Enumeration"dirt, rock, empty, mole"
 
 Direction:Enumeration"up, down, left, right"
 
+Cells:Collections.vector(of:Cell)
+
 Point:Data<<{implements Concept.Invariant
   Size x, Size y
 
   method invariant()
     x>=0Size & x<80Size & y>=0Size & y<80Size
+
   This go(Direction that) {
     if that.isUp() (return this.with(x:\-1Size))
     if that.isDown() (return this.with(x:\+1Size))
     if that.isLeft() (return this.with(y:\-1Size))
-    Assert.Bug[that.isRight()]
+    Assert.Holds[that.isRight()]
     return this.with(y:\+1Size)
     catch error Concept.Invariant.Failure err  (return this)
     }
@@ -109,33 +112,19 @@ Point:Data<<{implements Concept.Invariant
 
 Land:Data<<{//we may want to put the field and the predefined factory private;
   //we will learn how to do that later.
-  mut Cell.List cells
-  
+  mut Cells cells
+
   class method
   mut This ()
-    This(cells:Cell.List[
+    This(cells:Cells[
       with i in Range(stop:80Size*80Size) (
         if Random(10Size)==0Size (use[Cell.rock()])
         else (use[Cell.dirt()])
         )
       ])   
 
-  mut method
-  Void randomDig() (
-    var Point current=Point(x:0Size,y:0Size)
-    with i in Range(stop:100Size) (
-      this.set(current,val:Cell.empty())
-      d=Direction.from(index:Random(4Size)
-      newPoint=current.go(d)
-      if !this.get(d).isRock() (//no digging in rock
-        current:=newPoint
-        )
-      )
-    this.set(current,val:Cell.mole())//finally, the mole is where we ends up
-    )
-  
   //implementation of the matrix as an example,
-  //should be imported from a library
+  //in good 42 code should be imported from a library
   mut method 
   Void set(Point that, Cell val)
     this.#cells()(that.y()*80Size+that.x(), val:val)
@@ -143,6 +132,21 @@ Land:Data<<{//we may want to put the field and the predefined factory private;
   read method 
   Cell get(Point that)
     this.#cells().val(that.y()*80Size+that.x())    
+  
+  
+  mut method
+  Void randomDig() (
+    var Point current=Point(x:0Size,y:0Size)
+    with i in Range(stop:100Size) (
+      this.set(current,val:Cell.empty())
+      d=Direction.from(index:Random(4Size))
+      newPoint=current.go(d)
+      if !this.get(d).isRock() (//no digging in rock
+        current:=newPoint
+        )
+      )
+    this.set(current,val:Cell.mole())//finally, the mole is where we ends up
+    )
   
   toS() S""[with x in Range(stop:80Size) (
       use[S.nl()]//newline
@@ -152,7 +156,7 @@ Land:Data<<{//we may want to put the field and the predefined factory private;
         else if this.get(p).isDirt() (use[S"%"])
         else if this.get(p).isEmpty() (use[S" "])
         else (Assert.Bug[this.get(p).isMole()] use[S"M"])         
-      ))]""
+      ))]""++S.nl()
   //since we define it explicitly, Data will leave it alone :)
   }
 CCode
@@ -162,7 +166,7 @@ WTitle((5/5) Examples summary)
 <ul><li>
 Always think about what can go wrong upfront
 </li><li>
-Most methods can be completed by first checking for 
+May methods can be completed by first checking for 
 errors/issues and then using a Wcode(with)
 </li><li>
 Before heading into a problem,
@@ -183,5 +187,5 @@ Libraries should have well modularize code,
 and provide convenient hooks for adaptation.
 Metaprogramming and interfaces are the right tool for this task.
 
-We should not confound adaptability (without touching the original source, make it so that a new problem can be tackled), with maintenability (change the original source to keep it up to date
+We should not confound adaptability (without touching the original source, make it takle a new problem), with maintenability (change the original source to keep it up to date
 with the ever-changing set of requirements).

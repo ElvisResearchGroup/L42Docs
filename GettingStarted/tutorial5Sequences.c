@@ -132,17 +132,16 @@ p=point.with(x:\y, y:\x)
 p=point.with(x:point.y(), y:point.x())
 CCode
 
-The Wcode(\) is very convenient also while initializing list/set of enumerated values.
-For example
+The 'Wcode(\)' is also very convenient while initializing a list/set of enumerated values.
+WBR
+For example:
 
 OBCode
 Direction=Enumeration"north, east, south, west"
-Direction.Set[\north;\east] //the bitflag corresponding
+Direction.Set[ \north; \east ] //the bitflag corresponding
 //to the set of north and east.
 //is equivalent to the much longer
-Direction.Set[Direction.north();Direction.east()]
-
-p=point.with(x:point.y(), y:point.x())
+Direction.Set[ Direction.north(); Direction.east() ]
 CCode
 
 
@@ -152,14 +151,42 @@ CCode
 
 
 
-WTitle((3/5) `Mutable sequences')
+WTitle((3/5) `Mutate sequences')
+The same sequence class can offer both immutable and mutable methods.
+Sequences are created mutable by Wcode([..]).
+WP
+Mutable references can become immutable by promotion; for example,
+a method without Wcode(mut) parameters returning a 
+Wcode(mut) reference
+can be used to initialize an immutable binding.
+You need to specify the type of the local binding to force the promotion.
+WBR
+For example:
 
+OBCode
+Nums myNums=DoIt.getMutableNums() //ok promotions happens, myNums is immutable
+
+myNums=DoIt.getMutableNums() //myNums type is inferred to be mut Nums
+CCode
+
+Mutable sequences can contains mutable objects.
+While this can be useful in special circumstances, it can create aliasing issues similar to the
+ones of the animals example of before.
+To warn against such issues, methods Wcode(left()), Wcode(right()) and Wcode(val(that)) return 
+Wcode(read) references to mutable objects. In order to obtain 
+a Wcode(mut) reference, the user need to use the methods
+Wcode(`#left()'),
+ Wcode(`#right()')
+ and Wcode(`#val(that)').
+
+WP
 
 Mutable sequences can be more efficient that 
 immutable ones, and are more general, since they 
-can handled mutable objects.
-The square brackets creates mutable sequences/collections,
-so 
+can store mutable objects.
+WBR
+The square brackets create mutable sequences/collections,
+so:
 
 OBCode
 foo=Nums[a;b;c;d]
@@ -171,17 +198,17 @@ CCode
 Now we show some methods over mutable collections, consider each following line independently:
 OBCode
 //setting a value in a position
-foo(2Size,val:b) //foo.equals(Nums[a;b;b;d])
+foo(2Size,val:e) //foo.equals(Nums[a;b;e;d])
 //setting at left or right
-foo.left(b) //foo.equals(Nums[b;b;c;d])
-foo.right(b) //foo.equals(Nums[a;b;c;b])
+foo.left(e) //foo.equals(Nums[e;b;c;d])
+foo.right(e) //foo.equals(Nums[a;b;c;e])
 
 //add a value in a position
-foo.add(2Size,val:b) //foo.equals(Nums[a;b;b;c;d])
+foo.add(2Size,val:e) //foo.equals(Nums[a;b;e;c;d])
 
 //add at left or right
-foo.add(left:b) //foo.equals(Nums[b;a;b;c;d])
-foo.add(right:b) //foo.equals(Nums[a;b;c;d;b])
+foo.add(left:e) //foo.equals(Nums[e;a;b;c;d])
+foo.add(right:e) //foo.equals(Nums[a;b;c;d;e])
 
 //removal
 foo.remove(index:2Size) //foo.equals(Nums[a;b;d])
@@ -195,26 +222,6 @@ foo.removeRight(elem:b) //remove the rightmost b
 CCode
 
 
-
-Mutable collections can become immutable by promotion; for example,
-a method without mutable parameters returning a mutable collection 
-can be used to initialize a mutable one.
-You may need to explicit the type of the local binding to force the promotion.
-For example
-
-OBCode
-Nums myNums=DoIt.getMutableNums() //ok promotions happens, myNums is immutable
-
-myNums=DoIt.getMutableNums() //myNums type is inferred to be mut Nums
-CCode
-
-Mutable collections can contains mutable objects.
-While this can be useful in special circumstances, it can create aliasing issues similar to the
-ones of the animals example of before.
-To warn against such issues, methods Wcode(left()), Wcode(right()) and Wcode(val(that)) return 
-readable references of the mutable objects. In order to obtain 
-the actual mutable reference, the user need to use the methods
-Wcode(`#left()'), Wcode(`#right()') and Wcode(`#val(that)').
 
 
 
@@ -237,11 +244,14 @@ with myData=foo.bar() ( //like a typecase/switch/chain of instanceof
   on Concepts.ToS Debug(myData) //print stringables that are not numbers. 
   )
 CCode
+The semantics of Wcode(with-on) is that the
+first match is executed. No
+confusing fall-through semantics as in C/Java switch.
 
 if Wcode(myData) is already declared one can simply write
 OBCode
 with myData (
-  on S Debug(myData)
+  on S Debug(myData) //here 'myData' is seen of 'S' type
   default Debug(S"Your data is not a string")
   )
 CCode
@@ -254,10 +264,11 @@ with myElem in vec.vals() (on S  result:=result++myElem  )
 //result==S"foobeer", composed by all strings inside vec
 CCode
 
-Wcode(with) can be used as list comprehension
+Wcode(with) can be used as list comprehension; where 
+Wcode(use) inserts elements in the sequence under construction
 OBCode
 vec=Anys[S"foo"; 12Num; S"beer";]
-v=Strings[with myElem in vec.vals() (on S use[myElem] )] //filter non strings
+v=Strings[with myElem in vec.vals() (on S use[myElem] )] //filter out non-strings
 //v==Strings[S"foo"; S"beer";]
 CCode
 
@@ -272,7 +283,7 @@ method Num m(Shape x, Person y, Vehicle z) //example of method using with
   )}
 CCode
 
-Or to iterate over multiple collections at once
+Or to iterate over multiple collections at once:
 OBCode
 rs=Nums[1\;2\;3\;]
 as= Nums[10\;20\;30\;]
@@ -282,44 +293,44 @@ with a in as.vals(), b in bs.vals(), var r in rs.vals() (r:=r+a+b)
 //now rs==Nums[111\;222\;333\;]
 CCode
 
-While iterating on multiple collections, a dynamic error is usually raised if 
+While iterating on multiple collections, a dynamic error is raised if 
 Wcode(rs),
  Wcode(as) and
  Wcode(bs) have different length.
 This behaviour can be tuned in many way:
 iterators can be parametrized with
-Wcode(from:) , Wcode(to:), Wcode(fill:) and 
-Wcode(stopOk:) (I need a better name for this last one).
+Wcode(from) , Wcode(maxTo), Wcode(fill) and 
+Wcode(minTo)
 
-Wcode(from:) and Wcode(to:) are on default zero and the sequence length,
+Wcode(from) and Wcode(maxTo) are on default zero and the sequence length,
 and can be specified to start from another value, like 1 or 2, and
 to end before the very end.
 
-Wcode(fill:) can be used in combination with 
-Wcode(from:) and Wcode(to:)
+Wcode(fill) can be used in combination with 
+Wcode(from) and Wcode(maxTo)
 to iterate outside of the sequence range.
-If Wcode(fill:) is used without specifying Wcode(to:), the
+If Wcode(fill) is used without specifying Wcode(maxTo), the
 sequence is considered infinite and iteration may go on forever.
 
-Wcode(stopOk:) is useful when multiple collections are iterated at once,
-and specify the minimal allowed iteration cycles (suggested value is 0).
+Wcode(minTo) is useful when multiple collections are iterated at once,
+and specify the minimal allowed iteration cycles.
 Let see some examples:
 OBCode
-with x in xs.vals(), y in ys.vals(fill:10N)
+with x in xs.vals(), y in ys.vals(fill:10Size)
 //will iterate for as long as xs, even if ys is shorter
 //will stop after xs.size() cycles, and fail if xs.size()<ys.size()
 
-with x in xs.vals(), y in ys.vals(fill:10N stopOk:\)
+with x in xs.vals(), y in ys.vals(fill:10Num, minTo:0Size)
 //will iterate for as long as xs, even if ys is shorter
 //will stop after xs.size() cycles
 
-with x in xs.vals(stopOk:\), y in ys.vals(stopOk:\)
+with x in xs.vals(minTo:0Size), y in ys.vals(minTo:0Size)
 //will iterate for as long as both xs and ys have elements
 
-with x in xs.vals(fill:10N), y in ys.vals(fill:10N)
+with x in xs.vals(fill:10Num), y in ys.vals(fill:10Num)
 //will go on forever
 
-with x in xs.vals(stopOk:5N), y in ys.vals(from:1N to: \ - 1N stopOk:3N )
+with x in xs.vals(minTo:5Size), y in ys.vals(from:1Size maxTo: \ - 1Size minTo:3Size )
 //will extract at least 5 elements from xs, will skip the first 
 //and the last element of ys and extract at least 2 elements from ys.
 CCode
@@ -330,13 +341,13 @@ OBCode
 rs=Nums[1\;2\;3\;]
 as= Nums[10\;20\;30\;40\;50\;]
 bs= Nums[100\;200\;]
-with a in as.vals(stopOk:\), b in bs.vals(fill:300Num), var r in rs.vals() (
+with a in as.vals(minTo:0Size), b in bs.vals(fill:300Num), var r in rs.vals() (
   r:=r+a+b)
 //rs==Nums[111\;222\;333\;]
 CCode
 
 
-WTitle(`Strings interpolation, even better with Wcode(with)')
+WTitle(`Strings interpolation, even better with' 'Wcode(with)')
 
 Alphanumeric classes and strings can be seen as immutable
 sequences of Strings of length 1.
@@ -377,8 +388,8 @@ difficulties.
 Most methods have a general version that works with an index, and specialized Wcode(left) and
 Wcode(right) variants.
 </li><li>
-Wcode(/) can help remove a lot of boilerplate, but is not trivial to get used to it.
+'Wcode(/)' can help remove a lot of boilerplate, but is a concept unique to 42, and require some effort to get used to.
 </li><li>
-Wcode(with) is very useful and flexible. It is common to find methods composed be just a large
+Wcode(with) is very useful and flexible. It is common to find methods composed from just a large
 Wcode(with) statement plus a little pre and post processing around it.
 </li></ul>

@@ -1,6 +1,5 @@
 WBigTitle(Example of Libraries)
 
-WTitle((1/5)Gui)
 42 stands for the primate of libraries, so let see some libraries in action.
 We have already see how to chose a towel, and many classes that are likely to be present in such towel, like
 Wcode(S) and Wcode(Data).
@@ -14,8 +13,11 @@ Main: {
   }
 }
 CCode
-Load is another decorator, here it modifies the library found in L42.is/Gui
+Wcode(Load) is another decorator, here it modifies the library found in Wcode(L42.is/Gui)
  so that it can be used easily from AdamTowel.
+
+
+WTitle((1/5)Gui)
 
 Gui allows to create graphical user interfaces using html.
 
@@ -23,10 +25,11 @@ OBCode
 {reuse L42.is/AdamTowel
 Gui: Load<<{reuse L42.is/Gui}
 MyGui: Gui(
-  title: S"My Gui" //seek for index.html in your basePath
-  basePath: S"base/path/for/my/files"// use / on all operative systems
+  title: S"My Gui"
+  basePath: S"base/path/for/my/files"// use / on all operating systems
   x: 600Gui.Pixel
   y: 400Gui.Pixel
+  //loads index.html from your basePath
   )<<{
   mut method
   Void event_quit(mut Gui gui, S msg)
@@ -38,8 +41,9 @@ MyGui: Gui(
 
   mut method
   Void event_say(mut Gui gui, S msg) (
-    //msg is going to be a multiline string,
-    //first line equal to "say", other lines give more info
+    //msg is going to be a multiline string coming from the
+    //html message/event.
+    //First line == "say", other lines give more info
     Strings ss=msg.split(S.nl())
     Gui.alert(S"hi dear "+ss.val(1\))
     )
@@ -57,28 +61,26 @@ OHCode
     Hi, buttons here
     <Button onclick='event42("quit");'> Quit</Button>
     <Button onclick='event42("sayHi");'> Say Hi</Button>
-    <Button onclick='event42("say\ncaterpillar");'> Say Hi</Button>
+    <Button onclick='event42("say\ncaterpillar");'> Say Hi Caterpillar</Button>
   </body>
 </html>
 CCode
-Do not forget the two layers of quotes: you need to quote both the call to Wcode(event42)
+Notice the two layers of quotes: you need to quote both the call to Wcode(event42)
 and the string codifying the event itself.
 
 To make something happen in the gui, you can use 
 Wcode(gui.executeJs(cmd)).
-For example
+WBR
+For example, an event could call the following method:
 OBCode
 mut method
-Void event_useJSToWriteOnTextArea(mut Gui gui, S msg) (
-  Strings ss=msg.split(S.nl())
-  js1=Gui.JavaScript"document.getElementById('myTextAreaId').value = 'Hi! event happened';"
-  //or, to use information in the message
-  js2=Gui.JavaScript"document.getElementById('"[ss.val(1\)]"').value = '"[ss.val(2\)]"';"
-  gui.executeJS(js2)
+Void useJSToWriteOnTextArea(mut Gui gui) (
+  js=Gui.JavaScript"document.getElementById('myTextAreaId').value = 'Hi! event happened';"
+  gui.executeJS(js)
   )
 CCode
 
-Gui provide help to visualize datastructures of various kind, 
+Gui provides help to visualize datastructures of various kind, 
 for example vectors of Data classes can be shown as tables in the following way: 
 OBCode
 Person: Data<<{ Size id, Name name, Name surname, Year age }
