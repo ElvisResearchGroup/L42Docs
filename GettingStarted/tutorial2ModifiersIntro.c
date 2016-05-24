@@ -1,7 +1,7 @@
 WBigTitle(`Keep control:  Modifiers, kinds of classes/references/objects')
 
 WTitle(`(1/5)Kinds of classes')
-Wcode(Point) is an WEmph(Immutable class:) 
+Wcode(Point) is an WEmph(Immutable class: ) 
  none of its fields can be WEmph(updated) 
 or WEmph(mutated.)
 Immutable classes are very easy to use but may be inadequate when representing real objects, whose state can changes across time.
@@ -9,7 +9,7 @@ A WEmph(Mutable class) is a class where the state of (some of) its instances may
 
 Let's now declare a Wcode(Animal) mutable class, whose location can be updated.
 OBCode
-Animal: Data<<{
+Animal: Data <>< {
   var Point location
 
   mut method
@@ -53,7 +53,7 @@ WTitle(`(2/5)Interaction between mutable and immutable')
 
 We now explore some interaction between mutable and immutable objects.
 OBCode
-Animal: Data<<{
+Animal: Data <>< {
   var Point location
   mut Points path
   mut method
@@ -111,7 +111,7 @@ CCode
 The first dog moves and consumes the path for the second one as well.
 That is, the first goes to 12: 20 and the second goes to 1: 2.
 
-This is because Wcode(Animal) is now a WEmph(Deeply mutable class:)  a mutable class with mutable fields. 
+This is because Wcode(Animal) is now a WEmph(Deeply mutable class: )  a mutable class with mutable fields. 
 An amazing amount of bugs are caused by the usage of deeply mutable classes.
 
 Note how we are using the exposer Wcode(`#path()')
@@ -124,7 +124,7 @@ This tricky behaviour is correct for a
 deeply mutable class. 
 In 42 we can change Wcode(Animal) to prevent this aliasing issue.
 OBCode
-Animal: Data<<{
+Animal: Data <>< {
   var Point location
   capsule Points path
   mut method
@@ -176,7 +176,7 @@ OBCode
 mut Animal dog1=Animal(__) //no promotion here
 Animal dog2=Animal(__) //promotion mutable->immutable
 dog1.move()
-//dog2.move()  //ill-typed, requires a mut Animal
+ //dog2.move()  //ill-typed, requires a mut Animal
 CCode
 
 We will explain later the exact rules for promotion,
@@ -187,7 +187,7 @@ WTitle(`Exposers and getters: mutable, lent and read')
 
 As we had seen before, exposers are needed to 
 access a mutable reference for a mutable field.
-In case of capsule fields, the exposer will provide a Wcode(lent) reference; that is:
+In case of capsule fields, the exposer will provide a Wcode(lent) reference; that is: 
 a hygienic mutable reference allowing mutation but not long term storage.
 
 Lent references are a supertype of mutable references and can not be stored in mutable/capsule/immutable fields.

@@ -7,19 +7,19 @@ another format, like an executable jar or a native program
 and then save the result somewhere, such as on the website where you users can download it.
 
 OBCode
-{reuse L42.is/AdamTowel
-ToDeploy:Resource << {reuse L42.is/AdamTowel
+{reuse L42.is/AdamsTowel
+ToDeploy: Resource <>< {reuse L42.is/AdamsTowel
   //yes, we repeat the reuse
   /*..lots of code here..*/
   }
-Task:Deploy.asExecutableJar(
-  main:Selector"aClassMethod()"
-  location:URL".."
-  )<<ToDeploy()
+Task: Deploy.asExecutableJar(
+  main: Selector"aClassMethod()"
+  location: URL".."
+  ) <>< ToDeploy()
 }
 CCode
 
-Note that we reuse AdamTowel both outside Wcode(MyProgram)
+Note that we reuse AdamsTowel both outside Wcode(MyProgram)
 and inside of it;
 The two towels do not need to be the same.
 The outermost just has to support the deployment process
@@ -29,28 +29,28 @@ Wcode(MyProgram) a closed library: only libraries that do not refer to external 
 WTitle(42 projects)
 In order to write any sizeable program, it would be great
 to be able to organize our code in multiple files spanning a hierarcky of folders.
-In 42, we can obtain this by using 'Wcode(...)'.
+In 42, we can obtain this by using Wcode(...).
 A 42 project can be either a file
 with upper case name and extension Wcode(.L42)
 or a folder containing a file called Wcode(This.L42).
 Folders can contain other files Wcode(.L42) or folders containing other Wcode(This.L42) and other files.
 
 WP
-In the 42 code, when using 'Wcode(...)' we refer
+In the 42 code, when using Wcode(...) we refer
 to a folder/file with the name of the innermost nested library and we import its content.
 
 For example in the following, we refer to the file/folder Wcode(Main).
 OBCode
-{reuse L42.is/AdamTowel
-ToDeploy:Resource<<{
-  reuse L42.is/AdamTowel
-  Main:...
+{reuse L42.is/AdamsTowel
+ToDeploy: Resource <>< {
+  reuse L42.is/AdamsTowel
+  Main: ...
   class method
   Void main()
     Main.runStuff()
   }
-Task:Deploy.asExecutableJar(
-  location:URL"..")<<ToDeploy()
+Task: Deploy.asExecutableJar(
+  location: URL"..") <>< ToDeploy()
 }
 CCode
 
@@ -59,18 +59,18 @@ a folder Wcode(Main) with all the actual code,
 and then various files providing testing and deploying functionalities.
 
 In general, for medium size projects is a good idea to keep executing the tests before the deployment; for example
-directly under Wcode(Main:...) we could add
+directly under Wcode(Main: ...) we could add
 Wcode(TestsRunner: ...)
 Do not panic, If the test are not reachable from Wcode(myMainMethod), they are not going to be included in the
 executable jar.
 WP
 42 can support various kinds of unit testing and mocking,
-but there is no support at this stage in AdamTowel.
+but there is no support at this stage in AdamsTowel.
 
 WTitle((2/5)Towel embroidery)
 A towel is about the most massively useful thing a programmer can have.
 A towel has immense psychological value, and you should always know where your towel is.
-All the classes we have used up to now without defining them, are defined in AdamTowel.
+All the classes we have used up to now without defining them, are defined in AdamsTowel.
 They are all normal classes/libraries.
 
 You can code without a towel, but this means starting from first principles,
@@ -103,12 +103,12 @@ Towels shines when multiple towels are used at the same time.
 
 OBCode
 {reuse L42.is/AdamsTowel
-//here you can access to lots of utility classes declared inside the towel
-//including numbers, strings and so on.
-C:{reuse L42.is/FordTowel
-//here you can access a different set of classes.
-//For example, Num would refer to the number in FordTowel
-//and to see the number declared in AdamsTowel you have to write This1.N
+ //here you can access to lots of utility classes declared inside the towel
+ //including numbers, strings and so on.
+C: {reuse L42.is/FordTowel
+ //here you can access a different set of classes.
+ //For example, Num would refer to the number in FordTowel
+ //and to see the number declared in AdamsTowel you have to write This1.N
   }
 }
 CCode
@@ -126,18 +126,18 @@ deploy you own towel, when you can
 pre-load some libraries and define your basic classes.
 
 OBCode
-{reuse L42.is/AdamTowel
-ToDeploy:Resource<<{
-  reuse L42.is/AdamTowel
-  Gui:Load<<{reuse L42.is/Gui}
-  Kg:Units.of(Num)
-  Meter:Units.of(Num)
+{reuse L42.is/AdamsTowel
+ToDeploy: Resource <>< {
+  reuse L42.is/AdamsTowel
+  Gui: Load <>< {reuse L42.is/Gui}
+  Kg: Units.of(Num)
+  Meter: Units.of(Num)
   /*..*/  
   }
-Task:Deploy.asTowel(
-  url:Url"https://github.com/MyProjectName/MyTowel.L42"
-  permissions:S".."
-  )<<ToDeploy()
+Task: Deploy.asTowel(
+  url: Url"https: //github.com/MyProjectName/MyTowel.L42"
+  permissions: S".."
+  ) <>< ToDeploy()
 }
 CCode
 
@@ -148,7 +148,7 @@ WP
 The idea of modifying a towel to create a variation is called
 WEmph(Towel Embroidery.)
 Wcode(MyTowel)
- is just a variation of AdamTowel, with more stuff added at the bottom.
+ is just a variation of AdamsTowel, with more stuff added at the bottom.
 While adding stuff in this way is very useful,
 we can do much more than that.
 
@@ -159,13 +159,13 @@ is Wcode(Extend.patch(that)).
 The idea is that we extend a library using a part of itself
 as a patch.
 WBR
-As an example:
+As an example: 
 OBCode
-Code:Extend.patch(Path"Fix")<<{
+Code: Extend.patch(Path"Fix") <>< {
   class method
   S sayHi()
     S"Hi"
-  Fix:{
+  Fix: {
     class method @override
     S sayHi()
       S"Say "++this.#1sayHi()
@@ -175,12 +175,12 @@ CCode
 
 Wcode(Code.sayHi()) will return Wcode(S"Say Hi").
 This also works for nested classes. If for example
-you wish to add a reverse method to Wcode(S) in your towel, you could do the following:
+you wish to add a reverse method to Wcode(S) in your towel, you could do the following: 
 
 OBCode
-ToDeploy:Resource<<Extend.patch(Path"Fix")<<{
-  reuse L42.is/AdamTowel
-  Fix:{S:{
+ToDeploy: Resource <>< Extend.patch(Path"Fix") <>< {
+  reuse L42.is/AdamsTowel
+  Fix: {S: {
     method S reverse() {/*..*/}
     }}
   }
@@ -222,18 +222,18 @@ Wcode(Load) is used to load libraries,
 but it also contains all the knowledge to deploy
 them.
 WBR
-For example:
+For example: 
 OBCode
-{reuse L42.is/AdamTowel
-ToDeploy:Resource<<{
+{reuse L42.is/AdamsTowel
+ToDeploy: Resource <>< {
   reuse L42.is/MyTowel
-  MyLib:...
+  MyLib: ...
   }
 }
-Task:Load.DeployLibrary(
-  path:Path"MyLib",
-  url:Url".."
-  )<<ToDeploy()
+Task: Load.DeployLibrary(
+  path: Path"MyLib",
+  url: Url".."
+  ) <>< ToDeploy()
 }
 CCode
 
@@ -244,14 +244,14 @@ in Wcode(MyLib), it will be pruned away.
 
 WP
 
-Note how in this example we use towels Wcode(AdamTowel)
+Note how in this example we use towels Wcode(AdamsTowel)
  and Wcode(MyTowel).
 Wcode(Load) used in
 Wcode(Task) comes from 
-Wcode(AdamTowel), thus has no idea of the 
+Wcode(AdamsTowel), thus has no idea of the 
 embrowdery process that created.
 This means that all classes already present 
-in Wcode(AdamTowel) will be attempted to be abstracted away, while all the newly introduced classes will become private.
+in Wcode(AdamsTowel) will be attempted to be abstracted away, while all the newly introduced classes will become private.
 Thus, in our example, 
 Wcode(Gui),
 Wcode(Kg) and
@@ -265,29 +265,29 @@ then it needs to be loaded on similarly embrowdered towels.
 WP
 If we wish to expand the Loading/deployment process, we
 need to patch Wcode(ConceptMap)
-as in the following example:
+as in the following example: 
 OBCode
-{reuse L42.is/AdamTowel
-ToDeploy:Resource<<Extend.patch(Path"Fix")<<{
-  reuse L42.is/AdamTowel
-  Kg:Units.of(Num)
-  Gui:Load<<{reuse L42.is/Gui}
-  Fix:{
-    ConceptMap:{interface 
+{reuse L42.is/AdamsTowel
+ToDeploy: Resource <>< Extend.patch(Path"Fix") <>< {
+  reuse L42.is/AdamsTowel
+  Kg: Units.of(Num)
+  Gui: Load <>< {reuse L42.is/Gui}
+  Fix: {
+    ConceptMap: {interface 
       method Kg _Kg()
       method Gui _Gui()
       }
-    S:{
+    S: {
       method
       S reverse() {/*..*/}
       }
     }
   }
 
-Task:Deploy.asTowel(
-  url:Url"https://github.com/MyProjectName/MyTowel.L42"
-  permissions:S".."
-  )<<ToDeploy()
+Task: Deploy.asTowel(
+  url: Url"https: //github.com/MyProjectName/MyTowel.L42"
+  permissions: S".."
+  ) <>< ToDeploy()
 }
 CCode
 Now Wcode(MyTowel) can be used  as a towel,
@@ -310,12 +310,12 @@ share a unique definition for Wcode(Kg) and Wcode(Gui).
  <!--
 
 OBCode
-Observer:{interface
+Observer: {interface
   mut method update()
   }
-Observers:Collection.vector(ofMut:Observer)
+Observers: Collection.vector(ofMut: Observer)
 
-Traits:{
+Traits: {
 
   class method
   Library subject(){
@@ -327,7 +327,7 @@ Traits:{
 
     mut method
     Void register(Observer that)
-      this.#observers().add(right:that)
+      this.#observers().add(right: that)
 
     mut method
     Void notify() 
@@ -340,23 +340,23 @@ Traits:{
 
 }
 
-MyObservableWidget:Extends[Traits.subject(); Traits.widget()] <<{
+MyObservableWidget: Extends[Traits.subject(); Traits.widget()] <>< {
   mut method @override
   Void repaint() (this.#2repaint() this.notify())
   }
 CCode
 
-It is possible to iterate over a range of numbers:
+It is possible to iterate over a range of numbers: 
 
 OBCode
 with i in 4Size.vals() (
-  Debug(i)//prints 4,5,6,7 and so on forever
+  Debug(i) //prints 4,5,6,7 and so on forever
   )
 CCode
 
 OBCode
 with i in 4Size.upTo(42Size) (
-  Debug(i)//prints 4,5,6,7 and so on up to 42 excluded
+  Debug(i) //prints 4,5,6,7 and so on up to 42 excluded
   )
 CCode
 
@@ -365,13 +365,13 @@ Resources used within an iteration can be released after the iteration
 since collections are notified when the iteration ends.
 
 OBCode
-//a contains "foo1 \n foo2 \n foo3"
-//b contains "bar1 \n bar2"
+ //a contains "foo1 \n foo2 \n foo3"
+ //b contains "bar1 \n bar2"
 with 
   input in LineStream.readFile(S"a"), 
-  var output in LineStream.readWriteFile(S"b",fill:S"None") (
-    output:= output +" : "+input)//line by line, add input in the file
-//b contains "bar1 : foo1 \n bar2 : foo2 \n None : foo3"
+  var output in LineStream.readWriteFile(S"b",fill: S"None") (
+    output: = output +" : "+input) //line by line, add input in the file
+ //b contains "bar1 : foo1 \n bar2 : foo2 \n None : foo3"
 CCode
 
 

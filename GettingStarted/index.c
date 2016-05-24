@@ -51,7 +51,7 @@ WP
 <Div id="c"><p>
 WTitle(Pure and fair Object Oriented language)
 42 is a pure object oriented language,
-where every value is an object. This means that:
+where every value is an object. This means that: 
 <ul>
 <li>
 Numbers are objects, 
@@ -98,7 +98,7 @@ WTitle(A simple language)
 We believe 42 is a simple language,
 where all classes are final and interfaces are the only instrument to obtain subtyping.
 Moreover, 42 does not offer many controversial features usually found in other programming
-languages, including:
+languages, including: 
 (method) overloading; threading; numeric conversions and coercions;
 casts; var-args; primitive types and automatic (un-)boxing;
 inner classes; arrays; generics; scope-hiding of local variables/bindings, methods and fields;

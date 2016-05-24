@@ -1,12 +1,12 @@
 WBigTitle(Target audience)
 This tutorial is design for expert programmers, already knowledgeable in 
 at least two or three languages between Java, C#, C++ and Python.
-This tutorial lay basic knowledges for programming in 42 using AdamTowel, but
+This tutorial lay basic knowledges for programming in 42 using AdamsTowel, but
 do not explore the foundational theories behind 42,
 or the mathematical reasons that makes 42 correct.
 WBR
-AdamTowel is in continue evolution; this document does not represent the current state
-of AdamTowel but an ideal target destination.
+AdamsTowel is in continue evolution; this document does not represent the current state
+of AdamsTowel but an ideal target destination.
 WBR
 This document is work in progress,
 and chapters 10 and 11 are not as well thought out as the rest of the document,
@@ -17,7 +17,7 @@ WTitle((1/5)Simple hello world program)
 Let's look at a simple hello world program: 
 
 OBCode 
-{reuse L42.is/AdamTowel
+{reuse L42.is/AdamsTowel
 Main: {
   Debug(S"Hello world")
   return ExitCode.success()
@@ -25,15 +25,15 @@ Main: {
 }
 CCode
 
-When we write Wcode(reuse L42.is/AdamTowel) we are asking 42 to
+When we write Wcode(reuse L42.is/AdamsTowel) we are asking 42 to
 reuse the code of the library found in the internet address 
-Wcode(L42.is/AdamTowel).
-AdamTowel is our Towel, that is the set of classes and interfaces that we wish to start from (Wlink(towel,see more on towels)).
+Wcode(L42.is/AdamsTowel).
+AdamsTowel is our Towel, that is the set of classes and interfaces that we wish to start from (Wlink(towel,see more on towels)).
 Wcode(L42.is) is the main website of 42, where most commonly used libraries are hosted. To reuse code you 
 need an internet connection; but this also means that you will never have to manually import any code.
 Required code will be transitively downloaded and cached on your machine, so you need not to be aware of the existence of this mechanism.
 WP
-We do not need to always start from AdamTowel, there are many interesting towels out there, and you may also become skilled in the 
+We do not need to always start from AdamsTowel, there are many interesting towels out there, and you may also become skilled in the 
 advanced technique of towel embroidery.
 WP
 
@@ -57,10 +57,10 @@ Finally, our code ends by returning "success" as exit status.
 WTitle((2/5)Method declaration and call)
 Let's now declare a method and call it.
 OBCode
-{reuse L42.is/AdamTowel
+{reuse L42.is/AdamsTowel
 MyCode: {
   class method
-  S hello(S nickName){//we can use usual if/while
+  S hello(S nickName){ //we can use usual if/while
     if nickName.isEmpty() (return S"Hello!")
     return S"Hello " ++ nickName
     } 
@@ -92,7 +92,7 @@ In 42 we do not have constructors. Objects are created by factory methods, that 
 WTitle((3/5)Simple class with internal state)
 Let's create now a class with state and factory: 
 OBCode
-Point: Data<<{
+Point: Data <>< {
   Num x
   Num y
   method
@@ -103,7 +103,7 @@ Point: Data<<{
   }
 CCode
 Here you can see we declare a Wcode(Point) class with Wcode(x) and Wcode(y) Wcode(Num) (unlimited precision rational number) coordinates.
-Wcode(Data) is a decorator. Decorators are classes/objects that offer an operator Wcode(<<), called the babel fish operator,
+Wcode(Data) is a decorator. Decorators are classes/objects that offer an operator Wcode(<><), called the babel fish operator,
 whose goal is to translate a library into a "better" library.
 In this case, Wcode(Data) is translating the class Wcode(`{Num x, Num y}') into a much longer class, with
 a factory method taking in input the fields and initializing them, but also containing
@@ -130,7 +130,7 @@ While this makes some code more verbose, it saves us from the burden of  method 
 WTitle(Decorators)
 Decorators are one of the main concepts used by 42 programmers. We will encounter many decorators in this tutorial.
 For now, just get used to the pattern of writing
-Wcode(<<) to go from a minimal chunk of code, with method declarations for the important bits, to a fully fledged usable class.
+Wcode(<><) to go from a minimal chunk of code, with method declarations for the important bits, to a fully fledged usable class.
 Wlink(Decorators, More on decorators)
 
 
@@ -139,8 +139,8 @@ WTitle((4/5)Vectors)
 Vectors can be declared using Wcode(Collections.vector(of)), as in the example below.
 
 OBCode
-Nums: Collections.vector(of: Num)//declaration for vectors of nums
-Points: Collections.vector(of: Point)//same for points
+Nums: Collections.vector(of: Num) //declaration for vectors of nums
+Points: Collections.vector(of: Point) //same for points
 /*..*/
 xs=Nums[10Num;20Num;30Num]
 ys=Nums[1Num;2Num;3Num]
@@ -158,11 +158,11 @@ WTitle(`(5/5)Basis summary')
 
 <ul><li>
 At the start of your program, import a towel using 
-"Wcode(reuse _)", as in Wcode(reuse L42.is/AdamTowel).
+"Wcode(reuse _)", as in Wcode(reuse L42.is/AdamsTowel).
 </li><li>
 To declare a simple class exposing its state and 
 some methods working with those, use Wcode(Data), as in
-Wcode(Point: Data<<{Num x, Num y}).
+Wcode(`Point: Data <>< {Num x, Num y}').
 </li><li>
 You can declare methods in classes with the Wcode(method) keyword,
 as in Wcode(method ReturnType myName(ParType parName) body).

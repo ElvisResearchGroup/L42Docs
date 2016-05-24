@@ -1,4 +1,4 @@
-WBigTitle(Errors and Exceptions: Messages in AdamTowel)
+WBigTitle(Errors and Exceptions: Messages in AdamsTowel)
 
 WTitle((1/5)`Errors, Messages, Asserts, Guards, .. so much terminology') 
 In 42 when something takes an unexpected turn,
@@ -7,7 +7,7 @@ This is similar to Java unchecked exceptions.
 Every immutable object can be thrown as an error.
 While it is possible to thrown informative strings, they do no offer enough
 structure to fully take advantage of the error mechanism.
-AdamTowel defines the interface Wcode(Message):
+AdamsTowel defines the interface Wcode(Message): 
 a structured way to provide a certain kind of message to the user.
 Wcode(Message)s has Wcode(.text()) ,
 Wcode(.isResponse()) and Wcode(.responseOf()).
@@ -17,7 +17,7 @@ then Wcode(msg.responseOf()) will be the
 former message in the chain, else Wcode(msg.responseOf())
 will produce a run time error.
 
-There are two main kinds of Wcode(Message)s:
+There are two main kinds of Wcode(Message)s: 
 Wcode(Guard) and Wcode(Assert).
 While Assertions are useful to observe bugs, the application
 logic should not depend on them, since they may change
@@ -31,12 +31,12 @@ The following code show usages of Wcode(Assert.Pre) and Wcode(Assert.Bug)
 
 OBCode
 Assert.Pre[ //preconditions
-  myVal>0Nat;//simplest form
-  myVal>0Nat msg:S"here with personalized message myVal="[myVal]"";
-  myVal expected:42Nat //call equals and do a better error reporting
-  ]//in a bunch of assertions, they are all going to be checked together.
+  myVal>0Nat; //simplest form
+  myVal>0Nat msg: S"here with personalized message myVal="[myVal]"";
+  myVal expected: 42Nat //call equals and do a better error reporting
+  ] //in a bunch of assertions, they are all going to be checked together.
 Assert.Bug[ //postconditions/checks in the middle
-  res expected: 42Nat msg:S" message"
+  res expected: 42Nat msg: S" message"
   ]
 if notGoodParameter (Assert.Pre"error message")
 if observedBug  (Assert.Bug"error message")
@@ -47,20 +47,20 @@ WTitle(`(2/5) create, throw and capture')
 WTitle(create and throw)
 
 You can create new kinds of messages using the 
-service class of the message interface:
+service class of the message interface: 
 
 OBCode
-AnswerNotUnderstood:Message.$<<{implements Guard}
-//this is a new kind of message, implementing Guard.
-//you can also add methods to your kind of message.
-//you can add fields, we will see this more in detail later.
+AnswerNotUnderstood: Message.$ <>< {implements Guard}
+ //this is a new kind of message, implementing Guard.
+ //you can also add methods to your kind of message.
+ //you can add fields, we will see this more in detail later.
 /*..*/
-//throwing an error
+ //throwing an error
 if this.ohNoNoNOOO() (error AnswerNotUnderstood"Well, too bad")
 
 if this.iWasDistracted() (
   //throwing an error in response of another
-  Guard other=NotListening""//empty message
+  Guard other=NotListening"" //empty message
   error AnswerNotUnderstood"Try again"(other)
   )
 
@@ -82,13 +82,13 @@ For example, in the following code we have 3 paragraphs: line 2-3,
 OBCode
 res=(
  b1=CanGoWrong()
- b2=CanGoWrong()//see b1
- catch error Wrong msg1  S"hi 1"//not see b1,b2
- catch error Guard msg2  S"hi 2"//not see b1,b2
- b3=CanGoWrong()//can see b1, b2
- b4=CanGoWrong()//can see b1, b2
- catch error Wrong msg3  S"hi 3"//see b1,b2, not see b3,b4
- S"hi 4"//see b1,b2,b3
+ b2=CanGoWrong() //see b1
+ catch error Wrong msg1  S"hi 1" //not see b1,b2
+ catch error Guard msg2  S"hi 2" //not see b1,b2
+ b3=CanGoWrong() //can see b1, b2
+ b4=CanGoWrong() //can see b1, b2
+ catch error Wrong msg3  S"hi 3" //see b1,b2, not see b3,b4
+ S"hi 4" //see b1,b2,b3
  )
 CCode
 
@@ -117,7 +117,7 @@ This is enforced by disallowing catching errors if the paragraph can mutate obje
 WBR
 That is, the following code do not compile
 OBCode
-p=Person(name:S"Bill" age:23Year)
+p=Person(name: S"Bill" age: 23Year)
 res=(
  p.age(p.age()+1Year)
  p.age(p.age()+1Year)
@@ -130,7 +130,7 @@ While the following is accepted.
 
 OBCode
 res=(
- p=Person(name:S"Bill" age:23Year)
+ p=Person(name: S"Bill" age: 23Year)
  p.age(p.age()+1Year)
  p.age(p.age()+1Year)
  catch error Guard msg2  (/*can not see p*/)
@@ -167,16 +167,16 @@ the types, we can take their existence in account while writing imperative progr
 Wcode(Assert)ions should not be thrown as exceptions, but only as errors.
 WP
 Often, the programmer wants to just turn exceptions into errors or other exceptions.
-This is possible with the following code:
+This is possible with the following code: 
 
 
 OBCode
-//long version
+ //long version
 DoStuff()
 catch exception FileNotFound fnf 
   error WTF"I just created it!"(fnf)
 
-//short version
+ //short version
 DoStuff()
 error on FileNotFound
   WTF"I just created it!"
@@ -208,16 +208,16 @@ WTitle(`(4/5) return')
 
 Return, as we have seen, can be used to exit from the inner
 most level of curly brackets.
-Also curly brackets can have catches. let's see some examples:
+Also curly brackets can have catches. let's see some examples: 
 OBCode
 {
 x=DoStuff()
 catch exception Stuff e1
-  void//just swallow the exception
+  void //just swallow the exception
 catch exception Guard e2
-  obj.doSideEffect()//this method return void
+  obj.doSideEffect() //this method return void
 catch exception Message e3
-  return e3//a result of the curly brackets
+  return e3 //a result of the curly brackets
 y=DoStuff(x)
 return y
 error on Guard 
@@ -226,7 +226,7 @@ error on Guard
 CCode
 
 Moreover, curly brackets/return can be used
-to provide a different result if some computation fails:
+to provide a different result if some computation fails: 
 
 OBCode
 res={return PlanA()
@@ -241,7 +241,7 @@ While only immutable values can be thrown as errors/exceptions,
 return can throw any kind of value, but returns can not flow
 outside of the scope of a method.
 Hold your head before it explodes, but curly brackets are just a syntactic sugar
- to capture returns; these two snippets of code are equivalent:
+ to capture returns; these two snippets of code are equivalent: 
 <div class="compare">
 OBCode
 N res={
@@ -262,7 +262,7 @@ N res=(
     )
   catch return N x
     x
-  error void//this line is never executed
+  error void //this line is never executed
   )
 CCode
 </div>
@@ -285,7 +285,7 @@ terminate it with an Wcode(Assert)
 Whenever something out of your
 control happen, Give it a name and throw it as an error, as in
 OBCode
-NameOfIssue:Message.$<<{implements Guard}
+NameOfIssue: Message.$ <>< {implements Guard}
 /*...*/
 if /*..*/ error NameOfIssue"more info"
 CCode

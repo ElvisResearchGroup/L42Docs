@@ -6,12 +6,12 @@ WTitle(Refactor)
 Wcode(Refactor) is a class supporting modification of
 library literals.
 For example, you may want to rename the method Wcode(importStructure(that)) into just Wcode(import(that)).
-You can do the following:
+You can do the following: 
 OBCode
-{reuse L42.is/AdamTowel
-Db:Refactor.RenameSelector(
-  Selector"importStructure(that)" to:Selector"import(that)")<<Load<<{reuse L42.is/Db}
-UnivDb:Db.import(Db.ConnectionS"...")
+{reuse L42.is/AdamsTowel
+Db: Refactor.RenameSelector(
+  Selector"importStructure(that)" to: Selector"import(that)") <>< Load <>< {reuse L42.is/Db}
+UnivDb: Db.import(Db.ConnectionS"...")
 /*..*/
 }
 CCode
@@ -20,7 +20,7 @@ in the same way the type Wcode(Path) represent
 paths inside library literals, as in Wcode(Path"MyNested.MyNestedNested") or
 Wcode(Path"This").
 
-There are a lot of refactoring operations nested under Wcode(Refactor):
+There are a lot of refactoring operations nested under Wcode(Refactor): 
 <ul><li>
 Wcode(RenameSelector)
 and 
@@ -87,10 +87,10 @@ WP
 We use the term Wemph(trait) for  methods that return reusable (unnamed) code.
 For example
 OBCode
-Transaction:{
+Transaction: {
   class method
   Library traitEnsureTransaction() 
-    {//begin library literal
+    { //begin library literal
     class method //without name: can be called as a functor
     Void (mut Db.Connection connection)
     exception Db.Query.Failure //no body: abstract method
@@ -99,7 +99,7 @@ Transaction:{
     Void (mut Db.Connection that)
     exception Db.Query.Failure (
       that.openTransaction()
-      This(connection:that)//here we call us as a functor
+      This(connection: that) //here we call us as a functor
       catch exception Db.Query.Failure x (
         that.rollback()
         exception x //no 'finally' needed thanks to strong error safety, more on this later
@@ -107,11 +107,11 @@ Transaction:{
       that.commitTransaction()
       )
     }
-  }//end library literal
+  } //end library literal
 
-MyAction:Refactor.compose(
-  left:Transaction.traitEnsureTransaction()
-  right:{ //and now the missing implementation
+MyAction: Refactor.compose(
+  left: Transaction.traitEnsureTransaction()
+  right: { //and now the missing implementation
     class method
     Void (mut Db.Connection connection)
     exception Db.Query.Failure {
@@ -119,9 +119,9 @@ MyAction:Refactor.compose(
       }
     })
 
-Main:{
+Main: {
   /*..*/
-  MyAction(conn)//do the operation in a transaction
+  MyAction(conn) //do the operation in a transaction
   /*..*/
   }
 CCode
@@ -141,50 +141,50 @@ WP
 
 Manually declaring a class just to declare a single trait method
 returning a library literal is verbose.
-In AdamTowel we can use the class Wcode(Resource)
+In AdamsTowel we can use the class Wcode(Resource)
 which automate this process.
 WBR
-For example:
+For example: 
 OBCode
-TraitEnsureTransaction:Resource<<{
+TraitEnsureTransaction: Resource <>< {
   class method
-  Void (mut Db.Connection connection)//method selector here is '(connection)'
+  Void (mut Db.Connection connection) //method selector here is '(connection)'
   exception Db.Query.Failure 
 
   class method
-  Void (mut Db.Connection that)//method selector here is '(that)'
+  Void (mut Db.Connection that) //method selector here is '(that)'
   exception Db.Query.Failure (/*..as before..*/)
   }
 
-MyAction:Refactor.compose(
-  left:TraitEnsureTransaction()
-  right:{ /*..as before..*/})
+MyAction: Refactor.compose(
+  left: TraitEnsureTransaction()
+  right: { /*..as before..*/})
 CCode
 
 This let us save just a couple of lines. 
 We can improve further and make a Wcode(Transaction)
-class decorator:
+class decorator: 
 
 OBCode
-Transaction:{
-  InvalidAction:Message.$<<{implements MetaGuard}
+Transaction: {
+  InvalidAction: Message.$ <>< {implements MetaGuard}
   //meta guard is the root of all the metaprogramming guards
-  class method //using << to define the babelfish operator
-  Library << (Library that) 
+  class method //using <>< to define the babelfish operator
+  Library <>< (Library that) 
   exception InvalidAction {
-    i=Introspection(lib:that)
+    i=Introspection(lib: that)
     if !i.hasMethod(\"(connection)") (exception InvalidAction
       "Action method '(connection)' missing")
     composed=Refactor.compose(  left: TraitEnsureTransaction(), right: that  )
     exception on MetaGuard ( InvalidAction
-      "Action invalid:type of '(connection)' does not fit or already defined '(that)'")
-    return Refactor.HideSelector(\"(connection)")<<composed
+      "Action invalid: type of '(connection)' does not fit or already defined '(that)'")
+    return Refactor.HideSelector(\"(connection)") <>< composed
     error on Metaguard
       WTF"'(connection)' is there, ready to be hidden"
     }  
   }
-//So, MyAction becomes shorter and better checked:
-MyAction:Transaction<<{
+ //So, MyAction becomes shorter and better checked: 
+MyAction: Transaction <>< {
   class method
   Void(mut Db.Connection connection)
   exception Db.Query.Failure {
@@ -207,16 +207,16 @@ Wcode(Extend)
  is a decorator implemented using 
 Wcode(Refactor) and
 Wcode(Introspection)
-which provides a flexible model of multiple inheritance with super calls in AdamTowel.
+which provides a flexible model of multiple inheritance with super calls in AdamsTowel.
 WBR
 As an example, in a game we can have a chest which contains objects in certain positions,
 a boat which host humanoids, and
 a cargo boat, which host humanoids and contains objects like a chest.
 We want to reuse the code of chest and boat to obtain the cargo boat.
 WBR 
-For example:
+For example: 
 OBCode
-ChestTrait:Resource<<{
+ChestTrait: Resource <>< {
   mut Objects objects
   /*.. methods to validate access to objects..*/
   read method
@@ -227,7 +227,7 @@ ChestTrait:Resource<<{
     }
   }
 
-BoatTrait:Resource<<{
+BoatTrait: Resource <>< {
   mut Humanoids crew
   Kg maxCapacity
   /*.. methods to validate access to crew..*/
@@ -239,9 +239,9 @@ BoatTrait:Resource<<{
     this.maxCapacity()-this.weight()    
   }
 
-Chest:Data<<ChestTrait()
-Boat:Data<<BoatTrait()
-CargoBoat:Data<<Extend[ChestTrait();BoatTrait()]<<{
+Chest: Data <>< ChestTrait()
+Boat: Data <>< BoatTrait()
+CargoBoat: Data <>< Extend[ChestTrait();BoatTrait()] <>< {
   read method @override //explained below
   Kg weight() this.#1weight()+this.#2weight()
   }
@@ -267,7 +267,7 @@ As an exercise, lets try to use what we learned to add a Wcode(sum()) method to
 a vector.
 
 OBCode
-Nums:Extends[Collections.vector(of:Num)]<<{
+Nums: Extends[Collections.vector(of: Num)] <>< {
   read method
   Num sum(){
     var Num res=0Num
@@ -281,7 +281,7 @@ Easy.
 However, note that we are calling Wcode(this.vals()) to
 do the iteration, and we are not declaring a Wcode(vals())
 method.
-The idea is that while computing Wcode(Nums), the type system is temporary allowing for incomplete/untypable code at the right of the 'Wcode(:)'.
+The idea is that while computing Wcode(Nums), the type system is temporary allowing for incomplete/untypable code at the right of the Wcode(: ).
 The typesystem will check that all is ok when the declaration of Wcode(Nums) is complete.
 WP
 However, we have done an extension only on our specific Wcode(Nums) vector, we would have to repeat
@@ -291,13 +291,13 @@ Well, this can only work for vectors of elements with a Wcode(+) operator, and a
 numeric classes offer a Wcode(zero()) 
 and Wcode(one()) method.
 WBR
-Building on that, we could attempt the following, invalid solution:
+Building on that, we could attempt the following, invalid solution: 
 OBCode
-MyCollection:{
+MyCollection: {
   class method
   Library traitSum()
-    {//my sum feature
-    T:{
+    { //my sum feature
+    T: {
       class method T zero()
       method T +(T that)
       }
@@ -310,9 +310,9 @@ MyCollection:{
     }
   class method
   Library vector(class Any of) {
-    oldPart=Collection.vector(of:of)
-    newPart=Refactor.Redirect(Path"T" to:of)<<this.traitSum()
-    return Refactor.compose(left:oldPart, right:newPart)
+    oldPart=Collection.vector(of: of)
+    newPart=Refactor.Redirect(Path"T" to: of) <>< this.traitSum()
+    return Refactor.compose(left: oldPart, right: newPart)
     }
 CCode
 
@@ -331,7 +331,7 @@ but that would be duplicating code; moreover, Wcode(vals()) returns an iterator,
 
 Wcode(Collection) offers a solution: a trait containing
 the minimal code skeleton to make Wcode(vals()) over path 
-'Wcode(T)'.
+Wcode(T).
 WBR
 The idea is that
 the composition of Wcode(traitSum()) and
@@ -340,23 +340,23 @@ However, even declaring Wcode(traitSum()) as
 OBCode
 class method
 Library traitSum() 
-  Extend[Collections.traitValsT()]<<{/*my sum feature as before*/}
+  Extend[Collections.traitValsT()] <>< {/*my sum feature as before*/}
 CCode
 
-whould not work: the Wcode(<<) method would
+whould not work: the Wcode(<><) method would
 be called when Wcode(traitSum()) runs, leaving incomplete code in the resulting library literal.
 We need to force the computation to happen before
 Wcode(MyColleciton) is completed.
 A solution is to use Wcode(Resource).
 
 OBCode
-TraitSum:Resource<<Extend[Collections.traitValsT()]<<{/*my sum feature as before*/}
-MyCollection:{
+TraitSum: Resource <>< Extend[Collections.traitValsT()] <>< {/*my sum feature as before*/}
+MyCollection: {
   class method
   Library vector(class Any of) (
-    oldPart=Collection.vector(of:of)//surely works
-    {newPart=Refactor.Redirect(Path"T" to:of)<<TraitSum()
-    return Extend[oldPart]<<newPart
+    oldPart=Collection.vector(of: of) //surely works
+    {newPart=Refactor.Redirect(Path"T" to: of) <>< TraitSum()
+    return Extend[oldPart] <>< newPart
     catch exception MetaGuard g return oldPart
     })
 CCode
@@ -366,12 +366,12 @@ If our parameter does not support zero and plus,
 we will just return a normal collection. We need to insert additional brackets otherwise the 
 binding Wcode(oldPart) would not be visible in the catch body.
 
-As you may notice there is some incoherence in our programming style:
+As you may notice there is some incoherence in our programming style: 
 should traits be methods in a class or Resources?
 should we use 
 the more primitive
 Wcode(Refactor.compose(left,right))
-or the more flexible Wcode(Extend[]<<)?
+or the more flexible Wcode(Extend[] <><)?
 In the current state of the art we do not have an answer for what is the best in 42.
 WBR
 Indeed, we still do not understand the question.

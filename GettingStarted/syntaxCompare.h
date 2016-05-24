@@ -21,8 +21,8 @@ CJCode
 WTitle(Imports and comments)
 <div class="compare">
 OCode
-//42 code
-//comment
+ //42 code
+ //comment
 
 /*multiline comment*/
 
@@ -30,8 +30,8 @@ reuse L42.is/AdamsTowel  //importing code
 CCode
 
 OJCode
-//(sort of) equivalent Java code 
-//comment
+ //(sort of) equivalent Java code 
+ //comment
 
 /*multiline comment*/
 
@@ -50,7 +50,7 @@ CJCode
 WTitle(String and numbers)
 <div class="compare">
 OCode
-//42 code
+ //42 code
 S"hello world"  //String
 
 Url"www.google.com" //Specially formatted string
@@ -66,15 +66,15 @@ Javascript"
 14Size  //number suitable to be an index
 100Meter  //100 meter
 25Kg  //25 kg, 
-//25Kg+100Meter do not compile
+ //25Kg+100Meter do not compile
 CCode
 
 OJCode
-//(sort of) equivalent Java code 
+ //(sort of) equivalent Java code 
 "hello world"  //String
 
 URI.create("www.google.com") //explicit parsing
-//(and Java URL class is discouraged)
+ //(and Java URL class is discouraged)
 
 Javascript.create( //poor man solution
 "x=function(){",
@@ -86,7 +86,7 @@ Javascript.create( //poor man solution
 14  //general purpose int
 100L  // may be we want long distances
 25d  //may be we want high precision weight
-//25d+100L is a double :)
+ //25d+100L is a double : )
 CJCode
 </div>
 
@@ -103,7 +103,7 @@ WTitle(Hello world)
 <div class="compare">
 OCode
 {reuse L42.is/AdamsTowel
-Main:{ //Note: Main is not a method, just a 'task'
+Main: { //Note: Main is not a method, just a 'task'
   Debug(S"Hello world")
   return ExitCode.success()
   }
@@ -111,7 +111,7 @@ Main:{ //Note: Main is not a method, just a 'task'
 CCode
 
 OJCode
-//implicitly imports java.lang
+ //implicitly imports java.lang
 class MyClassName{
   public static void main(String[] args){
     System.out.println("Hello world");
@@ -136,7 +136,7 @@ CJCode
 WTitle(Methods and Classes)
 <div class="compare">
 OCode
-//42 code
+ //42 code
 class method //class method definition
 S answer() //return type and method name
   S"42" //simple bodies do not need {..return..}
@@ -145,16 +145,16 @@ class method //class method definition
 S compose(S left, S right) //paramters
   left++right //sequence concatenation
 
-Person:Data<<{ //declare a class Person
+Person: Data <>< { //declare a class Person
   S name  //fields
   Year age
-//in 42 fields are seen as getters and setters,
-//thus there is no need to declare those.
-//Also, no need to write down a constructor:
-//Data declares a 'name, age' factory for us.
+ //in 42 fields are seen as getters and setters,
+ //thus there is no need to declare those.
+ //Also, no need to write down a constructor: 
+ //Data declares a 'name, age' factory for us.
 
-//Data generates implementations for methods like
-//equality, hashCode and conversion to string.
+ //Data generates implementations for methods like
+ //equality, hashCode and conversion to string.
 
   method //instance method definition
   S sayHi(S to){  //here we use {..return..}
@@ -168,7 +168,7 @@ Person:Data<<{ //declare a class Person
 CCode
 
 OJCode
-//(sort of) equivalent Java code 
+ //(sort of) equivalent Java code 
 static String answer(){ //static method definition
   return "42";
   }
@@ -245,7 +245,7 @@ WTitle(Vectors)
 OCode
 names=Strings[S"Fred";S"Mary";S"Mark"]
 
-Years:Collection.vector(of:Year) //we need to declare it
+Years: Collection.vector(of: Year) //we declare it
 
 ages=Years[20Year;23Year;22Year]
 
@@ -255,29 +255,29 @@ with n in names.vals() ( //like a for each
   )
 
 with n in names.vals(), a in ages.vals() (
-//parallel iteration of names and ages
-  Debug(Person(name:n, age:a)) //print all the persons
+ //parallel iteration of names and ages
+  Debug(Person(name: n, age: a)) //print all the persons
   ) //fails with error if names.size()!=ages.size()
 
-Persons:Collection.vector(of:Person)
+Persons: Collection.vector(of: Person)
 
 friends=Persons[
-  Person(name:S"Fred", age:20Year);
-  Person(name:S"Mary", age:23Year);
-  Person(name:S"Mark", age:22Year);
+  Person(name: S"Fred", age: 20Year);
+  Person(name: S"Mary", age: 23Year);
+  Person(name: S"Mark", age: 22Year);
   ]
 
 moreFriends=Persons[
   with n in names.vals(), a in ages.vals() (
-    use[ Person(name:n, age:a) ]
+    use[ Person(name: n, age: a) ]
   )]
-//moreFriends contains the same as friends
+ //moreFriends contains the same as friends
 
-//with works also in string interpolation:
+ //with works also in string interpolation: 
 stringFriends=S"my friends ages are"[
   with n in names.vals(), a in ages.vals() (
-    use[ a++S":"++n, sep:S", ") ]
-  )]"" //== S"20:Fred, 23:Mary, 22:Mark"
+    use[ a++S": "++n, sep: S", ") ]
+  )]"" //== S"20: Fred, 23: Mary, 22: Mark"
 CCode
 
 OJCode
@@ -288,12 +288,12 @@ List<String> names=new ArrayList<>(Arrays.asList(
 List<Integer> ages=new ArrayList<>(Arrays.asList(
   20,23,22));
 
-for(String n :names){
+for(String n : names){
   System.out.println(n);
 }
 
 for(int i=0; i<names.size(); i++){
-//iterate 0 to size, and manualy use .get(i)
+ //iterate 0 to size, and manualy use .get(i)
   System.out.println(
     new Person(names.get(i), ages.get(i)));
   ); //silently buggy if names.size()<ages.size()
@@ -311,11 +311,11 @@ for(int i=0; i<names.size(); i++){
     new Person(names.get(i), ages.get(i)));
 } //silently buggy if names.size()<ages.size()
 
-//again, silently buggy if names.size()<ages.size()
+ //again, silently buggy if names.size()<ages.size()
 String stringFriends="my friends ages are";
 for(int i=0; i<names.size(); i++){
   if(i>0){stringFriends+=", ";}
-  stringFriends+=ages.get(i)+":"+names.get(i);
+  stringFriends+=ages.get(i)+": "+names.get(i);
 }
 CJCode
 </div>

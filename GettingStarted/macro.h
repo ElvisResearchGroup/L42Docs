@@ -4,7 +4,7 @@ m4_define(`OBCode',`<pre class="l42Big"><![CDATA[')m4_dnl
 m4_define(`OJCode',`<pre class="java"><![CDATA[')m4_dnl
 m4_define(`OHCode',`<pre class="html"><![CDATA[')m4_dnl
 m4_define(`CJCode',`]]></pre>')m4_dnl
-m4_define(`Wcode',`<span class="code"><![CDATA[$1]]></span>')m4_dnl
+m4_define(`Wcode','`<span class="code"><![CDATA[$1]]></span>'')m4_dnl
 m4_define(`WcodeQuote',`<h6 class="code">$1</h6>')m4_dnl
 m4_define(`Wlink',`<a href="$1.xhtml">$2</a>')m4_dnl
 m4_define(`WP',`</p><p>')m4_dnl

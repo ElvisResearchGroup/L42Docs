@@ -15,7 +15,7 @@ Wcode(Num) is a general number type,
 implemented as an arbitrary precision rational.
 When in doubt of what numeric type to use, Wcode(Num)
 is a good first guess.
-Some examples of usage:
+Some examples of usage: 
 OBCode
 little=123Num
 stillLittle=4567890Num
@@ -40,16 +40,16 @@ You can import other numeric types by loading libraries.
 For example
 
 OBCode
-Int:Load<<{reuse L42.is/Numbers/Int}//not supported yet
-//infinite precision positive and negative integer numbers
-Double:Load<<{reuse L42.is/Numbers/Double}//not supported yet
-//double precision positive and negative floating points numbers
-Float:Load<<{reuse L42.is/Numbers/Float}//not supported yet
-//single precision positive and negative floating points numbers
-Int64:Load<<{reuse L42.is/Numbers/Int64}//not supported yet
-//64 bit modulo arithmetic
-UInt64:Load<<{reuse L42.is/Numbers/UInt64}//not supported yet
-//64 bit modulo arithmetic, unsigned
+Int: Load <>< {reuse L42.is/Numbers/Int} //not supported yet
+ //infinite precision positive and negative integer numbers
+Double: Load <>< {reuse L42.is/Numbers/Double} //not supported yet
+ //double precision positive and negative floating points numbers
+Float: Load <>< {reuse L42.is/Numbers/Float} //not supported yet
+ //single precision positive and negative floating points numbers
+Int64: Load <>< {reuse L42.is/Numbers/Int64} //not supported yet
+ //64 bit modulo arithmetic
+UInt64: Load <>< {reuse L42.is/Numbers/UInt64} //not supported yet
+ //64 bit modulo arithmetic, unsigned
 CCode
 
 The class decorator Wcode(Load) allows to load libraries and embed them in the 
@@ -59,15 +59,15 @@ reuse keyword imports the code from the web.
 WTitle(Conversions)
 Conversions between various numeric classes must be performed explicitly.
 
-AdamTowel offers a simple way to convert between numeric classes, and more in general
+AdamsTowel offers a simple way to convert between numeric classes, and more in general
 between base classes.
 All numeric  classes implements
 the Wcode(Base) interface and offering the Wcode(.from(base)) method.
 So, for example 
 OBCode
-Double:Load<<{reuse L42.is/Numbers/Double}
+Double: Load <>< {reuse L42.is/Numbers/Double}
 size=S"hello".size()
-myDouble=Double.from(base:size)
+myDouble=Double.from(base: size)
 CCode
 converts from Wcode(Size) to Wcode(Double).
 This avoid precision loss as much as possible.
@@ -85,11 +85,11 @@ and Wcode(Size).
 
 For example
 OBCode
-Meter:Units.of(Num)
-Second:Units.of(Num)
+Meter: Units.of(Num)
+Second: Units.of(Num)
 res=(6Meter +4Meter)*2Num //20Meter
-//wrong1=6Meter+2Second
-//wrong2=6Meter/2Second
+ //wrong1=6Meter+2Second
+ //wrong2=6Meter/2Second
 CCode
 As you can see, we can sum meters together, and we can use the support for multiplication, but we can not mix different units of measure.
 
@@ -107,35 +107,35 @@ Methods like that are required to be used with care, so they start with
 Wcode(`#') to underline that.
 
 OBCode
-Num n1=42Meter.div(2Meter)//=21Num
-Num n2=42Meter.#inner()//=42Num
+Num n1=42Meter.div(2Meter) //=21Num
+Num n2=42Meter.#inner() //=42Num
 CCode
 
 
 
 WTitle(Composite Units)
 
-Wcode(Units) supports composite units:
+Wcode(Units) supports composite units: 
 OBCode
-Speed:Units.of(Meter per:Second)
-fast1=Speed(42Meter per:0.1Second)
-fast2=Speed"420"//equivalent ways to initialize it
+Speed: Units.of(Meter per: Second)
+fast1=Speed(42Meter per: 0.1Second)
+fast2=Speed"420" //equivalent ways to initialize it
 fast3=Speed"840/2"
-distance1=fast1.right(left:60Second)
+distance1=fast1.right(left: 60Second)
 
-Acc:Units.of(Speed per:Second)
+Acc: Units.of(Speed per: Second)
 g=Acc"9.8"
-speedAfter=g.right(left:10Second)//98 m/s
-distance2=speedAfter.right(left:10Second)/2Num //490 m after 10s free fall
+speedAfter=g.right(left: 10Second) //98 m/s
+distance2=speedAfter.right(left: 10Second)/2Num //490 m after 10s free fall
 
-Kg:Units.of(Num)
-Newton:Units.of(Kg and:Acc)//Kg*m/s2
+Kg: Units.of(Num)
+Newton: Units.of(Kg and: Acc) //Kg*m/s2
 myRoket=900Newton
-gForceOnMe=Newton(78Kg and:g)//little less than 780
+gForceOnMe=Newton(78Kg and: g) //little less than 780
 myLift=myRoket-gForceOnMe
 if myLift>0Newton (Debug(S"I can fly"))
-myAcc=myLift.right(left:78Kg)//get second component
-reachedHeight=myAcc.right(left:10Second).right(left:10Second)/2Num //after 10 sec
+myAcc=myLift.right(left: 78Kg) //get second component
+reachedHeight=myAcc.right(left: 10Second).right(left: 10Second)/2Num //after 10 sec
 CCode
 Note how in a cmposite unit we can use Wcode(right(left)) and
  Wcode(left(right)) 
@@ -143,10 +143,10 @@ Note how in a cmposite unit we can use Wcode(right(left)) and
 for the left one, or we can extract the left component providing a value for the right one.
  
 WP
-We can also declare aliasing units:
+We can also declare aliasing units: 
 
 OBCode
-Cm:Units.alias(0.01Meter)//not supported yet
+Cm: Units.alias(0.01Meter) //not supported yet
 Meter height=178Cm
 CCode
 
@@ -160,24 +160,24 @@ the original unit.
 WTitle((3/5) Alphanumeric)
 In the same way Wcode(Units) allows easy creation of
 arithmetic classes,
-Wcode(Alphanumeric) allows easy creation of alphanumeric classes:
+Wcode(Alphanumeric) allows easy creation of alphanumeric classes: 
 classes that can be instantiated from a string literal that follow certain 
 properties.
 
 
 OBCode
-Email:Alphanumeric<<{//not supported yet
+Email: Alphanumeric <>< { //not supported yet
   S local //fields
   S domain
   class method
   This parse(S that) {
-    index=that.indexOf(S"@")//works only for simple emails
+    index=that.indexOf(S"@") //works only for simple emails
     if index.positive() (error Alphanumeric.ParseError"@ not found")
-    local=that(end:index)//string slicing
-    domain=that(start:index+1Size )//string slicing
+    local=that(end: index) //string slicing
+    domain=that(start: index+1Size ) //string slicing
     if domain.contains(S"@") (error this.parseError(S"multiple @ found"))
-    return This(that,local:local,domain:domain)
-    }//call the factory with fields plus the original string
+    return This(that,local: local,domain: domain)
+    } //call the factory with fields plus the original string
 }
 myEmail=Email"arthur.dent@gmail.com"
 myEmail.local() ==S"arthur.dent" //holds
@@ -189,15 +189,15 @@ Note how we can raise an error if the string does not have the shape we expected
 We will see errors/exception in more detail soon.
 We can declare fields, and compute their values by parsing the string.
 While it is suggested to propagate the original string in the factory,
-it is not mandatory, for example you could apply some form of normalization, as shown under:
+it is not mandatory, for example you could apply some form of normalization, as shown under: 
 
 OBCode
-Email:Alphanumeric<<{/*..*/
-  This parse(S that) {//google ignore dots anyway
+Email: Alphanumeric <>< {/*..*/
+  This parse(S that) { //google ignore dots anyway
     /*..*/
-    local=that(end:index).replaceAll(S"." with:S"")
+    local=that(end: index).replaceAll(S"." with: S"")
     /*..*/
-    return This(local++S"@"++domain,local:local,domain:domain)
+    return This(local++S"@"++domain,local: local,domain: domain)
     } 
   }
 myEmail=Email"arthur.dent@gmail.com"
@@ -219,12 +219,12 @@ Direction.names()==Strings[S"north,S"east",S"south",S"west"]
 if n.isNorth() (/*..*/)
 else if n.isEast() (/*..*/)
 
-Debug(n)//prints north
+Debug(n) //prints north
 
-e=Direction.from(base:S"east")
+e=Direction.from(base: S"east")
 
 with d in Direction.all().vals() (
-  Debug(d)//prints all the directions in order.
+  Debug(d) //prints all the directions in order.
   )
 
 CCode
