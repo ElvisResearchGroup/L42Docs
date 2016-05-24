@@ -1,26 +1,26 @@
 m4_include(`header.h')m4_dnl
 
 WTitle(`First, read in any order those introductions')
-<Button class='button' type='button' onclick='selectDiv("a");'>
+<Button class= 'button' type= 'button' onclick= 'selectDiv("a");'>
 Why 42
 </Button>
 
-<Button class='button' type='button' onclick='selectDiv("c");'>
+<Button class= 'button' type= 'button' onclick= 'selectDiv("c");'>
 Pure OO
 </Button>
 
 
-<Button class='button' type='button' onclick='selectDiv("b");'>
+<Button class= 'button' type= 'button' onclick= 'selectDiv("b");'>
 Learn through examples
 </Button>
 
 
-<Button class='button' type='button' onclick='showAll(allDivs);'>
+<Button class= 'button' type= 'button' onclick= 'showAll(allDivs);'>
 Show all content
 </Button>
 
 
-<Div id="a"><p>
+<Div id= "a"><p>
 WTitle(Why 42)
 42 is a new programming language,
 whose name is inspired by The Hitchhiker's Guide to the Galaxy.
@@ -48,7 +48,7 @@ WP
 </p></Div>
 
 
-<Div id="c"><p>
+<Div id= "c"><p>
 WTitle(Pure and fair Object Oriented language)
 42 is a pure object oriented language,
 where every value is an object. This means that: 
@@ -63,7 +63,7 @@ Any class that offers the method supports the operator.
 
 </li><li>
 Classes are objects, so when you write Wcode(Foo.bar()) you refer to the method Wcode(.bar()) offered by the object denoted by Wcode(Foo).
-class objects are just objects, and you can also store them in local bindings if you wish, as in Wcode(x=Foo)
+class objects are just objects, and you can also store them in local bindings if you wish, as in Wcode(x= Foo)
 </li><li>
 The code is an object, but only at the granularity of 
 Libraries; that is, balanced pairs of curly brackets representing classes (or interfaces) with methods and nested libraries.
@@ -74,7 +74,7 @@ First class meta-programming is the most important feature of 42.
 </li><li>
 Differently from other pure object oriented languages, in 42
 all objects have the same treatment, both syntactically and semantically.
-For example Wcode(x = S"Hello " ++ S"World")
+For example Wcode(x =  S"Hello " ++ S"World")
 This is a declaration for a local binding Wcode(x), using the string class Wcode(S) and the method operator Wcode(++),
 used as string (or in general sequence/collection) concatenation.
 
@@ -87,7 +87,7 @@ They give priority to their "preferred" version of numbers and strings, and this
 Instead in 42 you may encounter strings like Wcode(URL"www.google.com") or
  Wcode(EMAIL"Arthur.Dent@gmail.com").
 The same for numeric classes: to talk about a street, 20 meters long, you would write
-Wcode(streetLength=20Meter).
+Wcode(streetLength= 20Meter).
 Note that we write the class name after the number,
 while usually the class name is before.
 42 is a little incoherent in this point, both for better readability and because Wcode(Meter20) would be considered an identifier by the parser.

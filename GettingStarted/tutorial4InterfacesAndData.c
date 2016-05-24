@@ -104,9 +104,9 @@ Square: Data <>< {implements Shape
     /*..*/)
   }
 /*..*/
-class Shape kindOfShape=Square
+class Shape kindOfShape= Square
 kindOfShape.numberOfSides()==4Int //holds
-Shape s=kindOfShape.newShape(Color.red())
+Shape s= kindOfShape.newShape(Color.red())
 CCode
 
 The pattern in the code above allows to encode the abstract factory 
@@ -170,11 +170,11 @@ WP
 Another very well known interface is Wcode(Concepts.Equals)
 implemented by objects that can be compared with
 Wcode(read method Bool equals(read Concepts.Equals that)).
-Such objects usually also define methods Wcode(==) and Wcode(!=)
+Such objects usually also define methods Wcode(==) and Wcode(!= )
 based on Wcode(equals), but is not required by the interface.
 
 Wcode(Data) will automatically generate a valid Wcode(Concepts.Equals)
-implementation, and derived methods Wcode(==) and Wcode(!=).
+implementation, and derived methods Wcode(==) and Wcode(!= ).
 The default implementation of 
 Wcode(Data) does not takes circular object graphs in account, and will loop in those cases. We discuss how to personalize the behaviour of Wcode(Data) in Wlink(dataAndInvariants,
 `Data documentation').
@@ -198,7 +198,7 @@ Square: Data <>< {implements Shape
     This //this implementation can be omitted if "Data <>< " is used
   }
 /*..*/
-Shape s=..
+Shape s= ..
 s.class().newShape(Color.red())
 CCode
 Where the interface Wcode(Shape) defines an abstract factory method (that is,
@@ -228,7 +228,7 @@ BoundingBox: Data <>< {implements Concepts.Invariant
   var Meter maxX
   var Meter maxY
   method invariant()
-    this.minX()<=this.maxX() & this.minY()<=this.maxY()
+    this.minX()<= this.maxX() & this.minY()<= this.maxY()
   }
 CCode
 

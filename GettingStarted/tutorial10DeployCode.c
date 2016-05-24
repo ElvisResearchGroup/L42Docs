@@ -103,12 +103,12 @@ Towels shines when multiple towels are used at the same time.
 
 OBCode
 {reuse L42.is/AdamsTowel
- //here you can access to lots of utility classes declared inside the towel
- //including numbers, strings and so on.
+//here you can access to lots of utility classes declared inside the towel
+//including numbers, strings and so on.
 C: {reuse L42.is/FordTowel
- //here you can access a different set of classes.
- //For example, Num would refer to the number in FordTowel
- //and to see the number declared in AdamsTowel you have to write This1.N
+//here you can access a different set of classes.
+//For example, Num would refer to the number in FordTowel
+//and to see the number declared in AdamsTowel you have to write This1.N
   }
 }
 CCode
@@ -365,18 +365,18 @@ Resources used within an iteration can be released after the iteration
 since collections are notified when the iteration ends.
 
 OBCode
- //a contains "foo1 \n foo2 \n foo3"
- //b contains "bar1 \n bar2"
+//a contains "foo1 \n foo2 \n foo3"
+//b contains "bar1 \n bar2"
 with 
   input in LineStream.readFile(S"a"), 
   var output in LineStream.readWriteFile(S"b",fill: S"None") (
-    output: = output +" : "+input) //line by line, add input in the file
- //b contains "bar1 : foo1 \n bar2 : foo2 \n None : foo3"
+    output:=  output +" : "+input) //line by line, add input in the file
+//b contains "bar1 : foo1 \n bar2 : foo2 \n None : foo3"
 CCode
 
 
     
-OBCode Library myCode={ method Int foo()} CCode
+OBCode Library myCode= { method Int foo()} CCode
 A local binding of type Library initialized with a class with a single Wcode(foo()) method. Since there is no body, it is an abstract method.
  -->	 
 
@@ -404,5 +404,5 @@ Wcode(MyCode.hello(..))
 use directly the Wcode(MyCode) class instance as
 receiver. We can also give it a name 
 e se vuoi puoi anche salvarlo su un binding locale, 
-tipo x=MyCode  x.hello(...)
+tipo x= MyCode  x.hello(...)
 -->

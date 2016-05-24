@@ -44,8 +44,8 @@ This works also for methods with multiple parameters, if the first one is called
 We can use an animal by writing, for example: 
 
 OBCode
-mut Animal dog1=Animal(location: Point(x: 0Num, y: 0Num))
-dog2=Animal(location: Point(x: 0Num, y: 0Num)) //type 'mut Animal' inferred
+mut Animal dog1= Animal(location: Point(x: 0Num, y: 0Num))
+dog2= Animal(location: Point(x: 0Num, y: 0Num)) //type 'mut Animal' inferred
 dog1.run()
 CCode
 
@@ -86,11 +86,11 @@ In general, methods starting with `#' should be used with care.
 WP
 This code models an animal following a path. It can be used like this.
 OBCode
-zero=Point(x: 0Num, y: 0Num)
-ps1=Points[ Point(x: 12Num, y: 20Num);Point(x: 1Num, y: 2Num)]
-ps2=Points[ zero;Point(x: 1Num, y: 2Num)]
-dog1=Animal(location: zero, path: ps1)
-dog2=Animal(location: zero, path: ps2)
+zero= Point(x: 0Num, y: 0Num)
+ps1= Points[ Point(x: 12Num, y: 20Num);Point(x: 1Num, y: 2Num)]
+ps2= Points[ zero;Point(x: 1Num, y: 2Num)]
+dog1= Animal(location: zero, path: ps1)
+dog2= Animal(location: zero, path: ps2)
 dog1.move()
 dog2.move()
 CCode
@@ -101,10 +101,10 @@ The second dog goes to 0: 0.
 This code involves a mutable animal with a mutable field. This is often
 a terrible idea, since its behaviour may depend on aliasing:  what happens if two dogs follow the same path?
 OBCode
-zero=Point(x: 0Num, y: 0Num)
-ps=Points[ Point(x: 12Num, y: 20Num);Point(x: 1Num, y: 2Num)]
-dog1=Animal(location: zero, path: ps)
-dog2=Animal(location: zero, path: ps)
+zero= Point(x: 0Num, y: 0Num)
+ps= Points[ Point(x: 12Num, y: 20Num);Point(x: 1Num, y: 2Num)]
+dog1= Animal(location: zero, path: ps)
+dog2= Animal(location: zero, path: ps)
 dog1.move()
 dog2.move()
 CCode
@@ -145,10 +145,10 @@ WP
 
 Now the code from before would not compile. However we can still write the following variant
 OBCode
-zero=Point(x: 0Num, y: 0Num)
-capsule Points ps=Points[ Point(x: 12Num, y: 20Num);Point(x: 1Num, y: 2Num)]
-dog1=Animal(location: zero, path: ps)
-dog2=Animal(location: zero, path: Points[ Point(x: 12Num, y: 20Num);Point(x: 1Num, y: 2Num)])
+zero= Point(x: 0Num, y: 0Num)
+capsule Points ps= Points[ Point(x: 12Num, y: 20Num);Point(x: 1Num, y: 2Num)]
+dog1= Animal(location: zero, path: ps)
+dog2= Animal(location: zero, path: Points[ Point(x: 12Num, y: 20Num);Point(x: 1Num, y: 2Num)])
 dog1.move()
 dog2.move()
 CCode
@@ -159,7 +159,7 @@ has to use another capsule. It is okay to just write the object creation in plac
 Alternatively, most classes offer a Wcode(clone()) method,
 so in this case we could write
 
-Wcode(dog2=Animal(location: zero, path: dog1.path().clone()))
+Wcode(dog2= Animal(location: zero, path: dog1.path().clone()))
 
 
 WTitle(`(4/5)Handle mutability')
@@ -173,10 +173,10 @@ In most cases you can promote such reference to immutable/capsule; just make the
  The type system will take care of the rest.
 If a reference can not be safely promoted to immutable/capsule, you may have to use the Wcode(.clone()) method or to refactor your code.
 OBCode
-mut Animal dog1=Animal(__) //no promotion here
-Animal dog2=Animal(__) //promotion mutable->immutable
+mut Animal dog1= Animal(__) //no promotion here
+Animal dog2= Animal(__) //promotion mutable->immutable
 dog1.move()
- //dog2.move()  //ill-typed, requires a mut Animal
+//dog2.move()  //ill-typed, requires a mut Animal
 CCode
 
 We will not explain in this tutorial the exact rules for promotion, but the main idea is that if the initialization expression uses local bindings in a controlled/safe way, then promotion can be applied.

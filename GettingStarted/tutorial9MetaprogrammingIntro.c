@@ -172,10 +172,10 @@ Transaction: {
   class method //using <>< to define the babelfish operator
   Library <>< (Library that) 
   exception InvalidAction {
-    i=Introspection(lib: that)
+    i= Introspection(lib: that)
     if !i.hasMethod(\"(connection)") (exception InvalidAction
       "Action method '(connection)' missing")
-    composed=Refactor.compose(  left: TraitEnsureTransaction(), right: that  )
+    composed= Refactor.compose(  left: TraitEnsureTransaction(), right: that  )
     exception on MetaGuard ( InvalidAction
       "Action invalid: type of '(connection)' does not fit or already defined '(that)'")
     return Refactor.HideSelector(\"(connection)") <>< composed
@@ -183,7 +183,7 @@ Transaction: {
       WTF"'(connection)' is there, ready to be hidden"
     }  
   }
- //So, MyAction becomes shorter and better checked: 
+//So, MyAction becomes shorter and better checked: 
 MyAction: Transaction <>< {
   class method
   Void(mut Db.Connection connection)
@@ -221,8 +221,8 @@ ChestTrait: Resource <>< {
   /*.. methods to validate access to objects..*/
   read method
   Kg weight() {
-    var Kg res=0Kg
-    with o in this.objects().vals() (res+=o.weight() )
+    var Kg res= 0Kg
+    with o in this.objects().vals() (res+= o.weight() )
     return res
     }
   }
@@ -270,8 +270,8 @@ OBCode
 Nums: Extends[Collections.vector(of: Num)] <>< {
   read method
   Num sum(){
-    var Num res=0Num
-    with n in this.vals() (res+=n )
+    var Num res= 0Num
+    with n in this.vals() (res+= n )
     return res
     }
   }
@@ -303,15 +303,15 @@ MyCollection: {
       }
     read method
     Num sum(){
-      var T res=T.zero()
-      with n in this.vals() (res+=n ) //error here, vals() undefined
+      var T res= T.zero()
+      with n in this.vals() (res+= n ) //error here, vals() undefined
       return res
       }
     }
   class method
   Library vector(class Any of) {
-    oldPart=Collection.vector(of: of)
-    newPart=Refactor.Redirect(Path"T" to: of) <>< this.traitSum()
+    oldPart= Collection.vector(of: of)
+    newPart= Refactor.Redirect(Path"T" to: of) <>< this.traitSum()
     return Refactor.compose(left: oldPart, right: newPart)
     }
 CCode
@@ -354,8 +354,8 @@ TraitSum: Resource <>< Extend[Collections.traitValsT()] <>< {/*my sum feature as
 MyCollection: {
   class method
   Library vector(class Any of) (
-    oldPart=Collection.vector(of: of) //surely works
-    {newPart=Refactor.Redirect(Path"T" to: of) <>< TraitSum()
+    oldPart= Collection.vector(of: of) //surely works
+    {newPart= Refactor.Redirect(Path"T" to: of) <>< TraitSum()
     return Extend[oldPart] <>< newPart
     catch exception MetaGuard g return oldPart
     })

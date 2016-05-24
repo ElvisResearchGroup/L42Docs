@@ -44,7 +44,7 @@ MyGui: Gui(
     //msg is going to be a multiline string coming from the
     //html message/event.
     //First line == "say", other lines give more info
-    Strings ss=msg.split(S.nl())
+    Strings ss= msg.split(S.nl())
     Gui.alert(S"hi dear "+ss.val(1\))
     )
   }
@@ -59,9 +59,9 @@ OHCode
   <head> </head>
   <body>
     Hi, buttons here
-    <Button onclick='event42("quit");'> Quit</Button>
-    <Button onclick='event42("sayHi");'> Say Hi</Button>
-    <Button onclick='event42("say\ncaterpillar");'> Say Hi Caterpillar</Button>
+    <Button onclick= 'event42("quit");'> Quit</Button>
+    <Button onclick= 'event42("sayHi");'> Say Hi</Button>
+    <Button onclick= 'event42("say\ncaterpillar");'> Say Hi Caterpillar</Button>
   </body>
 </html>
 CCode
@@ -75,7 +75,7 @@ For example, an event could call the following method:
 OBCode
 mut method
 Void useJSToWriteOnTextArea(mut Gui gui) (
-  js=Gui.JavaScript"document.getElementById('myTextAreaId').value = 'Hi! event happened';"
+  js= Gui.JavaScript"document.getElementById('myTextAreaId').value =  'Hi! event happened';"
   gui.executeJS(js)
   )
 CCode
@@ -96,7 +96,7 @@ MyGui: Gui(/*..*/) <>< { mut Persons persons //field
     )
   mut method
   Void event_addPerson(mut Gui gui,S msg) (
-    Person p=InputPerson(gui,title: S"New Person details")
+    Person p= InputPerson(gui,title: S"New Person details")
     catch exception InputPerson.Cancelled exc ( void) //do nothing
     this.persons().add(left: p)
     gui.refresh()
@@ -114,9 +114,9 @@ OBCode
 FileSystem: Load <>< {reuse L42.is/FileSystem}
 
 Main: {
-  files=FileSystem()
+  files= FileSystem()
   files.write(S"foo.txt",S"foo foo foo!") //the file 'foo.txt' in the current directory
-  S foos=files.read(S"foo.txt") //most likely, it contains 'foo foo foo!'
+  S foos= files.read(S"foo.txt") //most likely, it contains 'foo foo foo!'
   return ExitCode.normal()
   }
 }
@@ -136,12 +136,12 @@ OBCode
 
 method S readFoo()
  FileSystem().read(S"foo.txt") //may read foo once and for all at compile time,
- //and then return the same value every time. It can be useful
- //for loading resources, like image files in a simple game.
+//and then return the same value every time. It can be useful
+//for loading resources, like image files in a simple game.
 
 method S readFoo(mut FileSystem that)
  that.read(S"foo.txt") //need the parameter to act, thus
- //will wait until a parameter is provided
+//will wait until a parameter is provided
 CCode
 
 In general, all the system interaction that happens over the same system object are
@@ -157,10 +157,10 @@ OBCode
 {reuse L42.is/AdamsTowel
 Db: Load <>< {reuse L42.is/Db} //Db can do Raw access
 UnivDb: Db.importStructure(Db.ConnectionS"...")
-QueryCountry: UnivDb.query(\"select * from student where country=@country")
+QueryCountry: UnivDb.query(\"select * from student where country= @country")
 Main: {
-  connection=UnivDb.connect()
-  UnivDb.Student.Table ss=QueryCountry(connection, country: S"Italy")
+  connection= UnivDb.connect()
+  UnivDb.Student.Table ss= QueryCountry(connection, country: S"Italy")
   /*..*/
   }
 }
@@ -214,7 +214,7 @@ Db: Load <>< {reuse L42.is/Db}
 
 UnivDb: Db.importStructure(Db.ConnectionS"...") //will not use Name and Year
 
-QueryCountry: UnivDb.query(\"select * from students where country=@country")
+QueryCountry: UnivDb.query(\"select * from students where country= @country")
 
 Person: Data <>< { Name name, Name surname, Year age 
   class method
@@ -233,9 +233,9 @@ ShowPersons: Gui.widget(table: Persons)
 MyGui: Gui(/*..*/) <>< {
   mut method
   Void eventLoad(mut Gui gui, S msg) (
-    connection=UnivDb.connect()
-    UnivDb.Student.Table ss=QueryCountry(connection, country: S"Italy")
-    ps=Persons[with s in ss.vals() (use[Person.from(db: s)])]
+    connection= UnivDb.connect()
+    UnivDb.Student.Table ss= QueryCountry(connection, country: S"Italy")
+    ps= Persons[with s in ss.vals() (use[Person.from(db: s)])]
     gui.add(ShowPersons(ps, into: Gui.Id"divLeft"))
     )
   }

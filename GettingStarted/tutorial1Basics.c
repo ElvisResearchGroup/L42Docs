@@ -124,7 +124,7 @@ In the method Wcode(add(y)) we show an improved version, using the Wcode(with) m
 We can declare two methods, Wcode(add(x)) and Wcode(add(y)) with the same name, if parameter names are different.
 WP
 Note how we always use getters and we never access fields directly.
-In many other languages we can use write Wcode(a.fieldName) and Wcode(a.fieldName=newValue). Such syntax does not exists in 42. The same goes for object instantiation; in many languages there is a special Wcode(new ClassName(..)) dedicated syntax, while in 42 it is just a method call.
+In many other languages we can use write Wcode(a.fieldName) and Wcode(a.fieldName= newValue). Such syntax does not exists in 42. The same goes for object instantiation; in many languages there is a special Wcode(new ClassName(..)) dedicated syntax, while in 42 it is just a method call.
 WP
 Also, similarly to what happens in Python, we need to use Wcode(this.methodName()) to call methods when the receiver is Wcode(this).
 While this makes some code more verbose, it saves us from the burden of
@@ -148,9 +148,9 @@ OBCode
 Nums: Collections.vector(of: Num) //declaration for vectors of nums
 Points: Collections.vector(of: Point) //same for points
 /*..*/
-xs=Nums[10Num;20Num;30Num]
-ys=Nums[1Num;2Num;3Num]
-points=Points[with x in xs.vals(), y in ys.vals() (
+xs= Nums[10Num;20Num;30Num]
+ys= Nums[1Num;2Num;3Num]
+points= Points[with x in xs.vals(), y in ys.vals() (
   use[Point(x: x, y: y)]
   )]
 CCode

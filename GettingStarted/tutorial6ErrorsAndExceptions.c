@@ -32,7 +32,7 @@ The following code show usages of Wcode(Assert.Pre) and Wcode(Assert.Holds)
 OBCode
 Assert.Pre[ //preconditions
   myVal>0Nat; //simplest form
-  myVal>0Nat msg: S"here with personalized message myVal="[myVal]"";
+  myVal>0Nat msg: S"here with personalized message myVal= "[myVal]"";
   myVal expected: 42Nat //call equals and do a better error reporting
   ] //in a bunch of assertions, they are all going to be checked together.
 
@@ -52,16 +52,16 @@ service class of the message interface:
 
 OBCode
 AnswerNotUnderstood: Message.$ <>< {implements Guard}
- //this is a new kind of message, implementing Guard.
- //you can also add methods to your kind of message.
- //you can add fields, we will see this more in detail later.
+//this is a new kind of message, implementing Guard.
+//you can also add methods to your kind of message.
+//you can add fields, we will see this more in detail later.
 /*..*/
- //throwing an error
+//throwing an error
 if this.ohNoNoNOOO() (error AnswerNotUnderstood"Well, too bad")
 
 if this.iWasDistracted() (
   //throwing an error in response of another
-  Guard other=NotListening"" //empty message
+  Guard other= NotListening"" //empty message
   error AnswerNotUnderstood"Try again"(other)
   )
 
@@ -81,13 +81,13 @@ This logically separe any block of code into WEmph(paragraphs.)
 For example, in the following code we have 3 paragraphs: line 2-3,
  line 6-7 and line 9.
 OBCode
-res=(
- b1=CanGoWrong()
- b2=CanGoWrong() //see b1
+res= (
+ b1= CanGoWrong()
+ b2= CanGoWrong() //see b1
  catch error Wrong msg1  S"hi 1" //not see b1,b2
  catch error Guard msg2  S"hi 2" //not see b1,b2
- b3=CanGoWrong() //can see b1, b2
- b4=CanGoWrong() //can see b1, b2
+ b3= CanGoWrong() //can see b1, b2
+ b4= CanGoWrong() //can see b1, b2
  catch error Wrong msg3  S"hi 3" //see b1,b2, not see b3,b4
  S"hi 4" //see b1,b2,b3
  )
@@ -118,8 +118,8 @@ This is enforced by disallowing catching errors if the paragraph can mutate obje
 WBR
 That is, the following code do not compile
 OBCode
-p=Person(name: S"Bill" age: 23Year)
-res=(
+p= Person(name: S"Bill" age: 23Year)
+res= (
  p.age(p.age()+1Year)
  p.age(p.age()+1Year)
  catch error Guard msg2  (/*could see p with 23 or 24 years*/)
@@ -130,8 +130,8 @@ CCode
 While the following is accepted.
 
 OBCode
-res=(
- p=Person(name: S"Bill" age: 23Year)
+res= (
+ p= Person(name: S"Bill" age: 23Year)
  p.age(p.age()+1Year)
  p.age(p.age()+1Year)
  catch error Guard msg2  (/*can not see p*/)
@@ -171,12 +171,12 @@ This is possible with the following code:
 
 
 OBCode
- //long version
+//long version
 DoStuff()
 catch exception FileNotFound fnf 
   error WTF"I just created it!"(fnf)
 
- //short version
+//short version
 DoStuff()
 error on FileNotFound
   WTF"I just created it!"
@@ -213,14 +213,14 @@ most level of curly brackets.
 Also curly brackets can have catches. let's see some examples: 
 OBCode
 {
-x=DoStuff()
+x= DoStuff()
 catch exception Stuff e1
   void //just swallow the exception
 catch exception Guard e2
   obj.doSideEffect() //this method return void
 catch exception Message e3
   return e3 //a result of the curly brackets
-y=DoStuff(x)
+y= DoStuff(x)
 return y
 error on Guard 
   WTF""
@@ -231,7 +231,7 @@ Moreover, curly brackets/return can be used
 to provide a different result if some computation fails: 
 
 OBCode
-res={return PlanA()
+res= {return PlanA()
   catch error Guard x
     return PlanB()
   }
@@ -244,9 +244,9 @@ return can throw any kind of value, but returns can not flow
 outside of the scope of a method.
 Hold your head before it explodes, but curly brackets are just a syntactic sugar
  to capture returns; these two snippets of code are equivalent: 
-<div class="compare">
+<div class= "compare">
 OBCode
-N res={
+N res= {
   
   if bla (return e1)
   return e2
@@ -257,8 +257,8 @@ N res={
   }
 CCode
 OBCode
-N res=(
-  Void unused=(
+N res= (
+  Void unused= (
     if bla (return e1)
     return e2
     )

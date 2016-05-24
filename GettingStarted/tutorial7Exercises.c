@@ -14,20 +14,20 @@ WP
 Solution: 
 OBCode
 UndefinedOnEmpty: Message.$ <>< {implements Guard}
- //Max is undefined on empty lists.
- //Since there was no mention of preconditions,
- //we should explicitly handle all the error cases!
+//Max is undefined on empty lists.
+//Since there was no mention of preconditions,
+//we should explicitly handle all the error cases!
 class method
 Num max(Nums that) {
   if that.isEmpty() (error UndefinedOnEmpty"Max is undefined on empty lists")
   //now that we know we can proceed: 
-  var Num maxCandidate=that.left()
+  var Num maxCandidate= that.left()
   //there is no such thing like a minimum number,
   //we need to select one element from the list.
   with n in that.vals() (
     //we could write 'that.withoutLeft().vals()'
     //to avoid cheching on the first again
-    if maxCandidate<n (maxCandidate: =n)
+    if maxCandidate<n (maxCandidate:= n)
     //update the variable to keep track of the max so far.
     )
   return maxCandidate
@@ -45,8 +45,8 @@ OBCode
 UnequalSize: Message.$ <>< {implements Guard}
 class method
 S map(Strings keys, Strings values) {
-  if keys.size() != values.size() (error UnequalSize
-    "keys="[keys.size()]", values="[values.size()]"" )
+  if keys.size() !=  values.size() (error UnequalSize
+    "keys= "[keys.size()]", values= "[values.size()]"" )
   //the former formatting allows us to keep a whole line for the error message
   return S"["[with k in keys.vals(), v in values.vals() (
     use[k++S"->"++v, sep: S", "]
@@ -66,8 +66,8 @@ Solution:
 OBCode
 class method
 Strings upTo(Strings that, Size size) ( //no need of '{..return..}' for simple methods
-  Assert.Pre[size>=0Size]
-  Strings[with s in that.vals() (  if s.size()<=size (use[s]) )]
+  Assert.Pre[size>= 0Size]
+  Strings[with s in that.vals() (  if s.size()<= size (use[s]) )]
   )
 CCode
 
@@ -98,7 +98,7 @@ Point: Data <>< {implements Concept.Invariant
   Size x, Size y
 
   method invariant()
-    x>=0Size & x<80Size & y>=0Size & y<80Size
+    x>= 0Size & x<80Size & y>= 0Size & y<80Size
 
   This go(Direction that) {
     if that.isUp() (return this.with(x: \-1Size))
@@ -136,13 +136,13 @@ Land: Data <>< { //we may want to put the field and the predefined factory priva
   
   mut method
   Void randomDig() (
-    var Point current=Point(x: 0Size,y: 0Size)
+    var Point current= Point(x: 0Size,y: 0Size)
     with i in Range(stop: 100Size) (
       this.set(current,val: Cell.empty())
-      d=Direction.from(index: Random(4Size))
-      newPoint=current.go(d)
+      d= Direction.from(index: Random(4Size))
+      newPoint= current.go(d)
       if !this.get(d).isRock() ( //no digging in rock
-        current: =newPoint
+        current:= newPoint
         )
       )
     this.set(current,val: Cell.mole()) //finally, the mole is where we ends up
@@ -151,7 +151,7 @@ Land: Data <>< { //we may want to put the field and the predefined factory priva
   toS() S""[with x in Range(stop: 80Size) (
       use[S.nl()] //newline
       with y in Range(stop: 80Size) (
-        p=Point(x: x,y: y)
+        p= Point(x: x,y: y)
         if this.get(p).isRock() (use[S"#"])
         else if this.get(p).isDirt() (use[S"%"])
         else if this.get(p).isEmpty() (use[S" "])
