@@ -2293,7 +2293,7 @@ Once a library literal has a name, it can not be independently metaprogrammed; b
 by metaprogramming over the library that contains it.
 
 </p><p>
-We call Wemph(traits) methods that return reusable (unnamed) code.
+We use the term Wemph(trait) for  methods that return reusable (unnamed) code.
 For example
 <pre class="l42Big"><![CDATA[
 Transaction:{
@@ -2609,9 +2609,9 @@ and use <span class="code"><![CDATA[Refactor]]></span> only when all the other o
 
 </p><h2> (1/5)Deploy programs </h2> <p>
 In 42 libraries can be directly manipulated, and
-a possible manipulation is to convert it in 
+a possible manipulation is to convert them in 
 another format, like an executable jar or a native program
-and then save the result somewhere, like on the website where you users can download it.
+and then save the result somewhere, such as on the website where you users can download it.
 
 <pre class="l42Big"><![CDATA[
 {reuse L42.is/AdamTowel
@@ -2629,9 +2629,9 @@ Task:Deploy.asExecutableJar(
 Note that we reuse AdamTowel both outside <span class="code"><![CDATA[MyProgram]]></span>
 and inside of it;
 The two towels do not need to be the same.
-The outermost just have to support the deployment process
+The outermost just has to support the deployment process
 <span class="code"><![CDATA[Deploy]]></span>, while the inner one is needed to make
-<span class="code"><![CDATA[MyProgram]]></span> a close library: only libraries that do not refer to external classes can be deployed.
+<span class="code"><![CDATA[MyProgram]]></span> a closed library: only libraries that do not refer to external classes can be deployed.
 
 </p><h2> 42 projects </h2> <p>
 In order to write any sizeable program, it would be great
@@ -2674,7 +2674,7 @@ executable jar.
 42 can support various kinds of unit testing and mocking,
 but there is no support at this stage in AdamTowel.
 
-</p><h2> (2/5)Towels embroidery </h2> <p>
+</p><h2> (2/5)Towel embroidery </h2> <p>
 A towel is about the most massively useful thing a programmer can have.
 A towel has immense psychological value, and you should always know where your towel is.
 All the classes we have used up to now without defining them, are defined in AdamTowel.
@@ -2688,12 +2688,12 @@ and the types <span class="code"><![CDATA[Library]]></span>, <span class="code">
 </p><p>
 
 The distinction between towels and other libraries is just psychological;
-we generally call towels libraries that are expected to provide standard
+we generally use the term <span style="color:#ff1111; font-weight: bold;"> towel </span> for libraries that are expected to provide standard
 functionalities and types, such as numbers, booleans,
 strings and various kinds of decorators and system errors.
 
 </p><p>
-However, we do not expect all L42 programs to reuse the same towel.
+However, we do not expect all 42 programs to reuse the same towel.
 For hygienic reasons, in real life everyone tends to use their own towel.
 For similar reasons, any sizeable 42 program will use its own towel.
 
@@ -2701,7 +2701,7 @@ For similar reasons, any sizeable 42 program will use its own towel.
 
 We expect different programs to use massively different libraries for
 what in other languages is the standard library.
-That is, there is no such thing as 'the L42 standard library'
+That is, there is no such thing as 'the 42 standard library'.
 
 
 </p><h2> Using multiple Towels </h2> <p>
@@ -2724,13 +2724,13 @@ Different code parts reason about different set of classes;
 including those predefined in other languages.
 
 Useful for code that reasons on code; that is a very common task
-in L42. 
+in 42. 
 
 </p><h2> Define and deploy our own towel </h2> <p>
 If you are writing a sizable program, 
 or many similar programs, it make sense to
 deploy you own towel, when you can 
-pre load import some libraries and define your basic classes.
+pre-load some libraries and define your basic classes.
 
 <pre class="l42Big"><![CDATA[
 {reuse L42.is/AdamTowel
@@ -2757,14 +2757,16 @@ The idea of modifying a towel to create a variation is called
 <span class="code"><![CDATA[MyTowel]]></span>
  is just a variation of AdamTowel, with more stuff added at the bottom.
 While adding stuff in this way is very useful,
-We can do much more than that.
+we can do much more than that.
+
+</p><p>
 
 One useful tool to modify the content of a towel
 is <span class="code"><![CDATA[Extend.patch(that)]]></span>.
 The idea is that we extend a library using a part of itself
 as a patch.
 <br/>
-As an example
+As an example:
 <pre class="l42Big"><![CDATA[
 Code:Extend.patch(Path"Fix")<<{
   class method
@@ -2801,24 +2803,24 @@ that is the implementation of <span class="code"><![CDATA[reverse()]]></span> wi
 </p><h2> (3/5)Library deployment </h2> <p>
 
 If you start writing in 42, you will soon feel the need
-of factorizing your project into libraries that could
+to factorize your project into libraries that can
 be independently tested, deployed and loaded.
 While successful libraries are used by multiple 
 independent projects and developers,
 most libraries exists just as a development tool in 
-order to keep under control the complexity of big projects.
+order to keep the complexity of big projects under control.
 </p><p>
 In 42 is easy to code with multiple libraries, and libraries can be much smaller.
 <br/>
 In 42 is possible to employ a programming model where every developer (or every pair of developers in a pair programming style) is the
-only responsible of one (or more) library and its maintenance process, while the group leader give specifications and tests to be met to the various library developers and will glue all the code together.
+only one responsible of one (or more) library and their maintenance process, while the group leader give specifications and tests to be met to the various library developers and will glue all the code together.
 
 </p><p>
 
-Most L42 libraries are not towels, but all 42 libraries are closed code.
+Most 42 libraries are not towels, but all 42 libraries are closed code.
 <br/>
 Thus, most non-towel 42 library are generic
-(have abstract classes/methods) that can be rebound
+(have abstract classes/methods) and can be rebound
 to a multitude of towels.
 <br/>
 
@@ -2842,8 +2844,8 @@ Task:Load.DeployLibrary(
 }
 ]]></pre>
 
-This code deploy <span class="code"><![CDATA[MyLib]]></span> on an url as a library,
-
+This code deploy <span class="code"><![CDATA[MyLib]]></span> on an url as a library.
+<br/>
 If there was any nested library unreachable from public classes
 in <span class="code"><![CDATA[MyLib]]></span>, it will be pruned away.
 

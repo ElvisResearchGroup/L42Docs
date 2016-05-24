@@ -2,9 +2,9 @@ WBigTitle(Deploy 42)
 
 WTitle((1/5)Deploy programs)
 In 42 libraries can be directly manipulated, and
-a possible manipulation is to convert it in 
+a possible manipulation is to convert them in 
 another format, like an executable jar or a native program
-and then save the result somewhere, like on the website where you users can download it.
+and then save the result somewhere, such as on the website where you users can download it.
 
 OBCode
 {reuse L42.is/AdamTowel
@@ -22,9 +22,9 @@ CCode
 Note that we reuse AdamTowel both outside Wcode(MyProgram)
 and inside of it;
 The two towels do not need to be the same.
-The outermost just have to support the deployment process
+The outermost just has to support the deployment process
 Wcode(Deploy), while the inner one is needed to make
-Wcode(MyProgram) a close library: only libraries that do not refer to external classes can be deployed.
+Wcode(MyProgram) a closed library: only libraries that do not refer to external classes can be deployed.
 
 WTitle(42 projects)
 In order to write any sizeable program, it would be great
@@ -67,7 +67,7 @@ WP
 42 can support various kinds of unit testing and mocking,
 but there is no support at this stage in AdamTowel.
 
-WTitle((2/5)Towels embroidery)
+WTitle((2/5)Towel embroidery)
 A towel is about the most massively useful thing a programmer can have.
 A towel has immense psychological value, and you should always know where your towel is.
 All the classes we have used up to now without defining them, are defined in AdamTowel.
@@ -81,12 +81,12 @@ and the types Wcode(Library), Wcode(Void) and Wcode(Any).
 WP
 
 The distinction between towels and other libraries is just psychological;
-we generally call towels libraries that are expected to provide standard
+we generally use the term WEmph(towel) for libraries that are expected to provide standard
 functionalities and types, such as numbers, booleans,
 strings and various kinds of decorators and system errors.
 
 WP
-However, we do not expect all L42 programs to reuse the same towel.
+However, we do not expect all 42 programs to reuse the same towel.
 For hygienic reasons, in real life everyone tends to use their own towel.
 For similar reasons, any sizeable 42 program will use its own towel.
 
@@ -94,7 +94,7 @@ WP
 
 We expect different programs to use massively different libraries for
 what in other languages is the standard library.
-That is, there is no such thing as 'the L42 standard library'
+That is, there is no such thing as 'the 42 standard library'.
 
 
 WTitle(Using multiple Towels)
@@ -117,13 +117,13 @@ Different code parts reason about different set of classes;
 including those predefined in other languages.
 
 Useful for code that reasons on code; that is a very common task
-in L42. 
+in 42. 
 
 WTitle(Define and deploy our own towel)
 If you are writing a sizable program, 
 or many similar programs, it make sense to
 deploy you own towel, when you can 
-pre load import some libraries and define your basic classes.
+pre-load some libraries and define your basic classes.
 
 OBCode
 {reuse L42.is/AdamTowel
@@ -150,14 +150,16 @@ WEmph(Towel Embroidery.)
 Wcode(MyTowel)
  is just a variation of AdamTowel, with more stuff added at the bottom.
 While adding stuff in this way is very useful,
-We can do much more than that.
+we can do much more than that.
+
+WP
 
 One useful tool to modify the content of a towel
 is Wcode(Extend.patch(that)).
 The idea is that we extend a library using a part of itself
 as a patch.
 WBR
-As an example
+As an example:
 OBCode
 Code:Extend.patch(Path"Fix")<<{
   class method
@@ -194,24 +196,24 @@ that is the implementation of Wcode(reverse()) will be able to use Wcode(Bool), 
 WTitle((3/5)Library deployment)
 
 If you start writing in 42, you will soon feel the need
-of factorizing your project into libraries that could
+to factorize your project into libraries that can
 be independently tested, deployed and loaded.
 While successful libraries are used by multiple 
 independent projects and developers,
 most libraries exists just as a development tool in 
-order to keep under control the complexity of big projects.
+order to keep the complexity of big projects under control.
 WP
 In 42 is easy to code with multiple libraries, and libraries can be much smaller.
 WBR
 In 42 is possible to employ a programming model where every developer (or every pair of developers in a pair programming style) is the
-only responsible of one (or more) library and its maintenance process, while the group leader give specifications and tests to be met to the various library developers and will glue all the code together.
+only one responsible of one (or more) library and their maintenance process, while the group leader give specifications and tests to be met to the various library developers and will glue all the code together.
 
 WP
 
-Most L42 libraries are not towels, but all 42 libraries are closed code.
+Most 42 libraries are not towels, but all 42 libraries are closed code.
 WBR
 Thus, most non-towel 42 library are generic
-(have abstract classes/methods) that can be rebound
+(have abstract classes/methods) and can be rebound
 to a multitude of towels.
 WBR
 
@@ -235,8 +237,8 @@ Task:Load.DeployLibrary(
 }
 CCode
 
-This code deploy Wcode(MyLib) on an url as a library,
-
+This code deploy Wcode(MyLib) on an url as a library.
+WBR
 If there was any nested library unreachable from public classes
 in Wcode(MyLib), it will be pruned away.
 

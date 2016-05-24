@@ -84,7 +84,7 @@ Once a library literal has a name, it can not be independently metaprogrammed; b
 by metaprogramming over the library that contains it.
 
 WP
-We call Wemph(traits) methods that return reusable (unnamed) code.
+We use the term Wemph(trait) for  methods that return reusable (unnamed) code.
 For example
 OBCode
 Transaction:{
