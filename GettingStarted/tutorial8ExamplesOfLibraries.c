@@ -80,17 +80,17 @@ Void useJSToWriteOnTextArea(mut Gui gui) (
   )
 CCode
 
-Gui provides help to visualize datastructures of various kind, 
+Gui provides help to display datastructures of various kind, 
 for example vectors of Data classes can be shown as tables in the following way: 
 OBCode
 Person: Data<<{ Size id, Name name, Name surname, Year age }
 Persons: Collections.vector(of: Person)
-ShowPersons: Gui.widget(table: Persons)
-InputPerson: Gui.input(dialogForm: Person)//rely on JQuery UI
+ShowPersons: Gui.widget(table: Persons) //each person as a row in the table
+InputPerson: Gui.input(dialogForm: Person)//relies on 'JQuery UI'
 MyGui: Gui(/*..*/)<<{ mut Persons persons //field
   /*..*/
   mut method
-  Void eventLoad(mut Gui gui, S msg) ( //no underscore for system events
+  Void eventLoad(mut Gui gui) ( //no underscore for system events
     gui.add(ShowPersons(this.#persons(), into: Gui.Id"divLeft"))
     //the element with that id will contain the table
     )
@@ -106,37 +106,40 @@ Main: MyGui(persons: Persons[])
 CCode
 
 WTitle((2/5) Files)
-In 42 you can import Wcode(FSystem) to read and write files.
+In 42 you can import Wcode(FileSystem) to read and write files.
 
 
 OBCode
 {reuse L42.is/AdamTowel
-FSystem: Load<<{reuse L42.is/FSystem}
+FileSystem: Load<<{reuse L42.is/FileSystem}
 
 Main: {
-  files=FSystem()
-  files.write(S"foo.txt",S"foo foo foo!")
+  files=FileSystem()
+  files.write(S"foo.txt",S"foo foo foo!") //the file 'foo.txt' in the current directory
   S foos=files.read(S"foo.txt")//most likely, it contains 'foo foo foo!'
   return ExitCode.normal()
   }
 }
 CCode
 
-42 can execute every closed expression early, even at compile time, if it could give 
-a performance boost.
+Each instance of the FileSystem class owns its own stream of
+operations, which are not coordinated with the other instances.  If
+you create multiple instances, then you may find that events attached
+to other instances happen much earlier than you expect.
+This happens since 42 can execute every closed expression early,
+even at compile time, if it could give a performance boost.
 To avoid unexpected early effects
 you should
-pass a files object to functions that do
-I/O: 
+pass a files object to functions that do I/O: 
 
 OBCode
 
 method S readFoo()
- FSystem().read(S"foo.txt") //may read foo once and for all at compile time,
+ FileSystem().read(S"foo.txt") //may read foo once and for all at compile time,
 //and then return the same value every time. It can be useful
 //for loading resources, like image files in a simple game.
 
-method S readFoo(mut FSystem that)
+method S readFoo(mut FileSystem that)
  that.read(S"foo.txt") //need the parameter to act, thus
  //will wait until a parameter is provided
 CCode
@@ -146,15 +149,15 @@ chronologically sorted with respect to each other, but there is no guarantee
 of ordering between different system objects.
 
 WTitle((3/5) Db)
-In AdamTowel, databases can be access in two ways: 
+In AdamTowel, databases can be accessed in two ways: 
 Raw access (similar to what is supported by
 Wcode(DBC) or Wcode(JDBC) libraries) 
-and Structured access.
+and structured access.
 OBCode
 {reuse L42.is/AdamTowel
 Db: Load<<{reuse L42.is/Db}//Db can do Raw access
 UnivDb: Db.importStructure(Db.ConnectionS"...")
-QueryCountry: UnivDb.Query"select * from students where country=@country"
+QueryCountry: UnivDb.query(\"select * from student where country=@country")
 Main: {
   connection=UnivDb.connect()
   UnivDb.Student.Table ss=QueryCountry(connection, country: S"Italy")
@@ -165,32 +168,33 @@ CCode
 Here
 we use Wcode(Db) to 
 import the structure of the database. This means that 
-Wcode(UnivDb) will contain a class for each table-row of the database,
+Wcode(UnivDb) will contain a class for each table of the database, and
 every class will have a nested type representing 
 multiple rows (that is, a table).
-Wcode(UnivDb.Query) allows prepared queryes.
+Wcode(UnivDb.query(that)) allows prepared queries.
 In the case in the example, we can use
 Wcode(`QueryCountry(that,country)')
-to get the italian students.
-Note how Wcode(country) is a parameter of the method: in this way the  query users are informed of the query expectations.
-Our query used Wcode(*), so the type Wcode(UnivDb.Student.Table)
+to get the Italian students.
+Note how Wcode(country) is a parameter of the method: in this way the  query users are informed of the queries requirements.
+Our query used Wcode(*) (all columns), so the type Wcode(UnivDb.Student.Table)
 could be reused.
-In other cases a new type would be generated.
+In other cases a new type would be generated, eg. Wcode(QueryCountry.Table).
 
-WTitle((4/5) example Gui and Db together)
+WTitle((4/5) Example Gui and Db together)
 
-In the following code we show an example where a Gui visualize the Italian students.
+In the following code we show an example where a Gui display the Italian students.
 
-We could visualize directly elements of 
+We could directly display elements of 
 type Wcode(UnivDb.Student), but we chose 
-to write more flexible and maintainable code,
+to write more flexible and maintainable code
+(code maintenance requires localized changes),
 where we define our basic classes (Wcode(Name) and
 Wcode(Year))
 and we define an injection from
 Wcode(UnivDb.Student)
 to
 Wcode(Person).
-Then we just use the 
+Then we use the 
 Wcode(eventLoad) method
 to load the information from the DB and
 to display it.
@@ -202,7 +206,7 @@ Name:Alphanumeric:<<{This parse(S that) (
   if that.contains(S.nl()) (error Alphanumeric.ParseError
     "new lines not allowed in method names")
   This(that) 
-  )}
+  )}//check for more restrictions
 
 Year:Unit.of(Num)
 
@@ -210,7 +214,7 @@ Db: Load<<{reuse L42.is/Db}
 
 UnivDb: Db.importStructure(Db.ConnectionS"...")//will not use Name and Year
 
-QueryCountry: UnivDb.Query"select * from students where country=@country"
+QueryCountry: UnivDb.query(\"select * from students where country=@country")
 
 Person: Data<<{ Name name, Name surname, Year age 
   class method
@@ -241,7 +245,7 @@ Main: MyGui()
 CCode
 
 It is interesting to notice that if we wish to change the
-content of the students graphical representation, we just need to change the class Wcode(Person) and add/remove/swap fields.
+content of the students displayed representation, we just need to change the class Wcode(Person) and add/remove/swap fields.
 WP
 
 It is also interesting to consider what happens if the database schema changes.

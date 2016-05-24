@@ -2023,17 +2023,17 @@ Void useJSToWriteOnTextArea(mut Gui gui) (
   )
 ]]></pre>
 
-Gui provides help to visualize datastructures of various kind, 
+Gui provides help to display datastructures of various kind, 
 for example vectors of Data classes can be shown as tables in the following way: 
 <pre class="l42Big"><![CDATA[
 Person: Data<<{ Size id, Name name, Name surname, Year age }
 Persons: Collections.vector(of: Person)
-ShowPersons: Gui.widget(table: Persons)
-InputPerson: Gui.input(dialogForm: Person)//rely on JQuery UI
+ShowPersons: Gui.widget(table: Persons) //each person as a row in the table
+InputPerson: Gui.input(dialogForm: Person)//relies on 'JQuery UI'
 MyGui: Gui(/*..*/)<<{ mut Persons persons //field
   /*..*/
   mut method
-  Void eventLoad(mut Gui gui, S msg) ( //no underscore for system events
+  Void eventLoad(mut Gui gui) ( //no underscore for system events
     gui.add(ShowPersons(this.#persons(), into: Gui.Id"divLeft"))
     //the element with that id will contain the table
     )
@@ -2049,37 +2049,40 @@ Main: MyGui(persons: Persons[])
 ]]></pre>
 
 </p><h2> (2/5) Files </h2> <p>
-In 42 you can import <span class="code"><![CDATA[FSystem]]></span> to read and write files.
+In 42 you can import <span class="code"><![CDATA[FileSystem]]></span> to read and write files.
 
 
 <pre class="l42Big"><![CDATA[
 {reuse L42.is/AdamTowel
-FSystem: Load<<{reuse L42.is/FSystem}
+FileSystem: Load<<{reuse L42.is/FileSystem}
 
 Main: {
-  files=FSystem()
-  files.write(S"foo.txt",S"foo foo foo!")
+  files=FileSystem()
+  files.write(S"foo.txt",S"foo foo foo!") //the file 'foo.txt' in the current directory
   S foos=files.read(S"foo.txt")//most likely, it contains 'foo foo foo!'
   return ExitCode.normal()
   }
 }
 ]]></pre>
 
-42 can execute every closed expression early, even at compile time, if it could give 
-a performance boost.
+Each instance of the FileSystem class owns its own stream of
+operations, which are not coordinated with the other instances.  If
+you create multiple instances, then you may find that events attached
+to other instances happen much earlier than you expect.
+This happens since 42 can execute every closed expression early,
+even at compile time, if it could give a performance boost.
 To avoid unexpected early effects
 you should
-pass a files object to functions that do
-I/O: 
+pass a files object to functions that do I/O: 
 
 <pre class="l42Big"><![CDATA[
 
 method S readFoo()
- FSystem().read(S"foo.txt") //may read foo once and for all at compile time,
+ FileSystem().read(S"foo.txt") //may read foo once and for all at compile time,
 //and then return the same value every time. It can be useful
 //for loading resources, like image files in a simple game.
 
-method S readFoo(mut FSystem that)
+method S readFoo(mut FileSystem that)
  that.read(S"foo.txt") //need the parameter to act, thus
  //will wait until a parameter is provided
 ]]></pre>
@@ -2089,15 +2092,15 @@ chronologically sorted with respect to each other, but there is no guarantee
 of ordering between different system objects.
 
 </p><h2> (3/5) Db </h2> <p>
-In AdamTowel, databases can be access in two ways: 
+In AdamTowel, databases can be accessed in two ways: 
 Raw access (similar to what is supported by
 <span class="code"><![CDATA[DBC]]></span> or <span class="code"><![CDATA[JDBC]]></span> libraries) 
-and Structured access.
+and structured access.
 <pre class="l42Big"><![CDATA[
 {reuse L42.is/AdamTowel
 Db: Load<<{reuse L42.is/Db}//Db can do Raw access
 UnivDb: Db.importStructure(Db.ConnectionS"...")
-QueryCountry: UnivDb.Query"select * from students where country=@country"
+QueryCountry: UnivDb.query(\"select * from student where country=@country")
 Main: {
   connection=UnivDb.connect()
   UnivDb.Student.Table ss=QueryCountry(connection, country: S"Italy")
@@ -2108,32 +2111,33 @@ Main: {
 Here
 we use <span class="code"><![CDATA[Db]]></span> to 
 import the structure of the database. This means that 
-<span class="code"><![CDATA[UnivDb]]></span> will contain a class for each table-row of the database,
+<span class="code"><![CDATA[UnivDb]]></span> will contain a class for each table of the database, and
 every class will have a nested type representing 
 multiple rows (that is, a table).
-<span class="code"><![CDATA[UnivDb.Query]]></span> allows prepared queryes.
+<span class="code"><![CDATA[UnivDb.query(that)]]></span> allows prepared queries.
 In the case in the example, we can use
 <span class="code"><![CDATA[QueryCountry(that,country)]]></span>
-to get the italian students.
-Note how <span class="code"><![CDATA[country]]></span> is a parameter of the method: in this way the  query users are informed of the query expectations.
-Our query used <span class="code"><![CDATA[*]]></span>, so the type <span class="code"><![CDATA[UnivDb.Student.Table]]></span>
+to get the Italian students.
+Note how <span class="code"><![CDATA[country]]></span> is a parameter of the method: in this way the  query users are informed of the queries requirements.
+Our query used <span class="code"><![CDATA[*]]></span> (all columns), so the type <span class="code"><![CDATA[UnivDb.Student.Table]]></span>
 could be reused.
-In other cases a new type would be generated.
+In other cases a new type would be generated, eg. <span class="code"><![CDATA[QueryCountry.Table]]></span>.
 
-</p><h2> (4/5) example Gui and Db together </h2> <p>
+</p><h2> (4/5) Example Gui and Db together </h2> <p>
 
-In the following code we show an example where a Gui visualize the Italian students.
+In the following code we show an example where a Gui display the Italian students.
 
-We could visualize directly elements of 
+We could directly display elements of 
 type <span class="code"><![CDATA[UnivDb.Student]]></span>, but we chose 
-to write more flexible and maintainable code,
+to write more flexible and maintainable code
+(code maintenance requires localized changes),
 where we define our basic classes (<span class="code"><![CDATA[Name]]></span> and
 <span class="code"><![CDATA[Year]]></span>)
 and we define an injection from
 <span class="code"><![CDATA[UnivDb.Student]]></span>
 to
 <span class="code"><![CDATA[Person]]></span>.
-Then we just use the 
+Then we use the 
 <span class="code"><![CDATA[eventLoad]]></span> method
 to load the information from the DB and
 to display it.
@@ -2145,7 +2149,7 @@ Name:Alphanumeric:<<{This parse(S that) (
   if that.contains(S.nl()) (error Alphanumeric.ParseError
     "new lines not allowed in method names")
   This(that) 
-  )}
+  )}//check for more restrictions
 
 Year:Unit.of(Num)
 
@@ -2153,7 +2157,7 @@ Db: Load<<{reuse L42.is/Db}
 
 UnivDb: Db.importStructure(Db.ConnectionS"...")//will not use Name and Year
 
-QueryCountry: UnivDb.Query"select * from students where country=@country"
+QueryCountry: UnivDb.query(\"select * from students where country=@country")
 
 Person: Data<<{ Name name, Name surname, Year age 
   class method
@@ -2184,7 +2188,7 @@ Main: MyGui()
 ]]></pre>
 
 It is interesting to notice that if we wish to change the
-content of the students graphical representation, we just need to change the class <span class="code"><![CDATA[Person]]></span> and add/remove/swap fields.
+content of the students displayed representation, we just need to change the class <span class="code"><![CDATA[Person]]></span> and add/remove/swap fields.
 </p><p>
 
 It is also interesting to consider what happens if the database schema changes.
@@ -2210,7 +2214,7 @@ Stay tuned for more!
 </p><h2> Refactor </h2> <p>
 <span class="code"><![CDATA[Refactor]]></span> is a class supporting modification of
 library literals.
-For example, you may want to rename the method <span class="code"><![CDATA[importStructure(that)]]></span> in just <span class="code"><![CDATA[import(that)]]></span>.
+For example, you may want to rename the method <span class="code"><![CDATA[importStructure(that)]]></span> into just <span class="code"><![CDATA[import(that)]]></span>.
 You can do the following:
 <pre class="l42Big"><![CDATA[
 {reuse L42.is/AdamTowel
@@ -2222,7 +2226,7 @@ UnivDb:Db.import(Db.ConnectionS"...")
 ]]></pre>
 The type <span class="code"><![CDATA[Selector]]></span> represent method selectors;
 in the same way the type <span class="code"><![CDATA[Path]]></span> represent 
-local paths, as in <span class="code"><![CDATA[Path"MyNested.MyNestedNested"]]></span> or
+paths inside library literals, as in <span class="code"><![CDATA[Path"MyNested.MyNestedNested"]]></span> or
 <span class="code"><![CDATA[Path"This"]]></span>.
 
 There are a lot of refactoring operations nested under <span class="code"><![CDATA[Refactor]]></span>:
@@ -2232,12 +2236,12 @@ and
 <span class="code"><![CDATA[RenamePath]]></span>
 rename methods either at top level (as we just did) or
 in an arbitrary nested library;
-or rename paths in other paths
+or rename paths into other paths
 </li><li>
 
 <span class="code"><![CDATA[Redirect]]></span>
-allows to remove a nested library and redirect all its references to
-an external one. This allows to emulate generics, as we will see later.
+removes a nested library and redirects all its references to
+an external one. This emulates generics, as we will see later.
 </li><li>
 <span class="code"><![CDATA[UpdateDocumentationSelector]]></span>
 and <span class="code"><![CDATA[UpdateDocumentationPath]]></span>
@@ -2252,17 +2256,18 @@ leaving only the public skeleton
 and <span class="code"><![CDATA[HidePath]]></span>
 mark methods or paths as private.
 We have not seen details on private members, the main idea is that
-they are renamed in invisible names that you can never guess, and automatically renamed on need by refactoring operations.
+they are renamed into invisible names that you can never guess, and automatically renamed to avoid collisions 
+by refactoring operations.
 </li></ul>
 </p><p>
 In addition to all those nested classes,
 <span class="code"><![CDATA[Refactor]]></span> offers <span class="code"><![CDATA[Refactor.compose(left,right)]]></span>
 allowing a simmetric sum of two library literals.
-The main idea is that members with the same name are recursively summed
+The main idea is that members with the same name are recursively composed
 
 </p><h2> Introspection </h2> <p>
 <span class="code"><![CDATA[Introspection]]></span> is
-a class allowing to explore libraries, to discover what methods they have and so on.
+a class for exploring libraries, to discover what methods they have and so on.
 
 The main classes inside of Introspection are
 <span class="code"><![CDATA[Introspection.NestedLibrary]]></span>,
@@ -2271,25 +2276,32 @@ The main classes inside of Introspection are
 You can obtain a nested library by calling the factory methods 
 <span class="code"><![CDATA[Introspection(lib)]]></span> and <span class="code"><![CDATA[Introspection(classObj)]]></span>,
 respectively for library literals or class objects.
-We will see later some example of use of <span class="code"><![CDATA[Introspection]]></span>.
+We will see some example later of use of <span class="code"><![CDATA[Introspection]]></span>.
 
 
 </p><h2> (2/5)Traits and Metaprogramming </h2> <p>
 
-Metaprogramming is the most important feature of 42,
-all the decorators that you have seen up to now are implemented with metaprogramming, that in 42 offers a good balance of freedom and
+Metaprogramming is the most important feature of 42.
+All the decorators that you have seen up to now are implemented with metaprogramming, 
+which shows that 42 offers a good balance of freedom and
 safety.
+</p><p>
 The main idea of 42 metaprogramming is that only library literals can
-be manipulated, and that once a library literal has a name, it can not be directly metaprogrammed any more.
-Thus, we call traits methods that return reusable (unnamed) code.
+be manipulated.
+Metaprogramming is evaluated top down nested/inner-most first.
+Once a library literal has a name, it can not be independently metaprogrammed; but only influenced
+by metaprogramming over the library that contains it.
+
+</p><p>
+We call Wemph(traits) methods that return reusable (unnamed) code.
 For example
 <pre class="l42Big"><![CDATA[
 Transaction:{
   class method
-  Library traitEnsureTransaction() {
-
+  Library traitEnsureTransaction() 
+    {//begin library literal
     class method //without name: can be called as a functor
-    Void(mut Db.Connection connection)
+    Void (mut Db.Connection connection)
     exception Db.Query.Failure //no body: abstract method
 
     class method //without name: can be called as a functor
@@ -2304,13 +2316,13 @@ Transaction:{
       that.commitTransaction()
       )
     }
-  }
+  }//end library literal
 
 MyAction:Refactor.compose(
   left:Transaction.traitEnsureTransaction()
   right:{ //and now the missing implementation
     class method
-    Void(mut Db.Connection connection)
+    Void (mut Db.Connection connection)
     exception Db.Query.Failure {
       /*..my operation..*/
       }
@@ -2323,8 +2335,8 @@ Main:{
   }
 ]]></pre>
 
-Note how <span class="code"><![CDATA[traitEnsureTransaction()]]></span> is just a normal 
-class method that directly return a library literal.
+Note that <span class="code"><![CDATA[traitEnsureTransaction()]]></span> is just a normal 
+class method that directly returns a library literal.
 Traits in 42 are nothing fancier than that.
 
 Now <span class="code"><![CDATA[MyAction]]></span> will execute the operation inside of a transaction.
@@ -2339,16 +2351,17 @@ we now show how to improve.
 Manually declaring a class just to declare a single trait method
 returning a library literal is verbose.
 In AdamTowel we can use the class <span class="code"><![CDATA[Resource]]></span>
-that automate this process.
-For example
+which automate this process.
+<br/>
+For example:
 <pre class="l42Big"><![CDATA[
 TraitEnsureTransaction:Resource<<{
   class method
-  Void(mut Db.Connection connection)
-  exception Db.Query.Failure
+  Void (mut Db.Connection connection)//method selector here is '(connection)'
+  exception Db.Query.Failure 
 
   class method
-  Void (mut Db.Connection that)
+  Void (mut Db.Connection that)//method selector here is '(that)'
   exception Db.Query.Failure (/*..as before..*/)
   }
 
@@ -2372,13 +2385,14 @@ Transaction:{
     if !i.hasMethod(\"(connection)") (exception InvalidAction
       "Action method '(connection)' missing")
     composed=Refactor.compose(  left: TraitEnsureTransaction(), right: that  )
-    exception on MetaGuard ( InvalidAction"
-      "Action invalid:type of '(connection)' do not fit or already defined '(that)'")
+    exception on MetaGuard ( InvalidAction
+      "Action invalid:type of '(connection)' does not fit or already defined '(that)'")
     return Refactor.HideSelector(\"(connection)")<<composed
     error on Metaguard
       WTF"'(connection)' is there, ready to be hidden"
     }  
   }
+//So, MyAction becomes shorter and better checked:
 MyAction:Transaction<<{
   class method
   Void(mut Db.Connection connection)
@@ -2386,7 +2400,6 @@ MyAction:Transaction<<{
     /*..my operation..*/
     }
   }
-
 ]]></pre>
 
 Note how we check some well formedness of the parameter
@@ -2403,12 +2416,14 @@ Now we can use Transaction as a decorator.
  is a decorator implemented using 
 <span class="code"><![CDATA[Refactor]]></span> and
 <span class="code"><![CDATA[Introspection]]></span>
-and provide in AdamTowel a flexible model of multiple inheritance with super calls.
-As an example, in a game we can have a chest, that contains objects in a certain position,
-a boat that can host humanoids and
-a cargo boat, that can host humanoids and can contains objects like a chest.
+which provides a flexible model of multiple inheritance with super calls in AdamTowel.
+<br/>
+As an example, in a game we can have a chest which contains objects in certain positions,
+a boat which host humanoids, and
+a cargo boat, which host humanoids and contains objects like a chest.
 We want to reuse the code of chest and boat to obtain the cargo boat.
-For example
+<br/> 
+For example:
 <pre class="l42Big"><![CDATA[
 ChestTrait:Resource<<{
   mut Objects objects
@@ -2436,7 +2451,7 @@ BoatTrait:Resource<<{
 Chest:Data<<ChestTrait()
 Boat:Data<<BoatTrait()
 CargoBoat:Data<<Extend[ChestTrait();BoatTrait()]<<{
-  read method @override
+  read method @override //explained below
   Kg weight() this.#1weight()+this.#2weight()
   }
 ]]></pre>
@@ -2455,7 +2470,7 @@ With override the method type must be identical,
 while with hide they can be completely different.
 
 
-</p><h2> (4/5)An intollerant type system </h2> <p>
+</p><h2> (4/5)An intolerant type system </h2> <p>
 
 As an exercise, lets try to use what we learned to add a <span class="code"><![CDATA[sum()]]></span> method to
 a vector.
@@ -2482,14 +2497,15 @@ However, we have done an extension only on our specific <span class="code"><![CD
 such code for each vector.
 Can we produce vectors that will have a <span class="code"><![CDATA[sum()]]></span> method?
 Well, this can only work for vectors of elements with a <span class="code"><![CDATA[+]]></span> operator, and a zero concept. Luckily, all 
-numeric classes offers a <span class="code"><![CDATA[zero()]]></span> 
+numeric classes offer a <span class="code"><![CDATA[zero()]]></span> 
 and <span class="code"><![CDATA[one()]]></span> method.
 <br/>
 Building on that, we could attempt the following, invalid solution:
 <pre class="l42Big"><![CDATA[
 MyCollection:{
   class method
-  Library traitSum(){
+  Library traitSum()
+    {//my sum feature
     T:{
       class method T zero()
       method T +(T that)
@@ -2516,68 +2532,74 @@ Sadly, this is not going to compile, since
 in the method <span class="code"><![CDATA[sum()]]></span> we call <span class="code"><![CDATA[this.vals()]]></span>,
 and there is no definition for such method.
 Similar code worked in the former example, but here
-the definition of <span class="code"><![CDATA[MyCollection]]></span> get completed,
+the definition of <span class="code"><![CDATA[MyCollection]]></span> gets completed,
 and the code in the method <span class="code"><![CDATA[traitSum()]]></span> is still 
 incomplete.
 We could just repeat there the definition of <span class="code"><![CDATA[vals()]]></span>,
-but that would be duplicating code; moreover, <span class="code"><![CDATA[vals()]]></span> return an iterator, that have its methods too...
+but that would be duplicating code; moreover, <span class="code"><![CDATA[vals()]]></span> returns an iterator, which has methods too...
 
-<span class="code"><![CDATA[Collection]]></span> does offer a solution: a trait containing
-the minimal code skeleton to make <span class="code"><![CDATA[vals()]]></span>, the idea is that
+<span class="code"><![CDATA[Collection]]></span> offers a solution: a trait containing
+the minimal code skeleton to make <span class="code"><![CDATA[vals()]]></span> over path 
+'<span class="code"><![CDATA[T]]></span>'.
+<br/>
+The idea is that
 the composition of <span class="code"><![CDATA[traitSum()]]></span> and
-<span class="code"><![CDATA[Collection.traitVals()]]></span> is complete code.
+<span class="code"><![CDATA[Collection.traitValsT()]]></span> is complete code.
 However, even declaring <span class="code"><![CDATA[traitSum()]]></span> as
 <pre class="l42Big"><![CDATA[
 class method
 Library traitSum() 
-  Extend[Collections.traitSequence()]<<{/*as before*/}
+  Extend[Collections.traitValsT()]<<{/*my sum feature as before*/}
 ]]></pre>
-Whould not work: the <span class="code"><![CDATA[<<]]></span> method would
-be called when <span class="code"><![CDATA[traitSum()]]></span> runs, leaving incomplete code in the source.
+
+whould not work: the <span class="code"><![CDATA[<<]]></span> method would
+be called when <span class="code"><![CDATA[traitSum()]]></span> runs, leaving incomplete code in the resulting library literal.
 We need to force the computation to happen before
 <span class="code"><![CDATA[MyColleciton]]></span> is completed.
 A solution is to use <span class="code"><![CDATA[Resource]]></span>.
 
 <pre class="l42Big"><![CDATA[
-TraitSum:Resource<<Extend[Collections.traitSequence()]<<{ /*as before traitSum()*/}
+TraitSum:Resource<<Extend[Collections.traitValsT()]<<{/*my sum feature as before*/}
 MyCollection:{
   class method
   Library vector(class Any of) (
-    oldPart=Collection.vector(of:of)//surelly works
+    oldPart=Collection.vector(of:of)//surely works
     {newPart=Refactor.Redirect(Path"T" to:of)<<TraitSum()
     return Extend[oldPart]<<newPart
     catch exception MetaGuard g return oldPart
     })
 ]]></pre>
 
-By the way, before we also forgot to handle exceptions!
-In case our parameter does not support zero and plus,
+By the way, earlier we also forgot to handle exceptions!
+If our parameter does not support zero and plus,
 we will just return a normal collection. We need to insert additional brackets otherwise the 
 binding <span class="code"><![CDATA[oldPart]]></span> would not be visible in the catch body.
 
 As you may notice there is some incoherence in our programming style:
-should trait be methods in a class or Resources?
+should traits be methods in a class or Resources?
 should we use 
 the more primitive
 <span class="code"><![CDATA[Refactor.compose(left,right)]]></span>
 or the more flexible <span class="code"><![CDATA[Extend[]<<]]></span>?
-At the current state we do not have an answer to what is the best in 42. Indeed, we still do not understand the question.
+In the current state of the art we do not have an answer for what is the best in 42.
+<br/>
+Indeed, we still do not understand the question.
 
 
 </p><h2> (5/5)Metaprogramming summary </h2> <p>
 <ul><li>
-Metaprogramming is hard, 42 tries to make it simpler, but not trivial.
+Metaprogramming is hard; 42 tries to make it simpler, but not trivial.
 </li><li>
 Error handling is important while writing decorators.
 More then half of decorators code should be dedicated
-to handle errors and lift them into a more understandable
-form for the sake of the final user.
+to handling errors and lifting them into a more understandable
+form, for the sake of the final user.
 </li><li>
-we are just scratching the surface of what we
+We are just scratching the surface of what we
 can do with metaprogramming.
-If you are interested to become a Magrathean, then
-refer to the metaprogramming painful guide (link);
-otherwise just use metaprogramming libraries 
+If you are interested in becoming a Magrathean, then
+refer to the painful metaprogramming guide (link);
+otherwise just use existing metaprogramming libraries 
 and use <span class="code"><![CDATA[Refactor]]></span> only when all the other options feel more painful.
 </li></ul>
 
