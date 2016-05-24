@@ -1,3 +1,17 @@
+WBigTitle(Target audience)
+This tutorial is design for expert programmers, already knowledgeable in 
+at least two or three languages between Java, C#, C++ and Python.
+This tutorial lay basic knowledges for programming in 42 using AdamTowel, but
+do not explore the foundational theories behind 42,
+or the mathematical reasons that makes 42 correct.
+WBR
+AdamTowel is in continue evolution; this document does not represent the current state
+of AdamTowel but an ideal target destination.
+WBR
+This document is work in progress,
+and chapters 10 and 11 are not as well thought out as the rest of the document,
+and other chapters may still be inserted.
+
 WBigTitle(Basics)
 WTitle((1/5)Simple hello world program)
 Let's look at a simple hello world program: 
