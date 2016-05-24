@@ -21,10 +21,10 @@ little=123Num
 stillLittle=4567890Num
 big=100000000000000000Num
 bigger=100000000000000000.0001Num
-fraction=Num"1234567/890"
-fraction == little/stillLittle //holds
-Debug(fraction)
-Debug(Num"12/4") //will print "3"
+fraction1=Num"1234567/890"
+fraction2 == little/stillLittle //holds
+Debug(fraction1) //will print '1234567/890'
+Debug(Num"12/4") //will print '3'
 CCode
 
 Another useful numeric type is Wcode(Size).
@@ -62,7 +62,7 @@ Conversions between various numeric classes must be performed explicitly.
 AdamsTowel offers a simple way to convert between numeric classes, and more in general
 between base classes.
 All numeric  classes implements
-the Wcode(Base) interface and offering the Wcode(.from(base)) method.
+the Wcode(Base) interface and offers the Wcode(.from(base)) method.
 So, for example 
 OBCode
 Double: Load <>< {reuse L42.is/Numbers/Double}
@@ -98,7 +98,7 @@ Mathematically you can obtain the support out of the unit by
 division: Wcode(42Meter/2Meter = 21Meter).
 This do not work directly in 42, since multiplication and division
 takes the support and not a unit.
-Units provide method Wcode(div(that)) for this aim.
+Units provide method Wcode(divide(that)) for this aim.
 Units also provide method  Wcode(`#'inner()),
 this is just extracting the value of the support from the unit.
 This can be convenient during programming but 
@@ -107,7 +107,7 @@ Methods like that are required to be used with care, so they start with
 Wcode(`#') to underline that.
 
 OBCode
-Num n1=42Meter.div(2Meter) //=21Num
+Num n1=42Meter.divide(2Meter) //=21Num
 Num n2=42Meter.#inner() //=42Num
 CCode
 
@@ -169,16 +169,18 @@ OBCode
 Email: Alphanumeric <>< { //not supported yet
   S local //fields
   S domain
+
   class method
   This parse(S that) {
     index=that.indexOf(S"@") //works only for simple emails
-    if index.positive() (error Alphanumeric.ParseError"@ not found")
-    local=that(end: index) //string slicing
-    domain=that(start: index+1Size ) //string slicing
+    if index.isPresent() (error Alphanumeric.ParseError"@ not found")
+    local=that(end: index.get()) //string slicing
+    domain=that(start: index.get()+1Size ) //string slicing
     if domain.contains(S"@") (error this.parseError(S"multiple @ found"))
     return This(that,local: local,domain: domain)
     } //call the factory with fields plus the original string
 }
+/*..*/
 myEmail=Email"arthur.dent@gmail.com"
 myEmail.local() ==S"arthur.dent" //holds
 myEmail.domain() ==S"gmail.com" //holds
@@ -200,6 +202,7 @@ Email: Alphanumeric <>< {/*..*/
     return This(local++S"@"++domain,local: local,domain: domain)
     } 
   }
+/*..*/
 myEmail=Email"arthur.dent@gmail.com"
 myEmail.toS() ==S"arthurdent@gmail.com" //holds
 CCode

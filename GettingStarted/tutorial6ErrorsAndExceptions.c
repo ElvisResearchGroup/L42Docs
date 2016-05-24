@@ -27,7 +27,7 @@ A guard is guaranteed to be consistent across library evolution
 thus program logic can depend on them being thrown.
 
 Assertions are very convenient to check for pre/post conditions.
-The following code show usages of Wcode(Assert.Pre) and Wcode(Assert.Bug)
+The following code show usages of Wcode(Assert.Pre) and Wcode(Assert.Holds)
 
 OBCode
 Assert.Pre[ //preconditions
@@ -35,16 +35,17 @@ Assert.Pre[ //preconditions
   myVal>0Nat msg: S"here with personalized message myVal="[myVal]"";
   myVal expected: 42Nat //call equals and do a better error reporting
   ] //in a bunch of assertions, they are all going to be checked together.
-Assert.Bug[ //postconditions/checks in the middle
+
+Assert.Holds[ //postconditions/checks in the middle
   res expected: 42Nat msg: S" message"
   ]
 if notGoodParameter (Assert.Pre"error message")
-if observedBug  (Assert.Bug"error message")
+if observedBug  (Assert.Holds"error message")
 CCode
 
-WTitle(`(2/5) create, throw and capture')
+WTitle(`(2/5) Create, throw and capture')
 
-WTitle(create and throw)
+WTitle(Create and throw)
 
 You can create new kinds of messages using the 
 service class of the message interface: 
@@ -71,7 +72,7 @@ to create messages, however it has a service nested class called Wcode($), which
 is a class decorator helping us to create valid messages.
 As you can see we can create messages with text, in which we can optionally include a response.
 
-WTitle(capturing errors and exceptions)
+WTitle(Capturing errors and exceptions)
 
 In 42 there is no explicit Wcode(try) statement,
 but any block of code can contain Wcode(catch).
@@ -98,7 +99,7 @@ the paragraph directly above, and can not see the local binding
 declared in such paragraph.
 If a catch is successfull, then the result of its catch expression
 will be the result of the whole code block.
-In this way, blocks with catches behave like conditions.
+In this way, blocks with catches behave like conditionals.
 That is, The code above can assign to Wcode(res) either 
 Wcode(S"hi 1"),
 Wcode(S"hi 2"),
@@ -138,11 +139,11 @@ res=(
  )
 CCode
 
-WTitle(`(3/5) exceptions and errors')
+WTitle(`(3/5) Exceptions and errors')
 
 Exceptions are like checked exceptions in java.
 As with errors, every immutable object can be thrown as an exception.
-just write "exception" instead of "error" while throwing or capturing.
+just write Wcode(exception) instead of Wcode(error) while throwing or capturing.
 Exceptions represent expected, documented and reliable behaviour,
 they are just another way to express control flow.
 They are useful to characterize multiple outcomes of an operation,
@@ -158,13 +159,12 @@ exception CancelPressed {
   /*implementation to open a text dialog*/
   }
 CCode
-Where the programmer using Wcode(promptUser) will have to handle 
+The programmer using Wcode(promptUser) has to handle 
 the possibility that the cancel button was pressed.
 
-Exceptions does not enforce strong exception safety as error do,
+Exceptions does not enforce strong exception safety as errors do,
 so they can be used more flexibly, and since they are documented in
 the types, we can take their existence in account while writing imperative programs.
-Wcode(Assert)ions should not be thrown as exceptions, but only as errors.
 WP
 Often, the programmer wants to just turn exceptions into errors or other exceptions.
 This is possible with the following code: 
@@ -199,6 +199,8 @@ Wcode(WTF) is unreliable: as explained before, programmers are free
 to change when and how assertion violations are detected.
 For the case of Wcode(WTF), the programmer may recognize that
 such branch could be actually executed, and thus replace the error with correct behaviour.
+WP
+Wcode(Assert)ions should not be thrown as exceptions, but only as errors.
 
 
 

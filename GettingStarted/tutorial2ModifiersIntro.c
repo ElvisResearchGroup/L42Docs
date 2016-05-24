@@ -44,9 +44,9 @@ This works also for methods with multiple parameters, if the first one is called
 We can use an animal by writing, for example: 
 
 OBCode
-  mut Animal dog1=Animal(location: Point(x: 0Num, y: 0Num))
-  dog2=Animal(location: Point(x: 0Num, y: 0Num)) //type 'mut Animal' inferred
-  dog1.run()
+mut Animal dog1=Animal(location: Point(x: 0Num, y: 0Num))
+dog2=Animal(location: Point(x: 0Num, y: 0Num)) //type 'mut Animal' inferred
+dog1.run()
 CCode
 
 WTitle(`(2/5)Interaction between mutable and immutable')
@@ -66,7 +66,7 @@ CCode
 
 Here we use Wcode(mut Points path) to denote a mutable list of points. Note the absence of Wcode(var); this is conceptually similar to a Wcode(Points * const path;) in C++  or Wcode(final Points path;) in Java.
 To contrast, the declaration Wcode(var Point location) is similar to
-Wcode(Point const * location;) in C++  or Wcode(ImmPoint location;) in Java (for an opportune Wcode(ImmPoint) class).
+Wcode(Point const * location;) in C++  or Wcode(ImmPoint location;) in Java, for an opportune Wcode(ImmPoint) class.
 That is, 
 mutable objects can be referred using mutable references,
 Immutable objects can be referred using immutable references.
@@ -111,7 +111,7 @@ CCode
 The first dog moves and consumes the path for the second one as well.
 That is, the first goes to 12: 20 and the second goes to 1: 2.
 
-This is because Wcode(Animal) is now a WEmph(Deeply mutable class: )  a mutable class with mutable fields. 
+This is because Wcode(Animal) is a WEmph(Deeply mutable class: )  a mutable class with mutable fields. 
 An amazing amount of bugs are caused by the usage of deeply mutable classes.
 
 Note how we are using the exposer Wcode(`#path()')
@@ -179,8 +179,7 @@ dog1.move()
  //dog2.move()  //ill-typed, requires a mut Animal
 CCode
 
-We will explain later the exact rules for promotion,
-the main idea is that if the initialization expression uses local bindings in a controlled/safe way, then promotion can be applied.
+We will not explain in this tutorial the exact rules for promotion, but the main idea is that if the initialization expression uses local bindings in a controlled/safe way, then promotion can be applied.
 For example, a mutable expression using only capsule or immutable references can be promoted to capsule or immutable, as we prefer.
 
 WTitle(`Exposers and getters: mutable, lent and read')

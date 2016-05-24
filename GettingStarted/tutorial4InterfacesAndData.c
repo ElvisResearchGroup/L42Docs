@@ -21,11 +21,11 @@ CCode
 
 In 42, we say that the method Wcode(draw(that)) 
 implemented in Wcode(Square)
-WEmph(is defined by)
+WEmph(is declared by)
 Wcode(Shape).
 Each method is declared in a single point, either the class itself
 or a (transitively) implemented interface.
-This means that a class can not implement multiple interfaces defining methods
+This means that a class can not implement multiple interfaces declaring methods
 with the same name.
 For example, this code is ill-typed: 
 OBCode
@@ -114,7 +114,7 @@ pattern in a much simpler way:
 the binding Wcode(kindOfShape) serve the role of
 an instance of an abstract factory, and can create instances of
 a specific kind of shape.
-
+WP
 
 In 42 interfaces can not have 
 implemented static methods.
@@ -142,7 +142,7 @@ Shape: {interface
 CCode
 
 Such Wcode($) classes are referred as service classes.
-They are needed by the language but do not serve any role
+They are needed by the code but do not serve any role
 in the abstract model of the application.
 
 WTitle((3/5)`Concepts: ToS, Equals, Classable, ...')
@@ -176,7 +176,8 @@ based on Wcode(equals), but is not required by the interface.
 Wcode(Data) will automatically generate a valid Wcode(Concepts.Equals)
 implementation, and derived methods Wcode(==) and Wcode(!=).
 The default implementation of 
-Wcode(Data) does not takes circular object graphs in account, and will loop in those cases. We will discuss later how to personalize the behaviour of Wcode(Data).
+Wcode(Data) does not takes circular object graphs in account, and will loop in those cases. We discuss how to personalize the behaviour of Wcode(Data) in Wlink(dataAndInvariants,
+`Data documentation').
 
 WP
 Finally, an interface that nearly every class or interface implements is Wcode(Concepts.Classable).
@@ -240,10 +241,10 @@ and directly after any field update.
 Wcode(Data) guarantees that no Wcode(Margin) object that does not 
 satisfy the invariant will ever be visible outside of the scope of the Wcode(invariant()) method itself.
 
-See more about restrictions of this mechanism in (Wlink(dataAndInvariants,
-`data and invariants'))
+See more about restrictions of this mechanism in Wlink(dataAndInvariants,
+`Data documentation')
 WBR
-The current example shows a class with all immutable fields.
+The example above shows a class with all immutable fields.
 It is possible to enforce the invariant also on classes with immutable
 and capsule fields.
 Then Wcode(Data) will additionally check that the
@@ -257,7 +258,6 @@ It may be unobvious why such requirements suffice; the idea is that the only way
 to the content of a capsule field can be
 accessed is by the exposer. The reference produced by the lent exposer can only be returned as lent,
 or wrapped inside of freshly created objects referred to by lent references.
-(WEmph(note for marco: ) this means no more lent/read fields)
 
 
 WTitle((5/5)`Interfaces and Data, summary')

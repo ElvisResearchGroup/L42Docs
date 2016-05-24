@@ -15,10 +15,10 @@ CCode
 Sequences can be created with square brackets,
 and can be combined with operators.
 The general idea is that operators 
-Wcode(+,-,<,>) works 
+Wcode(`+,-,<,>') works 
 on one sequences and one element,
 while the corresponding doubled-up operators
-Wcode(++,--, <>< ,>>, >>=, <>< =,==)
+Wcode(`++,--, <>< ,>>, >>=, <>< =,==')
 works on two sequences.
 You can see the details of this below.
 OBCode
@@ -138,8 +138,7 @@ For example:
 
 OBCode
 Direction=Enumeration"north, east, south, west"
-Direction.Set[ \north; \east ] //the bitflag corresponding
- //to the set of north and east.
+Direction.Set[ \north; \east ] //the bitflag corresponding to the set of north and east.
  //is equivalent to the much longer
 Direction.Set[ Direction.north(); Direction.east() ]
 CCode
@@ -198,25 +197,25 @@ CCode
 Now we show some methods over mutable collections, consider each following line independently: 
 OBCode
  //setting a value in a position
-foo(2Size,val: e) //foo.equals(Nums[a;b;e;d])
+foo(2Size,val: e) //foo == Nums[a;b;e;d]
  //setting at left or right
-foo.left(e) //foo.equals(Nums[e;b;c;d])
-foo.right(e) //foo.equals(Nums[a;b;c;e])
+foo.left(e) //foo == Nums[e;b;c;d]
+foo.right(e) //foo == Nums[a;b;c;e]
 
  //add a value in a position
-foo.add(2Size,val: e) //foo.equals(Nums[a;b;e;c;d])
+foo.add(2Size,val: e) //foo == Nums[a;b;e;c;d]
 
  //add at left or right
-foo.add(left: e) //foo.equals(Nums[e;a;b;c;d])
-foo.add(right: e) //foo.equals(Nums[a;b;c;d;e])
+foo.add(left: e) //foo == Nums[e;a;b;c;d]
+foo.add(right: e) //foo == Nums[a;b;c;d;e]
 
  //removal
-foo.remove(index: 2Size) //foo.equals(Nums[a;b;d])
-foo.removeLeft() //foo.equals(Nums[b;c;d])
-foo.removeRight() //foo.equals(Nums[a;b;c])
+foo.remove(index: 2Size) //foo == Nums[a;b;d]
+foo.removeLeft() //foo == Nums[b;c;d]
+foo.removeRight() //foo == Nums[a;b;c]
 
  //removal, if elements implements Concepts.Equals
-foo.removeAll(elem: b) //foo.equals(Nums[a;c;d])
+foo.removeAll(elem: b) //foo == Nums[a;c;d]
 foo.removeLeft(elem: b) //remove the leftmost b
 foo.removeRight(elem: b) //remove the rightmost b
 CCode
@@ -247,8 +246,8 @@ CCode
 The semantics of Wcode(with-on) is that the
 first match is executed. No
 confusing fall-through semantics as in C/Java switch.
-
-if Wcode(myData) is already declared one can simply write
+WP
+If Wcode(myData) is already declared one can simply write
 OBCode
 with myData (
   on S Debug(myData) //here 'myData' is seen of 'S' type
@@ -265,6 +264,7 @@ with myElem in vec.vals() (on S  result: =result++myElem  )
 CCode
 
 Wcode(with) can be used as list comprehension; where 
+
 Wcode(use) inserts elements in the sequence under construction
 OBCode
 vec=Anys[S"foo"; 12Num; S"beer";]
@@ -272,7 +272,7 @@ v=Strings[with myElem in vec.vals() (on S use[myElem] )] //filter out non-string
  //v==Strings[S"foo"; S"beer";]
 CCode
 
-for multiple dispatch: 
+Wcode(with) can be used for multiple dispatch: 
 
 OBCode
 method Num m(Shape x, Person y, Vehicle z) //example of method using with
@@ -283,7 +283,7 @@ method Num m(Shape x, Person y, Vehicle z) //example of method using with
   )}
 CCode
 
-Or to iterate over multiple collections at once: 
+Wcode(with) can be used to iterate over multiple collections at once: 
 OBCode
 rs=Nums[1\;2\;3\;]
 as= Nums[10\;20\;30\;]
@@ -293,7 +293,7 @@ with a in as.vals(), b in bs.vals(), var r in rs.vals() (r: =r+a+b)
  //now rs==Nums[111\;222\;333\;]
 CCode
 
-While iterating on multiple collections, a dynamic error is raised if 
+while iterating on multiple collections, a dynamic error is raised if 
 Wcode(rs),
  Wcode(as) and
  Wcode(bs) have different length.
@@ -314,9 +314,10 @@ sequence is considered infinite and iteration may go on forever.
 
 Wcode(minTo) is useful when multiple collections are iterated at once,
 and specify the minimal allowed iteration cycles.
+WBR
 Let see some examples: 
 OBCode
-with x in xs.vals(), y in ys.vals(fill: 10Size)
+with x in xs.vals(), y in ys.vals(fill: 10Num)
  //will iterate for as long as xs, even if ys is shorter
  //will stop after xs.size() cycles, and fail if xs.size()<ys.size()
 
@@ -355,6 +356,7 @@ sequences of Strings of length 1.
 All the operators working on immutable sequences works on strings and alphanumerics.
 
 However, they can not be constructed with square brackets, that is Wcode(S[a;b;c]) does not compile.
+WBR
 Square brackets can be used to interpolate strings and alphanumerics; as in: 
 OBCode
 S"hello "[name]", have a good day, and do not panic!"
@@ -366,7 +368,7 @@ res=S"your info: "[with name in names.vals(), num in nums.vals()  (
   use[ S"name: "[name]", num: "[num]""]
   )]"" //we always need the ending string, even if empty.
 CCode
-In order to put a semicolon between elements in our string, we can use Wcode(sep: )
+In order to put a semicolon between elements in our string, we can use Wcode(sep)
 OBCode
 res=S"your info: "[with name in names.vals(), num in nums.vals()  (
   use[ S"name: "[name]", num: "[num]"", sep: S"; "]
