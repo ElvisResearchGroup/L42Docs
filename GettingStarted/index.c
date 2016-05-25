@@ -79,7 +79,7 @@ This is a declaration for a local binding Wcode(x), using the string class Wcode
 used as string (or in general sequence/collection) concatenation.
 
 Coming from another programming language, you may be surprised that we have to write Wcode(S) before Wcode("Hello ") and Wcode("World").
-This extra verbosity is needed to provide fair treatment to all classes. (Wlink(note1,see more))
+This extra verbosity is needed to provide fair treatment to all classes. (Wlink(`http://l42.is/tutorial.xhtml#BasicClasses',see more in Basic classes))
 In 42 we do not give preferential treatment
 to special objects/classes. In this sense, we consider
 most other languages to be discriminatory.

@@ -47,16 +47,17 @@
 
  </p><p id="Basics"> </p><h1> Target audience </h1> <p>
 This tutorial is design for expert programmers, already knowledgeable in 
-at least two or three languages between Java, C#, C++ and Python.
-This tutorial teach basic knowledge for programming in 42 using AdamsTowel, but
+at least two or three of the languages Java, C#, C++ and Python.
+This tutorial lays out the basic knowledge for programming in 42 using AdamsTowel, but
 does not explore the foundational theory behind 42,
-or the mathematical reasons that makes 42 correct.
+or the mathematical rational for the correctness of 42.
 <br/>
-AdamsTowel is in continue evolution; this document does not represent the current state
-of AdamsTowel but an ideal target destination.
+AdamsTowel is continuing to evolve;
+this document does not represent the current state
+of AdamsTowel, but an ideal target destination.
 <br/>
-This document is work in progress,
-and chapters 10 and 11 are not as well thought out as the rest of the document,
+This document is a work in progress,
+so chapters 10 and 11 are not as well thought out as the rest of the document,
 and other chapters may still be inserted.
 The syntax highlighter is still in progress.
 
@@ -2249,7 +2250,8 @@ You can do the following:
 <pre class="l42Big"><![CDATA[
 {reuse L42.is/AdamsTowel
 Db: Refactor.RenameSelector(
-  Selector"importStructure(that)" to: Selector"import(that)") <>< Load <>< {reuse L42.is/Db}
+  Selector"importStructure(that)" to: Selector"import(that)"
+  ) <>< Load <>< {reuse L42.is/Db}
 UnivDb: Db.import(Db.ConnectionS"...")
 /*..*/
 }
@@ -2275,7 +2277,7 @@ an external one. This emulates generics, as we will see later.
 </li><li>
 '<span class="code"><![CDATA[UpdateDocumentationSelector]]></span>'
 and '<span class="code"><![CDATA[UpdateDocumentationPath]]></span>'
-add to/alter/delete the documentation of methods/paths.
+add to, alter or delete the documentation of methods/paths.
 </li><li>
 '<span class="code"><![CDATA[MakeAbstractSelector]]></span>'
 and '<span class="code"><![CDATA[MakeAbstractPath]]></span>'
@@ -2323,7 +2325,7 @@ Once a library literal has a name, it can not be independently metaprogrammed; b
 by metaprogramming over the library that contains it.
 
 </p><p>
-We use the term Wemph(trait) for  methods that return reusable (unnamed) code.
+We use the term <span style="color:#ff1111; font-weight: bold;"> trait </span> for  methods that return reusable (unnamed) code.
 For example
 <pre class="l42Big"><![CDATA[
 Transaction: {
@@ -2437,7 +2439,7 @@ in an '<span class="code"><![CDATA[if]]></span>', then we catch and wrap the exc
 and finally we state our assumption that '<span class="code"><![CDATA[HideSelector]]></span>' can not fail in
 that context.
 
-Now we can use Transaction as a decorator.
+Now we can use '<span class="code"><![CDATA[Transaction]]></span>' as a decorator.
 
 
 </p><h2> (3/5)Extend </h2> <p>
@@ -2520,12 +2522,12 @@ Easy.
 However, note that we are calling '<span class="code"><![CDATA[this.vals()]]></span>' to
 do the iteration, and we are not declaring a '<span class="code"><![CDATA[vals()]]></span>'
 method.
-The idea is that while computing '<span class="code"><![CDATA[Nums]]></span>', the type system is temporary allowing for incomplete/untypable code at the right of the '<span class="code"><![CDATA[: ]]></span>'.
+The idea is that while computing '<span class="code"><![CDATA[Nums]]></span>', the type system is temporary allowing for incomplete/untypable code at the right of the '<span class="code"><![CDATA[:]]></span>'.
 The typesystem will check that all is ok when the declaration of '<span class="code"><![CDATA[Nums]]></span>' is complete.
 </p><p>
 However, we have done an extension only on our specific '<span class="code"><![CDATA[Nums]]></span>' vector, we would have to repeat
 such code for each vector.
-Can we produce vectors that will have a '<span class="code"><![CDATA[sum()]]></span>' method?
+Can we directly produce vectors that will have a '<span class="code"><![CDATA[sum()]]></span>' method?
 Well, this can only work for vectors of elements with a '<span class="code"><![CDATA[+]]></span>' operator, and a zero concept. Luckily, all 
 numeric classes offer a '<span class="code"><![CDATA[zero()]]></span>' 
 and '<span class="code"><![CDATA[one()]]></span>' method.
@@ -2567,6 +2569,7 @@ and the code in the method '<span class="code"><![CDATA[traitSum()]]></span>' is
 incomplete.
 We could just repeat there the definition of '<span class="code"><![CDATA[vals()]]></span>',
 but that would be duplicating code; moreover, '<span class="code"><![CDATA[vals()]]></span>' returns an iterator, which has methods too...
+</p><p>
 
 '<span class="code"><![CDATA[Collection]]></span>' offers a solution: a trait containing
 the minimal code skeleton to make '<span class="code"><![CDATA[vals()]]></span>' over path 

@@ -86,7 +86,7 @@ Javascript.create( //poor man solution
 14  //general purpose int
 100L  // may be we want long distances
 25d  //may be we want high precision weight
-//25d+100L is a double : )
+//25d+100L is a double :)
 CJCode
 </div>
 

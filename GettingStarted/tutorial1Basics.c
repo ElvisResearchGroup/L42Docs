@@ -1,15 +1,16 @@
 WBigTitle(Target audience)
 This tutorial is design for expert programmers, already knowledgeable in 
-at least two or three languages between Java, C#, C++ and Python.
-This tutorial teach basic knowledge for programming in 42 using AdamsTowel, but
+at least two or three of the languages Java, C#, C++ and Python.
+This tutorial lays out the basic knowledge for programming in 42 using AdamsTowel, but
 does not explore the foundational theory behind 42,
-or the mathematical reasons that makes 42 correct.
+or the mathematical rational for the correctness of 42.
 WBR
-AdamsTowel is in continue evolution; this document does not represent the current state
-of AdamsTowel but an ideal target destination.
+AdamsTowel is continuing to evolve;
+this document does not represent the current state
+of AdamsTowel, but an ideal target destination.
 WBR
-This document is work in progress,
-and chapters 10 and 11 are not as well thought out as the rest of the document,
+This document is a work in progress,
+so chapters 10 and 11 are not as well thought out as the rest of the document,
 and other chapters may still be inserted.
 The syntax highlighter is still in progress.
 

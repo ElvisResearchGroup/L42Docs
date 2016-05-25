@@ -10,7 +10,8 @@ You can do the following:
 OBCode
 {reuse L42.is/AdamsTowel
 Db: Refactor.RenameSelector(
-  Selector"importStructure(that)" to: Selector"import(that)") <>< Load <>< {reuse L42.is/Db}
+  Selector"importStructure(that)" to: Selector"import(that)"
+  ) <>< Load <>< {reuse L42.is/Db}
 UnivDb: Db.import(Db.ConnectionS"...")
 /*..*/
 }
@@ -36,7 +37,7 @@ an external one. This emulates generics, as we will see later.
 </li><li>
 Wcode(UpdateDocumentationSelector)
 and Wcode(UpdateDocumentationPath)
-add to/alter/delete the documentation of methods/paths.
+add to, alter or delete the documentation of methods/paths.
 </li><li>
 Wcode(MakeAbstractSelector)
 and Wcode(MakeAbstractPath)
@@ -84,7 +85,7 @@ Once a library literal has a name, it can not be independently metaprogrammed; b
 by metaprogramming over the library that contains it.
 
 WP
-We use the term Wemph(trait) for  methods that return reusable (unnamed) code.
+We use the term WEmph(trait) for  methods that return reusable (unnamed) code.
 For example
 OBCode
 Transaction: {
@@ -198,7 +199,7 @@ in an Wcode(if), then we catch and wrap the exceptions of Wcode(compose(left,rig
 and finally we state our assumption that Wcode(HideSelector) can not fail in
 that context.
 
-Now we can use Transaction as a decorator.
+Now we can use Wcode(Transaction) as a decorator.
 
 
 WTitle((3/5)Extend)
@@ -281,12 +282,12 @@ Easy.
 However, note that we are calling Wcode(this.vals()) to
 do the iteration, and we are not declaring a Wcode(vals())
 method.
-The idea is that while computing Wcode(Nums), the type system is temporary allowing for incomplete/untypable code at the right of the Wcode(: ).
+The idea is that while computing Wcode(Nums), the type system is temporary allowing for incomplete/untypable code at the right of the Wcode(:).
 The typesystem will check that all is ok when the declaration of Wcode(Nums) is complete.
 WP
 However, we have done an extension only on our specific Wcode(Nums) vector, we would have to repeat
 such code for each vector.
-Can we produce vectors that will have a Wcode(sum()) method?
+Can we directly produce vectors that will have a Wcode(sum()) method?
 Well, this can only work for vectors of elements with a Wcode(+) operator, and a zero concept. Luckily, all 
 numeric classes offer a Wcode(zero()) 
 and Wcode(one()) method.
@@ -328,6 +329,7 @@ and the code in the method Wcode(traitSum()) is still
 incomplete.
 We could just repeat there the definition of Wcode(vals()),
 but that would be duplicating code; moreover, Wcode(vals()) returns an iterator, which has methods too...
+WP
 
 Wcode(Collection) offers a solution: a trait containing
 the minimal code skeleton to make Wcode(vals()) over path 
