@@ -3,7 +3,8 @@ WBigTitle(Example of Libraries)
 42 stands for the primate of libraries, so let see some libraries in action.
 We have already see how to chose a towel, and many classes that are likely to be present in such towel, like
 Wcode(S) and Wcode(Data).
-Let see now how to load a library from its url: 
+WBR
+Let's see how to load a library from its url: 
 OBCode
 {reuse L42.is/AdamsTowel
 Gui: Load <>< {reuse L42.is/Gui}
@@ -41,8 +42,7 @@ MyGui: Gui(
 
   mut method
   Void event_say(mut Gui gui, S msg) (
-    //msg is going to be a multiline string coming from the
-    //html message/event.
+    //msg is going to be a multiline string coming from the html message/event.
     //First line == "say", other lines give more info
     Strings ss= msg.split(S.nl())
     Gui.alert(S"hi dear "+ss.val(1\))
@@ -59,9 +59,9 @@ OHCode
   <head> </head>
   <body>
     Hi, buttons here
-    <Button onclick= 'event42("quit");'> Quit</Button>
-    <Button onclick= 'event42("sayHi");'> Say Hi</Button>
-    <Button onclick= 'event42("say\ncaterpillar");'> Say Hi Caterpillar</Button>
+    <button onclick= 'event42("quit");'> Quit</button>
+    <button onclick= 'event42("sayHi");'> Say Hi</button>
+    <button onclick= 'event42("say\ncaterpillar");'> Say Hi Caterpillar</button>
   </body>
 </html>
 CCode
@@ -130,7 +130,7 @@ This happens since 42 can execute every closed expression early,
 even at compile time, if it could give a performance boost.
 To avoid unexpected early effects
 you should
-pass a files object to functions that do I/O: 
+pass a Wcode(FileSystem) object to functions that do I/O: 
 
 OBCode
 
@@ -169,7 +169,7 @@ Here
 we use Wcode(Db) to 
 import the structure of the database. This means that 
 Wcode(UnivDb) will contain a class for each table of the database, and
-every class will have a nested type representing 
+each of those classes will have a nested class representing 
 multiple rows (that is, a table).
 Wcode(UnivDb.query(that)) allows prepared queries.
 In the case in the example, we can use
@@ -218,7 +218,7 @@ QueryCountry: UnivDb.query(\"select * from students where country= @country")
 
 Person: Data <>< { Name name, Name surname, Year age 
   class method
-  This from(UnivDb.Student db)
+  This from(UnivDb.Student db) //injection/conversion method: UnivDb.Student -> Person
     Person(
       name: Name.from(base: db.name())
       surname: Name.from(base: db.surname())

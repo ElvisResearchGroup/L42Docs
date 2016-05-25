@@ -15,18 +15,15 @@ Solution:
 OBCode
 UndefinedOnEmpty: Message.$ <>< {implements Guard}
 //Max is undefined on empty lists.
-//Since there was no mention of preconditions,
-//we should explicitly handle all the error cases!
+//Since there was no mention of preconditions, we should explicitly handle all the error cases!
 class method
 Num max(Nums that) {
   if that.isEmpty() (error UndefinedOnEmpty"Max is undefined on empty lists")
   //now that we know we can proceed: 
   var Num maxCandidate= that.left()
-  //there is no such thing like a minimum number,
-  //we need to select one element from the list.
+  //there is no such thing like a minimum number, we need to select one element from the list.
   with n in that.vals() (
-    //we could write 'that.withoutLeft().vals()'
-    //to avoid cheching on the first again
+    //we could write 'that.withoutLeft().vals()' to avoid cheching on the first again
     if maxCandidate<n (maxCandidate:= n)
     //update the variable to keep track of the max so far.
     )
@@ -60,7 +57,7 @@ than size.
 For example 
 Wcode(`upTo(Strings[S"a";S"ab";S"abc"],size: 2Size)==Strings[S"a";S"ab"]')
 WP
-Precondition: size is not negative
+Precondition: Wcode(size) is not negative
 WP
 Solution: 
 OBCode
@@ -111,7 +108,7 @@ Point: Data <>< {implements Concept.Invariant
   }
 
 Land: Data <>< { //we may want to put the field and the predefined factory private;
-  //we will learn how to do that later.
+  //you can search in the documentation of Data how to do it.
   mut Cells cells
 
   class method
@@ -157,7 +154,7 @@ Land: Data <>< { //we may want to put the field and the predefined factory priva
         else if this.get(p).isEmpty() (use[S" "])
         else (Assert.Bug[this.get(p).isMole()] use[S"M"])         
       ))]""++S.nl()
-  //since we define it explicitly, Data will leave it alone : )
+  //since we define 'toS()' explicitly, Data will leave it alone :)
   }
 CCode
 
@@ -166,7 +163,7 @@ WTitle((5/5) Examples summary)
 <ul><li>
 Always think about what can go wrong upfront
 </li><li>
-May methods can be completed by first checking for 
+Many methods can be completed by first checking for 
 errors/issues and then using a Wcode(with)
 </li><li>
 Before heading into a problem,
@@ -187,5 +184,6 @@ Libraries should have well modularize code,
 and provide convenient hooks for adaptation.
 Metaprogramming and interfaces are the right tool for this task.
 
-We should not confound adaptability (without touching the original source, make it takle a new problem), with maintenability (change the original source to keep it up to date
+We should not confound adaptability (without touching the original source, make it takle a new problem), with maintenability
+ (it is easy to change the original source to keep it up to date
 with the ever-changing set of requirements).

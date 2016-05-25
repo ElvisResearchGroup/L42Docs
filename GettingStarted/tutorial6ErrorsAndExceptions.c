@@ -206,24 +206,31 @@ Wcode(Assert)ions should not be thrown as exceptions, but only as errors.
 
 
 
-WTitle(`(4/5) return')
+WTitle(`(4/5) Return')
 
 Return, as we have seen, can be used to exit from the inner
 most level of curly brackets.
-Also curly brackets can have catches. let's see some examples: 
+Also curly brackets can have catches.
+In this case, all catch bodies must ends with
+Wcode(return),
+Wcode(error) or
+Wcode(exception).
+WBR Let's see some examples: 
 OBCode
 {
 x= DoStuff()
 catch exception Stuff e1
-  void //just swallow the exception
-catch exception Guard e2
-  obj.doSideEffect() //this method return void
-catch exception Message e3
-  return e3 //a result of the curly brackets
+  return void //just swallow the exception (this block return 'Void')
+catch exception Guard e2 (
+  obj.doSideEffect()
+  return void //do something and return
+  )
+catch error Message e3
+  error WTF"not supposed to happen"
 y= DoStuff(x)
 return y
 error on Guard 
-  WTF""
+  WTF"not supposed to happen"
 }  
 CCode
 
@@ -237,7 +244,7 @@ res= {return PlanA()
   }
 CCode
 
-WTitle(`return looks similar to error/exception')
+WTitle(`Return looks similar to error/exception')
 Return is actually another thing that can be thrown and captured.
 While only immutable values can be thrown as errors/exceptions,
 return can throw any kind of value, but returns can not flow
@@ -289,7 +296,7 @@ control happen, Give it a name and throw it as an error, as in
 OBCode
 NameOfIssue: Message.$ <>< {implements Guard}
 /*...*/
-if /*..*/ error NameOfIssue"more info"
+if /*..*/ ( error NameOfIssue"more info" )
 CCode
 It just take 2 lines, and will make debugging your code so much 
 easier.
