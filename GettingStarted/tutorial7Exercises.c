@@ -95,7 +95,7 @@ Point: Data <>< {implements Concept.Invariant
   Size x, Size y
 
   method invariant()
-    x>= 0Size & x<80Size & y>= 0Size & y<80Size
+    this.x()>= 0Size & this.x()<80Size & this.y()>= 0Size & this.y()<80Size
 
   This go(Direction that) {
     if that.isUp() (return this.with(x: \-1Size))

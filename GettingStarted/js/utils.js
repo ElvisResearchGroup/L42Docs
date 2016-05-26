@@ -39,7 +39,7 @@ function setAllAs(className,options){
     var l42Box = ace.edit(list[i]);
     l42Box.setOptions(options);
     l42Box.setBehavioursEnabled(false);
-    //l42Box.setReadOnly(true);  // false to make it editable
+    l42Box.setReadOnly(true);  // false to make it editable
     // If our code as unrequired spaces at the front or back of the code. Remove them.
     var text = ""+l42Box.getValue().trim();
     l42Box.setValue(text,-1);
