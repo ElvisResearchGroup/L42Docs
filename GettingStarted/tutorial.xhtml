@@ -2639,10 +2639,12 @@ and use '<span class="code"><![CDATA[Refactor]]></span>' only when all the other
 
 
  </p><p id="DeployCode"> </p><h1> Deploy 42 </h1> <p>
+In the context of 42 and AdamsTowel, there are three things that can be deployed:
+ Executable programs,  Towels and Libraries.
 
 </p><h2> (1/5)Deploy programs </h2> <p>
 In 42 libraries can be directly manipulated, and
-a possible manipulation is to convert them in 
+one possible manipulation is to convert them in 
 another format, like an executable jar or a native program
 and then save the result somewhere, such as on the website where you users can download it.
 
@@ -2651,16 +2653,20 @@ and then save the result somewhere, such as on the website where you users can d
 ToDeploy: Resource <>< {reuse L42.is/AdamsTowel
   //yes, we repeat the reuse
   /*..lots of code here..*/
+  class method
+  Void main() (
+    /*..*/
+    )
   }
 Task: Deploy.asExecutableJar(
-  main: Selector"aClassMethod()"
+  main: Selector"main()"
   location: URL".."
   ) <>< ToDeploy()
 }
 ]]></pre>
 
 Note that we reuse AdamsTowel both outside '<span class="code"><![CDATA[MyProgram]]></span>'
-and inside of it;
+and inside of it.
 The two towels do not need to be the same.
 The outermost just has to support the deployment process
 '<span class="code"><![CDATA[Deploy]]></span>', while the inner one is needed to make
@@ -2669,15 +2675,19 @@ The outermost just has to support the deployment process
 </p><h2> 42 projects </h2> <p>
 In order to write any sizeable program, it would be great
 to be able to organize our code in multiple files spanning a hierarcky of folders.
-In 42, we can obtain this by using '<span class="code"><![CDATA[...]]></span>'.
+</p><p>
 A 42 project can be either a file
 with upper case name and extension '<span class="code"><![CDATA[.L42]]></span>'
 or a folder containing a file called '<span class="code"><![CDATA[This.L42]]></span>'.
 Folders can contain other files '<span class="code"><![CDATA[.L42]]></span>' or folders containing other '<span class="code"><![CDATA[This.L42]]></span>' and other files.
 
+In 42 we use  ellipsis '<span class="code"><![CDATA[...]]></span>' to include content of other files.
+The meaning of '<span class="code"><![CDATA[...]]></span>' depend of the position of the current file in the type system. To evaluate an ellipsis '<span class="code"><![CDATA[...]]></span>' we locate 
+  the nearest enclosing nested library declaration and we use its name '<span class="code"><![CDATA[name]]></span>' to identify either a file '<span class="code"><![CDATA[name.L42]]></span>' or a folder folder '<span class="code"><![CDATA[name]]></span>', that will contain a file This.L42.
+
+It is an error if both or neither files exist, this is an error.
+Note that the located '<span class="code"><![CDATA[*.L42]]></span>' file can contain more '<span class="code"><![CDATA[...]]></span>', those are resolved before importng it in the current scope.
 </p><p>
-In the 42 code, when using '<span class="code"><![CDATA[...]]></span>' we refer
-to a folder/file with the name of the innermost nested library and we import its content.
 
 For example in the following, we refer to the file/folder '<span class="code"><![CDATA[Main]]></span>'.
 <pre class="l42Big"><![CDATA[
@@ -2685,43 +2695,56 @@ For example in the following, we refer to the file/folder '<span class="code"><!
 ToDeploy: Resource <>< {
   reuse L42.is/AdamsTowel
   Main: ...
-  class method
-  Void main()
-    Main.runStuff()
   }
 Task: Deploy.asExecutableJar(
+  mainPath:Path"Main"
+  main: Selector"main()"
   location: URL"..") <>< ToDeploy()
 }
 ]]></pre>
 
-A common way to use 42 is to have a folder '<span class="code"><![CDATA[ProjectName]]></span>' containing
+A common way to use 42 is to have a folder with the name of your project, containing
 a folder '<span class="code"><![CDATA[Main]]></span>' with all the actual code,
-and then various files providing testing and deploying functionalities.
+and then various files providing testing and deploying functionalities, as in the following example:
+
+<pre class="l42Big"><![CDATA[
+{reuse L42.is/AdamsTowel
+ToDeploy: Resource <>< {
+  reuse L42.is/AdamsTowel
+  Main: ...
+  TestsRunner: ...
+  }
+Task: Deploy.asExecutableJar(
+  mainPath:Path"Main"
+  main: Selector"main()"
+  location: URL"..") <>< ToDeploy()
+}
+]]></pre>
 
 In general, for medium size projects is a good idea to keep executing the tests before the deployment; for example
 directly under '<span class="code"><![CDATA[Main: ...]]></span>' we could add
 '<span class="code"><![CDATA[TestsRunner: ...]]></span>'
-Do not panic, If the test are not reachable from '<span class="code"><![CDATA[myMainMethod]]></span>', they are not going to be included in the
+Do not panic, If the test are not reachable from '<span class="code"><![CDATA[Main.main()]]></span>', they are not going to be included in the
 executable jar.
 </p><p>
-42 can support various kinds of unit testing and mocking,
+42 could support various kinds of testing libraries,
 but there is no support at this stage in AdamsTowel.
 
-</p><h2> (2/5)Towel embroidery </h2> <p>
+</p><h2> (2/5)Deploy Towels </h2> <p>
 A towel is about the most massively useful thing a programmer can have.
 A towel has immense psychological value, and you should always know where your towel is.
-All the classes we have used up to now without defining them, are defined in AdamsTowel.
+All the classes that we have used up to now without defining them, are defined in AdamsTowel.
 They are all normal classes/libraries.
 
 You can code without a towel, but this means starting from first principles,
-witch could be quite unpleasant; especially since the only
+which could be quite unpleasant; especially since the only
 primitive things that 42 offers are Library literals
 (code as first class entities), the constant '<span class="code"><![CDATA[void]]></span>',
 and the types '<span class="code"><![CDATA[Library]]></span>', '<span class="code"><![CDATA[Void]]></span>' and '<span class="code"><![CDATA[Any]]></span>'.
 </p><p>
 
-The distinction between towels and other libraries is just psychological;
-we generally use the term <span style="color:#ff1111; font-weight: bold;"> towel </span> for libraries that are expected to provide standard
+
+Towels are for libraries providing standard
 functionalities and types, such as numbers, booleans,
 strings and various kinds of decorators and system errors.
 
@@ -2755,11 +2778,13 @@ C: {reuse L42.is/FordTowel
 
 Different code parts reason about different set of classes;
 including those predefined in other languages.
+That is, by introducing multiple towels in nested scopes,
+the names of the other scope are "masked".
 
 Useful for code that reasons on code; that is a very common task
 in 42. 
 
-</p><h2> Define and deploy our own towel </h2> <p>
+</p><h2> Towel embroidery: Define and deploy our own towel </h2> <p>
 If you are writing a sizable program, 
 or many similar programs, it make sense to
 deploy you own towel, when you can 
@@ -2781,7 +2806,7 @@ Task: Deploy.asTowel(
 }
 ]]></pre>
 
-The former code would create your towel and update it
+The former code will create your towel and update it
 on your github repository every time you
 run it.
 </p><p>
@@ -2789,6 +2814,8 @@ The idea of modifying a towel to create a variation is called
 <span style="color:#ff1111; font-weight: bold;"> Towel Embroidery. </span>
 '<span class="code"><![CDATA[MyTowel]]></span>'
  is just a variation of AdamsTowel, with more stuff added at the bottom.
+It is like adding your initials to your towel.
+</p><p>
 While adding stuff in this way is very useful,
 we can do much more than that.
 
@@ -2799,7 +2826,7 @@ is '<span class="code"><![CDATA[Extend.patch(that)]]></span>'.
 The idea is that we extend a library using a part of itself
 as a patch.
 <br/>
-As an example: 
+As an artificial example: 
 <pre class="l42Big"><![CDATA[
 Code: Extend.patch(Path"Fix") <>< {
   class method
@@ -2815,13 +2842,13 @@ Code: Extend.patch(Path"Fix") <>< {
 
 '<span class="code"><![CDATA[Code.sayHi()]]></span>' will return '<span class="code"><![CDATA[S"Say Hi"]]></span>'.
 This also works for nested classes. If for example
-you wish to add a reverse method to '<span class="code"><![CDATA[S]]></span>' in your towel, you could do the following: 
+you wish to add a reverse method into '<span class="code"><![CDATA[S]]></span>' in your towel, you could do the following: 
 
 <pre class="l42Big"><![CDATA[
 ToDeploy: Resource <>< Extend.patch(Path"Fix") <>< {
   reuse L42.is/AdamsTowel
   Fix: {S: {
-    method S reverse() {/*..*/}
+    method S reverse() {/*..*/ 0Num /*..*/}
     }}
   }
 ]]></pre>
@@ -2829,22 +2856,35 @@ ToDeploy: Resource <>< Extend.patch(Path"Fix") <>< {
 The advantage with respect to composing two separated
 libraries is that the scope is the same,
 that is the implementation of '<span class="code"><![CDATA[reverse()]]></span>' will be able to use '<span class="code"><![CDATA[Bool]]></span>', '<span class="code"><![CDATA[Num]]></span>' and so on.
+That is, if we was to write our code as 
 
-
-
+<pre class="l42Big"><![CDATA[
+ToDeploy: Resource <>< Extend[{reuse L42.is/AdamsTowel}] <>< {
+  S: {
+    method S reverse() {/*..*/ 0Num /*..*/}
+    }
+  }
+]]></pre>
+Now '<span class="code"><![CDATA[Num]]></span>' would be bound to the outer towel instead of the inner one.
 
 </p><h2> (3/5)Library deployment </h2> <p>
+
+The distinction between towels (that do not need to be '<span class="code"><![CDATA[Load]]></span>'ed)
+and other ('<span class="code"><![CDATA[Load]]></span>'able) libraries is 
+introduced by '<span class="code"><![CDATA[AdamsTowel]]></span>', not by 42.
+
+</p><p>
 
 If you start writing in 42, you will soon feel the need
 to factorize your project into libraries that can
 be independently tested, deployed and loaded.
 While successful libraries are used by multiple 
 independent projects and developers,
-most libraries exists just as a development tool in 
+most libraries exists just as development tools in 
 order to keep the complexity of big projects under control.
 </p><p>
 In 42 is easy to code with multiple libraries, and libraries can be much smaller.
-<br/>
+</p><p>
 In 42 is possible to employ a programming model where every developer (or every pair of developers in a pair programming style) is the
 only one responsible of one (or more) library and their maintenance process, while the group leader give specifications and tests to be met to the various library developers and will glue all the code together.
 

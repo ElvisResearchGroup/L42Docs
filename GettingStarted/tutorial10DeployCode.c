@@ -1,8 +1,10 @@
 WBigTitle(Deploy 42)
+In the context of 42 and AdamsTowel, there are three things that can be deployed:
+ Executable programs,  Towels and Libraries.
 
 WTitle((1/5)Deploy programs)
 In 42 libraries can be directly manipulated, and
-a possible manipulation is to convert them in 
+one possible manipulation is to convert them in 
 another format, like an executable jar or a native program
 and then save the result somewhere, such as on the website where you users can download it.
 
@@ -11,16 +13,20 @@ OBCode
 ToDeploy: Resource <>< {reuse L42.is/AdamsTowel
   //yes, we repeat the reuse
   /*..lots of code here..*/
+  class method
+  Void main() (
+    /*..*/
+    )
   }
 Task: Deploy.asExecutableJar(
-  main: Selector"aClassMethod()"
+  main: Selector"main()"
   location: URL".."
   ) <>< ToDeploy()
 }
 CCode
 
 Note that we reuse AdamsTowel both outside Wcode(MyProgram)
-and inside of it;
+and inside of it.
 The two towels do not need to be the same.
 The outermost just has to support the deployment process
 Wcode(Deploy), while the inner one is needed to make
@@ -29,15 +35,19 @@ Wcode(MyProgram) a closed library: only libraries that do not refer to external 
 WTitle(42 projects)
 In order to write any sizeable program, it would be great
 to be able to organize our code in multiple files spanning a hierarcky of folders.
-In 42, we can obtain this by using Wcode(...).
+WP
 A 42 project can be either a file
 with upper case name and extension Wcode(.L42)
 or a folder containing a file called Wcode(This.L42).
 Folders can contain other files Wcode(.L42) or folders containing other Wcode(This.L42) and other files.
 
+In 42 we use  ellipsis Wcode(...) to include content of other files.
+The meaning of Wcode(...) depend of the position of the current file in the type system. To evaluate an ellipsis Wcode(...) we locate 
+  the nearest enclosing nested library declaration and we use its name Wcode(name) to identify either a file Wcode(name.L42) or a folder folder Wcode(name), that will contain a file This.L42.
+
+It is an error if both or neither files exist, this is an error.
+Note that the located Wcode(*.L42) file can contain more Wcode(...), those are resolved before importng it in the current scope.
 WP
-In the 42 code, when using Wcode(...) we refer
-to a folder/file with the name of the innermost nested library and we import its content.
 
 For example in the following, we refer to the file/folder Wcode(Main).
 OBCode
@@ -45,43 +55,56 @@ OBCode
 ToDeploy: Resource <>< {
   reuse L42.is/AdamsTowel
   Main: ...
-  class method
-  Void main()
-    Main.runStuff()
   }
 Task: Deploy.asExecutableJar(
+  mainPath:Path"Main"
+  main: Selector"main()"
   location: URL"..") <>< ToDeploy()
 }
 CCode
 
-A common way to use 42 is to have a folder Wcode(ProjectName) containing
+A common way to use 42 is to have a folder with the name of your project, containing
 a folder Wcode(Main) with all the actual code,
-and then various files providing testing and deploying functionalities.
+and then various files providing testing and deploying functionalities, as in the following example:
+
+OBCode
+{reuse L42.is/AdamsTowel
+ToDeploy: Resource <>< {
+  reuse L42.is/AdamsTowel
+  Main: ...
+  TestsRunner: ...
+  }
+Task: Deploy.asExecutableJar(
+  mainPath:Path"Main"
+  main: Selector"main()"
+  location: URL"..") <>< ToDeploy()
+}
+CCode
 
 In general, for medium size projects is a good idea to keep executing the tests before the deployment; for example
 directly under Wcode(Main: ...) we could add
 Wcode(TestsRunner: ...)
-Do not panic, If the test are not reachable from Wcode(myMainMethod), they are not going to be included in the
+Do not panic, If the test are not reachable from Wcode(Main.main()), they are not going to be included in the
 executable jar.
 WP
-42 can support various kinds of unit testing and mocking,
+42 could support various kinds of testing libraries,
 but there is no support at this stage in AdamsTowel.
 
-WTitle((2/5)Towel embroidery)
+WTitle((2/5)Deploy Towels)
 A towel is about the most massively useful thing a programmer can have.
 A towel has immense psychological value, and you should always know where your towel is.
-All the classes we have used up to now without defining them, are defined in AdamsTowel.
+All the classes that we have used up to now without defining them, are defined in AdamsTowel.
 They are all normal classes/libraries.
 
 You can code without a towel, but this means starting from first principles,
-witch could be quite unpleasant; especially since the only
+which could be quite unpleasant; especially since the only
 primitive things that 42 offers are Library literals
 (code as first class entities), the constant Wcode(void),
 and the types Wcode(Library), Wcode(Void) and Wcode(Any).
 WP
 
-The distinction between towels and other libraries is just psychological;
-we generally use the term WEmph(towel) for libraries that are expected to provide standard
+
+Towels are for libraries providing standard
 functionalities and types, such as numbers, booleans,
 strings and various kinds of decorators and system errors.
 
@@ -115,11 +138,13 @@ CCode
 
 Different code parts reason about different set of classes;
 including those predefined in other languages.
+That is, by introducing multiple towels in nested scopes,
+the names of the other scope are "masked".
 
 Useful for code that reasons on code; that is a very common task
 in 42. 
 
-WTitle(Define and deploy our own towel)
+WTitle(Towel embroidery: Define and deploy our own towel)
 If you are writing a sizable program, 
 or many similar programs, it make sense to
 deploy you own towel, when you can 
@@ -141,7 +166,7 @@ Task: Deploy.asTowel(
 }
 CCode
 
-The former code would create your towel and update it
+The former code will create your towel and update it
 on your github repository every time you
 run it.
 WP
@@ -149,6 +174,8 @@ The idea of modifying a towel to create a variation is called
 WEmph(Towel Embroidery.)
 Wcode(MyTowel)
  is just a variation of AdamsTowel, with more stuff added at the bottom.
+It is like adding your initials to your towel.
+WP
 While adding stuff in this way is very useful,
 we can do much more than that.
 
@@ -159,7 +186,7 @@ is Wcode(Extend.patch(that)).
 The idea is that we extend a library using a part of itself
 as a patch.
 WBR
-As an example: 
+As an artificial example: 
 OBCode
 Code: Extend.patch(Path"Fix") <>< {
   class method
@@ -175,13 +202,13 @@ CCode
 
 Wcode(Code.sayHi()) will return Wcode(S"Say Hi").
 This also works for nested classes. If for example
-you wish to add a reverse method to Wcode(S) in your towel, you could do the following: 
+you wish to add a reverse method into Wcode(S) in your towel, you could do the following: 
 
 OBCode
 ToDeploy: Resource <>< Extend.patch(Path"Fix") <>< {
   reuse L42.is/AdamsTowel
   Fix: {S: {
-    method S reverse() {/*..*/}
+    method S reverse() {/*..*/ 0Num /*..*/}
     }}
   }
 CCode
@@ -189,22 +216,35 @@ CCode
 The advantage with respect to composing two separated
 libraries is that the scope is the same,
 that is the implementation of Wcode(reverse()) will be able to use Wcode(Bool), Wcode(Num) and so on.
+That is, if we was to write our code as 
 
-
-
+OBCode
+ToDeploy: Resource <>< Extend[{reuse L42.is/AdamsTowel}] <>< {
+  S: {
+    method S reverse() {/*..*/ 0Num /*..*/}
+    }
+  }
+CCode
+Now Wcode(Num) would be bound to the outer towel instead of the inner one.
 
 WTitle((3/5)Library deployment)
+
+The distinction between towels (that do not need to be Wcode(Load)ed)
+and other (Wcode(Load)able) libraries is 
+introduced by Wcode(AdamsTowel), not by 42.
+
+WP
 
 If you start writing in 42, you will soon feel the need
 to factorize your project into libraries that can
 be independently tested, deployed and loaded.
 While successful libraries are used by multiple 
 independent projects and developers,
-most libraries exists just as a development tool in 
+most libraries exists just as development tools in 
 order to keep the complexity of big projects under control.
 WP
 In 42 is easy to code with multiple libraries, and libraries can be much smaller.
-WBR
+WP
 In 42 is possible to employ a programming model where every developer (or every pair of developers in a pair programming style) is the
 only one responsible of one (or more) library and their maintenance process, while the group leader give specifications and tests to be met to the various library developers and will glue all the code together.
 
