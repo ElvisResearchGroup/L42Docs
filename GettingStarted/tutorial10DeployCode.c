@@ -2,6 +2,12 @@ WBigTitle(Deploy 42)
 In the context of 42 and AdamsTowel, there are three things that can be deployed:
  Executable programs,  Towels and Libraries.
 
+1 program
+2 stained towels
+3 library developement
+4 towel embrowdery and incompatible library developement
+5 recall
+
 WTitle((1/5)Deploy programs)
 In 42 libraries can be directly manipulated, and
 one possible manipulation is to convert them in 
@@ -144,11 +150,11 @@ the names of the other scope are "masked".
 Useful for code that reasons on code; that is a very common task
 in 42. 
 
-WTitle(Towel embroidery: Define and deploy our own towel)
+WTitle(Staining Towels)
 If you are writing a sizable program, 
 or many similar programs, it make sense to
-deploy you own towel, when you can 
-pre-load some libraries and define your basic classes.
+enrich a towel with some pre loaded libraries
+and basic classes.
 
 OBCode
 {reuse L42.is/AdamsTowel
@@ -157,10 +163,9 @@ ToDeploy: Resource <>< {
   Gui: Load <>< {reuse L42.is/Gui}
   Kg: Units.of(Num)
   Meter: Units.of(Num)
-  /*..*/  
   }
 Task: Deploy.asTowel(
-  url: Url"https: //github.com/MyProjectName/MyTowel.L42"
+  url: Url"https: //github.com/MyProjectName/RichTowel.L42"
   permissions: S".."
   ) <>< ToDeploy()
 }
@@ -170,20 +175,94 @@ The former code will create your towel and update it
 on your github repository every time you
 run it.
 WP
-The idea of modifying a towel to create a variation is called
-WEmph(Towel Embroidery.)
-Wcode(MyTowel)
- is just a variation of AdamsTowel, with more stuff added at the bottom.
-It is like adding your initials to your towel.
+A WEmph(Stained Towel) is a towel that looks like another but is enreached by adding more things at the bottom.
+I our example, Wcode(RichTowel)
+ is just a stained variation of Wcode(AdamsTowel).
+
+
+WTitle((3/5)Library deployment)
+
+If you start writing in 42, you will soon feel the need
+to factorize your project into libraries that can
+be independently tested, deployed and loaded.
+While successful libraries are used by multiple 
+independent projects and developers,
+most libraries exists just as development tools in 
+order to keep the complexity of big projects under control.
 WP
-While adding stuff in this way is very useful,
-we can do much more than that.
+In 42 is easy to code with multiple libraries, and libraries can be much smaller.
+WP
+In 42 is possible to employ a programming model where every developer (or every pair of developers in a pair programming style) is the
+only one responsible of one (or more) library and their maintenance process, while the group leader give specifications and tests to be met to the various library developers and will glue all the code together.
 
 WP
 
-One useful tool to modify the content of a towel
+Libraries can be deployed in a way similar to towel deployment;
+Wcode(Load) is used to load libraries,
+but it also contains all the knowledge to deploy
+them.
+WBR
+The following example code deploys a library
+using Wcode(AdamsTowel): 
+OBCode
+{reuse L42.is/AdamsTowel
+//could be L42.is/RichTowel and nothing would change
+
+ToDeploy: Resource <>< {
+  reuse L42.is/RichTowel
+  //need to be RichTowel; for example MyLib is using Gui
+  MoreStuff:...
+  MyLib: ...
+  }
+}
+Task: Load.DeployLibrary(
+  path: Path"MyLib",
+  url: Url".."
+  ) <>< ToDeploy()
+}
+CCode
+
+This code deploy Wcode(MyLib) to an url as a library.
+WBR
+If there was any nested library unreachable from public classes
+in Wcode(MyLib) or in Wcode(MoreStuff) it will be pruned away.
+Same for any nested library stained on top of Wcode(AdamsTowel).
+
+Code importing the library by 
+Wcode(Imported:Load <>< {reuse ..})
+will see the content of Wcode(MyLib) inside of Wcode(Imported).
+
+Most 42 libraries are not towels, but all 42 libraries are closed code.
+
+They will have have abstract classes/methods
+for each of the original towel concepts (before staining), and they can be rebound
+to a multitude of towels.
+In particular all stained versions of the same towel are compatible.
+Every needed nested library
+that was not present in the original towel, will be made private.
+On the other side, all the classes in the original towel will 
+be made abstract by Wcode(Load.DeployLibrary)
+and will be rebound to the current towel by Wcode(Load).
+
+WP
+
+Thus, in our example, 
+Wcode(Gui),
+Wcode(Kg),
+Wcode(Meter) and Wcode(MoreStuff)
+would become a private implementation detail of the exposed library.
+
+
+WTitle((4/5)Towel embroidery: Define and deploy our own towel)
+
+
+Towel embrowdery it is like adding your initials to your towel.
+WP
+While adding stuff in the end by staining, embrowdery is much more powerful.
+WP
+The most common embrowdery tool 
 is Wcode(Extend.patch(that)).
-The idea is that we extend a library using a part of itself
+The idea is that we extend a towel using a part of itself
 as a patch.
 WBR
 As an artificial example: 
@@ -227,83 +306,26 @@ ToDeploy: Resource <>< Extend[{reuse L42.is/AdamsTowel}] <>< {
 CCode
 Now Wcode(Num) would be bound to the outer towel instead of the inner one.
 
-WTitle((3/5)Library deployment)
 
-The distinction between towels (that do not need to be Wcode(Load)ed)
-and other (Wcode(Load)able) libraries is 
-introduced by Wcode(AdamsTowel), not by 42.
 
-WP
+Towel staining is a very minimal personalization, and stained towels
+are fully compatible with the original one.
+By embrowdery you can personalize a lot more the content of your towel,
+but when library deployment 
+rely on an embrowdered towel, compatibility with the orginal towel is lost.
+For example, an embrowded version of 
+Wcode(AdamsTowel) 
+can Wcode(Load) a library developed on the original 
+Wcode(AdamsTowel), but a library developed on the embrowded version 
+needs to be loaded into a similarly embrowded towel.
 
-If you start writing in 42, you will soon feel the need
-to factorize your project into libraries that can
-be independently tested, deployed and loaded.
-While successful libraries are used by multiple 
-independent projects and developers,
-most libraries exists just as development tools in 
-order to keep the complexity of big projects under control.
-WP
-In 42 is easy to code with multiple libraries, and libraries can be much smaller.
-WP
-In 42 is possible to employ a programming model where every developer (or every pair of developers in a pair programming style) is the
-only one responsible of one (or more) library and their maintenance process, while the group leader give specifications and tests to be met to the various library developers and will glue all the code together.
+One typical reason to embrowder a towel is to
+extend the set of classes that are shared between libraries.
+For example, one may want to develop a Towel for scientific use
+where the existence of some units of measure can be shared between all the libraries.
 
 WP
-
-Most 42 libraries are not towels, but all 42 libraries are closed code.
-WBR
-Thus, most non-towel 42 library are generic
-(have abstract classes/methods) and can be rebound
-to a multitude of towels.
-WBR
-
-Libraries can be deployed in a way similar to towel deployment;
-Wcode(Load) is used to load libraries,
-but it also contains all the knowledge to deploy
-them.
-WBR
-For example: 
-OBCode
-{reuse L42.is/AdamsTowel
-ToDeploy: Resource <>< {
-  reuse L42.is/MyTowel
-  MyLib: ...
-  }
-}
-Task: Load.DeployLibrary(
-  path: Path"MyLib",
-  url: Url".."
-  ) <>< ToDeploy()
-}
-CCode
-
-This code deploy Wcode(MyLib) on an url as a library.
-WBR
-If there was any nested library unreachable from public classes
-in Wcode(MyLib), it will be pruned away.
-
-WP
-
-Note how in this example we use towels Wcode(AdamsTowel)
- and Wcode(MyTowel).
-Wcode(Load) used in
-Wcode(Task) comes from 
-Wcode(AdamsTowel), thus has no idea of the 
-embrowdery process that created.
-This means that all classes already present 
-in Wcode(AdamsTowel) will be attempted to be abstracted away, while all the newly introduced classes will become private.
-Thus, in our example, 
-Wcode(Gui),
-Wcode(Kg) and
-Wcode(Meter)
-would become an implementation detail of the exposed library.
-
-if Wcode(MyTowel) had some non trivial embrowdery, like
-the string Wcode(reverse()) shown before,
-then it needs to be loaded on similarly embrowdered towels.
-
-WP
-If we wish to expand the Loading/deployment process, we
+To extend/expand the Loading/deployment process in this way, we
 need to patch Wcode(ConceptMap)
 as in the following example: 
 OBCode
@@ -311,42 +333,66 @@ OBCode
 ToDeploy: Resource <>< Extend.patch(Path"Fix") <>< {
   reuse L42.is/AdamsTowel
   Kg: Units.of(Num)
-  Gui: Load <>< {reuse L42.is/Gui}
+  Metre: Units.of(Num)
+  Second: Units.of(Num)
   Fix: {
     ConceptMap: {interface 
-      method Kg _Kg()
-      method Gui _Gui()
+      method Kg en_wikipedia_org$wiki$Kilogram ()
+      method Metre en_wikipedia_org$wiki$Metre()
+      method Second en_wikipedia_org$wiki$Second()
       }
     S: {
       method
       S reverse() {/*..*/}
       }
+    //just to show we can add to the concept map and to string
+    //at the same time, no problem.
     }
   }
 
 Task: Deploy.asTowel(
-  url: Url"https: //github.com/MyProjectName/MyTowel.L42"
+  url: Url"https://github.com/SI/SITowel.L42"
   permissions: S".."
   ) <>< ToDeploy()
 }
 CCode
-Now Wcode(MyTowel) can be used  as a towel,
+Now Wcode(SITowel) can be used  as a towel,
 and can be used to deploy libraries that can be loaded by 
 Wcode(MyTowel).
 
-In this simple case, we can just use the class name to encode the
-WEmph(conceptual names) for the newly added classes.
-For more flexible library loadings, you can use semantic URI as ontological nodes.
+By using (standard transmografaction of) semantic URIs as
+ontological nodes, we
+can create a basis for other libraries when tring to infer the meaning of our added types.
 WP
 Our fixed towel can be used now to deploy and load libraries wrote in
 this new towel, and libraries deployed and loaded in this way will 
-share a unique definition for Wcode(Kg) and Wcode(Gui).
+share a unique definition for certain units of measure.
+Note that libraries originally developed for
+Wcode(AdamsTowel) can still be loaded normally.
+If they was to interanlly define a concept of eg. Wcode(Meter),
+this would be interpreted as a normal (possibly private) nested class
+inside of the loaded library, and will not be merged with the unified 
+concept of Wcode(Meter) defined in Wcode(SITowel).
 
 
-
-
-
-
+WTitle(`(5/5)Deployment: programs, libraries and towels; summary')
+<ul><li>
+42 is a metaprogramming tool.
+It is natural to use 42 either a language (to run a program)
+or as a compiler (to deploy programs, libraries and towels).
+</li><li>
+Indeed we expect all sizable 42 projects to use 42 as a compiler,
+to produce some reusable artifacts.
+</li><li>
+The distinction between towels (that do not need to be Wcode(Load)ed)
+and other (Wcode(Load)able) libraries is 
+introduced not by 42, but by Wcode(AdamsTowel); radically different towels may provide different meaning for the concepts of deplowing and
+loading libraries/towels.
+</li><li>
+Application developers can freely stain and embrowder towels;
+in this way they can adapt Wcode(AdamsTowel) to serve them better.
+However, Library developers need to carefully consider the effect of embrowdery.
+</li></ul>
  <!--
 
 OBCode
