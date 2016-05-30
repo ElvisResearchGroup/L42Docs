@@ -2,11 +2,6 @@ WBigTitle(Deploy 42)
 In the context of 42 and AdamsTowel, there are three things that can be deployed:
  Executable programs,  Towels and Libraries.
 
-1 program
-2 stained towels
-3 library developement
-4 towel embrowdery and incompatible library developement
-5 recall
 
 WTitle((1/5)Deploy programs)
 In 42 libraries can be directly manipulated, and
@@ -40,7 +35,7 @@ Wcode(MyProgram) a closed library: only libraries that do not refer to external 
 
 WTitle(42 projects)
 In order to write any sizeable program, it would be great
-to be able to organize our code in multiple files spanning a hierarcky of folders.
+to be able to organize our code in multiple files spanning a hierarchy of folders.
 WP
 A 42 project can be either a file
 with upper case name and extension Wcode(.L42)
@@ -48,11 +43,11 @@ or a folder containing a file called Wcode(This.L42).
 Folders can contain other files Wcode(.L42) or folders containing other Wcode(This.L42) and other files.
 
 In 42 we use  ellipsis Wcode(...) to include content of other files.
-The meaning of Wcode(...) depend of the position of the current file in the type system. To evaluate an ellipsis Wcode(...) we locate 
-  the nearest enclosing nested library declaration and we use its name Wcode(name) to identify either a file Wcode(name.L42) or a folder folder Wcode(name), that will contain a file This.L42.
+The meaning of Wcode(...) depend of the position of the current file in the file system. To evaluate an ellipsis Wcode(...) we locate 
+  the nearest enclosing nested library declaration and we use its name Wcode(Name) to identify either a file Wcode(Name.L42) or a folder folder Wcode(Name), that will contain a file This.L42.
 
-It is an error if both or neither files exist, this is an error.
-Note that the located Wcode(*.L42) file can contain more Wcode(...), those are resolved before importng it in the current scope.
+It is an error if both or neither files exist.
+Note that the located Wcode(*.L42) file can contain more Wcode(...), those are resolved before importing it in the current scope.
 WP
 
 For example in the following, we refer to the file/folder Wcode(Main).
@@ -110,9 +105,9 @@ and the types Wcode(Library), Wcode(Void) and Wcode(Any).
 WP
 
 
-Towels are for libraries providing standard
-functionalities and types, such as numbers, booleans,
-strings and various kinds of decorators and system errors.
+Towels are libraries providing standard
+functionalities and types, such as number, boolean,
+string and various kinds of decorators and system errors.
 
 WP
 However, we do not expect all 42 programs to reuse the same towel.
@@ -145,13 +140,13 @@ CCode
 Different code parts reason about different set of classes;
 including those predefined in other languages.
 That is, by introducing multiple towels in nested scopes,
-the names of the other scope are "masked".
+the names of the other scopes are "masked".
 
 Useful for code that reasons on code; that is a very common task
 in 42. 
 
 WTitle(Staining Towels)
-If you are writing a sizable program, 
+If you are writing a sizeable program, 
 or many similar programs, it make sense to
 enrich a towel with some pre loaded libraries
 and basic classes.
@@ -175,8 +170,8 @@ The former code will create your towel and update it
 on your github repository every time you
 run it.
 WP
-A WEmph(Stained Towel) is a towel that looks like another but is enreached by adding more things at the bottom.
-I our example, Wcode(RichTowel)
+A WEmph(Stained Towel) is a towel that looks like another but is enriched by adding more things at the bottom.
+In our example, Wcode(RichTowel)
  is just a stained variation of Wcode(AdamsTowel).
 
 
@@ -222,16 +217,18 @@ Task: Load.DeployLibrary(
 }
 CCode
 
-This code deploy Wcode(MyLib) to an url as a library.
+This code deploy Wcode(MyLib) to an URL as a library.
 WBR
 If there was any nested library unreachable from public classes
 in Wcode(MyLib) or in Wcode(MoreStuff) it will be pruned away.
 Same for any nested library stained on top of Wcode(AdamsTowel).
-
-Code importing the library by 
+WP
+The deployed library can be imported as usual.
+For example using
 Wcode(Imported:Load <>< {reuse ..})
-will see the content of Wcode(MyLib) inside of Wcode(Imported).
+we will see the content of Wcode(MyLib) inside of Wcode(Imported).
 
+WP
 Most 42 libraries are not towels, but all 42 libraries are closed code.
 
 They will have have abstract classes/methods
@@ -256,11 +253,11 @@ would become a private implementation detail of the exposed library.
 WTitle((4/5)Towel embroidery: Define and deploy our own towel)
 
 
-Towel embrowdery it is like adding your initials to your towel.
+Towel embroidery it is like adding your initials to your towel.
 WP
-While adding stuff in the end by staining, embrowdery is much more powerful.
+While we can simply add to the end by staining, embroidery is much more powerful.
 WP
-The most common embrowdery tool 
+The most common embroidery tool 
 is Wcode(Extend.patch(that)).
 The idea is that we extend a towel using a part of itself
 as a patch.
@@ -310,16 +307,16 @@ Now Wcode(Num) would be bound to the outer towel instead of the inner one.
 
 Towel staining is a very minimal personalization, and stained towels
 are fully compatible with the original one.
-By embrowdery you can personalize a lot more the content of your towel,
+By embroidery you can personalize a lot more the content of your towel,
 but when library deployment 
-rely on an embrowdered towel, compatibility with the orginal towel is lost.
-For example, an embrowded version of 
+rely on an embroidered towel, compatibility with the original towel is lost.
+For example, an embroidered version of 
 Wcode(AdamsTowel) 
 can Wcode(Load) a library developed on the original 
-Wcode(AdamsTowel), but a library developed on the embrowded version 
-needs to be loaded into a similarly embrowded towel.
+Wcode(AdamsTowel), but a library developed on the embroidered version 
+needs to be loaded into a similarly embroidered towel.
 
-One typical reason to embrowder a towel is to
+One typical reason to embroider a towel is to
 extend the set of classes that are shared between libraries.
 For example, one may want to develop a Towel for scientific use
 where the existence of some units of measure can be shared between all the libraries.
@@ -358,18 +355,18 @@ Task: Deploy.asTowel(
 CCode
 Now Wcode(SITowel) can be used  as a towel,
 and can be used to deploy libraries that can be loaded by 
-Wcode(MyTowel).
+Wcode(SITowel).
 
-By using (standard transmografaction of) semantic URIs as
+By using (standard transmogrification of) semantic URIs as
 ontological nodes, we
-can create a basis for other libraries when tring to infer the meaning of our added types.
+can create a basis for other libraries when trying to infer the meaning of our added types.
 WP
 Our fixed towel can be used now to deploy and load libraries wrote in
 this new towel, and libraries deployed and loaded in this way will 
 share a unique definition for certain units of measure.
 Note that libraries originally developed for
 Wcode(AdamsTowel) can still be loaded normally.
-If they was to interanlly define a concept of eg. Wcode(Meter),
+If they was to internally define a concept of eg. Wcode(Meter),
 this would be interpreted as a normal (possibly private) nested class
 inside of the loaded library, and will not be merged with the unified 
 concept of Wcode(Meter) defined in Wcode(SITowel).
@@ -381,17 +378,17 @@ WTitle(`(5/5)Deployment: programs, libraries and towels; summary')
 It is natural to use 42 either a language (to run a program)
 or as a compiler (to deploy programs, libraries and towels).
 </li><li>
-Indeed we expect all sizable 42 projects to use 42 as a compiler,
-to produce some reusable artifacts.
+Indeed we expect all sizeable 42 projects to use 42 as a compiler,
+to produce some reusable artefacts.
 </li><li>
 The distinction between towels (that do not need to be Wcode(Load)ed)
 and other (Wcode(Load)able) libraries is 
-introduced not by 42, but by Wcode(AdamsTowel); radically different towels may provide different meaning for the concepts of deplowing and
+introduced not by 42, but by Wcode(AdamsTowel); radically different towels may provide different meaning for the concepts of deploying and
 loading libraries/towels.
 </li><li>
-Application developers can freely stain and embrowder towels;
+Application developers can freely stain and embroider towels;
 in this way they can adapt Wcode(AdamsTowel) to serve them better.
-However, Library developers need to carefully consider the effect of embrowdery.
+However, Library developers need to carefully consider the effect of embroidery.
 </li></ul>
  <!--
 
