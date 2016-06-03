@@ -796,6 +796,10 @@ Beware of the tricky modulo arithmetic.
 Use '<span class="code"><![CDATA[Units]]></span>' 
 and '<span class="code"><![CDATA[Alphanumeric]]></span>' to give meaning to your constants.
 In this way, the type system will help you to use values with the semantics you decided.
+</li><li>
+Both alphanumerics and enumerations
+use '<span class="code"><![CDATA[_".."]]></span>', the <span style="color:#ff1111; font-weight: bold;"> string literal postfix operator </span> to
+provide a compact syntax.
 </li></ul>
 
  </p><p id="InterfacesAndData"> </p><h1> Interfaces, Concepts and Data </h1> <p>
@@ -1285,9 +1289,9 @@ foo.removeLeft() //foo == Nums[b;c;d]
 foo.removeRight() //foo == Nums[a;b;c]
 
 //removal, if elements implements Concepts.Equals
-foo.removeAll(elem: b) //foo == Nums[a;c;d]
-foo.removeLeft(elem: b) //remove the leftmost b
-foo.removeRight(elem: b) //remove the rightmost b
+foo.removeAll(val: b) //foo == Nums[a;c;d]
+foo.removeLeft(val: b) //remove the leftmost b
+foo.removeRight(val: b) //remove the rightmost b
 ]]></pre>
 
 
@@ -2683,14 +2687,22 @@ or a folder containing a file called '<span class="code"><![CDATA[This.L42]]></s
 Folders can contain other files '<span class="code"><![CDATA[.L42]]></span>' or folders containing other '<span class="code"><![CDATA[This.L42]]></span>' and other files.
 
 In 42 we use  ellipsis '<span class="code"><![CDATA[...]]></span>' to include content of other files.
-The meaning of '<span class="code"><![CDATA[...]]></span>' depend of the position of the current file in the file system. To evaluate an ellipsis '<span class="code"><![CDATA[...]]></span>' we locate 
-  the nearest enclosing nested library declaration and we use its name '<span class="code"><![CDATA[Name]]></span>' to identify either a file '<span class="code"><![CDATA[Name.L42]]></span>' or a folder folder '<span class="code"><![CDATA[Name]]></span>', that will contain a file This.L42.
+The meaning of '<span class="code"><![CDATA[...]]></span>' depend 
+on both the location of the ellipsis in the code and 
+of the position of the current file in the file system. To evaluate an ellipsis '<span class="code"><![CDATA[...]]></span>'
+we locate the nearest enclosing nested
+library declaration, and we record its name, '<span class="code"><![CDATA[Main]]></span>' in the following example.
+This identifies either a file '<span class="code"><![CDATA[Main.L42]]></span>' or a folder folder '<span class="code"><![CDATA[Main]]></span>', that will contain a file This.L42.
 
-It is an error if both or neither files exist.
-Note that the located '<span class="code"><![CDATA[*.L42]]></span>' file can contain more '<span class="code"><![CDATA[...]]></span>', those are resolved before importing it in the current scope.
+
+If both or neither of these exist, there is an error.
+ Otherwise we include the contents of the found file.
+
+Note that the found *.L42 file can contain more ellipses, which will be
+resolved relative to the file before importing it into the current scope.
+
 </p><p>
-
-For example in the following, we refer to the file/folder '<span class="code"><![CDATA[Main]]></span>'.
+The following code show how to deploy some code as an executable jar.
 <pre class="l42Big"><![CDATA[
 {reuse L42.is/AdamsTowel
 ToDeploy: Resource <>< {
@@ -3133,13 +3145,14 @@ tipo x= MyCode  x.hello(...)
  </p><p id="Philosophy"> </p><h1> Guarantees and Philosophy </h1> <p>
 
 </p><h2> (1/5)Language invariants </h2> <p>
-42 guarantee a set of language invariants: properties that are always true
+42 guarantees a set of language invariants; properties that are always true.
 
 </p><h2> Immutability </h2> <p>
 In 42, once an object become immutable,
 it will never change again.
-It's whole reachable object graph is frozen forever.
-This is what in some languages is called value semantic.
+It's whole reachable object graph is frozen for the rest of its lifetime.
+( In some languages this is called value semantic,
+ to not be confused with pass by value/pass by reference)
 
 </p><h2> Encapsulation </h2> <p>
 A capsule binding (not a capsule field)
@@ -3150,9 +3163,11 @@ It is irrelevant if immutable leaves are shared or not.
 
 
 </p><h2> Hygienic aliasing </h2> <p>
-If some references points to disjoint object graphs (modulo immutable leaves)
-then after any operation that takes in input one or zero mutable references,
-those original references will still point to disjoint object graphs (modulo immutable leaves).
+A family of references is hygienic if each pair of references
+point to disjoint object graphs (modulo immutable leaves).
+</p><p>
+Hygienic families are preserved during
+the execution of any operation requiring at most one mutable references.
 That is: 
 <ul><li>
 capsule references can be used only once, so they will not be available any more,
@@ -3164,12 +3179,14 @@ an identical clone;
 read and lent references can not be stored inside of other object graphs.
 Lent view point adaptation is designed to carefully preserve 
 Hygienic aliasing while allowing lent reference to do mutation by promoting them to mutable in a controlled scope.
+</li><li>
+mutable references can not be stored inside a lent reference.
 </li></ul>
 
 </p><h2> Strong error safety </h2> <p>
-If an error is captured, the catch body will observe the same state it was present
-at the start of its guarded block.
-That is, operations guarded by a catch error can not modify externally visible state.
+If an error is captured, the catch body will observe the same state that was present
+at the start of its guarded paragraph.
+That is, paragraphs guarded by a catch error can not modify externally visible state.
 </p><h2> Checked exceptions </h2> <p>
 It is always statically known what exceptions every piece of code can raise.
 As for Java, this is obtained by declaring exceptions on the method signature.
@@ -3181,121 +3198,140 @@ If '<span class="code"><![CDATA[Point]]></span>' is an interface, you know is go
 Subtyping control also implies conventional
 avoidance of method not understood.
 </p><h2> MetaSafety </h2> <p>
-In 42, nested library declarations that do not contains library literals,
+
+Most other meta-programming approaches allows for new type errors to be introduced by metaprogramming.
+</p><p>
+In 42 meta-programming can not add type errors to otherwise
+well-typed code. Note that code can be non well-typed either because it is ill-typed or
+because it refers to classes and interfaces that have not yet been produced.
+</p><p>
+This implies that 
+Metaprogramming operations in 42 can produce non well-typed
+code only if at least one input is non well-typed.
+That is, if all of the inputs are well-typed and a result is produced (instead of, eg. a dynamic error or non temination), then the result is well-typed.
+</p><p>
+An important corollary: every expression that does not contains a library literal, will never produce
+non well-typed library literals.
+<br/>
+This includes every trait (class methods with no argument returning '<span class="code"><![CDATA[Library]]></span>') invocation
+and expressions like '<span class="code"><![CDATA[Collections.vector(of:Point)]]></span>';
+since they do not contains any library literal.
+
+</p><p>
+
+
+
+Nested library declarations containing library literals,
 as for example
-'<span class="code"><![CDATA[Nums: Collections.vector(of: Num)]]></span>' are
-guaranteed to produce well typed code. This does not happens in most other meta-programming approaches.
-nested library declarations containing library literal,
-as for example
-'<span class="code"><![CDATA[Point: Data <>< {Num x, Num y, method This add(S x) This.with(x: /+x)}]]></span>' can produce
-non well typed code, if such type error was present in such contained library literals.
+'<span class="code"><![CDATA[Point: Data <>< {Num x, Num y, method This add(S x) This.with(x: /+x)}]]></span>', can produce
+non well-typed code, if some contained library literals was non well-typed.
 In the case of our example, we mistakenly used the '<span class="code"><![CDATA[S]]></span>' type instead of 
-'<span class="code"><![CDATA[Num]]></span>'; this will cause a type error in the result, that can be traced back to a type error
+'<span class="code"><![CDATA[Num]]></span>'; this will cause a type error in the result, which can be traced back to a type error
 in the initial library literal.
 
 
 </p><h2> Object always fully initialized </h2> <p>
-In 42 all object are born with all the fields containing objects of the right types, and this will hold for the whole lifespan of the object.
+In 42 all object are born with all of the fields containing objects of the right types, and this will hold for the whole lifespan of the object.
 There is no '<span class="code"><![CDATA[null]]></span>' and no uninitialized values.
 To allow for the initialization of circular object graph 
 you can use a feature called '<span class="code"><![CDATA[fwd]]></span>' references, that we have not explored in this tutorial.
 See (link)
 
 
-</p><h2> (2/5)Philosopy of L42 and AdamsTowel </h2> <p>
+</p><h2> (2/5)Philosopy of 42 and AdamsTowel </h2> <p>
 Other languages have a weak division between language features
 and their standard library.
 42 have a very strong separation between language and libraries.
 You can see that from the mentality of the language and
 the (different) mentality of the popular '<span class="code"><![CDATA[AdamsTowel]]></span>'.
 
-</p><h2> Philosopy of L42 </h2> <p>
+</p><h2> Philosopy of 42 </h2> <p>
 <ul><li>
-42 is just an instrument; use it as best as you can,
+42 is just an instrument; use it as best you can,
 to do what you prefer.
 </li><li>
-No idea is too crazy for 42, 
+No idea is too crazy for 42;
 no matter what you do, you can not break the language
-invariants; so play hard with it, It can take it!
+invariants; so play hard with it; It can take it!
 </li><li>
 Do not let other people or libraries 
-tell you what to prefer/avoid.
+tell you what to prefer or avoid.
 </li><li>
 There is no intrinsic meaning in 42, no language feature
 is designed to be used only in a certain way.
 </li><li>
-42 is based on a minimal core composed by little more than
+42 is based on a minimal core, composed of little more than
 method calls and exception handling.
-Then there is a thick layer of syntactic sugar allowing 
+Then there is a thick layer of syntactic sugar, allowing 
 for more convenient syntax.
 
 Please,experiment with the fixed but flexible syntactic sugar of
-42 and find new idiomatic ways to mesh 42 into expressing what you want in the
-way you want it.
+42, and find new idiomatic ways to mesh 42 into expressing what you want in the
+way that you want it.
 </li></ul>
 
 
 </p><h2> Philosopy of AdamsTowel </h2> <p>
 
 <ul><li>
-AdamsTowel offers a large set of simple concepts, that you can use
+AdamsTowel offers a large set of simple concepts, which you can use
 to encode the domain of your problem.
 <BR/>
-Basic classes should represent atoms of knowledge,
+Basic classes should represent atoms of knowledge.
 <BR/>
 Collections should represent homogeneous groups of objects,
-where every object serve the same role in your domain.
+where every object serves the same role in your domain.
 <BR/>
-Data classes are agglomerates of other classes with an invariant.
+Instances of data classes are agglomerations of instances of other classes, subject to an invariant.
 <BR/>
-Modules just have class methods and are a simple way to organize your code.
+Modules have only class methods and are a simple way to organize your code.
 <BR/>
 Resources serve to indicate constants.
 <BR/>
-Algorithmic classes will implement a certain algorithm interface
-and will perform their tasks polymorphically.
+Algorithmic classes will implement a certain algorithm interface;
+and the concrete behaviour will be selected polymorphically; i.e. depending on the concrete class of the
+instance.
 <BR/>
 Messages will report errors and exceptions.
 <BR/>
-Decorators will complete your code from,
+Decorators will complete your code,
  adding the needed boilerplate.
 </li><li>
-AdamsTowel can be embroidered to create many variations,
-and those variations can all play together with little effort/discipline.
+AdamsTowel can be stained and embroidered to create many variations,
+and those variations can all play together with little effort and discipline.
 </li><li>
 You can use modifiers in a disciplined way to express meaning: 
 <ul><li>
-Immutable references are abstract/mathematical concepts, there are used to model the world 
+Immutable references are abstract/mathematical concepts, they are used to model the world 
 of your program but are not materialized in your world.
-For example, a '<span class="code"><![CDATA[Car]]></span>' has a '<span class="code"><![CDATA[Kg]]></span>' weight, but '<span class="code"><![CDATA[25Kg]]></span>' is not an actual
-thing in the world of cars.
+For example, a '<span class="code"><![CDATA[Car]]></span>' has a '<span class="code"><![CDATA[Kg]]></span>' weight, but '<span class="code"><![CDATA[25Kg]]></span>' is not a thing in the world of cars.
 </li><li>
-Class objects models kinds of things, and you can use
-class methods as convenience way to refer to general concepts not specially connected to any object
+Class objects model kinds of things, and you can use
+class methods as convenient ways to refer to general concepts not specially connected to any entity
 in the domain of your program.
-A special role is covered by
-class methods in interfaces: 
-In this way you can express behaviour that is parametric on the kind of objects, without
-resorting to metaprogramming, in a pattern similar to dependency injection, see (link).
-This will require using references to class objects instead of just naming them by path.
+Class methods in interfaces fill a special role:
+expressing behaviour that is parametric on the kind of object without
+resorting to metaprogramming; in a pattern similar to dependency injection, see (link).
+This requires using references to class objects instead of just naming them by path.
+
 <!--For example if the '<span class="code"><![CDATA[WebServer]]></span>' interface 
 has a '<span class="code"><![CDATA[class method This connect(S connectionString)]]></span>'
 then you can write code taking in input
 -->
-Another point where we need to use class references is metaprogramming; for example in '<span class="code"><![CDATA[Refactor.Redirect]]></span>'.
+Another point where we need to use class references is metaprogramming; for example in the target of  '<span class="code"><![CDATA[Refactor.Redirect]]></span>'.
 
 </li><li>
-Mutable reference will point to mutable objects;
-shallow mutable objects can be the main protagonist in your world.
-While everything sort of turn around them, must functions will just work on their
-properties, often immutable objects.
+Mutable references point to mutable objects.
+Shallow mutable objects can be the centrepiece of your design.
+However, while everything sort of turns around them, most functions will work only on their (immutable) content.
+
 Deep mutable objects need to be handled with more care.
 </li><li>
-Lent reference/parameters indicate the desire of a method to be hygienic with
+Lent references/parameters indicate the desire of a method to be hygienic with
 a chunk of data.
-If a method have only one mutable parameter including the method modifier,
-we suggest to  not making it lent, nothing would change and it would only look more involved.
-If a method have more than one mutable parameter, then if possible keep the 
+If a method has at most one mutable parameter including the method modifier,
+we suggest to  not making it lent; nothing would change and it would only look more involved.
+If a method has more than one mutable parameter, then if possible keep the 
 method modifier mutable and make the other parameters lent.
 The only case where it is reasonable to have a lent method is when there are at least two 
 other mutable parameters, and the method is using the information inside of the receiver to decide how to mix
@@ -3309,59 +3345,68 @@ If possible, make methods and methods parameters read if they can not be immutab
 
 
 </p><h2> (3/5) Reconciling opposite views </h2> <p>
-How can the philosophy of AdamsTowel be so different with respect of
+How can the philosophy of AdamsTowel be so different from
 the philosophy of 42?
 Actually, AdamsTowel is following all the suggestions of 42: 
-
-It is using 42 as an instrument, as best as it can.
-By checking for specific usage pattens it can enforce 
+<br/>
+It is using 42 as an instrument, as best it can.
+By checking for specific usage pattens, it can enforce 
 class invariants by building on the language invariants.
-Certain refactoring operations performs crazy complicated 
-operations, but they can be abstracted as a simple high level concept.
+Certain refactoring decorators performs crazily complicated 
+operations, but they can be abstracted to a simple high level concept.
 
-AdamsTowel goes its long way to support units of measure and alphanumerics, even if 
+AdamsTowel goes a long way to support units of measure and alphanumerics, even if 
 most other standard libraries would avoid going that way.
 
 Strings in AdamsTowel use the square bracket '<span class="code"><![CDATA[[]]]></span>' syntax to do 
-string interpolation, instead of just sequence building,
-'<span class="code"><![CDATA[Enumeration]]></span>' use the string literal postfix operator to generate enumeration 
+string interpolation, instead of just sequence building.
+'<span class="code"><![CDATA[Enumeration]]></span>' uses the string literal postfix operator to generate enumeration 
 classes.
-Who know what new and creative ways to use the 42 syntax could be used by another, more mature towel.
+Who knows what new and creative 
+applications of the 42 syntax could be used by another, more mature towel.
 
 
 
 </p><h2> (4/5) Embrace failure </h2> <p>
-We love programs that fails.
+We love programs that fail.
+<br/>
 We love more the ones that fails early and with good error messages.
-We love static type system, it allows us to fail very fast.
-We love to have code analysis, it makes our code fail quite fast and reliably. 
+<br/>
+We love static type system; it allows us to fail very fast.
+<br/>
+We love to have code analysis; it makes our code fail quite fast and reliably. 
+<br/>
 We love to check for additional constraints at run time.
-The important think is that a code that behave differently on how we expected should
-never be allowed to produce a result.
+<br/>
+The important think is that code behaving differently from what we expected, should
+never be allowed to produce a (non error) result.
 
-This mindset is different with respect to the one found in many other language communities.
+</p><p>
+This mindset is different from the one found in many other language communities.
 <br/>
-For example languages supporting flexible silent automatic conversions between different 
-datatypes (as string, bools and numbers) are clearly searching for a possible
-way to interpret a possible confusing programmer request and give it a meaning.
+For example languages supporting flexible, silent, automatic conversions between different 
+datatypes (as string, bools and numbers) are clearly searching for a 
+way to interpret a possibly confusing programmer request and give it a meaning.
 For example '<span class="code"><![CDATA["2"+2]]></span>' may mean '<span class="code"><![CDATA["22"]]></span>' while '<span class="code"><![CDATA[2+"2"]]></span>' may mean '<span class="code"><![CDATA[4]]></span>'.
-Reasonable interpretations, possibly motivated by certain examples, but they can not possibly scale to
-the general case.
 <br/>
-On the other side, programmers coming from languages supporting very strong type systems
-and encouraging type safety as a way of mind, 
+Those are reasonable interpretations, motivated by certain examples, but they can not possibly scale to
+the general case.
+</p><p>
+On the other hand, programmers coming from languages that support very strong type systems
+and encourage type safety as a way of mind, 
 would prefer to either encode a precondition at the type level, 
-or to encode a generalize behaviour where such precondition is not needed, to dodge the problem.
-For example under their mindset, '<span class="code"><![CDATA[max]]></span>' should not return an element, but an optional
+or to encode a generalized behaviour where such a precondition is not needed, to dodge the problem.
+For example, in their mindset, '<span class="code"><![CDATA[max]]></span>' should not return an element, but an optional
 element, and the option of no element will be produced in case of an empty list.
-This approach do not scale: 
-certain conditions can not be expressed in the type system,
+This approach does not scale: 
+certain conditions can not be expressed in the type system;
 some other conditions could be expressed but it would be too cumbersome.
 <br/>
-In our vision, the purpose of the type system is to help making the program adhere to
+In our vision, the purpose of the type system is help to make the program adhere to
 its intended behaviour or break fast.
-We do not want to bend our intended behaviour so that code never breaks by construction;
-such code can still behave unexpectedly (with respect to the original intended behaviour).
+We do not want to bend our intended behaviour so that code
+could never be observed to fail.
+Such code can still behave unexpectedly (with respect to the original intended behaviour).
 
 
 
@@ -3379,19 +3424,19 @@ If you want to go forward and have a better understanding
 of 42, you can now read, in any order,
 
 <ul><li>
-42 Core language design, for programming language experts
+42 core language design, for programming language experts
 </li><li>
-42 syntactic sugar, detailed explanations
+42 syntactic sugar, in detail
 </li><li>
 42 type system, exact rules for promotions and usage of fwd types
 </li><li>
-42 metaprogramming guide and how there is no state
+42 metaprogramming guide and how "there is no state"
 </li><li>
 42 testing, mocking and configuration
 </li><li>
-exporting 42 on different platforms
+deploying 42 onto different platforms
 </li><li>
-42 and native code, how to import libraries from other languages
+42 and native code; how to import libraries from other languages
 </li><li>
 42 optimizers 
 </li></ul>

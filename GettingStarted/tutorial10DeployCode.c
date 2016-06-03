@@ -43,14 +43,22 @@ or a folder containing a file called Wcode(This.L42).
 Folders can contain other files Wcode(.L42) or folders containing other Wcode(This.L42) and other files.
 
 In 42 we use  ellipsis Wcode(...) to include content of other files.
-The meaning of Wcode(...) depend of the position of the current file in the file system. To evaluate an ellipsis Wcode(...) we locate 
-  the nearest enclosing nested library declaration and we use its name Wcode(Name) to identify either a file Wcode(Name.L42) or a folder folder Wcode(Name), that will contain a file This.L42.
+The meaning of Wcode(...) depend 
+on both the location of the ellipsis in the code and 
+of the position of the current file in the file system. To evaluate an ellipsis Wcode(...)
+we locate the nearest enclosing nested
+library declaration, and we record its name, Wcode(Main) in the following example.
+This identifies either a file Wcode(Main.L42) or a folder folder Wcode(Main), that will contain a file This.L42.
 
-It is an error if both or neither files exist.
-Note that the located Wcode(*.L42) file can contain more Wcode(...), those are resolved before importing it in the current scope.
+
+If both or neither of these exist, there is an error.
+ Otherwise we include the contents of the found file.
+
+Note that the found *.L42 file can contain more ellipses, which will be
+resolved relative to the file before importing it into the current scope.
+
 WP
-
-For example in the following, we refer to the file/folder Wcode(Main).
+The following code show how to deploy some code as an executable jar.
 OBCode
 {reuse L42.is/AdamsTowel
 ToDeploy: Resource <>< {

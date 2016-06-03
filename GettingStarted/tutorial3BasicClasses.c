@@ -250,4 +250,8 @@ Beware of the tricky modulo arithmetic.
 Use Wcode(Units) 
 and Wcode(Alphanumeric) to give meaning to your constants.
 In this way, the type system will help you to use values with the semantics you decided.
+</li><li>
+Both alphanumerics and enumerations
+use Wcode(_".."), the WEmph(string literal postfix operator) to
+provide a compact syntax.
 </li></ul>

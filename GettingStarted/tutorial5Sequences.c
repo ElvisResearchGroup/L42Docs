@@ -215,9 +215,9 @@ foo.removeLeft() //foo == Nums[b;c;d]
 foo.removeRight() //foo == Nums[a;b;c]
 
 //removal, if elements implements Concepts.Equals
-foo.removeAll(elem: b) //foo == Nums[a;c;d]
-foo.removeLeft(elem: b) //remove the leftmost b
-foo.removeRight(elem: b) //remove the rightmost b
+foo.removeAll(val: b) //foo == Nums[a;c;d]
+foo.removeLeft(val: b) //remove the leftmost b
+foo.removeRight(val: b) //remove the rightmost b
 CCode
 
 
