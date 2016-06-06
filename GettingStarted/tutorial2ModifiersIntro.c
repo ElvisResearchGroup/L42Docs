@@ -4,7 +4,7 @@ WTitle(`(1/5)Kinds of classes')
 Wcode(Point) is an WEmph(Immutable class: ) 
  none of its fields can be WEmph(updated) 
 or WEmph(mutated.)
-Immutable classes are very easy to use but may be inadequate when representing real objects, whose state can changes across time.
+Immutable classes are very easy to use but may be inadequate when representing real objects, whose state can change across time.
 A WEmph(Mutable class) is a class where the state of (some of) its instances may be mutated.
 
 Let's now declare a Wcode(Animal) mutable class, whose location can be updated.
@@ -24,7 +24,7 @@ the Wcode(location) field is declared Wcode(var).
   Non variable fields can not be updated
 </li><li>
   the modifier Wcode(mut) in front of the method. 
-  We have seen Wcode(class) already, an we have seen methods with the default modifier ( 
+  We have seen Wcode(class) already, and we have seen methods with the default modifier ( 
 Wcode(add(x)) and
 Wcode(add(y)) ).
   Wcode(mut) methods can mutate the "this" object. If you have experience with C++
@@ -41,6 +41,9 @@ In those cases, the first parameter is conventionally called Wcode(that),
 and writing Wcode(a.b(that: c))
 is equivalent to writing Wcode(a.b(c)).
 This works also for methods with multiple parameters, if the first one is called Wcode(that).
+For example writing Wcode(a.b(that: c, x: d))
+is equivalent to writing Wcode(a.b(c, x: d)).
+WP
 We can use an animal by writing, for example: 
 
 OBCode

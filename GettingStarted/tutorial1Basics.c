@@ -48,10 +48,19 @@ WP
 Wcode(Debug)
 is a simple class offering methods to prod the system to understand what is going on.
 The most important method of Wcode(Debug) is to just print a message on the console.
+WP
 In 42, when a class has a "most important" method, it is conventional to name it so that can be used as if the
 class name was a function, that is
-we write Wcode(Debug(S"Hello world")) instead
-of a more verbouse Wcode(Debug.println(S"Hello world")). We call WEmph(funtors) objects and classes that can be used as functions.
+we write Wcode(Debug(S"Hello world")).
+For the same code, some other languages would require 
+a more verbouse Wcode(Debug.println(..)). 
+
+Objects and classes that can be used as functions are called WEmph(funtors).
+WBR
+In 42 Strings and numbers need to be created by their type, as in
+Wcode(S"Hello world") or Wcode(12Num), as explained in 
+Wlink(`index.xhtml',Pure OO).
+WP
 
 Finally, our code ends by returning "success" as exit status.
 
@@ -82,7 +91,7 @@ Note how the method is called using the parameter name explicitly.
 We believe this increases readability.
 WP
 You may also notice how there are two different usages for curly brackets:  if there is at least one Wcode(return) keyword then the expression is a block of statements,
-otherwise the expression is a library literal, witch can contains methods and nested libraries.
+otherwise the expression is a library literal, which can contains methods and nested libraries.
 A WEmph(nested library)
 is denoted by an upper-case name, and can be obtained by a library literal or an expression producing a library literal.
 A library literal can be a class (default case) or an interface (starts with the Wcode(interface) keyword).
@@ -120,7 +129,8 @@ Finally, we declare a methods to add to each of the coordinates.
 For very short methods we can omit the curly brackets and Wcode(return).
 Indeed, method bodies are just expressions, and the curly brackets turna block of statements into one expression. 
 
-In the method Wcode(add(x)) we show a how to create a new Wcde(Point) instanceand how to call getters.
+In the method Wcode(add(x)) we show a how to create a new 
+Wcode(Point) instanceand how to call getters.
 In the method Wcode(add(y)) we show an improved version, using the Wcode(with) method, another gift of Data, that allows us to easily create a clone with one or more fields updated.
 We can declare two methods, Wcode(add(x)) and Wcode(add(y)) with the same name, if parameter names are different.
 WP
@@ -149,19 +159,27 @@ OBCode
 Nums: Collections.vector(of: Num) //declaration for vectors of nums
 Points: Collections.vector(of: Point) //same for points
 /*..*/
-xs= Nums[10Num;20Num;30Num]
-ys= Nums[1Num;2Num;3Num]
+xs= Nums[ 10Num; 20Num; 30Num ]//10Num is a shortcut for Num"10"
+ys= Nums[ 1Num; 2Num; 3Num ]
 points= Points[with x in xs.vals(), y in ys.vals() (
   use[Point(x: x, y: y)]
   )]
 CCode
-
+Where we declare new classes Wcode(Nums)
+and Wcode(Points). Note that those are new classes in a nominal type system, so in
+OBCode
+Nums1: Collections.vector(of: Num)
+Nums2: Collections.vector(of: Num)
+CCode
+Wcode(Nums1) and
+Wcode(Nums2) denote different classes.
+WP
 Vectors can be initialized with the Wcode([_;_;_])
 syntax or with the Wcode([with _ ( _ use[ _ ]_ )]) syntax.
 We will discuss all the variation of Wcode(with) later.
 Note that to express number literals we need to specify their class.
 
-WTitle(`(5/5)Basis summary')
+WTitle(`(5/5)First summary')
 
 <ul><li>
 At the start of your program, import a towel using 
@@ -175,9 +193,9 @@ You can declare methods in classes with the Wcode(method) keyword,
 as in Wcode(method ReturnType myName(ParType parName) body).
 Use Wcode(class method) for methods that can be called on the class object directly.
 </li><li>
-To define a vector of a type, use 
+To introduce the concept of vector for a certain type, use 
 Wcode(Collections.vector(of))
-as in 
+as in the class declaration
 Wcode(Points: Collections.vector(of: Point))
 </li></ul>
 
