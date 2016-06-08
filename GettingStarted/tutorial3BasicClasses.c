@@ -173,10 +173,10 @@ Email: Alphanumeric <>< {
   class method
   This parse(S that) {
     index= that.indexOf(S"@") //works only for simple emails
-    if index.isPresent() (error Alphanumeric.ParseError"@ not found")
+    if !index.isPresent() (error Alphanumeric.ParseFail"@ not found")
     local= that(end: index.get()) //string slicing
     domain= that(start: index.get()+1Size ) //string slicing
-    if domain.contains(S"@") (error this.parseError(S"multiple @ found"))
+    if domain.contains(S"@") (error Alphanumeric.ParseFail"multiple @ found")
     return This(that,local: local,domain: domain)
     } //call the factory with fields plus the original string
 }
@@ -184,7 +184,7 @@ Email: Alphanumeric <>< {
 myEmail= Email"arthur.dent@gmail.com"
 myEmail.local() ==S"arthur.dent" //holds
 myEmail.domain() ==S"gmail.com" //holds
-myEmail.toS() =="arthur.dent@gmail.com" //holds
+myEmail.toS() ==S"arthur.dent@gmail.com" //holds
 CCode
 
 Note how we can raise an error if the string does not have the shape we expected.
