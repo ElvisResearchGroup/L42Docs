@@ -95,9 +95,9 @@ As you can see, we can sum meters together, and we can use the support for multi
 
 
 Mathematically you can obtain the support out of the unit by
-division: Wcode(42Meter/2Meter =  21Meter).
+division; that is, 42 meters divided by 2 meters is  21.
 This do not work directly in 42, since multiplication and division
-takes the support and not a unit.
+takes the support( Wcode(Num) in our examples) and not a unit.
 Units provide method Wcode(divide(that)) for this aim.
 Units also provide method  Wcode(`#'inner()),
 this is just extracting the value of the support from the unit.
