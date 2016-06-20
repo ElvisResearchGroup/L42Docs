@@ -277,7 +277,7 @@ Wcode(with) can be used for multiple dispatch:
 OBCode
 method Num m(Shape x, Person y, Vehicle z) //example of method using with
  with x y z (
- on Square Student Car (..return ..) //x here is a Square
+ on Square Student Car (.. return ..) //x here is a Square
  on Circle Person Airplane (..) //x here is a Circle
  default (..) //default case, here x is just a Shape
   )}
@@ -390,7 +390,7 @@ difficulties.
 Most methods have a general version that works with an index, and specialized Wcode(left) and
 Wcode(right) variants.
 </li><li>
-Wcode(/) can help remove a lot of boilerplate, but is a concept unique to 42, and require some effort to get used to.
+Wcode(\) can help remove a lot of boilerplate, but is a concept unique to 42, and require some effort to get used to.
 </li><li>
 Wcode(with) is very useful and flexible. It is common to find methods composed from just a large
 Wcode(with) statement plus a little pre and post processing around it.

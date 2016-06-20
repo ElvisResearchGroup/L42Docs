@@ -342,7 +342,7 @@ ToDeploy: Resource <>< Extend.patch(Path"Fix") <>< {
   Second: Units.of(Num)
   Fix: {
     ConceptMap: {interface 
-      method Kg en_wikipedia_org$wiki$Kilogram ()
+      method Kg en_wikipedia_org$wiki$Kilogram()
       method Metre en_wikipedia_org$wiki$Metre()
       method Second en_wikipedia_org$wiki$Second()
       }

@@ -100,12 +100,8 @@ var L42HighlightRules = function() {
         "refine|method|interface|reuse|return|error|exception|in|if|while|with|on|catch|class|mut|lent|read|capsule|var|default|use|check|loop|else|void|implements"
     );
 
-    var buildinConstants = ("null|Infinity|NaN|undefined");
-
     var keywordMapper = this.createKeywordMapper({
-        //"variable.language": "this",
         "keyword": keywords,
-        "constant.language": buildinConstants,
     }, "identifier");
 
     this.$rules = {
@@ -124,15 +120,14 @@ var L42HighlightRules = function() {
                 regex : "\\/\\*",
                 next : "comment"
             }, { // Multiline String
-                token : 'multistring', // Start
+                token : 'string', // Start
                 regex : '["]$',
                 push : [
                     {
-                        token: 'multistring',
+                        token: 'string',
                         regex:/^(\s*'.*)/ // middle
-                    },
-                    {
-                        token: 'multistring',
+                    },{
+                        token: 'string',
                         regex:/^\s*["]/, // end
                         caseInsensitive:true,
                         next:"pop"
@@ -140,8 +135,13 @@ var L42HighlightRules = function() {
                     {defaultToken:"errorHighlight"} // Everything else that does not match
                 ]
             }, {
-                token : "errorHighlight", // Highlight tabs as an error
-                regex : "\\t"
+                token : function(val) {
+                    return [{
+                        type: "errorHighlight",
+                        value: "\t"
+                        }];
+                },                
+                regex : /[\t]/ // Replace all tabs with a highlighted tab
             }, {
                 token : "string", // single line
                 regex : '["](?:(?:\\\\.)|(?:[^"\\\\]))*?["]'
@@ -149,12 +149,8 @@ var L42HighlightRules = function() {
                 token : "string", // single line
                 regex : "['](?:(?:\\\\.)|(?:[^'\\\\]))*?[']"
             }, {
-                token : "constant.language.boolean",
-                regex : "(?:true|false)\\b"
-            }, {
-
-		token : function(val) {
-                    var numberPattern = /[0-9][0-9.-]*/;
+		        token : function(val) {
+                    var numberPattern = /^[-0-9][0-9.]*/;
                     var nums=val.match( numberPattern )
                     if (nums==null){return [{
                         type: "upperIdentifiers",
@@ -170,54 +166,57 @@ var L42HighlightRules = function() {
                         }];
 
                 },                
-//		token : "upperIdentifiers",
-                regex : /[0-9]*[A-Z$][a-zA-Z0-9_$%]*/ //[A-Z$]+[a-zA-Z0-9_$%] should be same
+                regex : /[-0-9.]*[A-Z$][a-zA-Z0-9_$%]*/ // Classes / Upper Identifiers
             }, {
                 token : function(val) {
-                    if (val[val.length - 1] == ":") {
-                        return [{
+                    return [{
+                            type: "objectCall",
+                            value: val.slice(0, -1)
+                        }, {
+                            type: "text",
+                            value: val.slice(-1)
+                        }];
+                },
+                regex : "[.]??[a-z_$][a-zA-Z0-9_$]*\\(" // .methodName(
+            }, {
+                token : function(val) {
+                    return [{
+                            type: "text",
+                            value: val.slice(0,1)
+                        }, {
+                            type: "errorHighlight",
+                            value: val.slice(1)
+                        }];
+                },
+                regex : "[.][a-z_$][a-zA-Z0-9_$]*" // .Field // ERROR
+            },{
+                token : function(val) {
+                    return [{
                             type: "methodParameters",
                             value: val.slice(0, -1)
                         }, {
-                            type: "method.paren",
+                            type: "text",
                             value: val.slice(-1)
                         }];
-                    }
-                    else if (val[0] == ".") {
-                        return [
-                        {
-                            type: "object.call",
-                            value: val.slice(0,1)
-                        },{
-                            type: "objectCall",
-                            value: val.slice(1)
-                        }];
-                    }
-                    
-                    return keywordMapper(val) || "identifier";
                 },
-                regex : "[a-z_$][a-zA-Z0-9_$]*\\b\\:?|\\.[a-z_$][a-zA-Z0-9_$]*\\b" // parameter:  or .objectcall
+                regex : "[a-z_$][a-zA-Z0-9_$]*\\:(?!=)" // parameter:
+            }, {
+                token : function(val) {
+                    return [{
+                            type: "keyword",
+                            value: val.slice(0, "reuse".length)
+                        }, {
+                            type: "reuselibrary",
+                            value: val.slice("reuse".length)
+                        }];
+                },
+                regex : "reuse\\s{1,}\\S*"
             }, {
                 token : keywordMapper,
                 regex : "[a-zA-Z_$][a-zA-Z0-9_$]*\\b"
             }, {
-                token : "keyword.operator",
-                regex : "!|\\$|%|&|\\*|\\-\\-|\\-|\\+\\+|\\+|~|===|==|=|:=|!=|!==|<=|>=|<<=|>>=|>>>=|<>|<|>|!|&&|\\|\\||\\?\\:|\\*=|%=|\\+=|\\-=|&=|\\^=|\\b(?:in|instanceof|new|delete|typeof|void)"
-            }, {
-                token : "paren.lparen",
-                regex : "[\\[\\(\\{]"
-            }, {
-                token : "paren.rparen",
-                regex : "[\\]\\)\\}]"
-            }, {
-                token : "method.paren",
-                regex : "\\:"
-            }, {
-                token : "object.call",
-                regex : "\\."
-            }, {
                 token : "text",
-                regex : "\\s+"
+                regex : "!|%|&|\\*|\\-\\-|\\-|\\+\\+|\\+|==|=|:=|!=|<=|>=|<|>|&&|[\\/]|\\*=|%=|\\+=|\\-=|&="
             }
         ],
         "comment" : [
