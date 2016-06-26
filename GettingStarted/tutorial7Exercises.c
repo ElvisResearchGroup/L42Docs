@@ -74,7 +74,7 @@ where every cell can be full of dirt (90%) or rock (10%).
 Then a mole start from the left top corner and attempts to
 digs through dirt randomly.
 After 100 steps the mole stops.
-declare the opportune classes and write a randomDig
+define the opportune classes and write a Wcode(randomDig)
 method. 
 WP
 You can use the library Wcode(L42.is/Random)

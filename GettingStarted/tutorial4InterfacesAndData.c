@@ -23,9 +23,14 @@ In 42, we say that the method Wcode(draw(that))
 implemented in Wcode(Square)
 WEmph(is declared by)
 Wcode(Shape).
-Each method is declared in a single point, either the class itself
-or a (transitively) implemented interface.
-This means that a class can not implement multiple interfaces declaring methods
+Each method is declared in a single point. 
+Methods can be 
+defined (that is, declared and implemented)
+in the class itself;
+or declared in a (transitively) implemented interface and
+then just implemented.
+This means that a class can not 
+satisfy multiple interfaces declaring methods
 with the same name.
 For example, this code is ill-typed: 
 OBCode
@@ -118,13 +123,13 @@ WP
 
 In 42 interfaces can not have 
 implemented static methods.
-Sometimes there is the need of semanticaly associate some behaviour with an interface.
+Sometimes there is the need of semantically associate some behaviour with an interface.
 For example we could check intersections between shapes using
 the draw method.
 
 This can be done, since interfaces can have nested classes, that can have (class) methods.
 Conventionally, if you need behaviour associated with the concept represented by the interface, you can just declare a nested class,
-convetionally called Wcode($), containing you needed methods.
+conventionally called Wcode($), containing you needed methods.
 WBR
 For example
 

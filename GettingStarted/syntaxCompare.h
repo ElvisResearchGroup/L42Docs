@@ -142,16 +142,16 @@ S answer() //return type and method name
   S"42" //simple bodies do not need {..return..}
 
 class method //class method definition
-S compose(S left, S right) //paramters
+S compose(S left, S right) //parameters
   left++right //sequence concatenation
 
-Person: Data <>< { //declare a class Person
+Person: Data <>< { //define a class Person
   S name  //fields
   Year age
 //in 42 fields are seen as getters and setters,
-//thus there is no need to declare those.
+//thus there is no need to define those.
 //Also, no need to write down a constructor: 
-//Data declares a 'name, age' factory for us.
+//Data defines a 'name, age' factory for us.
 
 //Data generates implementations for methods like
 //equality, hashCode and conversion to string.
@@ -164,6 +164,9 @@ Person: Data <>< { //declare a class Person
     return S"Hi, my name is "[this.name()]
       " and  I'm "[this.age()]" years old"
     }
+  class method//This == Person here, 
+  This bob() //simple method instantiating a Person
+    This(name:S"Bob", age: 23Year)
   }
 CCode
 
@@ -174,10 +177,10 @@ static String answer(){ //static method definition
   }
 
 static String compose(S left, S right){
-  return left+right; //magically specially overriden +
+  return left+right; //magically specially overridden +
   }
 
-class Person{ //declare a class Person
+class Person{ //define a class Person
   String name;  //fields
   int age;
   String getName(){return this.name;}
@@ -195,6 +198,9 @@ class Person{ //declare a class Person
     } //is 'name' better then 'this.getName()'?
     return "Hi, my name is "+this.getName()
       +" and  I'm "+this.getAge()+" years old";
+  }
+  public static Person bob(){
+    return new Person("Bob",23);
   }
 }
 
@@ -245,12 +251,12 @@ WTitle(Vectors)
 OCode
 names= Strings[S"Fred";S"Mary";S"Mark"]
 
-Years: Collection.vector(of: Year) //we declare it
+Years: Collection.vector(of: Year) //we define it
 
 ages= Years[20Year;23Year;22Year]
 
 
-with n in names.vals() ( //like a for each
+with n in names.vals() ( //like a for each loop
   Debug(n)
   )
 
@@ -271,7 +277,7 @@ moreFriends= Persons[
   with n in names.vals(), a in ages.vals() (
     use[ Person(name: n, age: a) ]
   )]
-//moreFriends contains the same as friends
+//moreFriends contains the same elements as friends
 
 //with works also in string interpolation: 
 stringFriends= S"my friends ages are"[

@@ -93,11 +93,11 @@ res= (
  )
 CCode
 
-Paragraphs are separed by catches.
+Paragraphs are separated by catches.
 Each catch capture only exceptions/errors that happens inside of
 the paragraph directly above, and can not see the local binding
 declared in such paragraph.
-If a catch is successfull, then the result of its catch expression
+If a catch is successful, then the result of its catch expression
 will be the result of the whole code block.
 In this way, blocks with catches behave like conditionals.
 That is, The code above can assign to Wcode(res) either 
@@ -150,7 +150,7 @@ They are useful to characterize multiple outcomes of an operation,
 where is important to prevent the programmer from forgetting about
 the many possible outcome and focusing only on their preferred one.
 Exceptions are checked, so methods leaking exceptions have to
-declare this in their header, as in the following.
+mention it in their header, as in the following.
 OBCode
 /*somewhere in a GUI library*/
 method

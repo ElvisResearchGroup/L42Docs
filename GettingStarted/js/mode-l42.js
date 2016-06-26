@@ -177,7 +177,7 @@ var L42HighlightRules = function() {
                             value: val.slice(-1)
                         }];
                 },
-                regex : "[.]??[a-z_$][a-zA-Z0-9_$]*\\(" // .methodName(
+                regex : "[.]??[a-z_$#][a-zA-Z0-9_$]*\\(" // .methodName(
             }, {
                 token : function(val) {
                     return [{
@@ -210,7 +210,7 @@ var L42HighlightRules = function() {
                             value: val.slice("reuse".length)
                         }];
                 },
-                regex : "reuse\\s{1,}\\S*"
+                regex : "reuse\\s{1,}[^\{\}\\s]*" // resuse l42.is/AdamTowel
             }, {
                 token : keywordMapper,
                 regex : "[a-zA-Z_$][a-zA-Z0-9_$]*\\b"

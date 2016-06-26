@@ -66,7 +66,7 @@ Finally, our code ends by returning "success" as exit status.
 
 
 WTitle((2/5)Method declaration and call)
-Let's now declare a method and call it.
+Let's now define a method and call it.
 OBCode
 {reuse L42.is/AdamsTowel
 MyCode: {
@@ -82,8 +82,8 @@ Main: {
   }
 }
 CCode
-Here we declare a class to host our Wcode(hello(nickName)) method.
-We write Wcode(class method) to declare a method that can be called on the class object, as in Wcode(MyCode.hello(nickName: S"Marvin")).
+Here we define a class to host our Wcode(hello(nickName)) method.
+We write Wcode(class method) to define a method that can be called on the class object, as in Wcode(MyCode.hello(nickName: S"Marvin")).
 This is roughly equivalent to a static method in languages like Java or C++ , or class methods in Python.
 
 WP
@@ -113,7 +113,7 @@ Point: Data <>< {
     this.with(y: y + this.y())
   }
 CCode
-Here you can see we declare a Wcode(Point) class with coordinates Wcode(x) and Wcode(y) of type Wcode(Num),
+Here you can see we define a Wcode(Point) class with coordinates Wcode(x) and Wcode(y) of type Wcode(Num),
 unlimited precision rational number.
 
 
@@ -125,14 +125,14 @@ a factory method taking in input the fields and initializing them; but also cont
  boring but useful definitions for
 equality, inequality, conversions from and to human readable strings, XML and binary representations for (de)serialization.
 WP
-Finally, we declare a methods to add to each of the coordinates.
+Finally, we define a methods to add to each of the coordinates.
 For very short methods we can omit the curly brackets and Wcode(return).
 Indeed, method bodies are just expressions, and the curly brackets turna block of statements into one expression. 
 
 In the method Wcode(add(x)) we show a how to create a new 
 Wcode(Point) instanceand how to call getters.
 In the method Wcode(add(y)) we show an improved version, using the Wcode(with) method, another gift of Data, that allows us to easily create a clone with one or more fields updated.
-We can declare two methods, Wcode(add(x)) and Wcode(add(y)) with the same name, if parameter names are different.
+We can define two methods, Wcode(add(x)) and Wcode(add(y)) with the same name, if parameter names are different.
 WP
 Note how we always use getters and we never access fields directly.
 In many other languages we can use write Wcode(a.fieldName) and Wcode(a.fieldName= newValue). Such syntax does not exists in 42. The same goes for object instantiation; in many languages there is a special Wcode(new ClassName(..)) dedicated syntax, while in 42 it is just a method call.
@@ -153,7 +153,7 @@ Wlink(Decorators, More on decorators)
 
 WTitle((4/5)Vectors)
 
-Vectors can be declared using Wcode(Collections.vector(of)), as in the example below.
+Vectors can be defined using Wcode(Collections.vector(of)), as in the example below.
 
 OBCode
 Nums: Collections.vector(of: Num) //declaration for vectors of nums
@@ -165,7 +165,7 @@ points= Points[with x in xs.vals(), y in ys.vals() (
   use[Point(x: x, y: y)]
   )]
 CCode
-Where we declare new classes Wcode(Nums)
+Where we define new classes Wcode(Nums)
 and Wcode(Points). Note that those are new classes in a nominal type system, so in
 OBCode
 Nums1: Collections.vector(of: Num)
@@ -185,11 +185,11 @@ WTitle(`(5/5)First summary')
 At the start of your program, import a towel using 
 Wcode(reuse _), as in Wcode(reuse L42.is/AdamsTowel).
 </li><li>
-To declare a simple class exposing its state and 
+To define a simple class exposing its state and 
 some methods working with those, use Wcode(Data), as in
 Wcode(`Point: Data <>< {Num x, Num y}').
 </li><li>
-You can declare methods in classes with the Wcode(method) keyword,
+You can define methods in classes with the Wcode(method) keyword,
 as in Wcode(method ReturnType myName(ParType parName) body).
 Use Wcode(class method) for methods that can be called on the class object directly.
 </li><li>

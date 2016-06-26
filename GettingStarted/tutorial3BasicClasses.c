@@ -143,7 +143,7 @@ Note how in a cmposite unit we can use Wcode(right(left)) and
 for the left one, or we can extract the left component providing a value for the right one.
  
 WP
-We can also declare aliasing units: 
+We can also define aliasing units: 
 
 OBCode
 Cm: Units.alias(0.01Meter) 
@@ -151,7 +151,7 @@ Meter height= 178Cm
 CCode
 
 Note how height is of type Wcode(Meter).
-Alias units are just shortcut to declare values of
+Alias units are just shortcut to instantiate values of
 the original unit.
 
 
@@ -189,7 +189,7 @@ CCode
 
 Note how we can raise an error if the string does not have the shape we expected.
 We will see errors/exception in more detail soon.
-We can declare fields, and compute their values by parsing the string.
+We can define fields, and compute their values by parsing the string.
 While it is suggested to propagate the original string in the factory,
 it is not mandatory, for example you could apply some form of normalization, as shown under: 
 
@@ -238,7 +238,7 @@ WTitle((5/5) Summary)
 
 <ul><li>
 Base classes are the minimal building block for your program;
-be sure to declare all the right base classes to establish a convenient vocabulary
+be sure to define all the right base classes to establish a convenient vocabulary
 to talk about your problem domain.
 </li><li>
 Use Wcode(Num) as your first guess for numeric types,

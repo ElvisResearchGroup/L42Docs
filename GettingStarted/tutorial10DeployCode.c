@@ -135,12 +135,12 @@ Towels shines when multiple towels are used at the same time.
 
 OBCode
 {reuse L42.is/AdamsTowel
-//here you can access to lots of utility classes declared inside the towel
+//here you can access to lots of utility classes defined inside the towel
 //including numbers, strings and so on.
 C: {reuse L42.is/FordTowel
 //here you can access a different set of classes.
 //For example, Num would refer to the number in FordTowel
-//and to see the number declared in AdamsTowel you have to write This1.N
+//and to see the number defined in AdamsTowel you have to write This1.N
   }
 }
 CCode

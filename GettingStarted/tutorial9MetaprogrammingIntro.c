@@ -140,7 +140,7 @@ to use it;
 we now show how to improve.
 WP
 
-Manually declaring a class just to declare a single trait method
+Manually declaring a class just to define a single trait method
 returning a library literal is verbose.
 In AdamsTowel we can use the class Wcode(Resource)
 which automate this process.
@@ -317,7 +317,7 @@ MyCollection: {
     }
 CCode
 
-Conceptually, we declare a new trait for the sum method,
+Conceptually, we define a new trait for the sum method,
 and we make it general introducing Wcode(T) and our
 needed requirements.
 Sadly, this is not going to compile, since 

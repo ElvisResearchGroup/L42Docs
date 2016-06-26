@@ -106,14 +106,14 @@ Objects and classes that can be used as functions are called <span style="color:
 <br/>
 In 42 Strings and numbers need to be created by their type, as in
 '<span class="code"><![CDATA[S"Hello world"]]></span>' or '<span class="code"><![CDATA[12Num]]></span>', as explained in 
-<a href="index.xhtml">Pure OO</a>.
+<a href="index.xhtml.xhtml">Pure OO</a>.
 </p><p>
 
 Finally, our code ends by returning "success" as exit status.
 
 
 </p><h2> (2/5)Method declaration and call </h2> <p>
-Let's now declare a method and call it.
+Let's now define a method and call it.
 <pre class="l42Big"><![CDATA[
 {reuse L42.is/AdamsTowel
 MyCode: {
@@ -129,8 +129,8 @@ Main: {
   }
 }
 ]]></pre>
-Here we declare a class to host our '<span class="code"><![CDATA[hello(nickName)]]></span>' method.
-We write '<span class="code"><![CDATA[class method]]></span>' to declare a method that can be called on the class object, as in '<span class="code"><![CDATA[MyCode.hello(nickName: S"Marvin")]]></span>'.
+Here we define a class to host our '<span class="code"><![CDATA[hello(nickName)]]></span>' method.
+We write '<span class="code"><![CDATA[class method]]></span>' to define a method that can be called on the class object, as in '<span class="code"><![CDATA[MyCode.hello(nickName: S"Marvin")]]></span>'.
 This is roughly equivalent to a static method in languages like Java or C++ , or class methods in Python.
 
 </p><p>
@@ -160,7 +160,7 @@ Point: Data <>< {
     this.with(y: y + this.y())
   }
 ]]></pre>
-Here you can see we declare a '<span class="code"><![CDATA[Point]]></span>' class with coordinates '<span class="code"><![CDATA[x]]></span>' and '<span class="code"><![CDATA[y]]></span>' of type '<span class="code"><![CDATA[Num]]></span>',
+Here you can see we define a '<span class="code"><![CDATA[Point]]></span>' class with coordinates '<span class="code"><![CDATA[x]]></span>' and '<span class="code"><![CDATA[y]]></span>' of type '<span class="code"><![CDATA[Num]]></span>',
 unlimited precision rational number.
 
 
@@ -172,14 +172,14 @@ a factory method taking in input the fields and initializing them; but also cont
  boring but useful definitions for
 equality, inequality, conversions from and to human readable strings, XML and binary representations for (de)serialization.
 </p><p>
-Finally, we declare a methods to add to each of the coordinates.
+Finally, we define a methods to add to each of the coordinates.
 For very short methods we can omit the curly brackets and '<span class="code"><![CDATA[return]]></span>'.
 Indeed, method bodies are just expressions, and the curly brackets turna block of statements into one expression. 
 
 In the method '<span class="code"><![CDATA[add(x)]]></span>' we show a how to create a new 
 '<span class="code"><![CDATA[Point]]></span>' instanceand how to call getters.
 In the method '<span class="code"><![CDATA[add(y)]]></span>' we show an improved version, using the '<span class="code"><![CDATA[with]]></span>' method, another gift of Data, that allows us to easily create a clone with one or more fields updated.
-We can declare two methods, '<span class="code"><![CDATA[add(x)]]></span>' and '<span class="code"><![CDATA[add(y)]]></span>' with the same name, if parameter names are different.
+We can define two methods, '<span class="code"><![CDATA[add(x)]]></span>' and '<span class="code"><![CDATA[add(y)]]></span>' with the same name, if parameter names are different.
 </p><p>
 Note how we always use getters and we never access fields directly.
 In many other languages we can use write '<span class="code"><![CDATA[a.fieldName]]></span>' and '<span class="code"><![CDATA[a.fieldName= newValue]]></span>'. Such syntax does not exists in 42. The same goes for object instantiation; in many languages there is a special '<span class="code"><![CDATA[new ClassName(..)]]></span>' dedicated syntax, while in 42 it is just a method call.
@@ -200,7 +200,7 @@ For now, just get used to the pattern of writing
 
 </p><h2> (4/5)Vectors </h2> <p>
 
-Vectors can be declared using '<span class="code"><![CDATA[Collections.vector(of)]]></span>', as in the example below.
+Vectors can be defined using '<span class="code"><![CDATA[Collections.vector(of)]]></span>', as in the example below.
 
 <pre class="l42Big"><![CDATA[
 Nums: Collections.vector(of: Num) //declaration for vectors of nums
@@ -212,7 +212,7 @@ points= Points[with x in xs.vals(), y in ys.vals() (
   use[Point(x: x, y: y)]
   )]
 ]]></pre>
-Where we declare new classes '<span class="code"><![CDATA[Nums]]></span>'
+Where we define new classes '<span class="code"><![CDATA[Nums]]></span>'
 and '<span class="code"><![CDATA[Points]]></span>'. Note that those are new classes in a nominal type system, so in
 <pre class="l42Big"><![CDATA[
 Nums1: Collections.vector(of: Num)
@@ -232,11 +232,11 @@ Note that to express number literals we need to specify their class.
 At the start of your program, import a towel using 
 '<span class="code"><![CDATA[reuse _]]></span>', as in '<span class="code"><![CDATA[reuse L42.is/AdamsTowel]]></span>'.
 </li><li>
-To declare a simple class exposing its state and 
+To define a simple class exposing its state and 
 some methods working with those, use '<span class="code"><![CDATA[Data]]></span>', as in
 '<span class="code"><![CDATA[Point: Data <>< {Num x, Num y}]]></span>'.
 </li><li>
-You can declare methods in classes with the '<span class="code"><![CDATA[method]]></span>' keyword,
+You can define methods in classes with the '<span class="code"><![CDATA[method]]></span>' keyword,
 as in '<span class="code"><![CDATA[method ReturnType myName(ParType parName) body]]></span>'.
 Use '<span class="code"><![CDATA[class method]]></span>' for methods that can be called on the class object directly.
 </li><li>
@@ -272,7 +272,7 @@ or <span style="color:#ff1111; font-weight: bold;"> mutated. </span>
 Immutable classes are very easy to use but may be inadequate when representing real objects, whose state can change across time.
 A <span style="color:#ff1111; font-weight: bold;"> Mutable class </span> is a class where the state of (some of) its instances may be mutated.
 
-Let's now declare a '<span class="code"><![CDATA[Animal]]></span>' mutable class, whose location can be updated.
+Let's now define a '<span class="code"><![CDATA[Animal]]></span>' mutable class, whose location can be updated.
 <pre class="l42Big"><![CDATA[
 Animal: Data <>< {
   var Point location
@@ -284,7 +284,7 @@ Animal: Data <>< {
 ]]></pre>
 There are two new keywords used here: 
 <ul><li>
-the '<span class="code"><![CDATA[location]]></span>' field is declared '<span class="code"><![CDATA[var]]></span>'.
+the '<span class="code"><![CDATA[location]]></span>' field is '<span class="code"><![CDATA[var]]></span>'.
   This is called a variable field, and can be <span style="color:#ff1111; font-weight: bold;"> updated </span> by calling a setter.
   Non variable fields can not be updated
 </li><li>
@@ -420,7 +420,7 @@ dog2= Animal(location: zero, path: Points[ Point(x: 12Num, y: 20Num);Point(x: 1N
 dog1.move()
 dog2.move()
 ]]></pre>
-Where the '<span class="code"><![CDATA[ps]]></span>' local binding is declared capsule; 
+Where the '<span class="code"><![CDATA[ps]]></span>' local binding is '<span class="code"><![CDATA[capsule]]></span>'; 
 it can satisfy the Animal.path requirement, but it can be used only once.
 '<span class="code"><![CDATA[dog2]]></span>'
 has to use another capsule. It is okay to just write the object creation in place as is done.
@@ -662,9 +662,9 @@ As you can see, we can sum meters together, and we can use the support for multi
 
 
 Mathematically you can obtain the support out of the unit by
-division: '<span class="code"><![CDATA[42Meter/2Meter =  21Meter]]></span>'.
+division; that is, 42 meters divided by 2 meters is  21.
 This do not work directly in 42, since multiplication and division
-takes the support and not a unit.
+takes the support( '<span class="code"><![CDATA[Num]]></span>' in our examples) and not a unit.
 Units provide method '<span class="code"><![CDATA[divide(that)]]></span>' for this aim.
 Units also provide method  '<span class="code"><![CDATA[#inner()]]></span>',
 this is just extracting the value of the support from the unit.
@@ -710,7 +710,7 @@ Note how in a cmposite unit we can use '<span class="code"><![CDATA[right(left)]
 for the left one, or we can extract the left component providing a value for the right one.
  
 </p><p>
-We can also declare aliasing units: 
+We can also define aliasing units: 
 
 <pre class="l42Big"><![CDATA[
 Cm: Units.alias(0.01Meter) 
@@ -718,7 +718,7 @@ Meter height= 178Cm
 ]]></pre>
 
 Note how height is of type '<span class="code"><![CDATA[Meter]]></span>'.
-Alias units are just shortcut to declare values of
+Alias units are just shortcut to instantiate values of
 the original unit.
 
 
@@ -756,7 +756,7 @@ myEmail.toS() ==S"arthur.dent@gmail.com" //holds
 
 Note how we can raise an error if the string does not have the shape we expected.
 We will see errors/exception in more detail soon.
-We can declare fields, and compute their values by parsing the string.
+We can define fields, and compute their values by parsing the string.
 While it is suggested to propagate the original string in the factory,
 it is not mandatory, for example you could apply some form of normalization, as shown under: 
 
@@ -805,7 +805,7 @@ we will see more about that when we discuss collections.
 
 <ul><li>
 Base classes are the minimal building block for your program;
-be sure to declare all the right base classes to establish a convenient vocabulary
+be sure to define all the right base classes to establish a convenient vocabulary
 to talk about your problem domain.
 </li><li>
 Use '<span class="code"><![CDATA[Num]]></span>' as your first guess for numeric types,
@@ -848,9 +848,14 @@ In 42, we say that the method '<span class="code"><![CDATA[draw(that)]]></span>'
 implemented in '<span class="code"><![CDATA[Square]]></span>'
 <span style="color:#ff1111; font-weight: bold;"> is declared by </span>
 '<span class="code"><![CDATA[Shape]]></span>'.
-Each method is declared in a single point, either the class itself
-or a (transitively) implemented interface.
-This means that a class can not implement multiple interfaces declaring methods
+Each method is declared in a single point. 
+Methods can be 
+defined (that is, declared and implemented)
+in the class itself;
+or declared in a (transitively) implemented interface and
+then just implemented.
+This means that a class can not 
+satisfy multiple interfaces declaring methods
 with the same name.
 For example, this code is ill-typed: 
 <pre class="l42Big"><![CDATA[
@@ -943,13 +948,13 @@ a specific kind of shape.
 
 In 42 interfaces can not have 
 implemented static methods.
-Sometimes there is the need of semanticaly associate some behaviour with an interface.
+Sometimes there is the need of semantically associate some behaviour with an interface.
 For example we could check intersections between shapes using
 the draw method.
 
 This can be done, since interfaces can have nested classes, that can have (class) methods.
 Conventionally, if you need behaviour associated with the concept represented by the interface, you can just declare a nested class,
-convetionally called '<span class="code"><![CDATA[$]]></span>', containing you needed methods.
+conventionally called '<span class="code"><![CDATA[$]]></span>', containing you needed methods.
 <br/>
 For example
 
@@ -1097,13 +1102,13 @@ Java 8 default methods, since the implementation can be generated by examining t
 
 </p><h2> (1/5)Vectors as Sequences </h2> <p>
 
-As we have seen before, vectors can be declared using '<span class="code"><![CDATA[Collections.vector(of)]]></span>', as in the example below.
+As we have seen before, vectors can be defined using '<span class="code"><![CDATA[Collections.vector(of)]]></span>', as in the example below.
 
 <pre class="l42Big"><![CDATA[
 Nums: Collections.vector(of: Num) //declaration for vectors of nums
 /*..*/
 Nums xs= Nums[10Num;20Num;30Num] //immutable vector
-//note that we declare the type of 'xs' explicitly,
+//note that we write the type of 'xs' explicitly,
 //otherwise the vector would be mutable.
 ]]></pre>
 
@@ -1325,7 +1330,7 @@ foo.removeRight(val: b) //remove the rightmost b
 There are two basic usage for the '<span class="code"><![CDATA[with]]></span>' statement: as for-each and as a typecase.
 
 <pre class="l42Big"><![CDATA[
-//as a for each
+//as a for each loop
 vec=  Strings[S"foo"; S"bar"; S"beer"]
 var S result= S""
 with myElem in vec.vals() (result:= result++myElem) //like for(myElem: vec){..}
@@ -1342,7 +1347,7 @@ The semantics of '<span class="code"><![CDATA[with-on]]></span>' is that the
 first match is executed. No
 confusing fall-through semantics as in C/Java switch.
 </p><p>
-If '<span class="code"><![CDATA[myData]]></span>' is already declared one can simply write
+If '<span class="code"><![CDATA[myData]]></span>' is already in scope, one can simply write
 <pre class="l42Big"><![CDATA[
 with myData (
   on S Debug(myData) //here 'myData' is seen of 'S' type
@@ -1372,7 +1377,7 @@ v= Strings[with myElem in vec.vals() (on S use[myElem] )] //filter out non-strin
 <pre class="l42Big"><![CDATA[
 method Num m(Shape x, Person y, Vehicle z) //example of method using with
  with x y z (
- on Square Student Car (..return ..) //x here is a Square
+ on Square Student Car (.. return ..) //x here is a Square
  on Circle Person Airplane (..) //x here is a Circle
  default (..) //default case, here x is just a Shape
   )}
@@ -1485,7 +1490,7 @@ difficulties.
 Most methods have a general version that works with an index, and specialized '<span class="code"><![CDATA[left]]></span>' and
 '<span class="code"><![CDATA[right]]></span>' variants.
 </li><li>
-'<span class="code"><![CDATA[/]]></span>' can help remove a lot of boilerplate, but is a concept unique to 42, and require some effort to get used to.
+'<span class="code"><![CDATA[\]]></span>' can help remove a lot of boilerplate, but is a concept unique to 42, and require some effort to get used to.
 </li><li>
 '<span class="code"><![CDATA[with]]></span>' is very useful and flexible. It is common to find methods composed from just a large
 '<span class="code"><![CDATA[with]]></span>' statement plus a little pre and post processing around it.
@@ -1585,11 +1590,11 @@ res= (
  )
 ]]></pre>
 
-Paragraphs are separed by catches.
+Paragraphs are separated by catches.
 Each catch capture only exceptions/errors that happens inside of
 the paragraph directly above, and can not see the local binding
 declared in such paragraph.
-If a catch is successfull, then the result of its catch expression
+If a catch is successful, then the result of its catch expression
 will be the result of the whole code block.
 In this way, blocks with catches behave like conditionals.
 That is, The code above can assign to '<span class="code"><![CDATA[res]]></span>' either 
@@ -1642,7 +1647,7 @@ They are useful to characterize multiple outcomes of an operation,
 where is important to prevent the programmer from forgetting about
 the many possible outcome and focusing only on their preferred one.
 Exceptions are checked, so methods leaking exceptions have to
-declare this in their header, as in the following.
+mention it in their header, as in the following.
 <pre class="l42Big"><![CDATA[
 /*somewhere in a GUI library*/
 method
@@ -1884,7 +1889,7 @@ where every cell can be full of dirt (90%) or rock (10%).
 Then a mole start from the left top corner and attempts to
 digs through dirt randomly.
 After 100 steps the mole stops.
-declare the opportune classes and write a randomDig
+define the opportune classes and write a '<span class="code"><![CDATA[randomDig]]></span>'
 method. 
 </p><p>
 You can use the library '<span class="code"><![CDATA[L42.is/Random]]></span>'
@@ -2405,7 +2410,7 @@ to use it;
 we now show how to improve.
 </p><p>
 
-Manually declaring a class just to declare a single trait method
+Manually declaring a class just to define a single trait method
 returning a library literal is verbose.
 In AdamsTowel we can use the class '<span class="code"><![CDATA[Resource]]></span>'
 which automate this process.
@@ -2582,7 +2587,7 @@ MyCollection: {
     }
 ]]></pre>
 
-Conceptually, we declare a new trait for the sum method,
+Conceptually, we define a new trait for the sum method,
 and we make it general introducing '<span class="code"><![CDATA[T]]></span>' and our
 needed requirements.
 Sadly, this is not going to compile, since 
@@ -2800,12 +2805,12 @@ Towels shines when multiple towels are used at the same time.
 
 <pre class="l42Big"><![CDATA[
 {reuse L42.is/AdamsTowel
-//here you can access to lots of utility classes declared inside the towel
+//here you can access to lots of utility classes defined inside the towel
 //including numbers, strings and so on.
 C: {reuse L42.is/FordTowel
 //here you can access a different set of classes.
 //For example, Num would refer to the number in FordTowel
-//and to see the number declared in AdamsTowel you have to write This1.N
+//and to see the number defined in AdamsTowel you have to write This1.N
   }
 }
 ]]></pre>
@@ -3007,7 +3012,7 @@ ToDeploy: Resource <>< Extend.patch(Path"Fix") <>< {
   Second: Units.of(Num)
   Fix: {
     ConceptMap: {interface 
-      method Kg en_wikipedia_org$wiki$Kilogram ()
+      method Kg en_wikipedia_org$wiki$Kilogram()
       method Metre en_wikipedia_org$wiki$Metre()
       method Second en_wikipedia_org$wiki$Second()
       }

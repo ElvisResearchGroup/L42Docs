@@ -7,7 +7,7 @@ or WEmph(mutated.)
 Immutable classes are very easy to use but may be inadequate when representing real objects, whose state can change across time.
 A WEmph(Mutable class) is a class where the state of (some of) its instances may be mutated.
 
-Let's now declare a Wcode(Animal) mutable class, whose location can be updated.
+Let's now define a Wcode(Animal) mutable class, whose location can be updated.
 OBCode
 Animal: Data <>< {
   var Point location
@@ -19,7 +19,7 @@ Animal: Data <>< {
 CCode
 There are two new keywords used here: 
 <ul><li>
-the Wcode(location) field is declared Wcode(var).
+the Wcode(location) field is Wcode(var).
   This is called a variable field, and can be WEmph(updated) by calling a setter.
   Non variable fields can not be updated
 </li><li>
@@ -155,7 +155,7 @@ dog2= Animal(location: zero, path: Points[ Point(x: 12Num, y: 20Num);Point(x: 1N
 dog1.move()
 dog2.move()
 CCode
-Where the Wcode(ps) local binding is declared capsule; 
+Where the Wcode(ps) local binding is Wcode(capsule); 
 it can satisfy the Animal.path requirement, but it can be used only once.
 Wcode(dog2)
 has to use another capsule. It is okay to just write the object creation in place as is done.

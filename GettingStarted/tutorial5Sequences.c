@@ -2,13 +2,13 @@ WBigTitle(`High level sequences manipulation')
 
 WTitle((1/5)Vectors as Sequences, listing the basic operations)
 
-As we have seen before, vectors can be declared using Wcode(Collections.vector(of)), as in the example below.
+As we have seen before, vectors can be defined using Wcode(Collections.vector(of)), as in the example below.
 
 OBCode
 Nums: Collections.vector(of: Num) //declaration for vectors of nums
 /*..*/
 Nums xs= Nums[10Num;20Num;30Num] //immutable vector
-//note that we declare the type of 'xs' explicitly,
+//note that we write the type of 'xs' explicitly,
 //otherwise the vector would be mutable.
 CCode
 
@@ -230,7 +230,7 @@ WTitle((4/5) `Wcode(with): a Swiss army knife to encode complex behaviour')
 There are two basic usage for the Wcode(with) statement: as for-each and as a typecase.
 
 OBCode
-//as a for each
+//as a for each loop
 vec=  Strings[S"foo"; S"bar"; S"beer"]
 var S result= S""
 with myElem in vec.vals() (result:= result++myElem) //like for(myElem: vec){..}
@@ -247,7 +247,7 @@ The semantics of Wcode(with-on) is that the
 first match is executed. No
 confusing fall-through semantics as in C/Java switch.
 WP
-If Wcode(myData) is already declared one can simply write
+If Wcode(myData) is already in scope, one can simply write
 OBCode
 with myData (
   on S Debug(myData) //here 'myData' is seen of 'S' type
