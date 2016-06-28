@@ -109,6 +109,7 @@ Point: Data <>< {
   method
   Point add(Num x)
     Point(x: x + this.x(), y: this.y())
+  method
   Point add(Num y)
     this.with(y: y + this.y())
   }

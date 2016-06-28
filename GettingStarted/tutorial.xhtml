@@ -156,6 +156,7 @@ Point: Data <>< {
   method
   Point add(Num x)
     Point(x: x + this.x(), y: this.y())
+  method
   Point add(Num y)
     this.with(y: y + this.y())
   }
@@ -397,7 +398,7 @@ Animal: Data <>< {
   capsule Points path
   mut method
   Void move() 
-    this.location(path.left()))
+    this.location(this.path().left()))
     this.#path().removeLeft()
   }
 ]]></pre>

@@ -132,7 +132,7 @@ Animal: Data <>< {
   capsule Points path
   mut method
   Void move() 
-    this.location(path.left()))
+    this.location(this.path().left()))
     this.#path().removeLeft()
   }
 CCode
