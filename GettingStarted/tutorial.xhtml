@@ -1524,22 +1524,51 @@ enabled or disabled.
 A guard is guaranteed to be consistent across library evolution
 thus program logic can depend on them being thrown.
 
-Assertions are very convenient to check for pre/post conditions.
-The following code show usages of '<span class="code"><![CDATA[Assert.Pre]]></span>' and '<span class="code"><![CDATA[Assert.Holds]]></span>'
+Assertions are the right tool to prevent the code from proceding
+out of our designed space. The assertion class called '<span class="code"><![CDATA[X]]></span>' 
+looks like a road sign
+and represent this 
+"NO/PROHIBITED/FORBIDDEN" 
+feeling.
+
+Assertions are also very convenient to check for pre/post conditions.
+The following code show usages of '<span class="code"><![CDATA[X.Pre]]></span>' (for preconditions and, in general, blaming the client of a function)
+ and '<span class="code"><![CDATA[X]]></span>' (for postconditions checks in the middle and, in general, blaming the function implementation).
 
 <pre class="l42Big"><![CDATA[
-Assert.Pre[ //preconditions
-  myVal>0Nat; //simplest form
-  myVal>0Nat msg: S"here with personalized message myVal= "[myVal]"";
-  myVal expected: 42Nat //call equals and do a better error reporting
-  ] //in a bunch of assertions, they are all going to be checked together.
+method Nat confirmAnswer(Nat answer) (
+  X.Pre[ //preconditions
+    answer>0Num; //simplest form
+    answer<10000Num msg: S"here with personalized message answer= "[answer]"";
+    answer expected: 42Num //call equals and do a better error reporting
+    ] //in a bunch of assertions, they are all going to be checked/reported together.
+  Nat recomputedAnswer=6Num*7Num
+  X[ //postconditions/checks in the middle
+    recomputedAnswer expected: 42Num msg: S"arithmetic mess"
+    ]
 
-Assert.Holds[ //postconditions/checks in the middle
-  res expected: 42Nat msg: S" message"
-  ]
-if notGoodParameter (Assert.Pre"error message")
-if observedBug  (Assert.Holds"error message")
+  X[answer==recomputedAnswer] 
+
+if answer>50Num (//how to just throw error X
+  error X""
+  )
 ]]></pre>
+
+'<span class="code"><![CDATA[X]]></span>' is often used as last case in a sequence of if-return:
+
+<pre class="l42Big"><![CDATA[
+Direction: Enumeration"north, east, south, west"
+/*..*/
+Direction opposite={
+  if d.isNorth() return Direction.south()
+  if d.isSouth() return Direction.north()
+  if d.isEast() return Direction.west()
+  X[d.isWest()] return Direction.east()
+  }
+]]></pre>
+As you can see, since there are only 4 directions, we believe by exclusion that the last case must hold. However, we prefer to
+make our assumptions clear and have them checked.
+
 
 </p><h2> (2/5) Create, throw and capture </h2> <p>
 
@@ -1672,12 +1701,12 @@ This is possible with the following code:
 //long version
 DoStuff()
 catch exception FileNotFound fnf 
-  error WTF"I just created it!"(fnf)
+  error X"I just created it!"(fnf)
 
 //short version
 DoStuff()
 error on FileNotFound
-  WTF"I just created it!"
+  X"I just created it!"
 ]]></pre>
 
 The two snippets of code behave identically: the first
@@ -1689,13 +1718,12 @@ corresponding short form for the much less common case of
 wrapping errors.
 </p><p>
 
-'<span class="code"><![CDATA[WTF]]></span>' stands for what a terrible failure
-(as in android), and can be used to mark branches of code
+As you can see, we can use '<span class="code"><![CDATA[X]]></span>' to mark branches of code
 that the programmer believes would never be executed.
-'<span class="code"><![CDATA[WTF]]></span>' implements '<span class="code"><![CDATA[Assert]]></span>', thus code capturing
-'<span class="code"><![CDATA[WTF]]></span>' is unreliable: as explained before, programmers are free
+'<span class="code"><![CDATA[X]]></span>' implements '<span class="code"><![CDATA[Assert]]></span>', thus code capturing
+'<span class="code"><![CDATA[X]]></span>' is unreliable: as explained before, programmers are free
 to change when and how assertion violations are detected.
-For the case of '<span class="code"><![CDATA[WTF]]></span>', the programmer may recognize that
+In particular, the programmer may recognize that
 such branch could be actually executed, and thus replace the error with correct behaviour.
 </p><p>
 '<span class="code"><![CDATA[Assert]]></span>'ions should not be thrown as exceptions, but only as errors.
@@ -1724,11 +1752,11 @@ catch exception Guard e2 (
   return void //do something and return
   )
 catch error Message e3
-  error WTF"not supposed to happen"
+  error X"not supposed to happen"
 y= DoStuff(x)
 return y
 error on Guard 
-  WTF"not supposed to happen"
+  X"not supposed to happen"
 }  
 ]]></pre>
 
@@ -1914,11 +1942,10 @@ Point: Data <>< {implements Concept.Invariant
     this.x()>= 0Size & this.x()<80Size & this.y()>= 0Size & this.y()<80Size
 
   This go(Direction that) {
-    if that.isUp() (return this.with(x: \-1Size))
-    if that.isDown() (return this.with(x: \+1Size))
-    if that.isLeft() (return this.with(y: \-1Size))
-    Assert.Holds[that.isRight()]
-    return this.with(y: \+1Size)
+    if that.isUp() return this.with(x: \-1Size)
+    if that.isDown() return this.with(x: \+1Size)
+    if that.isLeft() return this.with(y: \-1Size)
+    X[that.isRight()] return this.with(y: \+1Size)
     catch error Concept.Invariant.Failure err  (return this)
     }
   }
@@ -1963,13 +1990,13 @@ Land: Data <>< { //we may want to put the field and the predefined factory priva
   
   toS() S""[with x in Range(stop: 80Size) (
       use[S.nl()] //newline
-      with y in Range(stop: 80Size) (
-        p= Point(x: x,y: y)
-        if this.get(p).isRock() (use[S"#"])
-        else if this.get(p).isDirt() (use[S"%"])
-        else if this.get(p).isEmpty() (use[S" "])
-        else (Assert.Bug[this.get(p).isMole()] use[S"M"])         
-      ))]""++S.nl()
+      with y in Range(stop: 80Size) {
+        p= this.get(Point(x: x,y: y))
+        if p.isRock() return use[S"#"]//common pattern: with {return use[..]}
+        if p.isDirt() return use[S"%"]//use[..] return void, so is ok
+        if p.isEmpty() return use[S" "]//as final result of a with block
+        X[p.isMole()] return use[S"M"]         
+      })]""++S.nl()
   //since we define 'toS()' explicitly, Data will leave it alone :)
   }
 ]]></pre>
@@ -2452,7 +2479,7 @@ Transaction: {
       "Action invalid: type of '(connection)' does not fit or already defined '(that)'")
     return Refactor.HideSelector(\"(connection)") <>< composed
     error on Metaguard
-      WTF"'(connection)' is there, ready to be hidden"
+      X"'(connection)' is there, ready to be hidden"
     }  
   }
 //So, MyAction becomes shorter and better checked: 

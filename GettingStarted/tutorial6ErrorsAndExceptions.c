@@ -26,22 +26,51 @@ enabled or disabled.
 A guard is guaranteed to be consistent across library evolution
 thus program logic can depend on them being thrown.
 
-Assertions are very convenient to check for pre/post conditions.
-The following code show usages of Wcode(Assert.Pre) and Wcode(Assert.Holds)
+Assertions are the right tool to prevent the code from proceding
+out of our designed space. The assertion class called Wcode(X) 
+looks like a road sign
+and represent this 
+"NO/PROHIBITED/FORBIDDEN" 
+feeling.
+
+Assertions are also very convenient to check for pre/post conditions.
+The following code show usages of Wcode(X.Pre) (for preconditions and, in general, blaming the client of a function)
+ and Wcode(X) (for postconditions checks in the middle and, in general, blaming the function implementation).
 
 OBCode
-Assert.Pre[ //preconditions
-  myVal>0Nat; //simplest form
-  myVal>0Nat msg: S"here with personalized message myVal= "[myVal]"";
-  myVal expected: 42Nat //call equals and do a better error reporting
-  ] //in a bunch of assertions, they are all going to be checked together.
+method Nat confirmAnswer(Nat answer) (
+  X.Pre[ //preconditions
+    answer>0Num; //simplest form
+    answer<10000Num msg: S"here with personalized message answer= "[answer]"";
+    answer expected: 42Num //call equals and do a better error reporting
+    ] //in a bunch of assertions, they are all going to be checked/reported together.
+  Nat recomputedAnswer=6Num*7Num
+  X[ //postconditions/checks in the middle
+    recomputedAnswer expected: 42Num msg: S"arithmetic mess"
+    ]
 
-Assert.Holds[ //postconditions/checks in the middle
-  res expected: 42Nat msg: S" message"
-  ]
-if notGoodParameter (Assert.Pre"error message")
-if observedBug  (Assert.Holds"error message")
+  X[answer==recomputedAnswer] 
+
+if answer>50Num (//how to just throw error X
+  error X""
+  )
 CCode
+
+Wcode(X) is often used as last case in a sequence of if-return:
+
+OBCode
+Direction: Enumeration"north, east, south, west"
+/*..*/
+Direction opposite={
+  if d.isNorth() return Direction.south()
+  if d.isSouth() return Direction.north()
+  if d.isEast() return Direction.west()
+  X[d.isWest()] return Direction.east()
+  }
+CCode
+As you can see, since there are only 4 directions, we believe by exclusion that the last case must hold. However, we prefer to
+make our assumptions clear and have them checked.
+
 
 WTitle(`(2/5) Create, throw and capture')
 
@@ -174,12 +203,12 @@ OBCode
 //long version
 DoStuff()
 catch exception FileNotFound fnf 
-  error WTF"I just created it!"(fnf)
+  error X"I just created it!"(fnf)
 
 //short version
 DoStuff()
 error on FileNotFound
-  WTF"I just created it!"
+  X"I just created it!"
 CCode
 
 The two snippets of code behave identically: the first
@@ -191,13 +220,12 @@ corresponding short form for the much less common case of
 wrapping errors.
 WP
 
-Wcode(WTF) stands for what a terrible failure
-(as in android), and can be used to mark branches of code
+As you can see, we can use Wcode(X) to mark branches of code
 that the programmer believes would never be executed.
-Wcode(WTF) implements Wcode(Assert), thus code capturing
-Wcode(WTF) is unreliable: as explained before, programmers are free
+Wcode(X) implements Wcode(Assert), thus code capturing
+Wcode(X) is unreliable: as explained before, programmers are free
 to change when and how assertion violations are detected.
-For the case of Wcode(WTF), the programmer may recognize that
+In particular, the programmer may recognize that
 such branch could be actually executed, and thus replace the error with correct behaviour.
 WP
 Wcode(Assert)ions should not be thrown as exceptions, but only as errors.
@@ -226,11 +254,11 @@ catch exception Guard e2 (
   return void //do something and return
   )
 catch error Message e3
-  error WTF"not supposed to happen"
+  error X"not supposed to happen"
 y= DoStuff(x)
 return y
 error on Guard 
-  WTF"not supposed to happen"
+  X"not supposed to happen"
 }  
 CCode
 

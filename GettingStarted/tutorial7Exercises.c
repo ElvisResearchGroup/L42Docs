@@ -98,11 +98,10 @@ Point: Data <>< {implements Concept.Invariant
     this.x()>= 0Size & this.x()<80Size & this.y()>= 0Size & this.y()<80Size
 
   This go(Direction that) {
-    if that.isUp() (return this.with(x: \-1Size))
-    if that.isDown() (return this.with(x: \+1Size))
-    if that.isLeft() (return this.with(y: \-1Size))
-    Assert.Holds[that.isRight()]
-    return this.with(y: \+1Size)
+    if that.isUp() return this.with(x: \-1Size)
+    if that.isDown() return this.with(x: \+1Size)
+    if that.isLeft() return this.with(y: \-1Size)
+    X[that.isRight()] return this.with(y: \+1Size)
     catch error Concept.Invariant.Failure err  (return this)
     }
   }
@@ -147,13 +146,13 @@ Land: Data <>< { //we may want to put the field and the predefined factory priva
   
   toS() S""[with x in Range(stop: 80Size) (
       use[S.nl()] //newline
-      with y in Range(stop: 80Size) (
-        p= Point(x: x,y: y)
-        if this.get(p).isRock() (use[S"#"])
-        else if this.get(p).isDirt() (use[S"%"])
-        else if this.get(p).isEmpty() (use[S" "])
-        else (Assert.Bug[this.get(p).isMole()] use[S"M"])         
-      ))]""++S.nl()
+      with y in Range(stop: 80Size) {
+        p= this.get(Point(x: x,y: y))
+        if p.isRock() return use[S"#"]//common pattern: with {return use[..]}
+        if p.isDirt() return use[S"%"]//use[..] return void, so is ok
+        if p.isEmpty() return use[S" "]//as final result of a with block
+        X[p.isMole()] return use[S"M"]         
+      })]""++S.nl()
   //since we define 'toS()' explicitly, Data will leave it alone :)
   }
 CCode

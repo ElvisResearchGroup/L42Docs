@@ -181,7 +181,7 @@ Transaction: {
       "Action invalid: type of '(connection)' does not fit or already defined '(that)'")
     return Refactor.HideSelector(\"(connection)") <>< composed
     error on Metaguard
-      WTF"'(connection)' is there, ready to be hidden"
+      X"'(connection)' is there, ready to be hidden"
     }  
   }
 //So, MyAction becomes shorter and better checked: 
