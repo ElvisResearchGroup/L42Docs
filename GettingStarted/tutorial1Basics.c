@@ -9,11 +9,8 @@ AdamsTowel is continuing to evolve;
 this document does not represent the current state
 of AdamsTowel, but an ideal target destination.
 WBR
-This document is a work in progress,
-so chapters 10 and 11 are not as well thought out as the rest of the document,
-and other chapters may still be inserted.
-The syntax highlighter is still in progress.
-
+The language 42 and many 42 metaphors are inspired by
+ The Hitchhiker's Guide to the Galaxy by Douglas Adams.
 WBigTitle(Basics)
 WTitle((1/5)Simple hello world program)
 Let's look at a simple hello world program: 
@@ -31,6 +28,7 @@ When we write Wcode(reuse L42.is/AdamsTowel) we are asking 42 to
 reuse the code of the library found in the internet address 
 Wcode(L42.is/AdamsTowel).
 AdamsTowel is our Towel, that is the set of classes and interfaces that we wish to start from (Wlink(towel,Deploy code)).
+A Towel usually plays the role of "the standard library" of most languages.
 Wcode(L42.is) is the main website of 42, where most commonly used libraries are hosted. To reuse code you 
 need an internet connection; but this also means that you will never have to manually import any code.
 Required code will be transitively downloaded and cached on your machine, so you need not to be aware of the existence of this mechanism.
@@ -55,7 +53,7 @@ we write Wcode(Debug(S"Hello world")).
 For the same code, some other languages would require 
 a more verbouse Wcode(Debug.println(..)). 
 
-Objects and classes that can be used as functions are called WEmph(funtors).
+Objects and classes that can be used as functions are called WEmph(functors) (as intended in C++).
 WBR
 In 42 Strings and numbers need to be created by their type, as in
 Wcode(S"Hello world") or Wcode(12Num), as explained in 
@@ -117,10 +115,16 @@ CCode
 Here you can see we define a Wcode(Point) class with coordinates Wcode(x) and Wcode(y) of type Wcode(Num),
 unlimited precision rational number.
 
-
-Wcode(Data) is a decorator. Decorators are classes/objects that offer an operator Wcode(<><), called the babel fish operator,
+In addition of Wcode(x),
+ Wcode(y),
+ Wcode(add(x))
+ and Wcode(add(y))
+ Wcode(Point) will offer many other useful methods since it has been declared using
+ Wcode(Data).
+ WP
+Indeed, Wcode(Data) is a decorator. Decorators are classes/objects that offer an operator Wcode(<><), called the babel fish operator,
 whose goal is to translate a library into a "better" library.
-In this case, Wcode(Data) is translating the class Wcode(`{Num x, Num y}')
+In this case, Wcode(Data) is translating the class Wcode(`{Num x, Num y .....}')
  into a much longer class, with
 a factory method taking in input the fields and initializing them; but also containing
  boring but useful definitions for

@@ -56,11 +56,8 @@ AdamsTowel is continuing to evolve;
 this document does not represent the current state
 of AdamsTowel, but an ideal target destination.
 <br/>
-This document is a work in progress,
-so chapters 10 and 11 are not as well thought out as the rest of the document,
-and other chapters may still be inserted.
-The syntax highlighter is still in progress.
-
+The language 42 and many 42 metaphors are inspired by
+ The Hitchhiker's Guide to the Galaxy by Douglas Adams.
 </p><h1> Basics </h1> <p>
 </p><h2> (1/5)Simple hello world program </h2> <p>
 Let's look at a simple hello world program: 
@@ -78,6 +75,7 @@ When we write '<span class="code"><![CDATA[reuse L42.is/AdamsTowel]]></span>' we
 reuse the code of the library found in the internet address 
 '<span class="code"><![CDATA[L42.is/AdamsTowel]]></span>'.
 AdamsTowel is our Towel, that is the set of classes and interfaces that we wish to start from (<a href="towel.xhtml">Deploy code</a>).
+A Towel usually plays the role of "the standard library" of most languages.
 '<span class="code"><![CDATA[L42.is]]></span>' is the main website of 42, where most commonly used libraries are hosted. To reuse code you 
 need an internet connection; but this also means that you will never have to manually import any code.
 Required code will be transitively downloaded and cached on your machine, so you need not to be aware of the existence of this mechanism.
@@ -102,7 +100,7 @@ we write '<span class="code"><![CDATA[Debug(S"Hello world")]]></span>'.
 For the same code, some other languages would require 
 a more verbouse '<span class="code"><![CDATA[Debug.println(..)]]></span>'. 
 
-Objects and classes that can be used as functions are called <span style="color:#ff1111; font-weight: bold;"> funtors </span>.
+Objects and classes that can be used as functions are called <span style="color:#ff1111; font-weight: bold;"> functors </span> (as intended in C++).
 <br/>
 In 42 Strings and numbers need to be created by their type, as in
 '<span class="code"><![CDATA[S"Hello world"]]></span>' or '<span class="code"><![CDATA[12Num]]></span>', as explained in 
@@ -164,10 +162,16 @@ Point: Data <>< {
 Here you can see we define a '<span class="code"><![CDATA[Point]]></span>' class with coordinates '<span class="code"><![CDATA[x]]></span>' and '<span class="code"><![CDATA[y]]></span>' of type '<span class="code"><![CDATA[Num]]></span>',
 unlimited precision rational number.
 
-
-'<span class="code"><![CDATA[Data]]></span>' is a decorator. Decorators are classes/objects that offer an operator '<span class="code"><![CDATA[<><]]></span>', called the babel fish operator,
+In addition of '<span class="code"><![CDATA[x]]></span>',
+ '<span class="code"><![CDATA[y]]></span>',
+ '<span class="code"><![CDATA[add(x)]]></span>'
+ and '<span class="code"><![CDATA[add(y)]]></span>'
+ '<span class="code"><![CDATA[Point]]></span>' will offer many other useful methods since it has been declared using
+ '<span class="code"><![CDATA[Data]]></span>'.
+ </p><p>
+Indeed, '<span class="code"><![CDATA[Data]]></span>' is a decorator. Decorators are classes/objects that offer an operator '<span class="code"><![CDATA[<><]]></span>', called the babel fish operator,
 whose goal is to translate a library into a "better" library.
-In this case, '<span class="code"><![CDATA[Data]]></span>' is translating the class '<span class="code"><![CDATA[{Num x, Num y}]]></span>'
+In this case, '<span class="code"><![CDATA[Data]]></span>' is translating the class '<span class="code"><![CDATA[{Num x, Num y .....}]]></span>'
  into a much longer class, with
 a factory method taking in input the fields and initializing them; but also containing
  boring but useful definitions for
