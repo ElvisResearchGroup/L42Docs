@@ -48,11 +48,13 @@ It is always statically known what exceptions every piece of code can raise.
 As for Java, this is obtained by declaring exceptions on the method signature.
 However, 42 offers convenient syntactic sugar to turn exceptions into errors/other exceptions.
 WTitle(Subtyping control)
-In 42 all class types are exact, so if a method takes a Wcode(Point), and Wcode(Point) is not
+In Java subtype is always possible (when not prevented by the Wcode(final) keyword), while 42 is more restrictive:
+Only interface provide subtyping, while classes are all exact types,
+that is, if a method takes a Wcode(Point), and Wcode(Point) is not
 an interface, that method is always going to receive exactly a point. 
-If Wcode(Point) is an interface, you know is going to be some class implementing that interface.
-Subtyping control also implies conventional
-avoidance of method not understood.
+On the other side, if Wcode(Point) is an interface, you know is going to be some class implementing that interface.
+This subtyping restriction, coupuled with metaprogramming operations like Wcode(Redirect) and generics, encourages frameworks to be instantiated at metaprogramming time instead of using subtyping.
+We believe this allows to reduce the use of subtyping only when is really needed, allowing easier reasoning on the code.
 WTitle(MetaSafety)
 
 Most other meta-programming approaches allows for new type errors to be introduced by metaprogramming.

@@ -3250,11 +3250,13 @@ It is always statically known what exceptions every piece of code can raise.
 As for Java, this is obtained by declaring exceptions on the method signature.
 However, 42 offers convenient syntactic sugar to turn exceptions into errors/other exceptions.
 </p><h2> Subtyping control </h2> <p>
-In 42 all class types are exact, so if a method takes a '<span class="code"><![CDATA[Point]]></span>', and '<span class="code"><![CDATA[Point]]></span>' is not
+In Java subtype is always possible (when not prevented by the '<span class="code"><![CDATA[final]]></span>' keyword), while 42 is more restrictive:
+Only interface provide subtyping, while classes are all exact types,
+that is, if a method takes a '<span class="code"><![CDATA[Point]]></span>', and '<span class="code"><![CDATA[Point]]></span>' is not
 an interface, that method is always going to receive exactly a point. 
-If '<span class="code"><![CDATA[Point]]></span>' is an interface, you know is going to be some class implementing that interface.
-Subtyping control also implies conventional
-avoidance of method not understood.
+On the other side, if '<span class="code"><![CDATA[Point]]></span>' is an interface, you know is going to be some class implementing that interface.
+This subtyping restriction, coupuled with metaprogramming operations like '<span class="code"><![CDATA[Redirect]]></span>' and generics, encourages frameworks to be instantiated at metaprogramming time instead of using subtyping.
+We believe this allows to reduce the use of subtyping only when is really needed, allowing easier reasoning on the code.
 </p><h2> MetaSafety </h2> <p>
 
 Most other meta-programming approaches allows for new type errors to be introduced by metaprogramming.
