@@ -828,7 +828,7 @@ use '<span class="code"><![CDATA[_".."]]></span>', the <span style="color:#ff111
 provide a compact syntax.
 </li></ul>
 
- </p><p id="InterfacesAndData"> </p><h1> Interfaces, Concepts and Data </h1> <p>
+ </p><p id="InterfacesAndData"> </p><h1> Interfaces, Concept and Data </h1> <p>
 
 </p><h2> (1/5)Interfaces, Basis and Details </h2> <p>
 </p><h2> Interfaces Basis </h2> <p>
@@ -922,17 +922,17 @@ For example, consider the following code:
 <pre class="l42Big"><![CDATA[
 Shape: {interface
   class method 
-  Int numberOfSides()
+  Num numberOfSides()
   class method
   This newShape(Color that)
   method
   Void draw(Canvas that)
   }
 
-Square: Data <>< {implements Shape
+Square: {implements Shape
   Color color
   method numberOfSides() //class method implemented
-    4Int
+    4Num
   method newShape(that) //class method implemented
     This(color: that)
   method draw(that) ( //method implemented
@@ -940,7 +940,7 @@ Square: Data <>< {implements Shape
   }
 /*..*/
 class Shape kindOfShape= Square
-kindOfShape.numberOfSides()==4Int //holds
+kindOfShape.numberOfSides()==4Num //holds
 Shape s= kindOfShape.newShape(Color.red())
 ]]></pre>
 
@@ -980,12 +980,12 @@ Such '<span class="code"><![CDATA[$]]></span>' classes are referred as service c
 They are needed by the code but do not serve any role
 in the abstract model of the application.
 
-</p><h2> (3/5)Concepts: ToS, Equals, Classable, ... </h2> <p>
-'<span class="code"><![CDATA[Concepts]]></span>' is a class defined in AdamsTowel,
+</p><h2> (3/5)Concept: ToS, Equals, Classable, ... </h2> <p>
+'<span class="code"><![CDATA[Concept]]></span>' is a class defined in AdamsTowel,
 containing interfaces commonly used by many classes.
 </p><p>
 The most well known one is 
-'<span class="code"><![CDATA[Concepts.ToS]]></span>', implemented by all objects that can
+'<span class="code"><![CDATA[Concept.ToS]]></span>', implemented by all objects that can
 be converted in human readable strings.
 
 In AdamsTowel, all basic classes (as alphanumeric, numeric and units) just return the simplest
@@ -997,34 +997,34 @@ and '<span class="code"><![CDATA[Meter"12".toS()==S"12"]]></span>'.
 </p><p>
 Other objects prints their fields content in square brackets.
 '<span class="code"><![CDATA[Data]]></span>' generates a reasonable
-'<span class="code"><![CDATA[Concepts.ToS]]></span>' implementation, following this patter. For fields of interface type,
+'<span class="code"><![CDATA[Concept.ToS]]></span>' implementation, following this patter. For fields of interface type,
 the class name of the stored instance is also produced.
 Plain representations from basic classes are escaped and enclosed with double quotes.
 
 </p><p>
-Another very well known interface is '<span class="code"><![CDATA[Concepts.Equals]]></span>'
+Another very well known interface is '<span class="code"><![CDATA[Concept.Equals]]></span>'
 implemented by objects that can be compared with
-'<span class="code"><![CDATA[read method Bool equals(read Concepts.Equals that)]]></span>'.
+'<span class="code"><![CDATA[read method Bool equals(read Concept.Equals that)]]></span>'.
 Such objects usually also define methods '<span class="code"><![CDATA[==]]></span>' and '<span class="code"><![CDATA[!= ]]></span>'
 based on '<span class="code"><![CDATA[equals]]></span>', but is not required by the interface.
 
-'<span class="code"><![CDATA[Data]]></span>' will automatically generate a valid '<span class="code"><![CDATA[Concepts.Equals]]></span>'
+'<span class="code"><![CDATA[Data]]></span>' will automatically generate a valid '<span class="code"><![CDATA[Concept.Equals]]></span>'
 implementation, and derived methods '<span class="code"><![CDATA[==]]></span>' and '<span class="code"><![CDATA[!= ]]></span>'.
 The default implementation of 
 '<span class="code"><![CDATA[Data]]></span>' does not takes circular object graphs in account, and will loop in those cases. We discuss how to personalize the behaviour of '<span class="code"><![CDATA[Data]]></span>' in <a href="dataAndInvariants.xhtml">Data documentation</a>.
 
 </p><p>
-Finally, an interface that nearly every class or interface implements is '<span class="code"><![CDATA[Concepts.Classable]]></span>'.
+Finally, an interface that nearly every class or interface implements is '<span class="code"><![CDATA[Concept.Classable]]></span>'.
 It allows us to get the class object out of an ordinary instance.
 This is very useful when wanting to create an instance based on another.
 For example, to create another shape of the same kind as a given shape,
 we could do the following: 
 <pre class="l42Big"><![CDATA[
-Shape: {interface implements Concepts.Classable
+Shape: {interface implements Concept.Classable
   class method This newShape(Color that)
   refine method This class()
   }
-Square: Data <>< {implements Shape
+Square: {implements Shape
   Color color
   method newShape(that) //implemented from Shape
     This(color: that)
@@ -1038,25 +1038,25 @@ s.class().newShape(Color.red())
 Where the interface '<span class="code"><![CDATA[Shape]]></span>' defines an abstract factory method (that is,
 an interface class method returning something of type '<span class="code"><![CDATA[This]]></span>')
 and class '<span class="code"><![CDATA[Square]]></span>' implements
- '<span class="code"><![CDATA[Shape]]></span>' (and thus also '<span class="code"><![CDATA[Concepts.Classable]]></span>').
+ '<span class="code"><![CDATA[Shape]]></span>' (and thus also '<span class="code"><![CDATA[Concept.Classable]]></span>').
  
  
-</p><h2> (4/5)Concepts.Invariant </h2> <p>
+</p><h2> (4/5)Concept.Invariant </h2> <p>
  
-'<span class="code"><![CDATA[Concepts.Invariant]]></span>' is another interface implemented very often and
+'<span class="code"><![CDATA[Concept.Invariant]]></span>' is another interface implemented very often and
  that can be handled by '<span class="code"><![CDATA[Data]]></span>', but in a different way from the former ones: 
  An object is more than just a record storing other objects of various types;
  those values are bond together by an invariant: a property that
  holds for all objects of that class.
  AdamsTowel and '<span class="code"><![CDATA[Data]]></span>'
- use '<span class="code"><![CDATA[Concepts.Invariant]]></span>' to represent this idea: 
- a class that does not implement '<span class="code"><![CDATA[Concepts.Invariant]]></span>' just has the
+ use '<span class="code"><![CDATA[Concept.Invariant]]></span>' to represent this idea: 
+ a class that does not implement '<span class="code"><![CDATA[Concept.Invariant]]></span>' just has the
  empty invariant enforced by the types of its fields, but the programmer can specify a
- more stringent invariant by implementing '<span class="code"><![CDATA[Concepts.Invariant]]></span>', as 
+ more stringent invariant by implementing '<span class="code"><![CDATA[Concept.Invariant]]></span>', as 
  in the following code: 
  
  <pre class="l42Big"><![CDATA[
-BoundingBox: Data <>< {implements Concepts.Invariant
+BoundingBox: Data <>< {implements Concept.Invariant
   var Meter minX
   var Meter minY
   var Meter maxX
@@ -1132,7 +1132,7 @@ Nums[a;b;c]+d==Nums[a;b;c;d]
 //sequence concatenation
 Nums[a;b]++Nums[c;d]==Nums[a;b;c;d]
 //element removal
-Nums[a;b;b;c] - b==Nums[a;c] //only if elements implements Concepts.Equals
+Nums[a;b;b;c] - b==Nums[a;c] //only if elements implements Concept.Equals
 //set subtraction
 Nums[a;b;b;c] -- Nums[b;c]==Nums[a] //same for all the operators under
 //set intersection
@@ -1165,7 +1165,7 @@ Nums[a;b;c;d].without(index: 2Size) == Nums[a;b;d]
 Nums[a;b;c;d].withoutLeft() == Nums[b;c;d]
 Nums[a;b;c;d].withoutRight() == Nums[a;b;c]
 
-//filtering, if elements implements Concepts.Equals
+//filtering, if elements implements Concept.Equals
 Nums[a;b;c;b;d].withoutAll(val: b) == Nums[a;c;d]
 Nums[a;b;c;b;d].withoutLeft(val: b) == Nums[a;c;b;d] //filter out the leftmost b
 Nums[a;b;c;b;d].withoutRight(val: b) == Nums[a;b;c;d] //filter out the rightmost b
@@ -1319,7 +1319,7 @@ foo.remove(index: 2Size) //foo == Nums[a;b;d]
 foo.removeLeft() //foo == Nums[b;c;d]
 foo.removeRight() //foo == Nums[a;b;c]
 
-//removal, if elements implements Concepts.Equals
+//removal, if elements implements Concept.Equals
 foo.removeAll(val: b) //foo == Nums[a;c;d]
 foo.removeLeft(val: b) //remove the leftmost b
 foo.removeRight(val: b) //remove the rightmost b
@@ -1345,7 +1345,7 @@ with myElem in vec.vals() (result:= result++myElem) //like for(myElem: vec){..}
 with myData= foo.bar() ( //like a typecase/switch/chain of instanceof
   on S  Debug(S"A string "++myData) //print strings
   on Num  void //do nothing if is a number
-  on Concepts.ToS Debug(myData) //print stringables that are not numbers. 
+  on Concept.ToS Debug(myData) //print stringables that are not numbers. 
   )
 ]]></pre>
 The semantics of '<span class="code"><![CDATA[with-on]]></span>' is that the

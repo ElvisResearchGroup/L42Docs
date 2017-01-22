@@ -1,4 +1,4 @@
-WBigTitle(`Interfaces, Concepts and Data')
+WBigTitle(`Interfaces, Concept and Data')
 
 WTitle((1/5)`Interfaces, Basis and Details')
 WTitle( Interfaces Basis)
@@ -92,17 +92,17 @@ For example, consider the following code:
 OBCode
 Shape: {interface
   class method 
-  Int numberOfSides()
+  Num numberOfSides()
   class method
   This newShape(Color that)
   method
   Void draw(Canvas that)
   }
 
-Square: Data <>< {implements Shape
+Square: {implements Shape
   Color color
   method numberOfSides() //class method implemented
-    4Int
+    4Num
   method newShape(that) //class method implemented
     This(color: that)
   method draw(that) ( //method implemented
@@ -110,7 +110,7 @@ Square: Data <>< {implements Shape
   }
 /*..*/
 class Shape kindOfShape= Square
-kindOfShape.numberOfSides()==4Int //holds
+kindOfShape.numberOfSides()==4Num //holds
 Shape s= kindOfShape.newShape(Color.red())
 CCode
 
@@ -150,12 +150,12 @@ Such Wcode($) classes are referred as service classes.
 They are needed by the code but do not serve any role
 in the abstract model of the application.
 
-WTitle((3/5)`Concepts: ToS, Equals, Classable, ...')
-Wcode(Concepts) is a class defined in AdamsTowel,
+WTitle((3/5)`Concept: ToS, Equals, Classable, ...')
+Wcode(Concept) is a class defined in AdamsTowel,
 containing interfaces commonly used by many classes.
 WP
 The most well known one is 
-Wcode(Concepts.ToS), implemented by all objects that can
+Wcode(Concept.ToS), implemented by all objects that can
 be converted in human readable strings.
 
 In AdamsTowel, all basic classes (as alphanumeric, numeric and units) just return the simplest
@@ -167,35 +167,35 @@ and Wcode(Meter"12".toS()==S"12").
 WP
 Other objects prints their fields content in square brackets.
 Wcode(Data) generates a reasonable
-Wcode(Concepts.ToS) implementation, following this patter. For fields of interface type,
+Wcode(Concept.ToS) implementation, following this patter. For fields of interface type,
 the class name of the stored instance is also produced.
 Plain representations from basic classes are escaped and enclosed with double quotes.
 
 WP
-Another very well known interface is Wcode(Concepts.Equals)
+Another very well known interface is Wcode(Concept.Equals)
 implemented by objects that can be compared with
-Wcode(read method Bool equals(read Concepts.Equals that)).
+Wcode(read method Bool equals(read Concept.Equals that)).
 Such objects usually also define methods Wcode(==) and Wcode(!= )
 based on Wcode(equals), but is not required by the interface.
 
-Wcode(Data) will automatically generate a valid Wcode(Concepts.Equals)
+Wcode(Data) will automatically generate a valid Wcode(Concept.Equals)
 implementation, and derived methods Wcode(==) and Wcode(!= ).
 The default implementation of 
 Wcode(Data) does not takes circular object graphs in account, and will loop in those cases. We discuss how to personalize the behaviour of Wcode(Data) in Wlink(dataAndInvariants,
 `Data documentation').
 
 WP
-Finally, an interface that nearly every class or interface implements is Wcode(Concepts.Classable).
+Finally, an interface that nearly every class or interface implements is Wcode(Concept.Classable).
 It allows us to get the class object out of an ordinary instance.
 This is very useful when wanting to create an instance based on another.
 For example, to create another shape of the same kind as a given shape,
 we could do the following: 
 OBCode
-Shape: {interface implements Concepts.Classable
+Shape: {interface implements Concept.Classable
   class method This newShape(Color that)
   refine method This class()
   }
-Square: Data <>< {implements Shape
+Square: {implements Shape
   Color color
   method newShape(that) //implemented from Shape
     This(color: that)
@@ -209,25 +209,25 @@ CCode
 Where the interface Wcode(Shape) defines an abstract factory method (that is,
 an interface class method returning something of type Wcode(This))
 and class Wcode(Square) implements
- Wcode(Shape) (and thus also Wcode(Concepts.Classable)).
+ Wcode(Shape) (and thus also Wcode(Concept.Classable)).
  
  
-WTitle((4/5)`Concepts.Invariant')
+WTitle((4/5)`Concept.Invariant')
  
-Wcode(Concepts.Invariant) is another interface implemented very often and
+Wcode(Concept.Invariant) is another interface implemented very often and
  that can be handled by Wcode(Data), but in a different way from the former ones: 
  An object is more than just a record storing other objects of various types;
  those values are bond together by an invariant: a property that
  holds for all objects of that class.
  AdamsTowel and Wcode(Data)
- use Wcode(Concepts.Invariant) to represent this idea: 
- a class that does not implement Wcode(Concepts.Invariant) just has the
+ use Wcode(Concept.Invariant) to represent this idea: 
+ a class that does not implement Wcode(Concept.Invariant) just has the
  empty invariant enforced by the types of its fields, but the programmer can specify a
- more stringent invariant by implementing Wcode(Concepts.Invariant), as 
+ more stringent invariant by implementing Wcode(Concept.Invariant), as 
  in the following code: 
  
  OBCode
-BoundingBox: Data <>< {implements Concepts.Invariant
+BoundingBox: Data <>< {implements Concept.Invariant
   var Meter minX
   var Meter minY
   var Meter maxX

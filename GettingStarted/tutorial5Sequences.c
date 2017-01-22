@@ -27,7 +27,7 @@ Nums[a;b;c]+d==Nums[a;b;c;d]
 //sequence concatenation
 Nums[a;b]++Nums[c;d]==Nums[a;b;c;d]
 //element removal
-Nums[a;b;b;c] - b==Nums[a;c] //only if elements implements Concepts.Equals
+Nums[a;b;b;c] - b==Nums[a;c] //only if elements implements Concept.Equals
 //set subtraction
 Nums[a;b;b;c] -- Nums[b;c]==Nums[a] //same for all the operators under
 //set intersection
@@ -60,7 +60,7 @@ Nums[a;b;c;d].without(index: 2Size) == Nums[a;b;d]
 Nums[a;b;c;d].withoutLeft() == Nums[b;c;d]
 Nums[a;b;c;d].withoutRight() == Nums[a;b;c]
 
-//filtering, if elements implements Concepts.Equals
+//filtering, if elements implements Concept.Equals
 Nums[a;b;c;b;d].withoutAll(val: b) == Nums[a;c;d]
 Nums[a;b;c;b;d].withoutLeft(val: b) == Nums[a;c;b;d] //filter out the leftmost b
 Nums[a;b;c;b;d].withoutRight(val: b) == Nums[a;b;c;d] //filter out the rightmost b
@@ -214,7 +214,7 @@ foo.remove(index: 2Size) //foo == Nums[a;b;d]
 foo.removeLeft() //foo == Nums[b;c;d]
 foo.removeRight() //foo == Nums[a;b;c]
 
-//removal, if elements implements Concepts.Equals
+//removal, if elements implements Concept.Equals
 foo.removeAll(val: b) //foo == Nums[a;c;d]
 foo.removeLeft(val: b) //remove the leftmost b
 foo.removeRight(val: b) //remove the rightmost b
@@ -240,7 +240,7 @@ with myElem in vec.vals() (result:= result++myElem) //like for(myElem: vec){..}
 with myData= foo.bar() ( //like a typecase/switch/chain of instanceof
   on S  Debug(S"A string "++myData) //print strings
   on Num  void //do nothing if is a number
-  on Concepts.ToS Debug(myData) //print stringables that are not numbers. 
+  on Concept.ToS Debug(myData) //print stringables that are not numbers. 
   )
 CCode
 The semantics of Wcode(with-on) is that the
