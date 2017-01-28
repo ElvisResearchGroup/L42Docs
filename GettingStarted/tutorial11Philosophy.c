@@ -57,7 +57,7 @@ This subtyping restriction, coupuled with metaprogramming operations like Wcode(
 We believe this allows to reduce the use of subtyping only when is really needed, allowing easier reasoning on the code.
 WTitle(MetaSafety)
 
-Most other meta-programming approaches allows for new type errors to be introduced by metaprogramming.
+Most other meta-programming approaches allow for new type errors to be introduced by metaprogramming.
 WP
 In 42 meta-programming can not add type errors to otherwise
 well-typed code. Note that code can be non well-typed either because it is ill-typed or
@@ -81,7 +81,7 @@ WP
 
 Nested library declarations containing library literals,
 as for example
-Wcode(`Point: Data <>< {Num x, Num y, method This add(S x) This.with(x: /+x)}'), can produce
+Wcode(`Point: Data <>< {Num x, Num y, method This add(S x) This.with(x: \+x)}'), can produce
 non well-typed code, if some contained library literals was non well-typed.
 In the case of our example, we mistakenly used the Wcode(S) type instead of 
 Wcode(Num); this will cause a type error in the result, which can be traced back to a type error
