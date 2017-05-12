@@ -311,7 +311,7 @@ MyCollection: {
     }
   class method
   Library vector(class Any of) {
-    oldPart= Collection.vector(of: of)
+    oldPart= Collections.vector(of: of)
     newPart= Refactor.Redirect(Path"T" to: of) <>< this.traitSum()
     return Refactor.compose(left: oldPart, right: newPart)
     }
@@ -337,7 +337,7 @@ Wcode(T).
 WBR
 The idea is that
 the composition of Wcode(traitSum()) and
-Wcode(Collection.traitValsT()) is complete code.
+Wcode(Collections.traitValsT()) is complete code.
 However, even declaring Wcode(traitSum()) as
 OBCode
 class method
@@ -356,7 +356,7 @@ TraitSum: Resource <>< Extend[Collections.traitValsT()] <>< {/*my sum feature as
 MyCollection: {
   class method
   Library vector(class Any of) (
-    oldPart= Collection.vector(of: of) //surely works
+    oldPart= Collections.vector(of: of) //surely works
     {newPart= Refactor.Redirect(Path"T" to: of) <>< TraitSum()
     return Extend[oldPart] <>< newPart
     catch exception MetaGuard g return oldPart

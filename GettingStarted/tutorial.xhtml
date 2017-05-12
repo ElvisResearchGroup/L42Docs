@@ -2613,7 +2613,7 @@ MyCollection: {
     }
   class method
   Library vector(class Any of) {
-    oldPart= Collection.vector(of: of)
+    oldPart= Collections.vector(of: of)
     newPart= Refactor.Redirect(Path"T" to: of) <>< this.traitSum()
     return Refactor.compose(left: oldPart, right: newPart)
     }
@@ -2639,7 +2639,7 @@ the minimal code skeleton to make '<span class="code"><![CDATA[vals()]]></span>'
 <br/>
 The idea is that
 the composition of '<span class="code"><![CDATA[traitSum()]]></span>' and
-'<span class="code"><![CDATA[Collection.traitValsT()]]></span>' is complete code.
+'<span class="code"><![CDATA[Collections.traitValsT()]]></span>' is complete code.
 However, even declaring '<span class="code"><![CDATA[traitSum()]]></span>' as
 <pre class="l42Big"><![CDATA[
 class method
@@ -2658,7 +2658,7 @@ TraitSum: Resource <>< Extend[Collections.traitValsT()] <>< {/*my sum feature as
 MyCollection: {
   class method
   Library vector(class Any of) (
-    oldPart= Collection.vector(of: of) //surely works
+    oldPart= Collections.vector(of: of) //surely works
     {newPart= Refactor.Redirect(Path"T" to: of) <>< TraitSum()
     return Extend[oldPart] <>< newPart
     catch exception MetaGuard g return oldPart
@@ -3106,7 +3106,7 @@ However, Library developers need to carefully consider the effect of embroidery.
 Observer: {interface
   mut method update()
   }
-Observers: Collection.vector(ofMut: Observer)
+Observers: Collections.vector(ofMut: Observer)
 
 Traits: {
 

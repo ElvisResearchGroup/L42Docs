@@ -260,11 +260,11 @@ support generation of documentation with metaprogramming.
 \frametitle{Collection generation / not with generics}
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-NVector: Collection.vector(N)
+NVector: Collections.vector(N)
 
-PointSet:Collection.set(Point)
+PointSet:Collections.set(Point)
 
-StudentList:Collection.orderedList(Student, orderedBy:{
+StudentList:Collections.orderedList(Student, orderedBy:{
   method Boolean(Student a, Student b) {return a.name>b.name}
   })
 \end{lstlisting}
@@ -276,7 +276,7 @@ Multiple incompatible collections can be generated for the same type, in order t
 \begin{frame}[fragile]
 \frametitle{Collection generation / not with generics}
 Thanks to \Q@Refactor::Redirect@ we can emulate generics, just redirect a class to the final destination.
-Internally, the code of \Q@Collection.vector@ may look like the following
+Internally, the code of \Q@Collections.vector@ may look like the following
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
 Collection:{...
@@ -289,10 +289,10 @@ Collection:{...
   }
 \end{lstlisting}
 \end{NiceCode}
-And the result of \Q@NVec:Collection.vector(N)@ could be:
+And the result of \Q@NVec:Collections.vector(N)@ could be:
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-$\Comment{NVec:Collection.vector(N)}$
+$\Comment{NVec:Collections.vector(N)}$
 NVec:{()
   method Void add(N that){...}
   ...}

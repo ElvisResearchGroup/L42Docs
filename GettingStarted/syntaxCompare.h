@@ -251,7 +251,7 @@ WTitle(Vectors)
 OCode
 names= Strings[S"Fred";S"Mary";S"Mark"]
 
-Years: Collection.vector(of: Year) //we define it
+Years: Collections.vector(of: Year) //we define it
 
 ages= Years[20Year;23Year;22Year]
 
@@ -265,7 +265,7 @@ with n in names.vals(), a in ages.vals() (
   Debug(Person(name: n, age: a)) //print all the persons
   ) //fails with error if names.size()!= ages.size()
 
-Persons: Collection.vector(of: Person)
+Persons: Collections.vector(of: Person)
 
 friends= Persons[
   Person(name: S"Fred", age: 20Year);

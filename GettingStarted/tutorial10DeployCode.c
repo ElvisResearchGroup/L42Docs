@@ -404,7 +404,7 @@ OBCode
 Observer: {interface
   mut method update()
   }
-Observers: Collection.vector(ofMut: Observer)
+Observers: Collections.vector(ofMut: Observer)
 
 Traits: {
 
