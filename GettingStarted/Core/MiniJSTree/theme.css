@@ -1,0 +1,59 @@
+body {
+	background-color:white;
+}
+
+.documentation {
+	overflow: scroll;
+	height: 350px;
+	font-size: 15px;
+	background-color:white;
+}
+
+.outline {
+	overflow: scroll;
+	height: 350px;
+	font-size: 15px;
+	background-color:white;
+}
+
+.title{
+	padding:5px;
+	border:5px 
+	solid #ccc; 
+	font-size: 20px;
+	background-color:lightgray;
+}
+
+div.mytree div {
+	padding-left:20px;
+	background:transparent url("leaf.png") no-repeat top left;
+}
+div.mytree div.parent div {
+	display:none;
+	cursor:default;
+}
+div.mytree div.parent {
+	cursor:pointer;
+	background:transparent url("open.png") no-repeat top left;
+}
+div.mytree div.expanded {
+	background:transparent url("expanded.png") no-repeat top left;
+}
+
+
+span.kind{ display: inline-block; width: 13px; }
+span.kind-Interface{ color:#0080ff; }
+span.kind-OpenClass{ color:#0080ff; }
+span.kind-ClosedClass{ color:#ff0000; }
+span.kind-Template{ color:#0080ff; }
+span.kind-FreeTemplate{ color:#33ff33; }
+span.kind-InterfaceImplementedMethod{ color:#0080ff; }
+span.kind-AbstractMethod{ color:#0080ff; }
+span.kind-ImplementedMethod{ color:#ff0000; }
+
+span.mdf{ display: inline-block; width: 13px; }
+span.mdf-Mutable{ color:#ff0000; } /* Red */
+span.mdf-Lent{ color:#0080ff; } /* Blue */
+span.mdf-Read{ color:#33ff33; } /* Green */
+span.mdf-Class{ color:#000000; } /* Black */
+span.mdf-Capsule{ color:#4000ff; } /* Purple */

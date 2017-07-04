@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <title>TITLE STUFFS</title>
+    <link rel="stylesheet" href="theme/style.min.css" />
+    <link rel="stylesheet" href="theme.css" />
+  </head>
+
+  <div class="title">
+    Outline
+	  <div class="outline" id="outline"></div>
+  </div>
+
+  <div class="title">
+    Documentation
+    <pre class="documentation"></pre>   
+  </div>   
+
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+  	<script src="jstree.min.js"></script>
+    <script src="app.js"></script>
+    <script src="l42JsonConverter.js"></script>
+
+    <div id="page-wrapper">
+
+        <h1>Text File Reader</h1>
+        <div>
+            Select a text file: 
+            <input type="file" id="fileInput">
+        </div>
+        <pre id="fileDisplayArea"><pre>
+
+    </div>
+  <body>
+  	<script>
+
+      // Create a tree using the string 'testL42JsonString'
+      $('#outline').jstree({ 'core' : {
+        'data' : convertToTreeJson(testL42JsonString)
+      } });
+
+      // Documentation Div
+      var documentation = document.getElementsByClassName("documentation")[0];
+
+      // When we click on a node in the tree. Change the documentation
+      $('#outline').on("changed.jstree", function (e, data) {
+        var doc = data.node.original.doc;
+
+        var formatted = formatDocumentation(doc);
+        while ( documentation.firstChild ) documentation.removeChild( documentation.firstChild );
+        documentation.appendChild(formatted);
+      });
+  	</script>
+  </body>
+</html>

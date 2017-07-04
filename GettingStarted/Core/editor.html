@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Editor</title>
+  <style type="text/css" media="screen">
+    body {
+        overflow: hidden;
+    }
+
+    #editor {
+        margin: 0;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+  </style>
+</head>
+<body>
+
+<pre id="editor">// OPERATORS
+// OPERATORS
+// OPERATORS
++ ++
+- --
+* **
+/
+%
+!|%|&|\\*|\\-\\-|\\-|\\+\\+|\\+|==|=|:=|!=|<=|>=|<|>|&&|[\\/]|\\*=|%=|\\+=|\\-=|&=
+
+
+// TABS
+// TABS
+// TABS
+
+                 
+// COMMENTS
+// COMMENTS
+// COMMENTS
+/*
+ifweopifgjweg
+*/
+
+/* weiogweioghweiohg */
+
+// Comment comment
+
+// STRINGS
+// STRINGS
+// STRINGS
+"I have a lot of text on a line"
+'I also have a lot of text on a line'
+
+"
+Error multiline
+"
+
+"
+'Working multiline
+"
+
+
+// METHOD NAME - TODO
+// METHOD NAME - TODO
+// METHOD NAME - TODO
+.methodName(
+.methodName
+
+
+
+// Upper Identidiers
+// Upper Identidiers
+// Upper Identidiers
+54ABCD
+ABCD54
+
+
+// PARAMETERS
+// PARAMETERS
+// PARAMETERS
+
+list: Collections.vector(of: Point)
+jump: field, time: t
+
+
+
+// Method(
+// Method(
+// Method(
+
+getTime(
+getValue(
+.setTime
+.setValue
+.setTime(t: t)
+.setValue(t: t)
+
+
+
+// KEYWORDS
+// KEYWORDS
+// KEYWORDS
+refine|method|interface|reuse|return|
+error|exception|in|if|while|
+with|on|catch|class|mut|
+lent|read|capsule|var|default|
+use|check|loop|else|void|implements
+
+
+// NUMBERS
+// NUMBERS
+// NUMBERS
+3N
+26236N
+84574577N
+
+
+// REUSE KEYWORD
+// REUSE KEYWORD
+// REUSE KEYWORD
+
+reuse something
+reuse long/library/from/somewhere
+{reuse long/library/from/somewhere
+{reuse long/library/from/somewhere {
+{reuse long/library/from/somewhere }
+{reuse long/library/from/somewhere // Talking
+{reuse long/library/from/somewhere { // Talking
+
+
+
+
+
+
+
+
+</pre>
+
+<script src="js/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/l42_eclipse");
+    editor.session.setMode("ace/mode/l42");
+    editor.session.setUseSoftTabs(false);
+</script>
+
+</body>
+</html>
