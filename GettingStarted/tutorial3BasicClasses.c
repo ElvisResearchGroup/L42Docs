@@ -122,7 +122,9 @@ fast1= Speed(42Meter per: 0.1Second)
 fast2= Speed"420" //equivalent ways to initialize it
 fast3= Speed"840/2"
 distance1= fast1.multiply(bySecond:60Second) //fast1.right(left: 60Second)
-fast1(*Second:60\)
+
+fast1(*Second:60\)  fast1*60Second
+
 Acc: Units.of(Speed per: Second)
 g= Acc"9.8"
 speedAfter= g.multiply(bySecond:10Second)//g.right(left: 10Second) //98 m/s
