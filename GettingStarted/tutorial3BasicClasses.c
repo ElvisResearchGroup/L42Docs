@@ -121,12 +121,12 @@ Speed: Units.of(Meter per: Second)
 fast1= Speed(42Meter per: 0.1Second)
 fast2= Speed"420" //equivalent ways to initialize it
 fast3= Speed"840/2"
-distance1= fast1.right(left: 60Second)
-
+distance1= fast1.multiply(bySecond:60Second) //fast1.right(left: 60Second)
+fast1(*Second:60\)
 Acc: Units.of(Speed per: Second)
 g= Acc"9.8"
-speedAfter= g.right(left: 10Second) //98 m/s
-distance2= speedAfter.right(left: 10Second)/2Num //490 m after 10s free fall
+speedAfter= g.multiply(bySecond:10Second)//g.right(left: 10Second) //98 m/s
+distance2= speedAfter.multiply(bySecond:10Second)//speedAfter.right(left: 10Second)/2Num //490 m after 10s free fall
 
 Kg: Units.of(Num)
 Newton: Units.of(Kg and: Acc) //Kg*m/s2
