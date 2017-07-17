@@ -670,7 +670,7 @@ Mathematically you can obtain the support out of the unit by
 division; that is, 42 meters divided by 2 meters is  21.
 This do not work directly in 42, since multiplication and division
 takes the support( '<span class="code"><![CDATA[Num]]></span>' in our examples) and not a unit.
-Units provide method '<span class="code"><![CDATA[divide(that)]]></span>' for this aim.
+Units provide operator '<span class="code"><![CDATA[/~/]]></span>' for this aim.
 Units also provide method  '<span class="code"><![CDATA[#inner()]]></span>',
 this is just extracting the value of the support from the unit.
 This can be convenient during programming but 
@@ -679,10 +679,9 @@ Methods like that are required to be used with care, so they start with
 '<span class="code"><![CDATA[#]]></span>' to underline that.
 
 <pre class="l42Big"><![CDATA[
-Num n1= 42Meter.divide(2Meter) //= 21Num
+Num n1= 42Meter /~/ 2Meter //= 21Num
 Num n2= 42Meter.#inner() //= 42Num
 ]]></pre>
-
 
 
 </p><h2> Composite Units </h2> <p>
@@ -693,12 +692,12 @@ Speed: Units.of(Meter per: Second)
 fast1= Speed(42Meter per: 0.1Second)
 fast2= Speed"420" //equivalent ways to initialize it
 fast3= Speed"840/2"
-distance1= fast1.right(left: 60Second)
+distance1= 60Second *< fast1 //fast1.right(left: 60Second)
 
 Acc: Units.of(Speed per: Second)
 g= Acc"9.8"
-speedAfter= g.right(left: 10Second) //98 m/s
-distance2= speedAfter.right(left: 10Second)/2Num //490 m after 10s free fall
+speedAfter= 10Second *<g //g.right(left: 10Second) //98 m/s
+distance2= 10Second *<speedAfter//speedAfter.right(left: 10Second)/2Num //490 m after 10s free fall
 
 Kg: Units.of(Num)
 Newton: Units.of(Kg and: Acc) //Kg*m/s2
@@ -706,14 +705,53 @@ myRoket= 900Newton
 gForceOnMe= Newton(78Kg and: g) //little less than 780
 myLift= myRoket-gForceOnMe
 if myLift>0Newton (Debug(S"I can fly"))
-myAcc= myLift.right(left: 78Kg) //get second component
-reachedHeight= myAcc.right(left: 10Second).right(left: 10Second)/2Num //after 10 sec
+myAcc= myLift ~/78Kg //myLift.right(left: 78Kg) //get second component
+reachedHeight= (10Second /< (10Second /< myAcc)) /2Num
+//myAcc.right(left: 10Second).right(left: 10Second)/2Num //after 10 sec
 ]]></pre>
-Note how in a cmposite unit we can use '<span class="code"><![CDATA[right(left)]]></span>' and
+
+As you see we have two types of composite units:
+multiplication (and) and division (per),
+as in 
+ '<span class="code"><![CDATA[Newton: Units.of(Kg and: Acc)]]></span>' 
+and in
+ '<span class="code"><![CDATA[Speed: Units.of(Meter per: Second)]]></span>'
+To extract the two components from a multiplication we use the left and right divisions
+'<span class="code"><![CDATA[~/]]></span>' 
+and  '<span class="code"><![CDATA[/~]]></span>'.
+
+To extract the two components from a division, we use the over times and over division operators
+'<span class="code"><![CDATA[*<]]></span>' 
+and  '<span class="code"><![CDATA[/<]]></span>'.
+
+In general, in a composite unit we can use '<span class="code"><![CDATA[right(left)]]></span>' and
  '<span class="code"><![CDATA[left(right)]]></span>' 
  to extract the right component providing a value 
 for the left one, or we can extract the left component providing a value for the right one.
- 
+
+To recap, we leverage on many algebraic binary operators:
+'<span class="code"><![CDATA[+]]></span>' 
+and
+'<span class="code"><![CDATA[-]]></span>' 
+to sum/subtract units of the same type,
+'<span class="code"><![CDATA[*]]></span>' 
+and
+'<span class="code"><![CDATA[/]]></span>' 
+to multiply and divide units with their support type,
+'<span class="code"><![CDATA[*<]]></span>' 
+and
+'<span class="code"><![CDATA[/<]]></span>' 
+to multiply and divide units against composite division units,
+'<span class="code"><![CDATA[~/]]></span>' 
+and
+'<span class="code"><![CDATA[/~]]></span>' 
+to divide composite multiplication units by their  left/right components;
+finally we use '<span class="code"><![CDATA[/~/]]></span>'  to divide a unit by itself and get the support type.
+
+
+
+
+
 </p><p>
 We can also define aliasing units: 
 
@@ -824,8 +862,8 @@ and '<span class="code"><![CDATA[Alphanumeric]]></span>' to give meaning to your
 In this way, the type system will help you to use values with the semantics you decided.
 </li><li>
 Both alphanumerics and enumerations
-use '<span class="code"><![CDATA[_".."]]></span>', the <span style="color:#ff1111; font-weight: bold;"> string literal postfix operator </span> to
-provide a compact syntax.
+offer  the string literal postfix operator to
+provide a compact initialization syntax.
 </li></ul>
 
  </p><p id="InterfacesAndData"> </p><h1> Interfaces, Concept and Data </h1> <p>
@@ -3259,7 +3297,7 @@ This subtyping restriction, coupuled with metaprogramming operations like '<span
 We believe this allows to reduce the use of subtyping only when is really needed, allowing easier reasoning on the code.
 </p><h2> MetaSafety </h2> <p>
 
-Most other meta-programming approaches allows for new type errors to be introduced by metaprogramming.
+Most other meta-programming approaches allow for new type errors to be introduced by metaprogramming.
 </p><p>
 In 42 meta-programming can not add type errors to otherwise
 well-typed code. Note that code can be non well-typed either because it is ill-typed or
@@ -3283,7 +3321,7 @@ since they do not contains any library literal.
 
 Nested library declarations containing library literals,
 as for example
-'<span class="code"><![CDATA[Point: Data <>< {Num x, Num y, method This add(S x) This.with(x: /+x)}]]></span>', can produce
+'<span class="code"><![CDATA[Point: Data <>< {Num x, Num y, method This add(S x) This.with(x: \+x)}]]></span>', can produce
 non well-typed code, if some contained library literals was non well-typed.
 In the case of our example, we mistakenly used the '<span class="code"><![CDATA[S]]></span>' type instead of 
 '<span class="code"><![CDATA[Num]]></span>'; this will cause a type error in the result, which can be traced back to a type error

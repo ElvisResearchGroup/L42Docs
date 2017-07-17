@@ -98,7 +98,7 @@ Mathematically you can obtain the support out of the unit by
 division; that is, 42 meters divided by 2 meters is  21.
 This do not work directly in 42, since multiplication and division
 takes the support( Wcode(Num) in our examples) and not a unit.
-Units provide method Wcode(divide(that)) for this aim.
+Units provide operator Wcode(/~/) for this aim.
 Units also provide method  Wcode(`#'inner()),
 this is just extracting the value of the support from the unit.
 This can be convenient during programming but 
@@ -107,10 +107,9 @@ Methods like that are required to be used with care, so they start with
 Wcode(`#') to underline that.
 
 OBCode
-Num n1= 42Meter.divide(2Meter) //= 21Num
+Num n1= 42Meter /~/ 2Meter //= 21Num
 Num n2= 42Meter.#inner() //= 42Num
 CCode
-
 
 
 WTitle(Composite Units)
@@ -121,14 +120,12 @@ Speed: Units.of(Meter per: Second)
 fast1= Speed(42Meter per: 0.1Second)
 fast2= Speed"420" //equivalent ways to initialize it
 fast3= Speed"840/2"
-distance1= fast1.multiply(bySecond:60Second) //fast1.right(left: 60Second)
-
-fast1(*Second:60\)  fast1*60Second
+distance1= 60Second *< fast1 //fast1.right(left: 60Second)
 
 Acc: Units.of(Speed per: Second)
 g= Acc"9.8"
-speedAfter= g.multiply(bySecond:10Second)//g.right(left: 10Second) //98 m/s
-distance2= speedAfter.multiply(bySecond:10Second)//speedAfter.right(left: 10Second)/2Num //490 m after 10s free fall
+speedAfter= 10Second *<g //g.right(left: 10Second) //98 m/s
+distance2= 10Second *<speedAfter//speedAfter.right(left: 10Second)/2Num //490 m after 10s free fall
 
 Kg: Units.of(Num)
 Newton: Units.of(Kg and: Acc) //Kg*m/s2
@@ -136,14 +133,53 @@ myRoket= 900Newton
 gForceOnMe= Newton(78Kg and: g) //little less than 780
 myLift= myRoket-gForceOnMe
 if myLift>0Newton (Debug(S"I can fly"))
-myAcc= myLift.right(left: 78Kg) //get second component
-reachedHeight= myAcc.right(left: 10Second).right(left: 10Second)/2Num //after 10 sec
+myAcc= myLift ~/78Kg //myLift.right(left: 78Kg) //get second component
+reachedHeight= (10Second /< (10Second /< myAcc)) /2Num
+//myAcc.right(left: 10Second).right(left: 10Second)/2Num //after 10 sec
 CCode
-Note how in a cmposite unit we can use Wcode(right(left)) and
+
+As you see we have two types of composite units:
+multiplication (and) and division (per),
+as in 
+ Wcode(Newton: Units.of(Kg and: Acc)) 
+and in
+ Wcode(Speed: Units.of(Meter per: Second))
+To extract the two components from a multiplication we use the left and right divisions
+Wcode(~/) 
+and  Wcode(/~).
+
+To extract the two components from a division, we use the over times and over division operators
+Wcode(*<) 
+and  Wcode(/<).
+
+In general, in a composite unit we can use Wcode(right(left)) and
  Wcode(left(right)) 
  to extract the right component providing a value 
 for the left one, or we can extract the left component providing a value for the right one.
- 
+
+To recap, we leverage on many algebraic binary operators:
+Wcode(+) 
+and
+Wcode(-) 
+to sum/subtract units of the same type,
+Wcode(*) 
+and
+Wcode(/) 
+to multiply and divide units with their support type,
+Wcode(*<) 
+and
+Wcode(/<) 
+to multiply and divide units against composite division units,
+Wcode(~/) 
+and
+Wcode(/~) 
+to divide composite multiplication units by their  left/right components;
+finally we use Wcode(/~/)  to divide a unit by itself and get the support type.
+
+
+
+
+
 WP
 We can also define aliasing units: 
 
@@ -254,6 +290,6 @@ and Wcode(Alphanumeric) to give meaning to your constants.
 In this way, the type system will help you to use values with the semantics you decided.
 </li><li>
 Both alphanumerics and enumerations
-use Wcode(_".."), the WEmph(string literal postfix operator) to
-provide a compact syntax.
+offer  the string literal postfix operator to
+provide a compact initialization syntax.
 </li></ul>
