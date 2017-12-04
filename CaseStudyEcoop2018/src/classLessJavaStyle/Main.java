@@ -5,37 +5,16 @@ public class Main {
 }
 
 // 0
-interface Point {
+@Obj interface Point {
   int x();
-
   int y();
 
-  static Point of(int x, int y) {
-    return new Point() {
-      public int x() {
-        return x;
-      }
-
-      public int y() {
-        return y;
-      }
-    };
-  }
+  static Point of(int x, int y) { return new Point() { public int x() { return x; } public int y() { return y; } }; }
 }
 
 // 1
-interface PointSum extends Point {
-  static PointSum of(int x, int y) {
-    return new PointSum() {
-      public int x() {
-        return x;
-      }
-
-      public int y() {
-        return y;
-      }
-    };
-  }
+@Obj interface PointSum extends Point {
+  static PointSum of(int x, int y) { return new PointSum() { public int x() { return x; } public int y() { return y; } }; }
 
   default PointSum sum(Point that) {
     return of(this.x() + that.x(), this.y() + that.y());
@@ -43,18 +22,8 @@ interface PointSum extends Point {
 }
 
 // 2
-interface PointSub extends Point {
-  static PointSub of(int x, int y) {
-    return new PointSub() {
-      public int x() {
-        return x;
-      }
-
-      public int y() {
-        return y;
-      }
-    };
-  }
+@Obj interface PointSub extends Point {
+  static PointSub of(int x, int y) { return new PointSub() { public int x() { return x; } public int y() { return y; } }; }
 
   default PointSub sub(Point that) {
     return of(this.x() - that.x(), this.y() - that.y());
@@ -62,18 +31,8 @@ interface PointSub extends Point {
 }
 
 // 3
-interface PointMul extends Point {
-  static PointMul of(int x, int y) {
-    return new PointMul() {
-      public int x() {
-        return x;
-      }
-
-      public int y() {
-        return y;
-      }
-    };
-  }
+@Obj interface PointMul extends Point {
+  static PointMul of(int x, int y) { return new PointMul() { public int x() { return x; } public int y() { return y; } }; }
 
   default PointMul mul(Point that) {
     return of(this.x() * that.x(), this.y() * that.y());
@@ -81,18 +40,8 @@ interface PointMul extends Point {
 }
 
 // 4
-interface PointDiv extends Point {
-  static PointDiv of(int x, int y) {
-    return new PointDiv() {
-      public int x() {
-        return x;
-      }
-
-      public int y() {
-        return y;
-      }
-    };
-  }
+@Obj interface PointDiv extends Point {
+  static PointDiv of(int x, int y) { return new PointDiv() { public int x() { return x; } public int y() { return y; } }; }
 
   default PointDiv div(Point that) {
     return of(this.x() / that.x(), this.y() / that.y());
@@ -100,18 +49,8 @@ interface PointDiv extends Point {
 }
 
 // 5
-interface PointSumMul extends PointSum, PointMul {
-  static PointSumMul of(int x, int y) {
-    return new PointSumMul() {
-      public int x() {
-        return x;
-      }
-
-      public int y() {
-        return y;
-      }
-    };
-  }
+@Obj interface PointSumMul extends PointSum, PointMul {
+  static PointSumMul of(int x, int y) { return new PointSumMul() { public int x() { return x; } public int y() { return y; } }; }
 
   default PointSumMul sum(Point that) {// we have to rewrite the method calling the new "of"
     return of(this.x() + that.x(), this.y() + that.y());// in order to produce an instance of PointSumMul
@@ -123,18 +62,8 @@ interface PointSumMul extends PointSum, PointMul {
 }
 
 // 6
-interface PointSumSub extends PointSum, PointSub {
-  static PointSumSub of(int x, int y) {
-    return new PointSumSub() {
-      public int x() {
-        return x;
-      }
-
-      public int y() {
-        return y;
-      }
-    };
-  }
+@Obj interface PointSumSub extends PointSum, PointSub {
+  static PointSumSub of(int x, int y) { return new PointSumSub() { public int x() { return x; } public int y() { return y; } }; }
 
   default PointSumSub sum(Point that) {// we have to rewrite the method calling the new "of"
     return of(this.x() + that.x(), this.y() + that.y());// in order to produce an instance of PointSumMul
@@ -146,18 +75,8 @@ interface PointSumSub extends PointSum, PointSub {
 }
 
 // 7
-interface PointSumDiv extends PointSum, PointDiv {
-  static PointSumDiv of(int x, int y) {
-    return new PointSumDiv() {
-      public int x() {
-        return x;
-      }
-
-      public int y() {
-        return y;
-      }
-    };
-  }
+@Obj interface PointSumDiv extends PointSum, PointDiv {
+  static PointSumDiv of(int x, int y) { return new PointSumDiv() { public int x() { return x; } public int y() { return y; } }; }
 
   default PointSumDiv sum(Point that) {// we have to rewrite the method calling the new "of"
     return of(this.x() + that.x(), this.y() + that.y());// in order to produce an instance of PointSumMul
@@ -169,18 +88,8 @@ interface PointSumDiv extends PointSum, PointDiv {
 }
 
 // 8
-interface PointSubMul extends PointMul, PointSub {
-  static PointSubMul of(int x, int y) {
-    return new PointSubMul() {
-      public int x() {
-        return x;
-      }
-
-      public int y() {
-        return y;
-      }
-    };
-  }
+@Obj interface PointSubMul extends PointMul, PointSub {
+  static PointSubMul of(int x, int y) { return new PointSubMul() { public int x() { return x; } public int y() { return y; } }; }
 
   default PointSubMul mul(Point that) {// we have to rewrite the method calling the new "of"
     return of(this.x() * that.x(), this.y() * that.y());// in order to produce an instance of PointSumMul
@@ -192,18 +101,8 @@ interface PointSubMul extends PointMul, PointSub {
 }
 
 // 9
-interface PointSubDiv extends PointSub, PointDiv {
-  static PointSubDiv of(int x, int y) {
-    return new PointSubDiv() {
-      public int x() {
-        return x;
-      }
-
-      public int y() {
-        return y;
-      }
-    };
-  }
+@Obj interface PointSubDiv extends PointSub, PointDiv {
+  static PointSubDiv of(int x, int y) { return new PointSubDiv() { public int x() { return x; } public int y() { return y; } }; }
 
   default PointSubDiv sub(Point that) {// we have to rewrite the method calling the new "of"
     return of(this.x() - that.x(), this.y() - that.y());// in order to produce an instance of PointSumMul
@@ -215,18 +114,8 @@ interface PointSubDiv extends PointSub, PointDiv {
 }
 
 // 10
-interface PointMulDiv extends PointMul, PointDiv {
-  static PointMulDiv of(int x, int y) {
-    return new PointMulDiv() {
-      public int x() {
-        return x;
-      }
-
-      public int y() {
-        return y;
-      }
-    };
-  }
+@Obj interface PointMulDiv extends PointMul, PointDiv {
+  static PointMulDiv of(int x, int y) { return new PointMulDiv() { public int x() { return x; } public int y() { return y; } }; }
 
   default PointMulDiv mul(Point that) {// we have to rewrite the method calling the new "of"
     return of(this.x() * that.x(), this.y() * that.y());// in order to produce an instance of PointSumMul
@@ -238,18 +127,8 @@ interface PointMulDiv extends PointMul, PointDiv {
 }
 
 // 11
-interface PointSumSubDiv extends PointSumSub, PointSumDiv, PointSubDiv {
-  static PointSumSubDiv of(int x, int y) {
-    return new PointSumSubDiv() {
-      public int x() {
-        return x;
-      }
-
-      public int y() {
-        return y;
-      }
-    };
-  }
+@Obj interface PointSumSubDiv extends PointSumSub, PointSumDiv, PointSubDiv {
+  static PointSumSubDiv of(int x, int y) { return new PointSumSubDiv() { public int x() { return x; } public int y() { return y; } }; }
 
   default PointSumSubDiv sum(Point that) {
     return of(this.x() + that.x(), this.y() + that.y());
@@ -265,18 +144,8 @@ interface PointSumSubDiv extends PointSumSub, PointSumDiv, PointSubDiv {
 }
 
 // 12
-interface PointSumSubMul extends PointSumSub, PointSumMul, PointSubMul {
-  static PointSumSubMul of(int x, int y) {
-    return new PointSumSubMul() {
-      public int x() {
-        return x;
-      }
-
-      public int y() {
-        return y;
-      }
-    };
-  }
+@Obj interface PointSumSubMul extends PointSumSub, PointSumMul, PointSubMul {
+  static PointSumSubMul of(int x, int y) { return new PointSumSubMul() { public int x() { return x; } public int y() { return y; } }; }
 
   default PointSumSubMul sum(Point that) {
     return of(this.x() + that.x(), this.y() + that.y());
@@ -292,18 +161,8 @@ interface PointSumSubMul extends PointSumSub, PointSumMul, PointSubMul {
 }
 
 // 13
-interface PointSumMulDiv extends PointSumMul, PointMulDiv, PointSumDiv {
-  static PointSumMulDiv of(int x, int y) {
-    return new PointSumMulDiv() {
-      public int x() {
-        return x;
-      }
-
-      public int y() {
-        return y;
-      }
-    };
-  }
+@Obj interface PointSumMulDiv extends PointSumMul, PointMulDiv, PointSumDiv {
+  static PointSumMulDiv of(int x, int y) { return new PointSumMulDiv() { public int x() { return x; } public int y() { return y; } }; }
 
   default PointSumMulDiv sum(Point that) {
     return of(this.x() + that.x(), this.y() + that.y());
@@ -319,18 +178,8 @@ interface PointSumMulDiv extends PointSumMul, PointMulDiv, PointSumDiv {
 }
 
 // 14
-interface PointSubMulDiv extends PointSubMul, PointMulDiv, PointSubDiv {
-  static PointSubMulDiv of(int x, int y) {
-    return new PointSubMulDiv() {
-      public int x() {
-        return x;
-      }
-
-      public int y() {
-        return y;
-      }
-    };
-  }
+@Obj interface PointSubMulDiv extends PointSubMul, PointMulDiv, PointSubDiv {
+  static PointSubMulDiv of(int x, int y) { return new PointSubMulDiv() { public int x() { return x; } public int y() { return y; } }; }
 
   default PointSubMulDiv sub(Point that) {
     return of(this.x() - that.x(), this.y() - that.y());
@@ -346,18 +195,8 @@ interface PointSubMulDiv extends PointSubMul, PointMulDiv, PointSubDiv {
 }
 
 // 15
-interface PointSumSubMulDiv extends PointSumSubMul, PointSumMulDiv, PointSumSubDiv, PointSubMulDiv {
-  static PointSumSubMulDiv of(int x, int y) {
-    return new PointSumSubMulDiv() {
-      public int x() {
-        return x;
-      }
-
-      public int y() {
-        return y;
-      }
-    };
-  }
+@Obj interface PointSumSubMulDiv extends PointSumSubMul, PointSumMulDiv, PointSumSubDiv, PointSubMulDiv {
+  static PointSumSubMulDiv of(int x, int y) { return new PointSumSubMulDiv() { public int x() { return x; } public int y() { return y; } }; }
 
   default PointSumSubMulDiv sum(Point that) {
     return of(this.x() + that.x(), this.y() + that.y());
