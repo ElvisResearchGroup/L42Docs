@@ -3,9 +3,9 @@ package imperativeVisitor;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Main {
 
-}
+
+
 
 // e::= x | \x.e | e1 e1 | l | e1-e2
 interface Exp {
@@ -256,16 +256,18 @@ class AlphaXFresh extends CloneVisitor {
 
   AlphaXFresh(String x, Set<String> used) {
     this.x = x;
+    this.yFresh = fresh(x,used);
+    }
+  static String fresh(String x,Set<String>used) {
     for (int num = 0;; num++) {
       String current = x + num;
       if (used.contains(current)) {
         continue;
       }
       used.add(current);
-      this.yFresh = current;
-      return;
+      return current;
+      }
     }
-  }
 
   @Override
   public Exp visit(X e) {
