@@ -5,7 +5,6 @@ trait Base {
     def eval: Int
   }
 
-
   class Num(val value: Int) extends Exp {
     def eval: Int = value
   }
@@ -14,7 +13,6 @@ trait Base {
 }
 
 trait BasePlus extends Base {
-
   class Plus(val left: exp, val right: exp) extends Exp {
     def eval: Int = left.eval + right.eval
   }
@@ -23,16 +21,13 @@ trait BasePlus extends Base {
 }
 
 trait BaseNeg extends Base {
-
   class Neg(val term: exp) extends Exp {
     def eval = -term.eval
   }
 
   type BaseNeg = Neg
 }
-
 trait BasePlusNeg extends BasePlus with BaseNeg
-
 trait Show extends Base {
   type exp <: Exp
 
@@ -46,11 +41,9 @@ trait Show extends Base {
   }
 
   final class Num(v: Int) extends BaseNum(v) with NumBehavior with Exp
-
 }
 
 trait ShowPlusNeg extends BasePlusNeg with Show {
-
   trait PlusBehavior {
     self: BasePlus =>
     def show = left.show + "+" + right.show;
@@ -62,9 +55,8 @@ trait ShowPlusNeg extends BasePlusNeg with Show {
     self: BaseNeg =>
     def show = "-(" + term.show + ")";
   }
-
+  
   class Neg(t: exp) extends BaseNeg(t) with NegBehavior with Exp
-
 }
 
 trait DblePlusNeg extends BasePlusNeg {
@@ -80,14 +72,12 @@ trait DblePlusNeg extends BasePlusNeg {
 
   def Neg(t: exp): exp
 
-
   trait NumBehavior {
     self: BaseNum =>
     def dble = Num(value * 2)
   }
 
   final class Num(v: Int) extends BaseNum(v) with NumBehavior with Exp
-
 
   trait PlusBehavior {
     self: BasePlus =>
@@ -96,48 +86,14 @@ trait DblePlusNeg extends BasePlusNeg {
 
   class Plus(l: exp, r: exp) extends BasePlus(l, r) with PlusBehavior with Exp
 
-
   trait NegBehavior {
     self: BaseNeg =>
     def dble = Neg(term.dble)
   }
 
   class Neg(t: exp) extends super.Neg(t) with NegBehavior with Exp
-
 }
-
-trait ShowDblePlusNeg extends ShowPlusNeg with DblePlusNeg {
-  type exp <: Exp
-
-  trait Exp extends super[ShowPlusNeg].Exp with super[DblePlusNeg].Exp;
-
-  trait NumBehavior extends super[ShowPlusNeg].NumBehavior with super[DblePlusNeg].NumBehavior {
-    self: BaseNum =>
-  }
-
-  final class Num(v: Int) extends BaseNum(v)
-    with NumBehavior
-    with Exp
-
-
-  trait PlusBehavior extends super[ShowPlusNeg].PlusBehavior with super[DblePlusNeg].PlusBehavior {
-    self: BasePlus =>
-  }
-
-  final class Plus(l: exp, r: exp) extends BasePlus(l, r)
-    with PlusBehavior
-    with Exp
-
-  trait NegBehavior extends super[ShowPlusNeg].NegBehavior with super[DblePlusNeg].NegBehavior {
-    self: BaseNeg =>
-  }
-
-  final class Neg(t: exp) extends BaseNeg(t)
-    with NegBehavior
-    with Exp
-
-}
-
+//-------------------
 trait Equals extends Base {
   type exp <: Exp;
 
@@ -154,9 +110,7 @@ trait Equals extends Base {
     override def isNum(v: Int) = v == value;
   }
 
-
   final class Num(v: Int) extends BaseNum(v) with NumBehavior with Exp
-
 }
 
 trait EqualsPlusNeg extends BasePlusNeg with Equals {
@@ -169,11 +123,9 @@ trait EqualsPlusNeg extends BasePlusNeg with Equals {
     def isNeg(t: exp): Boolean = false;
   }
 
-
   final class Num(v: Int) extends BaseNum(v)
     with NumBehavior // effectively super[Equals].NumBehavior
     with Exp
-
 
   trait PlusBehavior extends Exp {
     self: BasePlus =>
@@ -184,7 +136,6 @@ trait EqualsPlusNeg extends BasePlusNeg with Equals {
 
   final class Plus(l: exp, r: exp) extends BasePlus(l, r) with PlusBehavior with Exp
 
-
   trait NegBehavior extends Exp {
     self: BaseNeg =>
     def eql(other: exp): Boolean = other.isNeg(term);
@@ -193,7 +144,6 @@ trait EqualsPlusNeg extends BasePlusNeg with Equals {
   }
 
   final class Neg(t: exp) extends BaseNeg(t) with NegBehavior with Exp
-
 }
 
 trait EqualsShowPlusNeg extends EqualsPlusNeg with ShowPlusNeg {
@@ -201,7 +151,6 @@ trait EqualsShowPlusNeg extends EqualsPlusNeg with ShowPlusNeg {
 
   trait Exp extends super[EqualsPlusNeg].Exp
     with super[ShowPlusNeg].Exp
-
 
   trait NumBehavior extends super[EqualsPlusNeg].NumBehavior with super[ShowPlusNeg].NumBehavior {
     self: BaseNum =>
@@ -220,5 +169,28 @@ trait EqualsShowPlusNeg extends EqualsPlusNeg with ShowPlusNeg {
   }
 
   class Neg(term: exp) extends BaseNeg(term) with NegBehavior with Exp
+}
+//---
+trait ShowDblePlusNeg extends ShowPlusNeg with DblePlusNeg {
+  type exp <: Exp
 
+  trait Exp extends super[ShowPlusNeg].Exp with super[DblePlusNeg].Exp;
+
+  trait NumBehavior extends super[ShowPlusNeg].NumBehavior with super[DblePlusNeg].NumBehavior {
+    self: BaseNum =>
+  }
+
+  final class Num(v: Int) extends BaseNum(v) with NumBehavior with Exp
+
+  trait PlusBehavior extends super[ShowPlusNeg].PlusBehavior with super[DblePlusNeg].PlusBehavior {
+    self: BasePlus =>
+  }
+
+  final class Plus(l: exp, r: exp) extends BasePlus(l, r) with PlusBehavior with Exp
+
+  trait NegBehavior extends super[ShowPlusNeg].NegBehavior with super[DblePlusNeg].NegBehavior {
+    self: BaseNeg =>
+  }
+
+  final class Neg(t: exp) extends BaseNeg(t) with NegBehavior with Exp
 }
