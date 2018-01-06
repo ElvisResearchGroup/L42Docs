@@ -20,7 +20,7 @@ class Color {
   }
 }
 
-class Point {
+class Point {//10 lines
   final int x;
   final int y;
 
@@ -38,7 +38,7 @@ class Point {
   }
 }
 
-class PointSum extends Point {
+class PointSum extends Point {//9 lines
   public PointSum(int x, int y) {
     super(x, y);
   }
@@ -56,7 +56,7 @@ class PointSum extends Point {
   }
 }
 
-class CPoint extends PointSum {
+class CPoint extends PointSum {//13 lines
   final Color color;
 
   public CPoint(int x, int y, Color color) {
@@ -81,7 +81,7 @@ class CPoint extends PointSum {
   }
 }
 
-class FCPoint extends CPoint {
+class FCPoint extends CPoint {//15 lines
   final Flavor flavor;
 
   public FCPoint(int x, int y, Color color, Flavor flavor) {

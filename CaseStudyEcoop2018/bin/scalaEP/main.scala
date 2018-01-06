@@ -93,7 +93,7 @@ trait DblePlusNeg extends BasePlusNeg {
 
   class Neg(t: exp) extends super.Neg(t) with NegBehavior with Exp
 }
-//-- 52 lines up to here, not counting new lines and '}'
+//-------------------
 trait Equals extends Base {
   type exp <: Exp;
 
@@ -170,8 +170,7 @@ trait EqualsShowPlusNeg extends EqualsPlusNeg with ShowPlusNeg {
 
   class Neg(term: exp) extends BaseNeg(term) with NegBehavior with Exp
 }
-//--- 40 lines for equals
-//the rest is some examples of composing traits from the paper.
+//---
 trait ShowDblePlusNeg extends ShowPlusNeg with DblePlusNeg {
   type exp <: Exp
 

@@ -1,7 +1,7 @@
 package classicJavaStyle;
 
 //0
-class Point {
+class Point {//6
   final int x;
   final int y;
 
@@ -12,7 +12,7 @@ class Point {
 }
 
 // 1
-class PointSum extends Point {
+class PointSum extends Point {//5*4
   public PointSum(int x, int y) {
     super(x, y);
   }
@@ -56,7 +56,7 @@ class PointDiv extends Point {
 }
 
 // 5
-class PointSumSub extends PointSum {
+class PointSumSub extends PointSum {//7*6
   public PointSumSub(int x, int y) {
     super(x, y);
   }
@@ -146,7 +146,7 @@ class PointMulDiv extends PointMul {
 }
 
 // 11
-class PointSumSubDiv extends PointSumSub {
+class PointSumSubDiv extends PointSumSub {//9*4
   public PointSumSubDiv(int x, int y) {
     super(x, y);
   }
@@ -222,7 +222,7 @@ class PointSubMulDiv extends PointMulDiv {
 }
 
 // 15
-class PointSumSubMulDiv extends PointSumSubMul {
+class PointSumSubMulDiv extends PointSumSubMul {//11
   public PointSumSubMulDiv(int x, int y) {
     super(x, y);
   }
