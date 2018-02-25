@@ -146,7 +146,71 @@ trait DbleNeg extends BaseNeg with Dble {
   def Neg(t: exp): exp
 
   class Neg(t: exp) extends super.Neg(t) with NegBehavior with Exp
+}//78 lines up to here, not couting new lines and '}'
+
+
+//glue code: 27 lines
+object All0 extends 
+Eval with Show with Dble 
+with EvalNum with EvalPlus with EvalNeg 
+with ShowNum with ShowPlus with ShowNeg 
+with DbleNum with DblePlus with DbleNeg 
+    {
+  override type exp = Exp
+  
+  trait Exp extends 
+  super[Eval].Exp with super[Show].Exp with super[Dble].Exp
+  with super[DbleNum].Exp with super[DblePlus].Exp with super[DbleNeg].Exp 
+
+  trait NumBehavior extends
+  super[EvalNum].NumBehavior with super[ShowNum].NumBehavior
+  with super[DbleNum].NumBehavior{
+    self: BaseNum =>
+  }
+
+  class Num(v: Int) extends BaseNum(v) with NumBehavior with Exp
+
+  trait PlusBehavior extends
+  super[EvalPlus].PlusBehavior with super[ShowPlus].PlusBehavior
+  with super[DblePlus].PlusBehavior {
+    self: BasePlus =>
+  }
+
+   class Plus(l: exp, r: exp) extends BasePlus(l, r) with PlusBehavior with Exp
+
+  trait NegBehavior extends
+      super[EvalNeg].NegBehavior with super[ShowNeg].NegBehavior
+      with super[DbleNeg].NegBehavior {
+    self: BaseNeg =>
+  }
+
+  class Neg(t: exp) extends BaseNeg(t) with NegBehavior with Exp
+  
+  def Num(v: Int) = new Num(v)
+  
+  def Plus(l: exp, r: exp) =new Plus(l,r)
+
+  def Neg(t: exp) = new Neg(t)
 }
+
+object Test4 extends App {
+    import All._
+    println("All:")
+    println(new Num(3).show)
+    println(new Plus(new Num(3), new Num(4)).show)
+    println(new Neg(new Num(13)).show)
+
+    println(new Num(3).eval)
+    println(new Plus(new Num(3), new Num(4)).eval)
+    println(new Neg(new Num(13)).eval)
+
+    println(new Num(3).dble.show)
+    println(new Plus(new Num(3), new Num(4)).dble.show)
+    println(new Neg(new Num(13)).dble.show)
+}
+
+
+
 //----------------------EQUALS
 trait Equals extends Base {
   type exp <: Exp;
@@ -206,7 +270,7 @@ trait EqualsNeg extends BaseNeg with Equals {
 
   class Neg(t: exp) extends BaseNeg(t) with NegBehavior with Exp
 }
-
+//31 lines for equals, 29 glue
 object All extends 
 Eval with Show with Dble with Equals 
 with EvalNum with EvalPlus with EvalNeg 
@@ -266,65 +330,6 @@ object Test5 extends App {
     println(new Num(3).eql(new Num(3)))
     println(new Plus(new Num(3), new Num(4)).eql(new Num(3)))
     println(new Neg(new Num(13)).eql(new Neg(new Num(3))))
-
-    println(new Num(3).dble.show)
-    println(new Plus(new Num(3), new Num(4)).dble.show)
-    println(new Neg(new Num(13)).dble.show)
-}
-
-object All0 extends 
-Eval with Show with Dble 
-with EvalNum with EvalPlus with EvalNeg 
-with ShowNum with ShowPlus with ShowNeg 
-with DbleNum with DblePlus with DbleNeg 
-    {
-  override type exp = Exp
-  
-  trait Exp extends 
-  super[Eval].Exp with super[Show].Exp with super[Dble].Exp
-  with super[DbleNum].Exp with super[DblePlus].Exp with super[DbleNeg].Exp 
-
-  trait NumBehavior extends
-  super[EvalNum].NumBehavior with super[ShowNum].NumBehavior
-  with super[DbleNum].NumBehavior{
-    self: BaseNum =>
-  }
-
-  class Num(v: Int) extends BaseNum(v) with NumBehavior with Exp
-
-  trait PlusBehavior extends
-  super[EvalPlus].PlusBehavior with super[ShowPlus].PlusBehavior
-  with super[DblePlus].PlusBehavior {
-    self: BasePlus =>
-  }
-
-   class Plus(l: exp, r: exp) extends BasePlus(l, r) with PlusBehavior with Exp
-
-  trait NegBehavior extends
-      super[EvalNeg].NegBehavior with super[ShowNeg].NegBehavior
-      with super[DbleNeg].NegBehavior {
-    self: BaseNeg =>
-  }
-
-  class Neg(t: exp) extends BaseNeg(t) with NegBehavior with Exp
-  
-  def Num(v: Int) = new Num(v)
-  
-  def Plus(l: exp, r: exp) =new Plus(l,r)
-
-  def Neg(t: exp) = new Neg(t)
-}
-
-object Test4 extends App {
-    import All._
-    println("All:")
-    println(new Num(3).show)
-    println(new Plus(new Num(3), new Num(4)).show)
-    println(new Neg(new Num(13)).show)
-
-    println(new Num(3).eval)
-    println(new Plus(new Num(3), new Num(4)).eval)
-    println(new Neg(new Num(13)).eval)
 
     println(new Num(3).dble.show)
     println(new Plus(new Num(3), new Num(4)).dble.show)
