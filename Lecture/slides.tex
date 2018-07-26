@@ -16,7 +16,7 @@ Main1:{
   }
 //Our computation can return CODE; code in 42 is of type 'Library'
 
-Main2: Debug(S"Hello "++Main1.surprise())
+Main2: Debug(S"Hello "++Main1.foo())
 //Main2 can use Main1, since is declared later.
 //Classes are compiled top-bottom
 \end{lstlisting}
@@ -46,34 +46,6 @@ Point(x:4Num, y:2Num) //(6) factory call. Parameter names are required.
 \end{NiceCode}
 \end{frame}
 
-\begin{frame}[fragile]
-\frametitle{My first Trait}
-\begin{NiceCode}{59ex}{0.8}
-\begin{lstlisting}
-reuse $\ReuseUrl{L42.is/AdamTowel}$
-
-MessageTrait:Trait<><{
-
-  class method S message()=S"42"
-
-  class method S quoteMessage()=
-    S"The message is :'"++this.message()++S"'."
-
-  }
-MyClass:MessageTrait()
-
-Main:{
-  Debug(MyClass.quoteMessage())//works
-  Debug(MessageTrait.quoteMessage())//not well typed
-  }
-//--lets dissect the code above:
-Trait<><{..} //wraps the code into a method.
-Trait<><{..} /*equivalent to*/ {class method Library ()={..}}
-//A trait alone is not very useful.
-\end{lstlisting}
-\end{NiceCode}
-\end{frame}
-
 
 \begin{frame}[fragile]
 \frametitle{My first Trait compostion}
@@ -81,7 +53,7 @@ Trait<><{..} /*equivalent to*/ {class method Library ()={..}}
 \begin{lstlisting}
 reuse $\ReuseUrl{L42.is/AdamTowel}$
 
-MessageTrait:Trait<><{
+Part1:Trait<><{
 
   class method S message();
 
@@ -89,35 +61,32 @@ MessageTrait:Trait<><{
     S"The message is :'"++this.message()++S"'."
 
   }
-MyClass:MessageTrait+{
+
+Part2:Trait<><{
   class method S message()=S"42"
   }
-
+Result:Part1+Part2
 Main:{
-  Debug(MyClass.quoteMessage())//S"The message is :'8'."
+  Debug(Result.quoteMessage())//S"The message is :'42'."
   }
 //--lets dissect the code above:
-Trait<><{..} //A trait is a class that is good at manipulating the input code.
-Trait<><{..} /*equivalent to*/ {class method Library ()={..}}
-//A trait alone is not very useful.
-
-Override[t1;..;tn]<><t0
-//compose all the traits t0..tn, and t0 has precedence:
-//if a method is implemented in t0 and in t1..tn, the t0 version is kept
-//otherwise, error if a method is implemented more then once in t1..tn.
+Trait<><{..} //The trait wraps the input code and provide many useful operations.
+t1+t2//simmetric composition, match by member name
+//error if a method is implemented in both t1 and t2
 \end{lstlisting}
 \end{NiceCode}
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{My first Trait compostion}
+\frametitle{Modularization with traits}
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
 Alice:Trait<><{//could be in its own file
   MapReader:{class method Map read(S fileName)=/*read from file*/}
   Map:{//fully abstract!
-    Item get(Point coord)
-    Void set(Point coord)
+    class method Map ()
+    method Item get(Point coord)
+    method Void set(Point coord)
     }
   Item:{interface}
   Tree:{implements Item
@@ -139,11 +108,35 @@ Bob:Trait<><{
     method break()=Rock(weight:100Num)
     }
   Tree:{..} Grass:{..} ...
+  class method Void run()=..
   }
 Game:Alice+Bob
+
+Main:Game.run()
 \end{lstlisting}
 \end{NiceCode}
 \end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Modularized code=testable code}
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+AliceMock:Alice+{
+  Item:{interface}
+  Map:Collections.map(Point into:Item)
+  Tree:Data<><{implements Item,     Num height, Num weight}
+  Rock:Data<><{implements Item      Num weight }
+  Grass:Data<><{..} Wall:Data<><{..} .. ..
+  class method Void test(S fileName,S expected)={
+    map=MapReader.read(fileName:fileName)
+    Debug.test(map, expected:expected)
+    }
+Test1:AliceMock.test(S''justATree.txt'',S''[Point(x:0,y:0)->Tree(..)]''
+Main:Game.run()
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
 
 \begin{frame}[fragile]
 \frametitle{First exposure to 42}
