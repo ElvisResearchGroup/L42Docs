@@ -1,0 +1,753 @@
+\begin{frame}[fragile]
+\frametitle{Many mains in 42}
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+reuse $\ReuseUrl{L42.is/AdamTowel}$
+
+Main0: Debug(S"Hello world1")
+
+Main1:{
+  Debug(S"Let's do something more")  
+  x=7Num*6Num
+  Debug(S"Hello "++x)
+  return {
+    class method S foo()=S"Surprise"
+    }
+  }
+//Our computation can return CODE; code in 42 is of type 'Library'
+
+Main2: Debug(S"Hello "++Main1.surprise())
+//Main2 can use Main1, since is declared later.
+//Classes are compiled top-bottom
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{My first class}
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+reuse $\ReuseUrl{L42.is/AdamTowel}$
+Point:Data<><{Num x,Num y}
+Main2: Debug(S"Hello "++Point(x:4Num, y:2Num))
+//--lets dissect the code above:
+{Num x,Num y}//(0)an unnamed class-body
+Num x //(1)a final field x of type Num; it is equivalent to a getter
+method Num x() //(2)the equivalent getter. Note: is abstract/no body
+var Num x //(3)a non final field. Equivalent to getter+setter
+Point:Data<><{..} //(4) this is just a main that return code.
+//That code will be the definition for class 'Point'
+Data<><{..} //(5)Data is a class decorator.
+//In 42 operators are method calls; you can read it as 
+//Data.babelFish({Num x,Num y})
+//Data adds features to the argument: factory, equality, toS,...
+Point(x:4Num, y:2Num) //(6) factory call. Parameter names are required.
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{My first Trait}
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+reuse $\ReuseUrl{L42.is/AdamTowel}$
+
+MessageTrait:Trait<><{
+
+  class method S message()=S"42"
+
+  class method S quoteMessage()=
+    S"The message is :'"++this.message()++S"'."
+
+  }
+MyClass:MessageTrait()
+
+Main:{
+  Debug(MyClass.quoteMessage())//works
+  Debug(MessageTrait.quoteMessage())//not well typed
+  }
+//--lets dissect the code above:
+Trait<><{..} //wraps the code into a method.
+Trait<><{..} /*equivalent to*/ {class method Library ()={..}}
+//A trait alone is not very useful.
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{My first Trait compostion}
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+reuse $\ReuseUrl{L42.is/AdamTowel}$
+
+MessageTrait:Trait<><{
+
+  class method S message();
+
+  class method S quoteMessage()=
+    S"The message is :'"++this.message()++S"'."
+
+  }
+MyClass:MessageTrait+{
+  class method S message()=S"42"
+  }
+
+Main:{
+  Debug(MyClass.quoteMessage())//S"The message is :'8'."
+  }
+//--lets dissect the code above:
+Trait<><{..} //A trait is a class that is good at manipulating the input code.
+Trait<><{..} /*equivalent to*/ {class method Library ()={..}}
+//A trait alone is not very useful.
+
+Override[t1;..;tn]<><t0
+//compose all the traits t0..tn, and t0 has precedence:
+//if a method is implemented in t0 and in t1..tn, the t0 version is kept
+//otherwise, error if a method is implemented more then once in t1..tn.
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{My first Trait compostion}
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+Alice:Trait<><{//could be in its own file
+  MapReader:{class method Map read(S fileName)=/*read from file*/}
+  Map:{//fully abstract!
+    Item get(Point coord)
+    Void set(Point coord)
+    }
+  Item:{interface}
+  Tree:{implements Item
+    class method Tree(Num height, Num weight) }
+  Rock:{implements Item
+    class method Rock(Num weight) }
+  Grass:{..} Wall:{..} .. ..
+  }
+Bob:Trait<><{
+  Map:Data<><{/*map implementation*/}
+  Item:{interface 
+    method Item break()}//Item can have many methods
+  Rock:Data<><{implements Item
+    Num weight
+    method break()=Rock(weight:this.weight()-1Num)
+    }
+  Wall:Data<><{implements Item
+    Num height
+    method break()=Rock(weight:100Num)
+    }
+  Tree:{..} Grass:{..} ...
+  }
+Game:Alice+Bob
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{First exposure to 42}
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+Point: {(N x, N y) $\Comment{class point and field declarations}$
+  method N distance(Point that){$\Comment{method declaration}$
+    var tmpX=this.x()-that.x() $\Comment{fields are getters}$
+    tmpX:=tmpX*tmpX $\Comment{allowed since declared var}$
+    var tmpY=this.y()-that.y() $\Comment{omitted var type}$
+    tmpY*=tmpY  $\Comment{usual Java/C++ operators}$
+    return (tmpX+tmpY).sqrt() $\Comment{pure oo view}$
+    }
+  method Point  add(N x){$\Comment{method declaration}$
+    return Point(x:this.x()+x, y:this.y())$\Comment{constructor from fields}$
+    }
+  }
+\end{lstlisting}
+\end{NiceCode}
+
+Minimal OO capabilities:
+\begin{itemize}
+\item (final) classes with state (constructor composed by fields) and behaviour;
+\item single dispatch method call, with nominal method selectors;
+\item interfaces as the only way to induce subtyping; that is, all class types are exact types.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{First exposure to 42}
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+Point: { (N x, N y) ... }
+Main:{
+  p1= Point(x:12N,y:22N) $\Comment{this is declaring a final local var}$
+  p2= Point(x:12N,y:22N)
+  $\Comment{check=p1==p2 'equivalent of Java .equals}$
+  $\Comment{method == is undefined}$
+  }
+\end{lstlisting}
+\end{NiceCode}
+
+With \Q@Point@ as defined before, we can do very little with points.
+We may want to manually add
+\begin{itemize}
+\item equality, inequality, hashCode
+\item since all the fields can be compared  (by using \Q@>=@) then
+we may want to implement a method comparing points lexicographically
+\item toString, serialize, deserialize/parse, toHTML, clone,...
+\end{itemize}
+Implementing such methods is not only very boring,
+\PresentationOnly\pause\alert{It is super tricky!}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{How can it be so hard?}
+\begin{itemize}
+\item It is actually order of magnitude  simpler to use objects defining those methods than to define them correctly.
+\PresentationOnly\pause\item Up to the point that every year multiple articles challenge  the establish standard on how to
+do those kinds of operation on arbitrarily shaped objects/object graphs.
+\PresentationOnly\pause\item If automatic generations of those methods was a language feature
+%/part of a standard library,
+it would be outdated very fast.
+%\PresentationOnly\pause\item If it was a third party library, it would be doomed to stay unknown to most programmers. (How many of us known and use Project Lombock?)
+%\PresentationOnly\pause\item 42 is designed to attempt solving this kinds of problems.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{First exposure to class Decorators}
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+Point: Data[]<<{ (N x, N y) ... }
+Main:{
+  p1= Point(x:12N,y:22N) $\Comment{this is declaring a final local var}$
+  p2= Point(x:12N,y:22N)
+  check=p1==p2 $\Comment{true}$
+  less=p1>p2 $\Comment{false}$
+  }
+\end{lstlisting}
+\end{NiceCode}
+\Q@Data@  is a class, whose instances are class decorators.
+A class decorator is an object offering  a method named \Q@<<@ that takes a library (=a class with nested classes) and return a library; that is:\\*
+\Q@method Library <<(Library that)@.
+Since class decorator tends to have many options, they can be instantiated using the square brackets, as in \Q@Data[...optionName1:value1;optionName2:value2;...]@  .\\*
+(That is the syntax for any var-arg method, including convenient collections initialization as \Q@NVec[a;b;c;]@).
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{More examples of Data}
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+Margin: {(N maxX, N maxY, N minX, N minY)}$\Comment{just the fields}$
+\end{lstlisting}
+\end{NiceCode}
+\PresentationOnly\pause
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+Margin: Data[]<<{(N minX, N minY, N maxX, N maxY)}
+$\Comment{automatically generated equals/hashcode, no validation}$
+\end{lstlisting}
+\end{NiceCode}
+\PresentationOnly\pause{\small If \Q@invariant@ is provided, it will be dynamically called in the right moments.}
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+Margin: Data[]<<{(N minX, N minY, N maxX, N maxY)
+  method Void invariant() {
+    return Assert[
+      this.minX() >0N;
+      this.minY() >0N message:S"y should be positive";
+      this.maxX() >this.minX();
+      this.maxY() >this.minY();  ]}}
+\end{lstlisting}
+\end{NiceCode}
+\PresentationOnly\pause {\small Now we can have points inside a margin.}
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+Point: Data[]<<{(Margin that,  N x, N y)
+  method Void invariant() {
+    return Assert[   that.minX() <=this.x();  that.minY() <=this.y();
+       that.maxX() >=this.x();  that.maxY() >=this.y();  ]}}
+\end{lstlisting}
+\end{NiceCode}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Active libraries and Decorators: What is new here?}
+\begin{itemize}
+\item An active library is a library that have some way to generate code.
+\item A decorator is a special kind of active library, that takes a class and ``improve it".
+
+\item If you have some former knowledge of generative programming, you will know that I'm not proposing anything new or groundbreaking.
+
+\PresentationOnly\pause\item What I'm proposing is to design a language around the idea that decorators are going to \alert{be there} and massively used.
+
+\PresentationOnly\pause\item In the end, the programmers may change their perception about writing code: Instead of directly encoding the behaviour they need, they will give some suggestion to a decorator, that is going to do all the hard job.
+
+\PresentationOnly\pause\item This also allows for a much simpler language,requiring only a simple nominal (sub-)types and no inheritance.
+\\*Code reuse (with inheritance as a special case), generics (as shown later), enumerations and many other concepts may be encoded as (active) libraries / decorators.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Getting started with Active Libraries}
+How an Active Library looks like? 
+\\*${}_{}$
+\\*
+Minimal Active Library
+
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+A:{() $\Comment{a class with a method m returning the empty class}$
+  method Library m() {return {()}}
+  }
+B: A().m() $\Comment{an empty class generated using library A}$
+\end{lstlisting}
+\end{NiceCode}
+rewrites to 
+
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+A:{() $\Comment{a class with a method m returning the empty class}$
+  method Library m() {return {()}}
+  }
+B:{()} $\Comment{the empty class}$
+\end{lstlisting}
+\end{NiceCode}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Incremental compilation}
+{\small Like compile time execution in C++, template haskell and others.
+First class code literals, called \Q@Librar@ies allows classes
+ to be created, from top to bottom, using formerly defined classes.
+The program can perform side effects while creating classes.
+Execution is just the production of all the classes.}
+
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+$\Comment{(STEP0)}$
+A:{()$\Comment{a class with a method k producing an A}$
+  method Library m() {$\Comment{m just returns a class with a method k}$
+    return {() method A k(){return A()}} $\Comment{ returning an A instance}$
+  }}
+B:A().m()
+C:B().k().m()
+\end{lstlisting}
+\end{NiceCode}
+
+$\begin{array}{l | l}
+\mbox{During execution becomes} & \mbox{and finally}\\
+\!\!\begin{NiceCode}{26ex}{0.8}
+\begin{lstlisting}
+$\Comment{(STEP1)}$
+A:{() ..} $\Comment{as before}$
+B:{() method A k(){return A()}}
+C:B().k().m()
+\end{lstlisting}
+\end{NiceCode}
+&
+
+\begin{NiceCode}{26ex}{0.8}
+\begin{lstlisting}
+$\Comment{(STEP2)}$
+A:{() ..} $\Comment{as before}$
+B:{() method A k(){return A()}}
+C:{() method A k(){return A()}}
+\end{lstlisting}
+\end{NiceCode}
+\end{array}$
+
+{\small
+that is the result of the execution of the original 
+program.}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Minimal building block}
+To manipulate libraries we do not use any templating mechanism.
+Libraries can be composed with other libraries using an algebra of composition operators /decorators.
+The main one is \Q@Compose@, that decorates a class by summing to it a list of libraries. It is the only one that uses multiple libraries.\\*
+\Q@Compose[a;b;c]<<d@ composes \Q@a b c d@. Abstract methods can be implemented, nested classes with the same name are recursively summed.
+
+\PresentationOnly\pause On default the composition is symmetric, but \Q@Compose@ can take options to automatically solve conflicts (i.e. same method implemented in multiple classes). For example, a right preferential strategy.
+
+Note that generated libraries are decorated copies of old ones.
+\\*
+Pre-existing code is never modified.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Minimal building block}
+
+In addition to compose there are a plethora of \alert{refactoring} operators, that takes a single library and adapt it somehow.
+\begin{itemize}
+\PresentationOnly\pause\item \Q@RenamePath@ and \Q@RenameSelector@ rename nested classes and methods
+\PresentationOnly\pause\item \Q@RemoveImplementationPath@  make a nested class (and the whole subtree) fully abstract. (See also \Q@RemoveImplementationSelector@)
+\PresentationOnly\pause\item \Q@Redirect@ delete a  nested class and redirect all the reference to it to an external one.
+\PresentationOnly\pause\item \Q@Introspect@ is a class allowing to query a library on its methods and nested classes names and structural shapes.
+\PresentationOnly\pause\item \Q@MakePrivatePath@ and \Q@MakePrivateSelector@ to tune privateness.
+\PresentationOnly\pause\item \Q@AddDocumentationPath@, \Q@AddDocumentationSelector@, \Q@RemoveDocumentationPath@, \Q@RemoveDocumentationSelector@
+support generation of documentation with metaprogramming.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Collection generation / not with generics}
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+NVector: Collections.vector(N)
+
+PointSet:Collections.set(Point)
+
+StudentList:Collections.orderedList(Student, orderedBy:{
+  method Boolean(Student a, Student b) {return a.name>b.name}
+  })
+\end{lstlisting}
+\end{NiceCode}
+Collections are generated on demand one for each different type.
+Multiple incompatible collections can be generated for the same type, in order to underline a different role for different collections.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Collection generation / not with generics}
+Thanks to \Q@Refactor::Redirect@ we can emulate generics, just redirect a class to the final destination.
+Internally, the code of \Q@Collections.vector@ may look like the following
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+Collection:{...
+  Library vector(type Any that){
+    return Refactor::Redirect[Path"T" to: that ]<<{()
+      T:{}
+      method Void add(T that){...}
+     ...}
+    }
+  }
+\end{lstlisting}
+\end{NiceCode}
+And the result of \Q@NVec:Collections.vector(N)@ could be:
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+$\Comment{NVec:Collections.vector(N)}$
+NVec:{()
+  method Void add(N that){...}
+  ...}
+\end{lstlisting}
+\end{NiceCode}
+
+
+Note how in this way we only need a simple nominal type system.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Pseudo higher order functions}
+In the same way, it would be possible to have maps/filters/folds as in functional languages, without the need of polymorphic types
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+myStudents= PersonList[....]
+FindOlder: Accumulate[PersonList]<<{
+  method Person accumulate (Person left, Person right){
+    if left.age()>right.age() ( return left )
+    return right
+  }}
+older= FindOlder.from(myStudents)
+$\Comment{haskell-like equivalent}$
+$\Comment{older=accumulate (left,right->if left.age()>right.age() left else right) myStudents}$
+\end{lstlisting}
+\end{NiceCode}
+While do not look as nice as an haskell-like equivalent,
+our approach works with a simple pure nominal type system.
+\\*
+\PresentationOnly\pause
+\alert{Question:}
+\\*
+Is it easier to reason about decorators as producing code taking some hint in input, or
+is it easier to reason about higher order polymorphic function composition?
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Compose}
+ \Q@Compose@ decorates a class by summing to it a list of libraries.
+Since there is no ``extends'', code reuse is obtained with decorators.
+For example, to define a gui with callbacks, we can have a html form where buttons have ids, and we can implement the onclick method:
+
+%Test this code in the prototype!
+%should be ok with Gui g and give type error with Outer1 g
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+Gui:Compose[GuiFromHtml(myHtml)]<<{
+  ButtonStart:{ method Void onClick(Gui g){
+    g.resultText().value(g.inputText().value())   }}
+\end{lstlisting}
+\end{NiceCode}
+
+\Q@GuiFromHtml@ have a set of conventions: generate nested classes for elements with associated events, and getters for elements with an \Q@id@ attribute.\\*
+The programmer can/must rely on those conventions!\\*
+As an alternative design, \Q@GuiFromHtml@ could be a decorator; this it could examine the input code and check conventions are respected.
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+Gui:GuiFromHtml[myHtml]<<{
+  ButtStart:{ method Void onClick(Gui g){$\Comment{error is discovered}$
+    g.resultText().value(g.inputText().value())   }}
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Resolver}
+The need of super is satisfied with resolvers. In the following code
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+Compose[
+  { method Bool a(){return True()} };
+  { method Bool a(){return False()} };
+  resolver:{
+    Bool a(){return this.left() & this.right()}
+    Bool left()
+    Bool right()  
+    };
+  ]
+\end{lstlisting}
+\end{NiceCode}
+The \Q@Compose@ instance will compose the two classes successfully and
+the resulting method \Q@a()@ will perform the logic and of the result of the two methods.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{How Data could work? - Example: equals on fields}
+Example of input and expected result
+\begin{NiceCode}{59ex}{0.76}
+\begin{lstlisting}
+Point:Data[]<<{(N x,N y)}$\Comment{example just on ==}$
+\end{lstlisting}
+\end{NiceCode}
+reduces to
+\begin{NiceCode}{59ex}{0.76}
+\begin{lstlisting}
+Point:{(N x,N y)
+  method Bool == (Any that){
+    with that (
+      on Outer0  return this.internEquals(that) 
+      default    return false 
+      )
+    }
+
+  method $\Comment{@private}$
+  Bool internEquals(Outer0 that){
+    return this.x() ==that.x() & this.y() ==that.y()
+    }
+  }
+\end{lstlisting}
+\end{NiceCode}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{How Data could work? - Example: equals on fields}
+\begin{NiceCode}{59ex}{0.74}
+\begin{lstlisting}
+method Library equal(type Any class,Selector name) {$\Comment{equal on single field}$
+  return Refactor::Redirect[Path"T" to: class]<<
+         Refactor::RenameSelector[Selector"f()" to:name]<<{
+    T:{ method Bool ==(Any that)}
+    method T f()
+    method Bool internEquals(Outer0 that) {return this.f()==that.f()}
+    }  
+  }$\PresentationOnly\pause$
+method Library addEquals(Library l){$\Comment{produces a class with == and internEquals}$ $\PresentationOnly\pause$
+  var composer=Compose[resolver:{$\Comment{ how to merge two equal on single field}$
+    method Bool internEquals(Outer0 that) {
+      return this.left(that) & this.right(that) }
+    method Bool left(Outer0 that)
+    method Bool right(Outer0 that)   }]$\PresentationOnly\pause$
+  with field in Introspection.fieldsOf(l).vals() ($\Comment{accumulate equalities}$
+    composer:=composer.add(this.equal(class:field.class(),name:field.name())))$\!\!\PresentationOnly\pause$
+  result=composer<<{$\Comment{compute internEquals and add the == method}$
+    method Bool internEquals(Outer0 that)
+    method Bool ==(Any that){
+      with that (
+        on Outer0  return this.internEquals(that)
+        default    return false
+        ) }   }$\PresentationOnly\pause$
+  return Refactor::MakePrivateSelector[Selector"internEquals(that)"]<<result}
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Just a different way to generate code}
+Operations are defined by inductively generated methods:
+\begin{itemize}
+\PresentationOnly\pause\item define a behaviour for base case (``single field'' in the example)
+\PresentationOnly\pause\item define composition of behaviours (``logic and'' in the example)
+\PresentationOnly\pause\item refine the result depending of what you are doing (``result'' in the example) 
+\end{itemize}
+\PresentationOnly\pause At any step is possible to check what we are creating and provide good error messages if something is going wrong.\\*${}_{}$\\*
+Any operation can be synthesized as a library that would implement the operation on the original input when summed (Compose).
+
+\end{frame}
+
+
+%\begin{frame}[fragile]
+%\frametitle{Just a different way to generate code}
+%More Decorators! 
+%\begin{itemize}
+%\item \Q@Abstract[]<<{...}@ produces the skeleton of the input (that is, all the methods become abstract)
+%\item \Q@Load[]<<{...}@ takes a library with abstract methods/classes and bind them to some predefined value.
+%\item \Q@Iterable[]<<{...}@ using \Q@v.size()@, \Q@v(i)@ and \Q@v(i,val:e)@ adds a standard implementation of iterators for the input.
+%\item \Q@Optimize[]<<{...}@ produces a library with the same behaviour but with better performance (this would need ast level reasoning)
+%
+%\end{itemize}
+%
+%\end{frame}
+
+
+%\begin{frame}[fragile]
+%\frametitle{Decorator composition}
+%Decorators are 
+% endofunctions (functions whose domain is equal to its codomain), thus we can apply many decorators in a chain.
+%\begin{NiceCode}{59ex}{0.8}
+%\begin{lstlisting}
+%Point1: Data[]<<Logging[]<<{...}
+%\end{lstlisting}
+%\end{NiceCode}
+%\Q@Logging@ here will somehow log all the methods call of the original code, but not the ones added by \Q@Data@ itself.\\*
+%(Note that this works since \Q@<<@, \Q@>>@, \Q@++@ and \Q@**@ are right associative in 42.)
+%\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Decorators instead of Quote/Unquote DSL}
+What is a Quote/Unquote DSL (also known as a Templating DSL)?
+Main way to do metaprogramming.
+Example, Java Mint
+\begin{NiceCode}{59ex}{0.8}
+\begin{lstlisting}
+Code<String> msg=..;
+Code<Void> myCode=<|
+{
+  if(Foo.bar){ Foo.doBla();}
+  else { `(msg) }
+}
+|>;
+\end{lstlisting}
+\end{NiceCode}
+Special parenthesis \Q@<|  |>@ denotes first class code literals,
+with holes, denoted by the symbol \Q@`( )@.
+The holes can be filled with arbitrary expressions of \Q@Code@ type.
+This is just a layer of syntactic sugar over regular 
+Meta Object Protocol(MOP), that is basically an object oriented data-structure representing
+an AST for the language under consideration.
+Depending on the specific language,
+it is possible to guarantee a range of properties on the resulting code.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Decorators instead of Quote/Unquote DSL}
+
+Templating DSL: a low level mechanism for metaprogramming.\\*
+Focus is placed on the code and on the concrete implementation.\\*
+Since every kind of code can have holes, there is an enormous error space.\\*
+${}_{}$\\*\PresentationOnly\pause
+In my opinion Templating DSLs are a fast and dirty \\*
+way to obtain good initial results using metaprogramming.\\*
+The technique does not scale and is very low level.
+${}_{}$\\*\PresentationOnly\pause
+L42 does \alert{not} rely on Templating DSL.\\*
+We focus on behaviour composition instead of ``source code'' composition,
+and we take inspiration from class/module composition languages.
+\end{frame}
+
+
+%\fullPageImage{lego1}
+
+\begin{frame}[fragile]
+\frametitle{Today, a goal for tomorrow}
+The shift of mind that I'm suggesting here is similar to the one from imperative to object oriented programming.
+\begin{itemize}
+\item With OO, thanks to dynamic dispatch, the programmer do not chose explicitly what behaviour to invoke when a method is called.\\*
+(as in \Q@a.draw(b)@)\\*
+However, the programmers are still in control, since they are instantiating and passing around such objects.
+\PresentationOnly\pause\item With class decorators, the programmers do not chose explicitly what methods are in each class.\\*
+(as in \Q@Person:Data[]<<...@)\\*
+However, the programmers are still in control, since they writing and applying such decorator objects.
+\end{itemize}\PresentationOnly\pause
+The difference is in the which programmer keeps the control:
+In both cases we have a shift: the programmers of the final application can delegate more and more control to \emph{the programmers of the libraries}.
+\end{frame}
+
+%
+%\begin{frame}[fragile]
+%\frametitle{Today, a goal for tomorrow}
+%
+%Today a programmer can use a library containing \alert{millions of instructions} without the need to understand each instruction individually, and instead can rely on the library interface.
+%\\${}$\\
+% With 42, a programmer will be able to use 
+% \alert{millions of libraries} without the need to understand each library individually, and may rely on (active) libraries managing and organizing other libraries.
+% 
+%\end{frame}
+%
+%
+%\begin{frame}[fragile]
+%\frametitle{Purpose}
+%In 42 a \emph{library} is a self-contained piece of code that is released
+%by other programmers.
+%A good library has a modularized documentation and 
+%contains a significant amount of code dedicated to try and
+%deliver good error messages when used incorrectly with links to the relevant documentation section.
+%\\${}_{}$\\
+%In 42 an \emph{active library} is a library offering methods that generate other libraries.
+%Such methods can compose code (other libraries) to obtain highly personalized libraries that can provide a clear dedicated semantic to the programmer.
+%\\${}_{}$\\
+%This is the way I propose to scale library usage to millions:
+%Libraries can be composed by code and not by programmers.
+%\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Can you guess what this code is doing?}
+\begin{NiceCode}{59ex}{1}
+\begin{lstlisting}
+{reuse  $\ReuseUrl{L42.is/AdamsTowel}$
+DB: Load[]<<{reuse $\ReuseUrl{L42.is/DB}$}
+Gui: Load[]<<{reuse f$\ReuseUrl{L42.is/2dGui}$}
+Tables: DB(S"...my connection string...")
+StudentList: Collections.list(Tables::Student)
+StudentsView: Gui.tableOf(StudentList)
+QueryFrom: Tables::Query[result:StudentList](
+  DB::SQL"Select * from Student where country=@country")
+Main:{
+  connection=Tables.connect()
+  fromItaly=QueryFrom(connection, country:S"Italy")
+  Gui.show(StudentsView(fromItaly))
+  return ExitCode.normal()
+  }
+}
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{ Thanks! }
+\center{\huge Questions?}
+\end{frame}
+
