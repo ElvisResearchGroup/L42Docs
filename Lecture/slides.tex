@@ -51,88 +51,199 @@ Point(x:4Num, y:2Num) //(6) factory call. Parameter names are required.
 \frametitle{My first Trait compostion}
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-reuse $\ReuseUrl{L42.is/AdamTowel}$
-
 Part1:Trait<><{
-
-  class method S message();
+  class method S message()
 
   class method S quoteMessage()=
     S"The message is :'"++this.message()++S"'."
-
   }
 
-Part2:Trait<><{
-  class method S message()=S"42"
-  }
+Part2:Trait<><{ class method S message()=S"42" }
+
 Result:Part1+Part2
-Main:{
-  Debug(Result.quoteMessage())//S"The message is :'42'."
-  }
+
+Main:Debug(Result.quoteMessage())//S"The message is :'42'."
+
 //--lets dissect the code above:
-Trait<><{..} //The trait wraps the input code and provide many useful operations.
+Trait<><{..} //The trait wraps the input code to support operations.
 t1+t2//simmetric composition, match by member name
 //error if a method is implemented in both t1 and t2
+Result:{//was Part1+Part2; flattening semantics:
+  class method S message()=S"42"
+
+  class method S quoteMessage()=
+    S"The message is :'"++this.message()++S"'."
+  }
 \end{lstlisting}
 \end{NiceCode}
 \end{frame}
 
+
 \begin{frame}[fragile]
 \frametitle{Modularization with traits}
-\begin{NiceCode}{59ex}{0.8}
+\begin{NiceCode}{59ex}{0.7}
 \begin{lstlisting}
-Alice:Trait<><{//could be in its own file
-  MapReader:{class method Map read(S fileName)=/*read from file*/}
-  Map:{//fully abstract!
-    class method Map ()
-    method Item get(Point coord)
-    method Void set(Point coord)
+Game:{//example game code, NOT MODULARIZED
+  Map:Data<><{/*map implementation*/
+    method Item get(Point that)=..,,,,,method Void set(Item that)=..
     }
-  Item:{interface}
-  Tree:{implements Item
-    class method Tree(Num height, Num weight) }
-  Rock:{implements Item
-    class method Rock(Num weight) }
-  Grass:{..} Wall:{..} .. ..
-  }
-Bob:Trait<><{
-  Map:Data<><{/*map implementation*/}
-  Item:{interface 
-    method Item break()}//Item can have many methods
-  Rock:Data<><{implements Item
-    Num weight
+  Item:{interface,,,,,Point point, method Item break()}//Item can have many methods
+  Rock:Data<><{implements Item,,,,,Num weight
     method break()=Rock(weight:this.weight()-1Num)
     }
-  Wall:Data<><{implements Item
-    Num height
+  Wall:Data<><{implements Item,,,,,Num height
     method break()=Rock(weight:100Num)
+    } //we could have more kinds of Items, not just Rock and Wall
+  class method Map load(S fileName)=..//Alice writes load(\_)
+    /*read from file, divide in lines, call read(line)*/
+  class method Void load(Map map,S line)={//example line: S"Rock 23 in 12, 7"
+    ns=line.readNums()
+    if line.startsWith(S"Rock") (
+      map.set(Rock(weight:1ns,point:Point(x:2ns,x:3ns)))
+      )
+    if line.startsWith(S"Wall") (..)
+    ...
     }
-  Tree:{..} Grass:{..} ...
-  class method Void run()=..
+  class method Void run()=..this.load(..)..
   }
-Game:Alice+Bob
-
 Main:Game.run()
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Modularized code}
+\begin{NiceCode}{59ex}{0.7}
+\begin{lstlisting}
+Alice:Trait<><{//could be in its own file
+  Map:{class method Map(),,,,,method Void set(Item that)}
+  Item:{interface,,,,,Point point}
+  Rock:{implements Item,,,,,class method Rock(Num weight, Point point) }
+  //the above is all abstract
+  class method Map load(S fileName)=..//Alice writes load(\_)
+    /*read from file, divide in lines, call read(line)*/
+  class method Void load(Map map,S line)={//example line: S"Rock 23 in 12, 7"
+    ns=line.readNums()
+    if line.startsWith(S"Rock") (
+      map.set(Rock(weight:1ns,point:Point(x:2ns,y:3ns)))
+      )
+    if line.startsWith(S"Wall") (..)
+    ...
+    }
+  }
+Bob:{/*the Game code as before, without the two methods of Alice*/
+  class method Map load(S fileName)// we declare an abstract load method
+  }
+Game=Alice+Bob
+Main:Game.run()
+//both Alice and Bob are independent. Map,Item,Rock inside of Alice
+//are unrelated with Map,Item,Rock inside Bob.
+//the sum then merges the members with the same name.
+//The flattened result is exactly the code of before.
 \end{lstlisting}
 \end{NiceCode}
 \end{frame}
 
 \begin{frame}[fragile]
 \frametitle{Modularized code=testable code}
-\begin{NiceCode}{59ex}{0.8}
+\begin{NiceCode}{59ex}{0.7}
 \begin{lstlisting}
+Alice:Trait<><{/*as before*/}
 AliceMock:Alice+{
-  Item:{interface}
-  Map:Collections.map(Point into:Item)
-  Tree:Data<><{implements Item,     Num height, Num weight}
-  Rock:Data<><{implements Item      Num weight }
-  Grass:Data<><{..} Wall:Data<><{..} .. ..
+  Item:{interface,,,,,Point point}
+  Map:Collections.hashmap(Point to:Item)+{
+    method Void set(Item that)=this.put(key:that.point(),val:that)
+    }
+  Rock:Data<><{implements Item,,,,,Num weight}
+
   class method Void test(S fileName,S expected)={
     map=MapReader.read(fileName:fileName)
     Debug.test(map, expected:expected)
     }
-Test1:AliceMock.test(S''justATree.txt'',S''[Point(x:0,y:0)->Tree(..)]''
-Main:Game.run()
+Test1:AliceMock.test(S"justARock.txt",S"HashMap[Point(..)->Rock(..)]"
+Test2:...
+...
+\end{lstlisting}
+\end{NiceCode}
+Those tests are completely independent of Bob code, and can be run even before
+Bob started writing any code.
+By composing independently testable code, you can put you project together
+after every component has been independently tested.
+You can (and should) do it also in Java.
+However, it is so much harder to do so.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Dependency injection Hell in Java}
+\begin{NiceCode}{59ex}{0.7}
+\begin{lstlisting}[language=Java]
+//common code:
+interface Map{..} class Point{..}//most of those requires their own file
+interface Item{..}, interface Rock extends Item {..},..
+interface ItemFactory{Rock makeRock(Point p, weight w); ..}
+interface MapFactory{Map makeMap();}
+//Alice code:
+class MapLoader{
+  ItemFactory items; MapFactory maps;
+  MapLoader(ItemFactory i,MapFactory m){items=i;maps=m;}
+  Map load(String fileName){..maps.makeMap()..}
+  Void load(Map map,String fileName){..items.makeRock(..)..}
+  }
+//Alice mocking code
+class MockMap implements Map{...}
+class MockMapFactory implements MapFactory{//this may be a lambda in Java8
+  public Map makeMap(){return new MockMap();}  }
+class MockItemFactory implements ItemFactory{//but this can not
+  public Rock makeRock(..){return new MockRock(..);}
+  public Wall makeWall(..){return new MockWall(..);}  } ..
+class MockRock implements Rock{..} class MockWall implements Rock{..}
+class Tester{
+  static void test(String fileName,String expected)={
+    MapLoader m=new MapLoader(new MockMapFactory(),new MockItemFactory());
+    Map map=m.load(fileName:fileName)
+    assert map.toString().equals(expected);
+    }
+...
+\end{lstlisting}
+\end{NiceCode}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{42: True code modularization across nested classes}
+That is, in 42 you can modularize any arbitrary piece of code by
+just declaring abstract signatures 
+\begin{NiceCode}{59ex}{0.7}
+\begin{lstlisting}[language=Java]
+//common code:
+interface Map{..} class Point{..}//most of those requires their own file
+interface Item{..}, interface Rock extends Item {..},..
+interface ItemFactory{Rock makeRock(Point p, weight w); ..}
+interface MapFactory{Map makeMap();}
+//Alice code:
+class MapLoader{
+  ItemFactory items; MapFactory maps;
+  MapLoader(ItemFactory i,MapFactory m){items=i;maps=m;}
+  Map load(String fileName){..maps.makeMap()..}
+  Void load(Map map,String fileName){..items.makeRock(..)..}
+  }
+//Alice mocking code
+class MockMap implements Map{...}
+class MockMapFactory implements MapFactory{//this may be a lambda in Java8
+  public Map makeMap(){return new MockMap();}  }
+class MockItemFactory implements ItemFactory{//but this can not
+  public Rock makeRock(..){return new MockRock(..);}
+  public Wall makeWall(..){return new MockWall(..);}  } ..
+class MockRock implements Rock{..} class MockWall implements Rock{..}
+class Tester{
+  static void test(String fileName,String expected)={
+    MapLoader m=new MapLoader(new MockMapFactory(),new MockItemFactory());
+    Map map=m.load(fileName:fileName)
+    assert map.toString().equals(expected);
+    }
+...
 \end{lstlisting}
 \end{NiceCode}
 \end{frame}
