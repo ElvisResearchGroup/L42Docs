@@ -31,7 +31,7 @@ Main2: Debug(S"Hello "++Main1.foo())
 //(STEP0)
 A:{// a class with a method .ma()
   class method Library ma() = {class method Library k()={}} 
-  }}//.ma() just returns a class with a method .k()
+  }}//.ma() just returns a library with a method .k()
 B:A.ma()
 C:B.k()
 \end{lstlisting}
@@ -74,7 +74,7 @@ reuse $\ReuseUrl{L42.is/AdamTowel}$
 Point:Data<><{Num x,Num y}
 Main2: Debug(S"Hello "++Point(x:4Num, y:2Num))
 //--lets dissect the code above:
-{Num x,Num y}//(0)an unnamed class-body
+{Num x,Num y}//(0)an unnamed library
 Num x //(1)a final field x of type Num; it is equivalent to a getter
 method Num x() //(2)the equivalent getter. Note: is abstract/no body
 var Num x //(3)a non final field. Equivalent to getter+setter
@@ -126,9 +126,9 @@ units of code, that can be composed into either more traits or classes.
 
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-Part1=Trait({..})//has method .a() implemented, has method .b() abstract
-Part2=Trait({..})//has method .b() implemented, has method .a() abstract
-Result=Part1 & Part2 //has both .a() and .b() implemented
+Part1:Trait({..})//has method .a() implemented, has method .b() abstract
+Part2:Trait({..})//has method .b() implemented, has method .a() abstract
+Result:Part1 & Part2 //has both .a() and .b() implemented
 \end{lstlisting}
 \end{NiceCode}
 
@@ -163,11 +163,7 @@ Result: Part1 & Part2 & {}
 
 Main:Debug(Result.quoteMessage())//S"The message is :'42'."
 
-//--lets dissect the code above:
-Trait({..}) //The trait wraps the input code to support operations.
-Trait1 & Trait2 == trait//simmetric composition, match by member name
-Trait & Library == Library
-//error if a method is implemented in both t1 and t2
+//--after reduction, Result becomes:
 Result:{//was Part1\&Part2; flattening semantics:
   class method S message()=S"42"
   class method S quoteMessage()=
@@ -186,21 +182,26 @@ Result:{//was Part1\&Part2; flattening semantics:
 \begin{lstlisting}
 Library code={ class method Void foo()=Debug(S"hi") }
 code.foo()//wrong, 'code' is Library, is not compiled yet
-A:{ class method Library getCode()={ method Void foo()=Debug(S"hi") } } 
-B:A.getCode()//here I select the code for compilation!
+A:{ class method Library code()={ method Void foo()=Debug(S"hi") } } 
+B:A.code()//here I select the code for compilation!
 Main:B.foo()//this works and prints "hi''
 
 A:{../*code of A, all manually written*/} //boring boilerplate
-A:MyDecorator<><{/*essential code of A*/}//compact
-AT:Trait({/*essential code of A*/})//traits can be saved on the class table
-A:MyDecorator<><AT //and are treated like Library by decorators
+
+A:MyDecorator<><{/*essential code of A*/}//compact, correct
+
+APartial:{/*essential code of A*/}//wrong, the decorator needs
+A:MyDecorator<><APartial      //the code, not the class name
+
+AT:Trait({/*essential code of A*/})//traits can be named
+A:MyDecorator<><AT.code() //their code can be recovered
  
 {..}:Library
-Decorator <>< Library --> Library
-Decorator <>< Trait --> Library
-Trait & Trait --> Trait
-Trait & Library --> Library
-
+Decorator <>< Library --> Library //Enrich library with more code
+Trait({..}) --> Trait  //Wraps the input code to support operations.
+Trait(a).code()==a
+Trait & Trait --> Trait   //simmetric composition, match by member name
+Trait & Library --> Library // -what are the possible errors?
 \end{lstlisting}
 \end{NiceCode}
 \end{frame}
@@ -230,7 +231,7 @@ Game:{//example game code, NOT MODULARIZED
   class method Void load(Map map,S line)={//example line: S"Rock 23 in 12, 7"
     ns=line.readNums()
     if line.startsWith(S"Rock") (
-      map.set(Rock(weight:ns.get(1\),point:Point(x:ns.get(2\),y:ns.get(3\))))
+      map.set(Rock(weight:ns.get(0\),point:Point(x:ns.get(1\),y:ns.get(2\))))
       )
     if line.startsWith(S"Wall") (..)
     ...
@@ -245,14 +246,14 @@ Main:Game.run()
 
 %---------------------------Alice+BOB
 \begin{frame}[fragile]
-\frametitle{Modularized code}
+\frametitle{Modularized code: Alice <--> Bob}
 \begin{NiceCode}{59ex}{0.7}
 \begin{lstlisting}
 Common:Trait({
   Map:{class method Map(),,,,,method Void set(Item that)}
-  Item:{interface,,,,,Point point}
+  Item:{interface}
   Rock:{implements Item,,,,,class method Rock(Num weight, Point point) }
-  })
+  ..})
 Bob:Common & Trait({//all as before, but load(fileName) is abstract
   Item:{interface,,,,,Point point,,,,,method Item break()}
   Rock:Data<><{implements Item,,,,,Num weight,,,,,method break()=Rock(..)}
@@ -261,7 +262,7 @@ Bob:Common & Trait({//all as before, but load(fileName) is abstract
   class method Void run()=..this.load(..).. //implemented by Bob
   class method Map load(S fileName)
   })
-Alice:Common & Trait({ Map:{}, Item:{}, Rock:{}
+Alice:Common & Trait({ Map:{},,,,,Item:{},,,,,Rock:{},,,,,Wall:{}
   class method Map load(S fileName)=..//Alice writes load(\_)
     /*exactly the same code of before call read(line)*/
   class method Void load(Map map,S line)={//example line: S"Rock 23 in 12, 7"
@@ -283,12 +284,12 @@ Main:Game.run()             //The flattened result is exactly the code of before
 \frametitle{Modularized code=testable code}
 \begin{NiceCode}{59ex}{0.7}
 \begin{lstlisting}
-Alice:Common+Trait({/*as before*/})
-AliceMock:Alice+{
+Alice:Common & Trait({/*as before*/})
+AliceMock:Alice & {
   Item:{interface,,,,,Point point}
   Rock:Data<><{implements Item,,,,,Num weight}
 
-  Map:Collections.hashmap(key:Point, val:Item)+{
+  Map:Trait(Collections.hashmap(key:Point, val:Item)) & {
     method Void set(Item that)=this.put(key:that.point(),val:that)
     }
 
@@ -316,8 +317,8 @@ However, it is so much harder to do so.
 \begin{lstlisting}[language=Java, morekeywords={assert}]
 //common code:
 interface Map{..} class Point{..}//most of those requires their own file
-interface Item{..}, interface Rock extends Item {..},..
-interface ItemFactory{Rock makeRock(Point p, weight w); ..}
+interface Item{..} interface Rock extends Item {..}..
+interface ItemFactory{Rock makeRock(Point point, int weight); ..}
 interface MapFactory{Map makeMap();}
 //Alice code:
 class MapLoader{
@@ -340,7 +341,6 @@ class Tester{
     Map map=m.load(fileName)
     assert map.toString().equals(expected);
     }
-...
 \end{lstlisting}
 \end{NiceCode}
 \end{frame}
@@ -389,16 +389,19 @@ MapTest:MapTrait & {
 \frametitle{ sum or redirect?}
 \begin{NiceCode}{59ex}{0.7}
 \begin{lstlisting}
-AbstractService:Trait({...})
-ServiceT:AbstractService & Trait({...})
+AbstractService:Trait({...}) //abstrat signatures (as in the trait 'Common')
+ServiceImplT:AbstractService & Trait({...})//concrete implementation
+
 AT:Trait({Ser:AbstractService &{} ...})
 BT:Trait({Ser:AbstractService &{} ...})
+
 //option 1:
-A:AT & ServiceT & {}
-B:AT & ServiceT & {}
+A:AT & ServiceImplT & {}
+B:BT & ServiceImplT & {}
 //now A.Ser !=B.Ser, even if they may have the same implementation
+
 //option 2:
-Service:ServiceT &{}
+Service:ServiceImplT &{}
 A:AT"Ser"<=Service & {}
 B:BT"Ser"<=Service & {}
 //now neither A.Ser or B.Ser exists; A and B both refers to Service 
@@ -432,8 +435,8 @@ myTrait[hide:\"baz()"] //make method private
 myTrait.showOnly(anAbsTrait)//make all private but the argument signatures
 
 //sometime is convenient to examin code as in java reflection.
-//42 offers a Location library for doing that; for example
-retType=Location.Lib(right).m$$ethod(this.that()).returnType()
+//Traits offer methods for that, for example
+retType=myTrait.m$$ethod(\"foo()").returnType()
 
 //and we can use this with redirect!
 myTrait"T"<=retType
@@ -456,7 +459,7 @@ ToSTrait:Trait({implements Concepts.ToS
   })
 Answer:Data<><{Selector that
   method Library <><(Library right)={
-    fieldType=Location.Lib(right).m$$ethod(this.that()).returnType()
+    fieldType=Trait(right).m$$ethod(this.that()).returnType()
     t=ToSTrait[\"f()" into: this.that()]"T"<=fieldType
     return Data<>< (t & right) 
     // data will do its job, except for toS, since it is already defined
@@ -465,7 +468,7 @@ Answer:Data<><{Selector that
 
 //usage
 MyClass:Answer(\"inner()")<><{Point inner}
-Main:Debug(  MyClass(Point(x:3\,y:7\))  ) //will print Point(x:3,y:7)
+Main:Debug(  MyClass(inner:Point(x:3\,y:7\))  ) //will print Point(x:3,y:7)
 \end{lstlisting}
 \end{NiceCode}
 \end{frame}
@@ -478,7 +481,7 @@ Main:Debug(  MyClass(Point(x:3\,y:7\))  ) //will print Point(x:3,y:7)
 {reuse  $\ReuseUrl{L42.is/AdamsTowel}$
 //load libraries
 Db: Load<><{reuse $\ReuseUrl{L42.is/DB}$}
-Gui: Load<><{reuse f$\ReuseUrl{L42.is/2dGui}$}
+Gui: Load<><{reuse $\ReuseUrl{L42.is/2dGui}$}
 
 //specialize the Db library to work over the VIC Students database
 VicDb: Db"...my connection string..."
