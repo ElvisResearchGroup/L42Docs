@@ -6,7 +6,7 @@ reuse $\ReuseUrl{L42.is/AdamTowel}$
 
 Main0: Debug(S"Hello world1")
 
-Main1:{
+Main1: {
   Debug(S"Let's do something more")  
   x=7Num*6Num
   Debug(S"Hello "++x)
@@ -15,10 +15,10 @@ Main1:{
     }
   return res
   }
-//Our computation can return CODE; code in 42 is of type 'Library'
+//Our computation can return code; 'code' in 42 is of type 'Library'
 
 Main2: Debug(S"Hello "++Main1.foo())
-//Main2 can use Main1, since is declared later.
+//Main2 can use Main1, since is declared earlier.
 //Classes are compiled top-bottom
 \end{lstlisting}
 \end{NiceCode}
@@ -29,11 +29,11 @@ Main2: Debug(S"Hello "++Main1.foo())
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
 //(STEP0)
-A:{// a class with a method .ma()
+A: {// a class with a method .ma()
   class method Library ma() = {class method Library k()={}} 
   }}//.ma() just returns a library with a method .k()
-B:A.ma()
-C:B.k()
+B: A.ma()
+C: B.k()
 \end{lstlisting}
 \end{NiceCode}
 
@@ -42,9 +42,9 @@ $\begin{array}{l | l}
 \!\!\begin{NiceCode}{26ex}{0.8}
 \begin{lstlisting}
 //(STEP1)
-A:{..} //as before
-B:{class method Library k()={}}
-C:B.k()
+A: {..} //as before
+B: {class method Library k()={}}
+C: B.k()
 \end{lstlisting}
 \end{NiceCode}
 &
@@ -52,9 +52,9 @@ C:B.k()
 \begin{NiceCode}{26ex}{0.8}
 \begin{lstlisting}
 //(STEP2)
-A:{..}//as before
-B:{class method Library k()={}}
-C:{}
+A: {..}//as before
+B: {class method Library k()={}}
+C: {}
 \end{lstlisting}
 \end{NiceCode}
 \end{array}$
@@ -71,20 +71,20 @@ Execution is just the production of all the classes.
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
 reuse $\ReuseUrl{L42.is/AdamTowel}$
-Point:Data<><{Num x,Num y}
-Main2: Debug(S"Hello "++Point(x:4Num, y:2Num))
-//--lets dissect the code above:
-{Num x,Num y}//(0)an unnamed library
-Num x //(1)a final field x of type Num; it is equivalent to a getter
-method Num x() //(2)the equivalent getter. Note: is abstract/no body
+Point: Data <>< {Num x,Num y}
+Main2: Debug(S"Hello "++Point(x: 4Num, y: 2Num))
+//--lets dissect the code above: 
+{Num x,Num y}//(0) an unnamed library
+Num x //(1) a final field x of type Num; it is equivalent to a getter
+method Num x() //(2) the equivalent getter. Note: is abstract/no body
 var Num x //(3)a non final field. Equivalent to getter+setter
-Point:Data<><{..} //(4) this is just a main that return code.
+Point: Data <>< {..} //(4) this is just a main that returns code.
 //That code will be the definition for class 'Point'
-Data<><{..} //(5)Data is a class decorator.
+Data <>< {..} //(5) Data is a class decorator.
 //In 42 operators are method calls; you can read it as if it was
 Data.babelFish({Num x,Num y})
-//Data adds features to the argument: factory, equality, toS,...
-Point(x:4Num, y:2Num) //(6) factory call. Parameter names are required.
+//Data adds features to the argument: factory, equality, toS,..
+Point(x: 4Num, y: 2Num) //(6) factory call. Parameter names are required.
 \end{lstlisting}
 \end{NiceCode}
 \end{frame}
@@ -94,26 +94,25 @@ Point(x:4Num, y:2Num) //(6) factory call. Parameter names are required.
 \frametitle{Example 42, Item Rock and Wall}
 \begin{NiceCode}{59ex}{0.7}
 \begin{lstlisting}
-Item:{interface
+Item: {interface
  Point point    /*equivalent to*/ method Point point()
  method Item break()
  }
-Rock:Data<><{implements Item
-  Num weight //it also inherit the field Point point
-  method break()=Rock(weight:this.weight()-1\, point:this.point())
+Rock: Data <>< {implements Item
+  Num weight //it also inherit the 'Point point' field
+  method break()=Rock(weight: this.weight()-1\, point: this.point())
   }
-Wall:Data<><{implements Item,,,,,Num height
-   //I will use this ,,,,, syntax when want to avoid going newline
-  method break()=Rock(weight:100\, point:this.point())
+Wall: Data <>< {implements Item     Num height
+  method break()=Rock(weight: 100\, point: this.point())
   }
 ..
-myRock=Rock(weight:15\ point:Point(x:12\ y:0\))
+myRock=Rock(weight: 15\ point: Point(x: 12\ y: 0\))
 myRock.break()
 myRock.weight()
 myRock.point()
 myRock.toS()
 myRock==myRock
-...
+..
 \end{lstlisting}
 \end{NiceCode}
 \end{frame}
@@ -126,13 +125,13 @@ units of code, that can be composed into either more traits or classes.
 
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-Part1:Trait({..})//has method .a() implemented, has method .b() abstract
-Part2:Trait({..})//has method .b() implemented, has method .a() abstract
-Result:Part1 & Part2 //has both .a() and .b() implemented
+Part1: Trait({..})//has method a implemented, has method b abstract
+Part2: Trait({..})//has method b implemented, has method a abstract
+Result: Part1 & Part2 //has both a and b implemented
 \end{lstlisting}
 \end{NiceCode}
 
-Many languages now support some variation of traits:
+Many languages now support some variation of traits: 
 \begin{itemize}
 \item Smalltalk: here is where the trait name first becomed popular.
 \item Rust has 'traits', but they are more like Haskell typeclasses.
@@ -140,7 +139,7 @@ Many languages now support some variation of traits:
 \item Java8 interfaces with default methods can be used as if they was Smalltalk traits.
 \end{itemize}
 42 traits are implemented as a library over primitive code manipulation operators.
-Trait composition in 42 is similar to Smalltalk trait composition, but it is nested:
+Trait composition in 42 is similar to Smalltalk trait composition, but it is nested: 
 Trait code can have nested classes; composition propagate recursivelly over nested classes with the same name. 
 \end{frame}
 
@@ -150,24 +149,24 @@ Trait code can have nested classes; composition propagate recursivelly over nest
 \frametitle{My first Trait compostion}
 \begin{NiceCode}{59ex}{0.8}
 \begin{lstlisting}
-Part1:Trait({
+Part1: Trait({
   class method S message()
 
   class method S quoteMessage()=
-    S"The message is :'"++this.message()++S"'."
+    S"The message is: '"++this.message()++S"'."
   })
 
-Part2:Trait({ class method S message()=S"42" })
+Part2: Trait({ class method S message()=S"42" })
 
 Result: Part1 & Part2 & {}
 
-Main:Debug(Result.quoteMessage())//S"The message is :'42'."
+Main: Debug(Result.quoteMessage())//S"The message is: '42'."
 
-//--after reduction, Result becomes:
-Result:{//was Part1\&Part2; flattening semantics:
+// after evaluation, Result becomes: 
+Result: {//was Part1\&Part2; flattening semantics: 
   class method S message()=S"42"
   class method S quoteMessage()=
-    S"The message is :'"++this.message()++S"'."
+    S"The message is: '"++this.message()++S"'."
   }
 \end{lstlisting}
 \end{NiceCode}
@@ -182,25 +181,25 @@ Result:{//was Part1\&Part2; flattening semantics:
 \begin{lstlisting}
 Library code={ class method Void foo()=Debug(S"hi") }
 code.foo()//wrong, 'code' is Library, is not compiled yet
-A:{ class method Library code()={ method Void foo()=Debug(S"hi") } } 
-B:A.code()//here I select the code for compilation!
-Main:B.foo()//this works and prints "hi''
+A: { class method Library code()={ method Void foo()=Debug(S"hi") } } 
+B: A.code()//here I select the code for compilation!
+Main: B.foo()//this works and prints "hi''
 
-A:{../*code of A, all manually written*/} //boring boilerplate
+A: {../*code of A, all manually written*/} //boring boilerplate
 
-A:MyDecorator<><{/*essential code of A*/}//compact, correct
+A: MyDecorator <>< {/*essential code of A*/}//compact, correct
 
-APartial:{/*essential code of A*/}//wrong, the decorator needs
-A:MyDecorator<><APartial      //the code, not the class name
+APartial: {/*essential code of A*/}//wrong, the decorator needs
+A: MyDecorator <>< APartial        //the code, not the class name
 
-AT:Trait({/*essential code of A*/})//traits can be named
-A:MyDecorator<><AT.code() //their code can be recovered
+AT: Trait({/*essential code of A*/})//traits can be named
+A: MyDecorator <>< AT.code() //their code can be recovered
  
-{..}:Library
-Decorator <>< Library --> Library //Enrich library with more code
+{..} -->Library
 Trait({..}) --> Trait  //Wraps the input code to support operations.
-Trait(a).code()==a
-Trait & Trait --> Trait   //simmetric composition, match by member name
+Trait(a).code() == a
+Decorator <>< Library --> Library //Enrich library with more code
+Trait & Trait --> Trait //symmetric composition, matches by member name
 Trait & Library --> Library // -what are the possible errors?
 \end{lstlisting}
 \end{NiceCode}
@@ -210,34 +209,35 @@ Trait & Library --> Library // -what are the possible errors?
 
 %-----------------------------------------------All Game
 \begin{frame}[fragile]
-\frametitle{Modularization with traits}
+\frametitle{Modularisation with traits}
 \begin{NiceCode}{59ex}{0.7}
 \begin{lstlisting}
-Game:{//example game code, NOT MODULARIZED
-  Item:{interface,,,,,Point point,,,,,method Item break()}//as before
-  Rock:Data<><{implements Item,,,,,Num weight,,,,,method break()=Rock(..)}
-  Wall:Data<><{implements Item,,,,,Num height,,,,,method break()=Rock(..)}
+Game: {//example game code, NOT MODULARISED
+  Item: {interface     Point point     method Item break()}//as before
+  Rock: Data <>< {implements Item     Num weight     method break()=Rock(..)}
+  Wall: Data <>< {implements Item     Num height     method break()=Rock(..)}
   
-  Map:Data<><{//map implementation by Bob
-    method Item get(Point that)=..,,,,,method Void set(Item that)=..
+  Map: Data <>< {//map implementation by Bob
+    method Item get(Point that)=..     method Void set(Item that)=..
     ..
     }
   class method Void run()=..this.load(..).. //implemented by Bob
   
-  class method Map load(S fileName)=..//Alice writes load(\_)
+  class method Map load(S fileName)={..//Alice writes load(\_)
     //create empty map,
     //read from file and divide in lines,
     //for all the lines, call load(map,line)
+    }
   class method Void load(Map map,S line)={//example line: S"Rock 23 in 12, 7"
     ns=line.readNums()
     if line.startsWith(S"Rock") (
-      map.set(Rock(weight:ns.get(0\),point:Point(x:ns.get(1\),y:ns.get(2\))))
+      map.set(Rock(weight: ns.get(0\),point: Point(x: ns.get(1\),y: ns.get(2\))))
       )
     if line.startsWith(S"Wall") (..)
-    ...
+    ..
     }
   }
-Main:Game.run()
+Main: Game.run()
 \end{lstlisting}
 \end{NiceCode}
 \end{frame}
@@ -246,36 +246,36 @@ Main:Game.run()
 
 %---------------------------Alice+BOB
 \begin{frame}[fragile]
-\frametitle{Modularized code: Alice <--> Bob}
+\frametitle{Modularised code: Alice <--> Bob}
 \begin{NiceCode}{59ex}{0.7}
 \begin{lstlisting}
-Common:Trait({
-  Map:{class method Map(),,,,,method Void set(Item that)}
-  Item:{interface}
-  Rock:{implements Item,,,,,class method Rock(Num weight, Point point) }
-  ..})
-Bob:Common & Trait({//all as before, but load(fileName) is abstract
-  Item:{interface,,,,,Point point,,,,,method Item break()}
-  Rock:Data<><{implements Item,,,,,Num weight,,,,,method break()=Rock(..)}
-  Wall:Data<><{implements Item,,,,,Num height,,,,,method break()=Rock(..)}
-  Map:Data<><{/*map implementation by Bob*/}
+Bob: Trait({//all as before, but load(fileName) is abstract
+  Item: {interface     Point point     method Item break()}
+  Rock: Data <>< {implements Item     Num weight     method break()=Rock(..)}
+  Wall: Data <>< {implements Item     Num height     method break()=Rock(..)}
+  Map: Data <>< {/*map implementation by Bob*/}
   class method Void run()=..this.load(..).. //implemented by Bob
   class method Map load(S fileName)
   })
-Alice:Common & Trait({ Map:{},,,,,Item:{},,,,,Rock:{},,,,,Wall:{}
+Alice: Trait({
+  Map: {class method Map()     method Void set(Item that)}
+  Item: {interface}
+  Rock: {implements Item     class method Rock(Num weight, Point point) }
+  Wall: {implements Item     class method Rock(Num height, Point point) }
+
   class method Map load(S fileName)=..//Alice writes load(\_)
     /*exactly the same code of before call read(line)*/
   class method Void load(Map map,S line)={//example line: S"Rock 23 in 12, 7"
     ns=line.readNums() //exactly the same code of before
     if line.startsWith(S"Rock") (
-      map.set(Rock(weight:1ns,point:Point(x:2ns,y:3ns)))
+      map.set(Rock(weight: 1ns,point: Point(x: 2ns,y: 3ns)))
       )
     if line.startsWith(S"Wall") (..)
-    ...                                   //Alice and Bob are now independent.
-    }                                    //Map,Item,Rock inside of Alice are
+    ..                                  //Alice and Bob are now independent.
+    }                                   //Map,Item,Rock inside of Alice are
   })                                    //unrelated with Map,Item,Rock inside Bob.
-Game=Alice & Bob & {}       // \& merges the members with the same name.
-Main:Game.run()             //The flattened result is exactly the code of before.
+Game: Alice & Bob & {}       // \& merges the members with the same name.
+Main: Game.run()             //The flattened result is exactly the code of before.
 \end{lstlisting}
 \end{NiceCode}
 \end{frame}
@@ -284,22 +284,22 @@ Main:Game.run()             //The flattened result is exactly the code of before
 \frametitle{Modularized code=testable code}
 \begin{NiceCode}{59ex}{0.7}
 \begin{lstlisting}
-Alice:Common & Trait({/*as before*/})
-AliceMock:Alice & {
-  Item:{interface,,,,,Point point}
-  Rock:Data<><{implements Item,,,,,Num weight}
+Alice: Trait({/*as before*/})
+AliceMock: Alice & {
+  Item: {interface     Point point}
+  Rock: Data <>< {implements Item     Num weight}
 
-  Map:Trait(Collections.hashmap(key:Point, val:Item)) & {
-    method Void set(Item that)=this.put(key:that.point(),val:that)
+  Map: Trait(Collections.hashmap(key: Point, val: Item)) & {
+    method Void set(Item that)=this.put(key: that.point(),val: that)
     }
 
   class method Void test(S fileName,S expected)={
-    map=this.load(fileName:fileName)
-    Debug.test(map, expected:expected)
+    map=this.load(fileName: fileName)
+    Debug.test(map, expected: expected)
     }
-Test1:AliceMock.test(S"justARock.txt",S"HashMap[Point(..)->Rock(..)]"
-Test2:...
-...
+Test1: AliceMock.test(S"justARock.txt",S"HashMap[Point(..)->Rock(..)]"
+Test2: ..
+..
 \end{lstlisting}
 \end{NiceCode}
 Those tests are completely independent of Bob code, and can be run even before
@@ -315,12 +315,12 @@ However, it is so much harder to do so.
 \frametitle{Dependency injection Hell in Java}
 \begin{NiceCode}{59ex}{0.7}
 \begin{lstlisting}[language=Java, morekeywords={assert}]
-//common code:
+//common code: 
 interface Map{..} class Point{..}//most of those requires their own file
 interface Item{..} interface Rock extends Item {..}..
 interface ItemFactory{Rock makeRock(Point point, int weight); ..}
 interface MapFactory{Map makeMap();}
-//Alice code:
+//Alice code: 
 class MapLoader{
   ItemFactory items; MapFactory maps;
   MapLoader(ItemFactory i,MapFactory m){items=i;maps=m;}
@@ -328,7 +328,7 @@ class MapLoader{
   Void load(Map map,String fileName){..items.makeRock(..)..}
   }
 //Alice mocking code
-class MockMap implements Map{...}
+class MockMap implements Map{..}
 class MockMapFactory implements MapFactory{//this may be a lambda in Java8
   public Map makeMap(){return new MockMap();}  }
 class MockItemFactory implements ItemFactory{//but this can not
@@ -350,25 +350,25 @@ class Tester{
 \frametitle{Redirect}
 \begin{NiceCode}{59ex}{0.7}
 \begin{lstlisting}
-MathTrait:Trait({
-  N:AbstractNumeric &{}
-  ListN:Collections.vector(of:N)
-  class method ListN factorize(N that)=....
+MathTrait: Trait({
+  N: AbstractNumeric &{}
+  ListN: Collections.vector(of: N)
+  class method ListN factorize(N that)=...
    })
-MathNum:MapTrait"N"<=Num & {}
-MathDouble:MapTrait"N"<=Double  & {}
+MathNum: MapTrait"N"<=Num & {} /*alternative syntax:*/ MapTrait[\"N" into: Num]
+MathDouble: MapTrait"N"<=Double  & {}
 
-MapTest:MapTrait & {
-  N :Data<><{ Num inner
-    ...//forward  + / * - etcetera to this.inner()
+MapTest: MapTrait & {
+  N: Data <>< { Num inner
+    ..//forward  '+', '/', '*', '-' etcetera to this.inner()
     //but do some checks and logging
-   Log:{...} 
+   Log: {..} 
   }
   class method Void test(N that)={
     N.Log.reset()
     res=This.factorize(that)
-    Debug.test(res,expected:..)
-    Debug.test(N.Log.report(),expected:..)
+    Debug.test(res,expected: ..)
+    Debug.test(N.Log.report(),expected: ..)
     }
   }
 \end{lstlisting}
@@ -389,22 +389,22 @@ MapTest:MapTrait & {
 \frametitle{ sum or redirect?}
 \begin{NiceCode}{59ex}{0.7}
 \begin{lstlisting}
-AbstractService:Trait({...}) //abstrat signatures (as in the trait 'Common')
-ServiceImplT:AbstractService & Trait({...})//concrete implementation
+AbstractService: Trait({..}) //abstrat signatures (as in the trait 'Common')
+ServiceImplT: AbstractService & Trait({..})//concrete implementation
 
-AT:Trait({Ser:AbstractService &{} ...})
-BT:Trait({Ser:AbstractService &{} ...})
+AT: Trait({Ser: AbstractService &{} ..})
+BT: Trait({Ser: AbstractService &{} ..})
 
-//option 1:
-A:AT & ServiceImplT & {}
-B:BT & ServiceImplT & {}
+//option 1: 
+A: AT & ServiceImplT & {}
+B: BT & ServiceImplT & {}
 //now A.Ser !=B.Ser, even if they may have the same implementation
 
-//option 2:
-Service:ServiceImplT &{}
-A:AT"Ser"<=Service & {}
-B:BT"Ser"<=Service & {}
-//now neither A.Ser or B.Ser exists; A and B both refers to Service 
+//option 2: 
+Service: ServiceImplT &{}
+A: AT"Ser"<=Service & {}
+B: BT"Ser"<=Service & {}
+//now neither A.Ser nor B.Ser exists; A and B both refers to Service 
 
 
 \end{lstlisting}
@@ -425,16 +425,16 @@ Otherwise, if the code you want is declared outside, use redirect.
 \begin{lstlisting}
 myTrait.abstract() //make the code all abstract and remove private members
 
-myTrait[\"foo()" of: \"A" into:\"bar()";\"baz(x)"  into:\"beer(y)"]
+myTrait[\"foo()" of: \"A" into: \"bar()";\"baz(x)"  into: \"beer(y)"]
 //rename method A.foo()  into A.bar(), and top-level baz(x) into beer(y)
 
-myTrait[abstract:\"baz()"] //make method abstract
+myTrait[abstract: \"baz()"] //make method abstract
 
-myTrait[hide:\"baz()"] //make method private
+myTrait[hide: \"baz()"] //make method private
 
-myTrait.showOnly(anAbsTrait)//make all private but the argument signatures
+trait1.showOnly(trait2)//make everything private, except things in 'trait2'
 
-//sometime is convenient to examin code as in java reflection.
+//sometime it is convenient to examine code as in Java reflection.
 //Traits offer methods for that, for example
 retType=myTrait.m$$ethod(\"foo()").returnType()
 
@@ -452,23 +452,23 @@ Make a class decorator that behaves like \Q@Data@, except it
 uses a specified field/no-arg-method to implement \Q@Concepts.ToS.toS()@.
 \begin{NiceCode}{59ex}{0.7}
 \begin{lstlisting}
-ToSTrait:Trait({implements Concepts.ToS
-  T:{implements Concepts.ToS}
+ToSTrait: Trait({implements Concepts.ToS
+  T: {implements Concepts.ToS}
   T f
   method toS()=this.f().toS()
   })
-Answer:Data<><{Selector that
+Answer: Data <>< {Selector that
   method Library <><(Library right)={
     fieldType=Trait(right).m$$ethod(this.that()).returnType()
     t=ToSTrait[\"f()" into: this.that()]"T"<=fieldType
-    return Data<>< (t & right) 
+    return Data <>< (t & right) 
     // data will do its job, except for toS, since it is already defined
     }
   }
 
 //usage
-MyClass:Answer(\"inner()")<><{Point inner}
-Main:Debug(  MyClass(inner:Point(x:3\,y:7\))  ) //will print Point(x:3,y:7)
+MyClass: Answer(\"inner()") <>< {Point inner}
+Main: Debug(  MyClass(inner: Point(x: 3\,y: 7\))  ) //will print Point(x: 3,y: 7)
 \end{lstlisting}
 \end{NiceCode}
 \end{frame}
@@ -480,24 +480,24 @@ Main:Debug(  MyClass(inner:Point(x:3\,y:7\))  ) //will print Point(x:3,y:7)
 \begin{lstlisting}
 {reuse  $\ReuseUrl{L42.is/AdamsTowel}$
 //load libraries
-Db: Load<><{reuse $\ReuseUrl{L42.is/DB}$}
-Gui: Load<><{reuse $\ReuseUrl{L42.is/2dGui}$}
+Db: Load <>< {reuse $\ReuseUrl{L42.is/DB}$}
+Gui: Load <>< {reuse $\ReuseUrl{L42.is/2dGui}$}
 
-//specialize the Db library to work over the VIC Students database
-VicDb: Db"...my connection string..."
+//specialise the Db library to work over the VIC Students database
+VicDb: Db"..my connection string.."
 
-//VicDb know all its tables and their shape. So we can have a vector of Students
-StudentList: Collections.vector(of:VicDb.Student)
+//VicDb knows all its tables and their shapes. So we can have a vector of Students
+StudentList: Collections.vector(of: VicDb.Student)
 QueryFrom: VicDb(//prepared query
-  query:Db.SQL"Select * from Student where country=@country"
-  result:StudentList)//and have queries returning StudentList
+  query: Db.SQL"Select * from Student where country=@country"
+  result: StudentList)//and have queries returning StudentList
 
-//Gui let use create a widget for tabular representation of vector of Data classes
-StudentsView: Gui.table(title:S"selected students" content:StudentList)
+//Gui lets us create a widget for a tabular representation of vectors of Data classes
+StudentsView: Gui.table(title: S"selected students" content: StudentList)
 
-Main:{
+Main: {
   connection=VicDb.connect()
-  fromItaly=QueryFrom(connection, country:S"Italy")
+  fromItaly=QueryFrom(connection, country: S"Italy")
   Gui.show(StudentsView(fromItaly))
   }
 }
