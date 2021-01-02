@@ -43,8 +43,9 @@ Learn through examples
 </Button>
 
 
-<Button class= 'button' type= 'button' onclick= 'showAll(allDivs);'>
-Show all content
+<Button class= 'button' type= 'button' onclick=
+ "location.href = 'tutorial.xhtml';">
+See the full Tutorial
 </Button>
 
 
@@ -52,7 +53,7 @@ Show all content
 </p><h2> Why 42 </h2> <p>
 42 is a new programming language,
 whose name is inspired by The Hitchhiker's Guide to the Galaxy.
-The language's goal is to allow the transparent cooperation and composition of millions of libraries at the same time.
+The language's goal is to allow the transparent cooperation and composition of millions of libraries at the same time, while providing a much higher security that any other widly used language.
 </p><p>
 In 42 you will be able to import libraries just by naming them and to
 compose them in your code without worrying about their dependencies.
@@ -62,16 +63,17 @@ the library code, and the library has no influence over the importing context.
 In 42 libraries are usually much smaller and are first class entities, that can be manipulated as values, loaded, stored, modified, adapted, saved or simply used. You will write code that manipulate libraries, but more importantly you will use libraries that manipulate libraries in non-trivial ways.
 Indeed in 42 manipulating libraries is so natural that is convenient to think of your own code as a library that you offer to yourself only.
 </p><p>
-42 enforces a high level of abstraction, thus there is no access to primitive
-structures like arrays (just use collections), and there is no concept of null or default initialization.
+42 enforces a high level of abstraction, thus there is no concept of null or default initialization.
 While is possible to write in a fully functional style in 42, usually 42 programs mix
 <span style="color:#ff1111; font-weight: bold;"> mutable datastructures with aliasing </span>
 and
 <span style="color:#ff1111; font-weight: bold;"> deeply immutable data </span>.
-42 offers powerful support for aliasing control and immutability, helping in mixing the two styles in an easy and natural way.
+By using reference and object capabilities,
+42 supports mutability and aliasing control, helping in mixing the two styles in an easy and natural way.
 
 </p><p>
-42 offers (well, will offer) automatic parallelism: thanks to immutability and aliasing control, many patterns of normal sequential code will be safely executed in parallel.
+Reference and object capabilities
+enforce the correctness of caching, representation invariants and parallelism.
 
 </p></Div>
 
@@ -85,19 +87,17 @@ where every value is an object. This means that:
 Numbers are objects, 
 so thay can have methods like '<span class="code"><![CDATA[.sqrt()]]></span>' or '<span class="code"><![CDATA[.abs()]]></span>'. 
 </li><li>
-All operators are just method calls, thus '<span class="code"><![CDATA[a + b]]></span>' is sugar for '<span class="code"><![CDATA[a.#plus(b)]]></span>', 
-and so on. Note how '<span class="code"><![CDATA[#plus]]></span>' is a ordinary method name.
+All operators are just method calls, thus '<span class="code"><![CDATA[a + b]]></span>' can be sugar for '<span class="code"><![CDATA[a.#plus0(b)]]></span>', 
+and so on. Note how '<span class="code"><![CDATA[#plus0]]></span>' is just an ordinary method name.
 Any class that offers the method supports the operator.
 
 </li><li>
 Classes are objects, so when you write '<span class="code"><![CDATA[Foo.bar()]]></span>' you refer to the method '<span class="code"><![CDATA[.bar()]]></span>' offered by the object denoted by '<span class="code"><![CDATA[Foo]]></span>'.
-class objects are just objects, and you can also store them in local bindings if you wish, as in '<span class="code"><![CDATA[x= Foo]]></span>'
+class objects are just objects, and you can also store them in local bindings if you wish, as in '<span class="code"><![CDATA[x = Foo]]></span>'
 </li><li>
 The code is an object, but only at the granularity of 
 Libraries; that is, balanced pairs of curly brackets representing classes (or interfaces) with methods and nested libraries.
 This is useful for meta-programming, which we will see later.
-First class meta-programming is the most important feature of 42.
-
 
 </li><li>
 Differently from other pure object oriented languages, in 42
@@ -112,14 +112,14 @@ In 42 we do not give preferential treatment
 to special objects/classes. In this sense, we consider
 most other languages to be discriminatory.
 They give priority to their "preferred" version of numbers and strings, and this puts into a position of unfair disadvantage library code trying to define its own kinds of numbers/strings.
-Instead in 42 you may encounter strings like '<span class="code"><![CDATA[URL"www.google.com"]]></span>' or
- '<span class="code"><![CDATA[EMAIL"Arthur.Dent@gmail.com"]]></span>'.
+Instead in 42 you may encounter strings like '<span class="code"><![CDATA[Url"www.google.com"]]></span>' or
+ '<span class="code"><![CDATA[Email"Arthur.Dent@gmail.com"]]></span>'.
 The same for numeric classes: to talk about a street, 20 meters long, you would write
 '<span class="code"><![CDATA[streetLength= 20Meter]]></span>'.
 Note that we write the class name after the number,
 while usually the class name is before.
 42 is a little incoherent in this point, both for better readability and because '<span class="code"><![CDATA[Meter20]]></span>' would be considered an identifier by the parser.
-You may encounter '<span class="code"><![CDATA[Int]]></span>', '<span class="code"><![CDATA[UInt]]></span>', '<span class="code"><![CDATA[Float]]></span>','<span class="code"><![CDATA[Size]]></span>', '<span class="code"><![CDATA[Meter]]></span>', '<span class="code"><![CDATA[Kg]]></span>', '<span class="code"><![CDATA[Second]]></span>', '<span class="code"><![CDATA[Year]]></span>', '<span class="code"><![CDATA[PhoneNumber]]></span>' and many other numeric classes.
+You may encounter '<span class="code"><![CDATA[I]]></span>', '<span class="code"><![CDATA[Num]]></span>', '<span class="code"><![CDATA[Double]]></span>', '<span class="code"><![CDATA[Meter]]></span>', '<span class="code"><![CDATA[Kg]]></span>', '<span class="code"><![CDATA[Second]]></span>', '<span class="code"><![CDATA[Year]]></span>', '<span class="code"><![CDATA[PhoneNumber]]></span>' and many other numeric classes.
 </li></ul>
 
 </p><h2> A simple language </h2> <p>
@@ -127,11 +127,9 @@ We believe 42 is a simple language,
 where all classes are final and interfaces are the only instrument to obtain subtyping.
 Moreover, 42 does not offer many controversial features usually found in other programming
 languages, including: 
-(method) overloading; threading; numeric conversions and coercions;
-casts; var-args; primitive types and automatic (un-)boxing;
+(method) overloading; threading; numeric conversions and coercions; var-args; primitive types and automatic (un-)boxing;
 inner classes; arrays; generics; scope-hiding of local variables/bindings, methods and fields;
 closures/lambdas and null.
-
 
 </p></Div>
 
@@ -163,7 +161,7 @@ We format the code so that, line by line, you can see the differences.
 
 /*multiline comment*/
 
-reuse L42.is/AdamsTowel  //importing code
+reuse [L42.is/AdamsTowel]  //importing code
 ]]></pre>
 
 <pre class="java"><![CDATA[
@@ -193,17 +191,17 @@ S"hello world"  //String
 Url"www.google.com" //Specially formatted string
 
 
-Javascript"
-'x= function(){
-'  alert("hello world";)
-'  }
-' x()
-" //multiline string
+Javascript"""
+  |x= function(){
+  |  alert("hello world";)
+  |  }
+  | x()
+  """ //multiline string
 
-14Size  //number suitable to be an index
-100Meter  //100 meter
-25Kg  //25 kg, 
-//25Kg+100Meter do not compile
+14I  //number suitable to be a collection index
+1Num// arbitrary precision rational
+Num"-13" //negative number
+Num"13/234" //number as fraction
 ]]></pre>
 
 <pre class="java"><![CDATA[
@@ -211,19 +209,20 @@ Javascript"
 "hello world"  //String
 
 URI.create("www.google.com") //explicit parsing
-//(and Java URL class is discouraged)
 
-Javascript.create( //poor man solution
-"x= function(){",
-"  alert(\"hello world\";)",
-"  }",
-" x()"
-) //painful. Note how we need to escape "
+Javascript.create("""
+ x= function(){
+   alert("hello world");
+   }
+ x()
+ """)//using the new multiline strings
 
 14  //general purpose int
-100L  // may be we want long distances
-25d  //may be we want high precision weight
-//25d+100L is a double :)
+new BigInteger("1");// big integer, some libraries
+//may have 'BigRational' too.
+25d  //to specify 'non int' you add the 'type' later.
+//25d+100L is a double, while in 42 
+//it would require an explicit conversion.
 ]]></pre>
 </div>
 
@@ -239,12 +238,9 @@ Javascript.create( //poor man solution
 </p><h2> Hello world </h2> <p>
 <div class= "compare">
 <pre class="l42"><![CDATA[
-{reuse L42.is/AdamsTowel
-Main: { //Note: Main is not a method, just a 'task'
+reuse [L42.is/AdamsTowel]
+Main =  //Note: Main is not a method, just a 'task'
   Debug(S"Hello world")
-  return ExitCode.success()
-  }
-}
 ]]></pre>
 
 <pre class="java"><![CDATA[
@@ -264,29 +260,22 @@ class MyClassName{
 
 
 
-
-
-
-
-
-
 </p><h2> Methods and Classes </h2> <p>
 <div class= "compare">
 <pre class="l42"><![CDATA[
 //42 code
 class method //class method definition
-S answer() //return type and method name
+S answer() = //return type and method name
   S"42" //simple bodies do not need {..return..}
 
 class method //class method definition
 S compose(S left, S right) //parameters
   left++right //sequence concatenation
 
-Person: Data <>< { //define a class Person
-  S name  //fields
-  Year age
-//in 42 fields are seen as getters and setters,
-//thus there is no need to define those.
+Person = Data : { //define a class Person
+  S name  //fields are just getters/setters
+  var Year age //only var fields have setters
+//no need to manually define getters/setters
 //Also, no need to write down a constructor: 
 //Data defines a 'name, age' factory for us.
 
@@ -294,15 +283,17 @@ Person: Data <>< { //define a class Person
 //equality, hashCode and conversion to string.
 
   method //instance method definition
-  S sayHi(S to){  //here we use {..return..}
+  S sayHi(S to) = {  //here we use {..return..}
     if to==this.name() ( //no parenthesis on if/while
-      return S"Oh, you are called "[this.name()]" too?"
+      return S"Oh, you are called %this.name() too?"
       )  //string interpolation
-    return S"Hi, my name is "[this.name()]
-      " and  I'm "[this.age()]" years old"
+    return S"""%%
+      |Hi, my name is %%this.name()
+      |and  I'm %%this.age() years old
+      """//Note: specified interpolation sequence
     }
   class method//This == Person here, 
-  This bob() //simple method instantiating a Person
+  This bob() = //simple method instantiating a Person
     This(name:S"Bob", age: 23Year)
   }
 ]]></pre>
@@ -354,12 +345,12 @@ class Person{ //define a class Person
 <div class= "compare">
 <pre class="l42"><![CDATA[
 if a>b (return /*...*/)
-var S acc= S""  //explicit 'var': can be updated
+var acc = S""  //explicit 'var': can be updated
 while Bool.true() ( //booleans are not constants
-  if acc.size()>50Size ( //Size: type of indexes 
-    exception void //like java break, rarely used in 42
+  if acc.size()>50I ( //Size: type of indexes 
+    Break()
     )
-  acc++= S"step"
+  acc ++= S"step"
   )
 ]]></pre>
 
@@ -370,7 +361,7 @@ while (true) {
   if (acc.length()>50) {
     break;
     }
-  acc+= "step";
+  acc += "step";
 }
 ]]></pre>
 </div>
@@ -386,50 +377,43 @@ while (true) {
 </p><h2> Vectors </h2> <p>
 <div class= "compare">
 <pre class="l42"><![CDATA[
-names= Strings[S"Fred";S"Mary";S"Mark"]
+Years = Collections.list(Year) //we define it
+...
+names = S.List[S"Fred";S"Mary";S"Mark"]
+ages = Years[20Year;23Year;22Year]
 
-Years: Collections.vector(of: Year) //we define it
+for n in names ( Debug(n) )
 
-ages= Years[20Year;23Year;22Year]
-
-
-with n in names.vals() ( //like a for each loop
-  Debug(n)
-  )
-
-with n in names.vals(), a in ages.vals() (
+for n in names, a in ages (
 //parallel iteration of names and ages
-  Debug(Person(name: n, age: a)) //print all the persons
+  Debug(Person(name= n, age= a)) //print all the persons
   ) //fails with error if names.size()!= ages.size()
 
-Persons: Collections.vector(of: Person)
+Persons = Collections.list(Person)
 
-friends= Persons[
-  Person(name: S"Fred", age: 20Year);
-  Person(name: S"Mary", age: 23Year);
-  Person(name: S"Mark", age: 22Year);
+friends = Persons[
+  Person(name=S"Fred", age=20Year);
+  \(name=S"Mary", age=23Year);//here \ == Person
+  \(name=S"Mark", age=22Year);// == the expected type
   ]
 
-moreFriends= Persons[
-  with n in names.vals(), a in ages.vals() (
-    use[ Person(name: n, age: a) ]
-  )]
+moreFriends = Persons()(
+  for n in names, a in ages 
+    \add(\(name=n, age=a))
+  )
 //moreFriends contains the same elements as friends
 
-//with works also in string interpolation: 
-stringFriends= S"my friends ages are"[
-  with n in names.vals(), a in ages.vals() (
-    use[ a++S": "++n, sep: S", ") ]
-  )]"" //== S"20: Fred, 23: Mary, 22: Mark"
+var stringFriends= S"my friends ages are "
+for n in names.vals(), a in ages.vals() (
+  stringFriends += S"%a: %n"++S.nl()//there is no \n
+  )
 ]]></pre>
 
 <pre class="java"><![CDATA[
-List<String> names= new ArrayList<>(Arrays.asList(
-  "Fred","Mary","Mark"));
+List<String> names= List.of("Fred","Mary","Mark");
 
 
-List<Integer> ages= new ArrayList<>(Arrays.asList(
-  20,23,22));
+List<Integer> ages= List.of(20,23,22);
 
 for(String n : names){
   System.out.println(n);
@@ -452,19 +436,14 @@ List<Person> moreFriends= new ArrayList<>();
 for(int i= 0; i<names.size(); i++){
   moreFriends.add(
     new Person(names.get(i), ages.get(i)));
-} //silently buggy if names.size()<ages.size()
+} //here and below: silent bug if names.size()<ages.size()
 
-//again, silently buggy if names.size()<ages.size()
 String stringFriends= "my friends ages are";
 for(int i= 0; i<names.size(); i++){
-  if(i>0){stringFriends+= ", ";}
-  stringFriends+= ages.get(i)+": "+names.get(i);
+  stringFriends+= ages.get(i)+": "+names.get(i)+"\n";
 }
 ]]></pre>
 </div>
-
-
-
 
 </p></Div>
  

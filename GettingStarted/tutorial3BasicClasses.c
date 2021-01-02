@@ -1,16 +1,6 @@
 WBigTitle(Basic classes)
 
-An immutable class is WEmph(base/basic)
-if is logically not composed by other elements,
-and can be instantiated by a single operations that takes no parameters.
-For examples numbers and strings are basics, while
-a collections is not: you need to provide the elements and the collection is logically
-composed by its elements.
-In the examples of before, Wcode(Point) and 
-Wcode(Animal) are not basic, since they are logically composed by their fields.
-
-
-WTitle((1/5) Num and Size)
+WTitle((1/5) Num, I, Double and Math.Long)
 Wcode(Num) is a general number type,
 implemented as an arbitrary precision rational.
 When in doubt of what numeric type to use, Wcode(Num)
@@ -27,78 +17,62 @@ Debug(fraction1) //will print '1234567/890'
 Debug(Num"12/4") //will print '3'
 CCode
 
-Another useful numeric type is Wcode(Size).
+Another useful numeric type is Wcode(I), for index and index offsets.
 It corresponds to sizes and indexes in sequences.
-Wcode(Size)s are returned by Wcode(size()) methods
+Wcode(I)s are returned by Wcode(size()) methods
 and are expected as parameter by indexing methods.
-Wcode(Size) represent 32 bit numbers with the usual 
+Wcode(I) represent 32 bit integers with the usual 
 but triky modulo arithmetic.
 
-WTitle(Loading other numeric types)
+WTitle(Other numeric types)
 
-You can import other numeric types by loading libraries.
-For example
+AdamTowel offers two other numeric types:
+Wcode(Double) (64 bits floating point) and Wcode(Math.Long) (64 bits integers, rarelly used).
 
-OBCode
-Int: Load <>< {reuse L42.is/Numbers/Int} 
-//infinite precision positive and negative integer numbers
-Double: Load <>< {reuse L42.is/Numbers/Double} 
-//double precision positive and negative floating points numbers
-Float: Load <>< {reuse L42.is/Numbers/Float} 
-//single precision positive and negative floating points numbers
-Int64: Load <>< {reuse L42.is/Numbers/Int64} 
-//64 bit modulo arithmetic
-UInt64: Load <>< {reuse L42.is/Numbers/UInt64} 
-//64 bit modulo arithmetic, unsigned
-CCode
-
-The class decorator Wcode(Load) allows to load libraries and embed them in the 
-current context, while the
-reuse keyword imports the code from the web.
 
 WTitle(Conversions)
 Conversions between various numeric classes must be performed explicitly.
 
 AdamsTowel offers a simple way to convert between numeric classes, and more in general
 between base classes.
-All numeric  classes implements
-the Wcode(Base) interface and offers the Wcode(.from(base)) method.
-So, for example 
+All numeric  classes implements Wcode(Math.Numeric)
+so that they can be converted in to each other using the the unnamed method. For example we can convert indexes into doubles by writing Wcode(Double(12I)).
+This will avoid precision loss as much as possible.
+
+WTitle((2/5) Units: An example library)
+
+We now see how to load and use an interesting 42 Library: Units
+Consider the following code, where the class decorator Wcode(Load) allows to load libraries and embed them in the 
+current context, while the
+reuse keyword imports the code from the web. 
 OBCode
-Double: Load <>< {reuse L42.is/Numbers/Double}
-size= S"hello".size()
-myDouble= Double.from(base: size)
-CCode
-converts from Wcode(Size) to Wcode(Double).
-This avoid precision loss as much as possible.
+reuse [L42.is/AdamTowel]
+Unit = Load:{reuse[L42.is/Unit]}
+Year = Unit(I)
+Person = Data:{S name, Year age}
+CBCode
 
+The library
+Wcode(Unit)
+offers methods to create units out of numeric supports, like Wcode(Num) and Wcode(I).
+The code above shows how to create a Wcode(Year) unit and use it to represent a person age.
 
+Units can be sum with themselves and multiplied by constants; for example
+Wcode(3Year+2Year == 5Year) and Wcode(3Year *2I == 6Year)would hold, but Wcode(3Year * 2Year) would not compile.
 
+Unit could be used to manually define all the units of SI; and a pre-build unit of such reusable code is already provided in the library; we simply need to specify the desired support:
 
-WTitle((2/5) Units)
-
-
-The class 
-Wcode(Units)
-offers methods to create units out of numeric supports, like Wcode(Num)
-and Wcode(Size).
-
-For example
 OBCode
-Meter: Units.of(Num)
-Second: Units.of(Num)
-res= (6Meter +4Meter)*2Num //20Meter
+SI = Class:Unit.TraitSI['Support=>Num]
+..
+res= (6SI.Meter +4SI.Meter)*2Num //20Meter
 //wrong1= 6Meter+2Second
 //wrong2= 6Meter/2Second
 CCode
 As you can see, we can sum meters together, and we can use the support for multiplication, but we can not mix different units of measure.
 
-
 Mathematically you can obtain the support out of the unit by
 division; that is, 42 meters divided by 2 meters is  21.
-This do not work directly in 42, since multiplication and division
-takes the support( Wcode(Num) in our examples) and not a unit.
-Units provide operator Wcode(/~/) for this aim.
 Units also provide method  Wcode(`#'inner()),
 this is just extracting the value of the support from the unit.
 This can be convenient during programming but 
@@ -107,92 +81,43 @@ Methods like that are required to be used with care, so they start with
 Wcode(`#') to underline that.
 
 OBCode
-Num n1= 42Meter /~/ 2Meter //= 21Num
-Num n2= 42Meter.#inner() //= 42Num
+Num n1= 42SI.Meter / 2SI.Meter //= 21Num
+Num n2= 42SI.Meter.#inner() //= 42Num
 CCode
 
-
-WTitle(Composite Units)
-
-Wcode(Units) supports composite units: 
-OBCode
-Speed: Units.of(Meter per: Second)
-fast1= Speed(42Meter per: 0.1Second)
-fast2= Speed"420" //equivalent ways to initialize it
-fast3= Speed"840/2"
-distance1= 60Second *< fast1 //fast1.right(left: 60Second)
-
-Acc: Units.of(Speed per: Second)
-g= Acc"9.8"
-speedAfter= 10Second *<g //g.right(left: 10Second) //98 m/s
-distance2= 10Second *<speedAfter//speedAfter.right(left: 10Second)/2Num //490 m after 10s free fall
-
-Kg: Units.of(Num)
-Newton: Units.of(Kg and: Acc) //Kg*m/s2
-myRoket= 900Newton
-gForceOnMe= Newton(78Kg and: g) //little less than 780
-myLift= myRoket-gForceOnMe
-if myLift>0Newton (Debug(S"I can fly"))
-myAcc= myLift ~/78Kg //myLift.right(left: 78Kg) //get second component
-reachedHeight= (10Second /< (10Second /< myAcc)) /2Num
-//myAcc.right(left: 10Second).right(left: 10Second)/2Num //after 10 sec
-CCode
-
-As you see we have two types of composite units:
-multiplication (and) and division (per),
-as in 
- Wcode(Newton: Units.of(Kg and: Acc)) 
-and in
- Wcode(Speed: Units.of(Meter per: Second))
-To extract the two components from a multiplication we use the left and right divisions
-Wcode(~/) 
-and  Wcode(/~).
-
-To extract the two components from a division, we use the over times and over division operators
-Wcode(*<) 
-and  Wcode(/<).
-
-In general, in a composite unit we can use Wcode(right(left)) and
- Wcode(left(right)) 
- to extract the right component providing a value 
-for the left one, or we can extract the left component providing a value for the right one.
-
-To recap, we leverage on many algebraic binary operators:
-Wcode(+) 
-and
-Wcode(-) 
-to sum/subtract units of the same type,
-Wcode(*) 
-and
-Wcode(/) 
-to multiply and divide units with their support type,
-Wcode(*<) 
-and
-Wcode(/<) 
-to multiply and divide units against composite division units,
-Wcode(~/) 
-and
-Wcode(/~) 
-to divide composite multiplication units by their  left/right components;
-finally we use Wcode(/~/)  to divide a unit by itself and get the support type.
-
-
-
-
-
-WP
-We can also define aliasing units: 
+Below you can find some code using units in interesting ways
 
 OBCode
-Cm: Units.alias(0.01Meter) 
-Meter height= 178Cm
+SI.Meter res1 = (6SI.Meter+4SI.Meter)*2Num //20M
+
+Num res2 = 42SI.Meter/2SI.Meter
+
+Num res3 = (42SI.Meter).#inner()
+
+SI.Velocity fast1 =  42SI.Meter/0.1SI.Second
+
+fast2 = SI.Velocity"420" //equivalent ways to initialize it
+fast3 = SI.Velocity"840/2"
+
+distance1 = 60SI.Second * fast1
+
+g = 9.8SI.Acceleration
+
+speedAfter = 10SI.Second * g //98 m/s
+
+t = 10SI.Second
+
+//free fall distance d=(gt^2)/2
+distance2 = (g*t*t)/2Num//490 m after 10s free fall
+
+//Newton=Kg*m/s2 = Kg*Acceleration
+myRoket = 900SI.Newton
+gForceOnMe = 80SI.Kg*g //little less than 800
+myLift = myRoket-gForceOnMe
+if myLift>0SI.Newton (Debug(S"I can fly"))
+myAcc = myLift / 80SI.Kg
+reachedHeight = (myAcc*t*t) / 2Num //after 10 sec
 CCode
-
-Note how height is of type Wcode(Meter).
-Alias units are just shortcut to instantiate values of
-the original unit.
-
-
 
 
 WTitle((3/5) Alphanumeric)

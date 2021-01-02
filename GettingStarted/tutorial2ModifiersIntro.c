@@ -1,20 +1,21 @@
-WBigTitle(`Keep control:  Modifiers, kinds of classes/references/objects')
+WBigTitle(`Keep control:  Modifiers, kinds of references/objects')
 
-WTitle(`(1/5)Kinds of classes')
-Wcode(Point) is an WEmph(Immutable class: ) 
- none of its fields can be WEmph(updated) 
+WTitle(`(1/5)Kinds of objects')
+All instance of Wcode(Point) are WEmph(immutable): 
+ none of their fields can be WEmph(updated)
 or WEmph(mutated.)
-Immutable classes are very easy to use but may be inadequate when representing real objects, whose state can change across time.
-A WEmph(Mutable class) is a class where the state of (some of) its instances may be mutated.
+Immutable objects are very easy to use but may be inadequate when representing entities whose state can change across time.
+A mutable object is an object where some of the fields in their Reachable Object Graph (ROG) can be updated.
 
-Let's now define a Wcode(Animal) mutable class, whose location can be updated.
+Let's now define a mutable Wcode(Animal), whose location can be updated.
 OBCode
-Animal: Data <>< {
+Animal = Data:{
   var Point location
 
   mut method
   Void run() 
-    this.location(this.location().add(x: 20Num))
+    this.location(\.add(x=20Num))
+  //here \ == this.location()
   }
 CCode
 There are two new keywords used here: 
@@ -24,9 +25,9 @@ the Wcode(location) field is Wcode(var).
   Non variable fields can not be updated
 </li><li>
   the modifier Wcode(mut) in front of the method. 
-  We have seen Wcode(class) already, and we have seen methods with the default modifier ( 
+  We have seen Wcode(class) already, and we have seen methods with the default modifier Wcode(imm) ( 
 Wcode(add(x)) and
-Wcode(add(y)) ).
+Wcode(add(y)) ); when a modifiers is not specified it is equivalent to specify the Wcode(imm) modifier.
   Wcode(mut) methods can mutate the "this" object. If you have experience with C++
   you can see the relationship with Wcode(const) methods.
   immutable (default) methods works only on immutable "this" objects. We will see later much more about modifiers
@@ -38,17 +39,17 @@ Also notice that we are using a setter here, where we are providing the first pa
 While this is usual in other languages, in 42 parameters are selected by name.
 However, for some methods with a single parameter, writing down the parameter name would not improve the readability and just add noise.
 In those cases, the first parameter is conventionally called Wcode(that), 
-and writing Wcode(a.b(that: c))
+and writing Wcode(a.b(that=c))
 is equivalent to writing Wcode(a.b(c)).
 This works also for methods with multiple parameters, if the first one is called Wcode(that).
-For example writing Wcode(a.b(that: c, x: d))
-is equivalent to writing Wcode(a.b(c, x: d)).
+For example writing Wcode(a.b(that=c, x=d))
+is equivalent to writing Wcode(a.b(c, x=d)).
 WP
-We can use an animal by writing, for example: 
+We can use WCode(Animal) by writing, for example: 
 
 OBCode
-mut Animal dog1= Animal(location: Point(x: 0Num, y: 0Num))
-dog2= Animal(location: Point(x: 0Num, y: 0Num)) //type 'mut Animal' inferred
+mut Animal dog1= Animal(location=\(x=0\, y=0\))
+dog2= Animal(location=\(x=0\, y=0\)) //type 'mut Animal' inferred
 dog1.run()
 CCode
 
@@ -56,13 +57,14 @@ WTitle(`(2/5)Interaction between mutable and immutable')
 
 We now explore some interaction between mutable and immutable objects.
 OBCode
-Animal: Data <>< {
+Animal = Data:{
   var Point location
   mut Points path
   mut method
-  Void move() 
-    this.location(path.left()))
+  Void move() = (
+    this.location(\path.left())
     this.#path().removeLeft()
+    )
   }
 CCode
 
@@ -73,6 +75,7 @@ Wcode(Point const * location;) in C++  or Wcode(ImmPoint location;) in Java, for
 That is, 
 mutable objects can be referred using mutable references,
 Immutable objects can be referred using immutable references.
+Fields can optionally be Wcode(var) independently from their reference kind.
 WP
 The method Wcode(move)
 first use the Wcode(location(that)) setter method to update the Wcode(location) field,
@@ -85,15 +88,15 @@ Exposers should be used with care: taking access to parts of a mutable
 state of an object could cause 
 spooky action at a distance effects by aliasing.
 
-In general, methods starting with `#' should be used with care.
+In general, a programming convention in 42 is that methods starting with `#' should be used with care.
 WP
 This code models an animal following a path. It can be used like this.
 OBCode
-zero= Point(x: 0Num, y: 0Num)
-ps1= Points[ Point(x: 12Num, y: 20Num);Point(x: 1Num, y: 2Num)]
-ps2= Points[ zero;Point(x: 1Num, y: 2Num)]
-dog1= Animal(location: zero, path: ps1)
-dog2= Animal(location: zero, path: ps2)
+zero= Point(x=0\, y=0\)
+ps1= Points[ \(x=12\, y=20\);\(x=1\, y=2\)]
+ps2= Points[ zero;\(x=1\, y=2\)]
+dog1= Animal(location=zero, path=ps1)
+dog2= Animal(location=zero, path=ps2)
 dog1.move()
 dog2.move()
 CCode
@@ -104,18 +107,18 @@ The second dog goes to 0: 0.
 This code involves a mutable animal with a mutable field. This is often
 a terrible idea, since its behaviour may depend on aliasing:  what happens if two dogs follow the same path?
 OBCode
-zero= Point(x: 0Num, y: 0Num)
-ps= Points[ Point(x: 12Num, y: 20Num);Point(x: 1Num, y: 2Num)]
-dog1= Animal(location: zero, path: ps)
-dog2= Animal(location: zero, path: ps)
+zero= Point(x=0\, y=0\)
+ps= Points[ \(x=12\, y=20\);\(x=1\, y=2\) ]
+dog1= Animal(location=zero, path=ps)
+dog2= Animal(location=zero, path=ps)
 dog1.move()
 dog2.move()
 CCode
 The first dog moves and consumes the path for the second one as well.
 That is, the first goes to 12: 20 and the second goes to 1: 2.
 
-This is because Wcode(Animal) is a WEmph(Deeply mutable class: )  a mutable class with mutable fields. 
-An amazing amount of bugs are caused by the usage of deeply mutable classes.
+This is because Wcode(Animal) is WEmph(deeply mutable): a mutable object with mutable fields. 
+An amazing amount of bugs are caused by the usage of deep mutability.
 
 Note how we are using the exposer Wcode(`#path()')
 in a safe pattern: only called over the Wcode(this) receiver, and the reference does not leak out of the method.
@@ -123,35 +126,41 @@ The problem here arise since the object was shared to begin with.
 
 WTitle(`(3/5)Capsules:  Keep aliasing graphs untangled')
 
-This tricky behaviour is correct for a 
-deeply mutable class. 
 In 42 we can change Wcode(Animal) to prevent this aliasing issue.
 OBCode
-Animal: Data <>< {
+Animal = Data:{
   var Point location
   capsule Points path
   mut method
-  Void move() 
-    this.location(this.path().left()))
-    this.#path().removeLeft()
+  Void move() = (
+    this.location(\path.left())
+    this.removeLeftPath()
+    )
+  @Cache.Clear class method
+  Void removeLeftPath(mut Points path) =
+    path.removeLeft()
   }
 CCode
 Now we use the modifier Wcode(capsule), this requires the field to be encapsulated with respect to aliasing.
 Immutable objects do not influence aliasing, so they are free from aliasing limitations.
-
-WP
 The Wcode(capsule)
  modifier WEmph(forces) the users to provide well encapsulated values,
  and WEmph(ensure) 
  the Wcode(Animal) data is well encapsulated.
 WP
-
-Now the code from before would not compile. However we can still write the following variant
+To ensure that the mutable path is not exposed, we must use
+the Wcode(@Cache.Clear) annotation to define a \Wemph(capsule mutator): a class method taking in input the value of the capsule field as Wcode(mut).
+This method can then be safely accessed as an instance method with the same name.
+The annotation is called Wcode(@Cache.Clear) because 
+capsule mutators also clear all the object based caches. Automatic caching is one of the coolest features of 42 and we will explore it late on.
+WP
+With Wcode(capsule Points path), we are forced to initialize two animals using different paths:
 OBCode
 zero= Point(x: 0Num, y: 0Num)
-capsule Points ps= Points[ Point(x: 12Num, y: 20Num);Point(x: 1Num, y: 2Num)]
-dog1= Animal(location: zero, path: ps)
-dog2= Animal(location: zero, path: Points[ Point(x: 12Num, y: 20Num);Point(x: 1Num, y: 2Num)])
+capsule Points ps= Points[\(x=12\, y=20\);\(x=1\, y= 2\)]
+dog1= Animal(location=zero, path=ps)
+//dog2= Animal(location=zero, path=ps) Does not compile
+dog2= Animal(location=zero, path=\[ \(x=12\, y=20\);\(x= 1\, y=2\)])
 dog1.move()
 dog2.move()
 CCode
@@ -167,10 +176,10 @@ Wcode(dog2= Animal(location: zero, path: dog1.path().clone()))
 
 WTitle(`(4/5)Handle mutability')
 
-WTitle(`Immutable objects of Mutable classes')
+WTitle(`Immutable objects of any class')
 
 How can we get an immutable Wcode(Animal)?
-When an Wcode(Animal) is created using Wcode(Animal(location: __,path: __)) we create a Wcode(mut Animal).
+When an Wcode(Animal) is created using Wcode(Animal(location=_,path=_)) we create a Wcode(mut Animal).
 
 In most cases you can promote such reference to immutable/capsule; just make the type of the local binding explicit.
  The type system will take care of the rest.
@@ -185,24 +194,16 @@ CCode
 We will not explain in this tutorial the exact rules for promotion, but the main idea is that if the initialization expression uses local bindings in a controlled/safe way, then promotion can be applied.
 For example, a mutable expression using only capsule or immutable references can be promoted to capsule or immutable, as we prefer.
 
-WTitle(`Exposers and getters: mutable, lent and read')
+WTitle(`lent and read')
+We have seen immutable, mutable, capsule and class.
+The are still two modifiers: Wcode(lent) and Wcode(read).
+They are hygienic references: they can be read but can not be stored in mutable/capsule/immutable fields.
+Wcode(lent) is an hygienic mutable reference, allowing mutation but not long term storage.
+Wcode(read) is an hygienic read-only reference.
+WP
+A method with a single mut parameter can still be called using a lent reference in place of it.
 
-As we had seen before, exposers are needed to 
-access a mutable reference for a mutable field.
-In case of capsule fields, the exposer will provide a Wcode(lent) reference; that is: 
-a hygienic mutable reference allowing mutation but not long term storage.
-
-Lent references are a supertype of mutable references and can not be stored in mutable/capsule/immutable fields.
-A single lent reference in a subexpression can be temporary promoted to a mutable references.
-for example, when doing 
-Wcode(`this.#path().removeLeft()')
-the reference produced by Wcode(`this.#path()') is promoted to mutable in order to call
-the mutable method Wcode(removeLeft()).
-
-When access to a mutable reference is not needed, one can use
-a normal getter also for mutable fields.
-In this case, a Wcode(read) reference is provided.
-
+Wcode(read) is the common supertype of Wcode(capsule),Wcode(imm), Wcode(mut) and Wcode(lent).
 In general, we can 
 use Wcode(read) when we not care about the mutability of an object.
 For example, we could add to Wcode(Animal)
@@ -212,7 +213,7 @@ read method
 Bool hasArrived()
   this.path().isEmpty()
 CCode
-This method can be called to mutable and immutable animals: 
+This method can be called on both mutable and immutable animals: 
 
 OBCode
 Debug(dog1.hasArrived())
@@ -279,23 +280,22 @@ to encode behaviours similar to dependency injection.
 
 
 
-WTitle(`Kinds of objects, summary')
+WTitle(`Keep control, summary')
 
 <ul>
 <li>
+mutable:  mutable objects can be freely aliased and mutated. They allows for a liberal programming style like we can find in Java/C++/C# or Python.
+They can be referred to by capsule, mutable, lent and read references.
+</li><li>
 immutable: immutable objects 
- can be instances of immutable classes, or promoted instances of mutable classes.
+ can be obtained by promoting instances of mutable classes.
  They
 can be referred to only by immutable and read references.
-</li><li>
-mutable:  mutable objects are instances of mutable classes.
-They can be referred to by capsule, mutable, lent and read references.
+
 </li><li>
 class:  class objects can be accessed from anywhere by using the corresponding class name;
 It is also possible to 
-store them into local binding, but they can be referred to only by class references,
-either of their class or any of the 
-transitively implemented interfaces.
+store them into (class) local binding.
 Some programmers found the fact that class objects are instances of themselves deeply concerning
 or disturbing, while for others it is just a good story to tell to break the ice at parties.
 </li></ul>

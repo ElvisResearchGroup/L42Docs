@@ -26,7 +26,7 @@ OCode
 
 /*multiline comment*/
 
-reuse L42.is/AdamsTowel  //importing code
+reuse [L42.is/AdamsTowel]  //importing code
 CCode
 
 OJCode
@@ -56,17 +56,17 @@ S"hello world"  //String
 Url"www.google.com" //Specially formatted string
 
 
-Javascript"
-'x= function(){
-'  alert("hello world";)
-'  }
-' x()
-" //multiline string
+Javascript"""
+  |x= function(){
+  |  alert("hello world";)
+  |  }
+  | x()
+  """ //multiline string
 
-14Size  //number suitable to be an index
-100Meter  //100 meter
-25Kg  //25 kg, 
-//25Kg+100Meter do not compile
+14I  //number suitable to be a collection index
+1Num// arbitrary precision rational
+Num"-13" //negative number
+Num"13/234" //number as fraction
 CCode
 
 OJCode
@@ -74,19 +74,20 @@ OJCode
 "hello world"  //String
 
 URI.create("www.google.com") //explicit parsing
-//(and Java URL class is discouraged)
 
-Javascript.create( //poor man solution
-"x= function(){",
-"  alert(\"hello world\";)",
-"  }",
-" x()"
-) //painful. Note how we need to escape "
+Javascript.create("""
+ x= function(){
+   alert("hello world");
+   }
+ x()
+ """)//using the new multiline strings
 
 14  //general purpose int
-100L  // may be we want long distances
-25d  //may be we want high precision weight
-//25d+100L is a double :)
+new BigInteger("1");// big integer, some libraries
+//may have 'BigRational' too.
+25d  //to specify 'non int' you add the 'type' later.
+//25d+100L is a double, while in 42 
+//it would require an explicit conversion.
 CJCode
 </div>
 
@@ -102,12 +103,9 @@ CJCode
 WTitle(Hello world)
 <div class= "compare">
 OCode
-{reuse L42.is/AdamsTowel
-Main: { //Note: Main is not a method, just a 'task'
+reuse [L42.is/AdamsTowel]
+Main =  //Note: Main is not a method, just a 'task'
   Debug(S"Hello world")
-  return ExitCode.success()
-  }
-}
 CCode
 
 OJCode
@@ -127,29 +125,22 @@ CJCode
 
 
 
-
-
-
-
-
-
 WTitle(Methods and Classes)
 <div class= "compare">
 OCode
 //42 code
 class method //class method definition
-S answer() //return type and method name
+S answer() = //return type and method name
   S"42" //simple bodies do not need {..return..}
 
 class method //class method definition
 S compose(S left, S right) //parameters
   left++right //sequence concatenation
 
-Person: Data <>< { //define a class Person
-  S name  //fields
-  Year age
-//in 42 fields are seen as getters and setters,
-//thus there is no need to define those.
+Person = Data : { //define a class Person
+  S name  //fields are just getters/setters
+  var Year age //only var fields have setters
+//no need to manually define getters/setters
 //Also, no need to write down a constructor: 
 //Data defines a 'name, age' factory for us.
 
@@ -157,15 +148,17 @@ Person: Data <>< { //define a class Person
 //equality, hashCode and conversion to string.
 
   method //instance method definition
-  S sayHi(S to){  //here we use {..return..}
+  S sayHi(S to) = {  //here we use {..return..}
     if to==this.name() ( //no parenthesis on if/while
-      return S"Oh, you are called "[this.name()]" too?"
+      return S"Oh, you are called %this.name() too?"
       )  //string interpolation
-    return S"Hi, my name is "[this.name()]
-      " and  I'm "[this.age()]" years old"
+    return S"""%%
+      |Hi, my name is %%this.name()
+      |and  I'm %%this.age() years old
+      """//Note: specified interpolation sequence
     }
   class method//This == Person here, 
-  This bob() //simple method instantiating a Person
+  This bob() = //simple method instantiating a Person
     This(name:S"Bob", age: 23Year)
   }
 CCode
@@ -217,12 +210,12 @@ WTitle(Control structures)
 <div class= "compare">
 OCode
 if a>b (return /*...*/)
-var S acc= S""  //explicit 'var': can be updated
+var acc = S""  //explicit 'var': can be updated
 while Bool.true() ( //booleans are not constants
-  if acc.size()>50Size ( //Size: type of indexes 
-    exception void //like java break, rarely used in 42
+  if acc.size()>50I ( //Size: type of indexes 
+    Break()
     )
-  acc++= S"step"
+  acc ++= S"step"
   )
 CCode
 
@@ -233,7 +226,7 @@ while (true) {
   if (acc.length()>50) {
     break;
     }
-  acc+= "step";
+  acc += "step";
 }
 CJCode
 </div>
@@ -249,50 +242,43 @@ CJCode
 WTitle(Vectors)
 <div class= "compare">
 OCode
-names= Strings[S"Fred";S"Mary";S"Mark"]
+Years = Collections.list(Year) //we define it
+...
+names = S.List[S"Fred";S"Mary";S"Mark"]
+ages = Years[20Year;23Year;22Year]
 
-Years: Collections.vector(of: Year) //we define it
+for n in names ( Debug(n) )
 
-ages= Years[20Year;23Year;22Year]
-
-
-with n in names.vals() ( //like a for each loop
-  Debug(n)
-  )
-
-with n in names.vals(), a in ages.vals() (
+for n in names, a in ages (
 //parallel iteration of names and ages
-  Debug(Person(name: n, age: a)) //print all the persons
+  Debug(Person(name= n, age= a)) //print all the persons
   ) //fails with error if names.size()!= ages.size()
 
-Persons: Collections.vector(of: Person)
+Persons = Collections.list(Person)
 
-friends= Persons[
-  Person(name: S"Fred", age: 20Year);
-  Person(name: S"Mary", age: 23Year);
-  Person(name: S"Mark", age: 22Year);
+friends = Persons[
+  Person(name=S"Fred", age=20Year);
+  \(name=S"Mary", age=23Year);//here \ == Person
+  \(name=S"Mark", age=22Year);// == the expected type
   ]
 
-moreFriends= Persons[
-  with n in names.vals(), a in ages.vals() (
-    use[ Person(name: n, age: a) ]
-  )]
+moreFriends = Persons()(
+  for n in names, a in ages 
+    \add(\(name=n, age=a))
+  )
 //moreFriends contains the same elements as friends
 
-//with works also in string interpolation: 
-stringFriends= S"my friends ages are"[
-  with n in names.vals(), a in ages.vals() (
-    use[ a++S": "++n, sep: S", ") ]
-  )]"" //== S"20: Fred, 23: Mary, 22: Mark"
+var stringFriends= S"my friends ages are "
+for n in names.vals(), a in ages.vals() (
+  stringFriends += S"%a: %n"++S.nl()//there is no \n
+  )
 CCode
 
 OJCode
-List<String> names= new ArrayList<>(Arrays.asList(
-  "Fred","Mary","Mark"));
+List<String> names= List.of("Fred","Mary","Mark");
 
 
-List<Integer> ages= new ArrayList<>(Arrays.asList(
-  20,23,22));
+List<Integer> ages= List.of(20,23,22);
 
 for(String n : names){
   System.out.println(n);
@@ -315,19 +301,14 @@ List<Person> moreFriends= new ArrayList<>();
 for(int i= 0; i<names.size(); i++){
   moreFriends.add(
     new Person(names.get(i), ages.get(i)));
-} //silently buggy if names.size()<ages.size()
+} //here and below: silent bug if names.size()<ages.size()
 
-//again, silently buggy if names.size()<ages.size()
 String stringFriends= "my friends ages are";
 for(int i= 0; i<names.size(); i++){
-  if(i>0){stringFriends+= ", ";}
-  stringFriends+= ages.get(i)+": "+names.get(i);
+  stringFriends+= ages.get(i)+": "+names.get(i)+"\n";
 }
 CJCode
 </div>
-
-
-
 
 </p></Div>
  

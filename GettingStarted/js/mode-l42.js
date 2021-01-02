@@ -1,40 +1,26 @@
 define("ace/mode/matching_brace_outdent",["require","exports","module","ace/range"], function(require, exports, module) {
 "use strict";
 
-var Range = require("../range").Range;
 
 var MatchingBraceOutdent = function() {};
 
 (function() {
-
-    this.checkOutdent = function(line, input) {
-        if (! /^\s+$/.test(line))
-            return false;
-
-        return /^\s*\}/.test(input);
+  this.checkOutdent = function(line, input) {
+    if (! /^\s+$/.test(line)){return false;}
+    return /^\s*\}/.test(input);
     };
-
-    this.autoOutdent = function(doc, row) {
-        var line = doc.getLine(row);
-        var match = line.match(/^(\s*\})/);
-
-        if (!match) return 0;
-
-        var column = match[1].length;
-        var openBracePos = doc.findMatchingBracket({row: row, column: column});
-
-        if (!openBracePos || openBracePos.row == row) return 0;
-
-        var indent = this.$getIndent(doc.getLine(openBracePos.row));
-        doc.replace(new Range(row, 0, row, column-1), indent);
+  this.autoOutdent = function(doc, row) {
+    var line = doc.getLine(row);
+    var match = line.match(/^(\s*\})/);
+    if (!match){return 0;}
+    var column = match[1].length;
+    var openBracePos = doc.findMatchingBracket({row: row, column: column});
+    if (!openBracePos || openBracePos.row == row) return 0;
+    var indent = this.$getIndent(doc.getLine(openBracePos.row));
+    doc.replace(new Range(row, 0, row, column-1), indent);
     };
-
-    this.$getIndent = function(line) {
-        return line.match(/^\s*/)[0];
-    };
-
-}).call(MatchingBraceOutdent.prototype);
-
+    this.$getIndent = function(line) {return line.match(/^\s*/)[0];};
+  }).call(MatchingBraceOutdent.prototype);
 exports.MatchingBraceOutdent = MatchingBraceOutdent;
 });
 
@@ -48,7 +34,7 @@ var DocCommentHighlightRules = function() {
     this.$rules = {
         "start" : [ {
             token : "comment.doc.tag",
-            regex : "@[\\w\\d_]+" // TODO: fix email addresses
+            regex : "@[\\w\\d_]+"
         }, 
         DocCommentHighlightRules.getTagRule(),
         {
@@ -96,149 +82,12 @@ var DocCommentHighlightRules = require("./doc_comment_highlight_rules").DocComme
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
 var L42HighlightRules = function() {
-    var keywords = (
-        "refine|method|interface|reuse|return|error|exception|in|if|while|with|on|catch|class|mut|lent|read|capsule|var|default|use|check|loop|else|void|implements"
-    );
+    var keywords =
+        "refine|method|interface|reuse|return|error|exception|in|if|while|for|whoops|catch|class|imm|fwd|mut|lent|read|capsule|var|loop|else|void";
 
     var keywordMapper = this.createKeywordMapper({
         "keyword": keywords,
     }, "identifier");
-	
-	var doubleQtStr = {
-                token : "string", // single line
-                regex : '["](?:[^"])*?["]'
-            };
-			
-	var singleQtStr = {
-                token : "string", // single line
-                regex : "['](?:[^'])*?[']"
-            };
-			
-	var classOrUpperID = {
-		        token : function(val) {
-					var numberPattern = /^[-0-9][0-9.]*/;
-                    var nums=val.match( numberPattern )
-                    if (nums==null){return [{
-                        type: "upperIdentifiers",
-                        value: val
-                        }]}
-                    var size=nums[0].length
-                    return [{
-                        type: "string",
-                        value: val.slice(0, size)
-                        }, {
-                        type: "upperIdentifiers",
-                        value: val.slice(size)
-                        }];
-
-                },                
-                regex : /[-0-9.]*[A-Z$_][a-zA-Z0-9_$%]*/ // Classes / Upper Identifiers
-            };
-			
-	var fieldErr = {
-                token : function(val) {
-                    return [{
-                            type: "text",
-                            value: val.slice(0,1)
-                        }, {
-                            type: "errorHighlight",
-                            value: val.slice(1)
-                        }];
-                },
-                regex : "[.][a-z_$][a-zA-Z0-9_$]*" // .Field // ERROR
-            };
-			
-	var reuseStuff = {
-                token : function(val) {
-                    return [{
-                            type: "keyword",
-                            value: val.slice(0, "reuse".length)
-                        }, {
-                            type: "reuselibrary",
-                            value: val.slice("reuse".length)
-                        }];
-                },
-                regex : "reuse\\s{1,}[^\{\}\\s]*" // resuse l42.is/AdamTowel
-            };
-	
-	var keywordThing = {
-                token : keywordMapper,
-                regex : "[a-zA-Z_$][a-zA-Z0-9_$]*\\b"
-            };
-			
-	var operators = {
-                token : "text",
-                regex : "!|%|&|\\*|\\-\\-|\\-|\\+\\+|\\+|==|=|:=|!=|<=|>=|<|>|&&|[\\/]|\\*=|%=|\\+=|\\-=|&="
-            };
-			
-	var mlString = { // Multiline String
-                token : 'string', // Start
-                regex : '["]$',
-                push : [
-                    {
-                        token: 'string',
-                        regex:/^(\s*'.*)/ // middle
-                    },{
-                        token: 'string',
-                        regex:/^\s*["]/, // end
-                        caseInsensitive:true,
-                        next:"pop"
-                    },
-                    {defaultToken:"errorHighlight"} // Everything else that does not match
-                ]
-            };
-			
-	var methodParam = {
-                token : function(val) {
-					var test = [];
-					test.push({
-                            type: "methodParameters",
-                            value: val.slice(0, -1)
-                        });
-					test.push({
-                            type: "text",
-                            value: val.slice(-1)
-                        });
-                    return test;
-                },
-                regex : "[a-z_$][a-zA-Z0-9_$]*=" // parameter:
-            };
-			
-	var tabErr = {
-                token : function(val) {
-                    return [{
-                        type: "errorHighlight",
-                        value: "\t"
-                        }];
-                },                
-                regex : /[\t]/ // Replace all tabs with a highlighted tab
-            };
-			
-	var methodCall = {
-                token : "objectCall",
-                regex : "[.]??[a-z_$#][a-zA-Z0-9_$]*(?=\\()", 
-				push: [
-					{
-                        token: 'text',
-                        regex: "\\(", // end
-                    },
-					{
-                        token: 'text',
-                        regex: "\\)", // end
-                        next: "pop"
-                    },
-					methodParam,
-					operators,
-					mlString,
-					doubleQtStr,
-					singleQtStr,
-					classOrUpperID,
-					fieldErr,
-					tabErr,
-					{ defaultToken: "text" }
-				]
-            };
-			
 
     this.$rules = {
         "start" : [
@@ -255,16 +104,102 @@ var L42HighlightRules = function() {
                 token : "comment", // multi line comment
                 regex : "\\/\\*",
                 next : "comment"
-            }, mlString, 
-			tabErr, 
-			doubleQtStr, 
-			singleQtStr, 
-			classOrUpperID, 
-			methodCall, 
-			fieldErr, 
-			reuseStuff, 
-			keywordThing, 
-			operators
+            }, { // Multiline String
+                token : 'string', // Start
+                regex : '"""%*$',
+                push : [
+                    {
+                        token: 'string',
+                        regex:/^(\s*('|\||#|\*).*)/ // middle
+                    },{
+                        token: 'string',
+                        regex:/^\s*"""/, // end
+                        caseInsensitive:true,
+                        next:"pop"
+                    },
+                    {defaultToken:"errorHighlight"} // Everything else that does not match
+                ]
+            }, {
+                token : function(val) {
+                    return [{
+                        type: "errorHighlight",
+                        value: "\t"
+                        }];
+                },                
+                regex : /[\t]/ // Replace all tabs with a highlighted tab
+            }, {
+                token : "string", // single line
+                regex : /".*?"/ //'["](?:(?:\\\\.)|(?:[^"\\\\]))*?["]'
+            }, {
+		        token : function(val) {
+                    var numberPattern = /^[-0-9][0-9.]*/;
+                    var nums=val.match( numberPattern )
+                    if (nums==null){return [{
+                        type: "upperIdentifiers",
+                        value: val
+                        }]}
+                    var size=nums[0].length
+                    return [{
+                        type: "string",
+                        value: val.slice(0, size)
+                        }, {
+                        type: "upperIdentifiers",
+                        value: val.slice(size)
+                        }];
+
+                },                
+                regex : /[-0-9.]*[_]*[A-Z$][a-zA-Z0-9_$]*/ // Classes / Upper Identifiers
+            }, {
+                token : function(val) {
+                    return [{
+                            type: "objectCall",
+                            value: val.slice(0, -1)
+                        }, {
+                            type: "text",
+                            value: val.slice(-1)
+                        }];
+                },
+                regex : "[.]??[_]*[a-z#][a-zA-Z0-9_$#]*[::[0-9]*]??[\\(|\\[]" // .methodName(
+            }, {
+                token : function(val) {
+                    return [{
+                            type: "text",
+                            value: val.slice(0,1)
+                        }, {
+                            type: "errorHighlight",
+                            value: val.slice(1)
+                        }];
+                },
+                regex : "[.][a-z_$][a-zA-Z0-9_$]*" // .Field // ERROR
+            },{
+                token : function(val) {
+                    return [{
+                            type: "methodParameters",
+                            value: val.slice(0, -1)
+                        }, {
+                            type: "text",
+                            value: val.slice(-1)
+                        }];
+                },
+                regex : "[a-z_$][a-zA-Z0-9_$]*\\=(?!=|\\>)" // parameter:
+            }, {
+                token : function(val) {
+                    return [{
+                            type: "keyword",
+                            value: val.slice(0, "reuse".length)
+                        }, {
+                            type: "reuselibrary",
+                            value: val.slice("reuse".length)
+                        }];
+                },
+                regex : "reuse\\s{1,}[^\{\}\\s]*" // resuse l42.is/AdamTowel
+            }, {
+                token : keywordMapper,
+                regex : "[a-zA-Z_$][a-zA-Z0-9_$]*\\b"
+            }, {
+                token : "text",
+                regex : "!|%|&|\\*|\\-\\-|\\-|\\+\\+|\\+|==|=|:=|!=|<=|>=|<|>|&&|[\\/]|\\*=|%=|\\+=|\\-=|&="
+            }
         ],
         "comment" : [
             {
