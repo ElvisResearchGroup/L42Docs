@@ -33,24 +33,23 @@ Wcode(Double) (64 bits floating point) and Wcode(Math.Long) (64 bits integers, r
 WTitle(Conversions)
 Conversions between various numeric classes must be performed explicitly.
 
-AdamsTowel offers a simple way to convert between numeric classes, and more in general
-between base classes.
-All numeric  classes implements Wcode(Math.Numeric)
+AdamsTowel offers a simple way to convert between numeric classes; all numeric  classes implements Wcode(Math.Numeric)
 so that they can be converted in to each other using the the unnamed method. For example we can convert indexes into doubles by writing Wcode(Double(12I)).
 This will avoid precision loss as much as possible.
 
 WTitle((2/5) Units: An example library)
 
-We now see how to load and use an interesting 42 Library: Units
+We now see how to load and use an interesting 42 Library:Wcode(Unit).
+
 Consider the following code, where the class decorator Wcode(Load) allows to load libraries and embed them in the 
 current context, while the
-reuse keyword imports the code from the web. 
+Wcode(reuse) keyword imports the code from the web. 
 OBCode
 reuse [L42.is/AdamTowel]
-Unit = Load:{reuse[L42.is/Unit]}
+Unit = Load:{reuse [L42.is/Unit]}
 Year = Unit(I)
 Person = Data:{S name, Year age}
-CBCode
+CCode
 
 The library
 Wcode(Unit)
@@ -58,7 +57,7 @@ offers methods to create units out of numeric supports, like Wcode(Num) and Wcod
 The code above shows how to create a Wcode(Year) unit and use it to represent a person age.
 
 Units can be sum with themselves and multiplied by constants; for example
-Wcode(3Year+2Year == 5Year) and Wcode(3Year *2I == 6Year)would hold, but Wcode(3Year * 2Year) would not compile.
+Wcode(3Year+2Year == 5Year) and Wcode(3Year *2I == 6Year) would hold, but Wcode(3Year * 2Year) would not compile.
 
 Unit could be used to manually define all the units of SI; and a pre-build unit of such reusable code is already provided in the library; we simply need to specify the desired support:
 
@@ -79,6 +78,8 @@ This can be convenient during programming but
 does not make a lot of sense mathematically.
 Methods like that are required to be used with care, so they start with
 Wcode(`#') to underline that.
+
+The syntax Wcode(['Support=>Num]) maps the class called Wcode(Support) inside of the library onto the class Wcode(Num) defined outse of the library. We will explain later the precise use of such mappings.
 
 OBCode
 Num n1= 42SI.Meter / 2SI.Meter //= 21Num
@@ -129,25 +130,25 @@ properties.
 
 
 OBCode
-Email: Alphanumeric <>< { 
+Email = S.Alphanumeric:{
   S local //fields
   S domain
-
+  
   class method
-  This parse(S that) {
-    index= that.indexOf(S"@") //works only for simple emails
-    if !index.isPresent() (error Alphanumeric.ParseFail"@ not found")
-    local= that(end: index.get()) //string slicing
-    domain= that(start: index.get()+1Size ) //string slicing
-    if domain.contains(S"@") (error Alphanumeric.ParseFail"multiple @ found")
-    return This(that,local: local,domain: domain)
+  This from(S string)={
+    index= string.indexOf(S"@") //works only for simple emails
+    if index==I"-1" (error S.ParseError"@ not found")
+    local= string.subString(0I to=index) //string slicing
+    domain= string.subString(index+1I to=\size) //string slicing
+    if domain.contains(S"@") (error S.ParseError"multiple @ found")
+    return This(string,local=local,domain=domain)
     } //call the factory with fields plus the original string
-}
-/*..*/
-myEmail= Email"arthur.dent@gmail.com"
-myEmail.local() ==S"arthur.dent" //holds
-myEmail.domain() ==S"gmail.com" //holds
-myEmail.toS() ==S"arthur.dent@gmail.com" //holds
+  }
+...
+myEmail = Email"arthur.dent@gmail.com"
+myEmail.local()==S"arthur.dent" //holds
+myEmail.domain()==S"gmail.com" //holds
+myEmail.toS()==S"arthur.dent@gmail.com" //holds
 CCode
 
 Note how we can raise an error if the string does not have the shape we expected.
@@ -157,64 +158,54 @@ While it is suggested to propagate the original string in the factory,
 it is not mandatory, for example you could apply some form of normalization, as shown under: 
 
 OBCode
-Email: Alphanumeric <>< {/*..*/
-  This parse(S that) { //google ignore dots anyway
+Email = S.Alphanumeric:{
+  S local //fields
+  S domain
+  
+  class method
+  This from(S string)={ //google ignore dots anyway
     /*..*/
-    local= that(end: index).replaceAll(S"." with: S"")
+    local = string.subString(0\ to=index)
+      .replace(S"." with=S"")
     /*..*/
-    return This(local++S"@"++domain,local: local,domain: domain)
+    return This(S"%local@%domain", local=local, domain=domain)
     } 
   }
 /*..*/
 myEmail= Email"arthur.dent@gmail.com"
-myEmail.toS() ==S"arthurdent@gmail.com" //holds
+myEmail.toS()==S"arthurdent@gmail.com" //holds
 CCode
 
 
 WTitle((4/5) Enumerations)
 
-Enumerations can be obtained with the Wcode(Enumeration) class, as in the following code.
+Enumerations can be obtained with Wcode(Enum), as in the following code.
 
 OBCode
-Direction: Enumeration"north, east, south, west"
+Direction = Collection.Enum:{
+  North={} East={} South={} Weast={}
+  }
 /*..*/
-n= Direction.north()
-s= Direction.south()
-Direction.names()==Strings[S"north,S"east",S"south",S"west"]
-
-if n.isNorth() (/*..*/)
-else if n.isEast() (/*..*/)
-
-Debug(n) //prints north
-
-e= Direction.from(base: S"east")
-
-with d in Direction.all().vals() (
+Debug(Direction.Vals()) // [North; East; South; Weast]
+n = Direction.North()
+s = Direction.South()
+if n==s (/*..*/)
+Debug(n) //North
+for d in Direction.Vals() (
   Debug(d) //prints all the directions in order.
   )
-
+n==Direction.Vals(S"North") //holds
 CCode
-Enumerations also come with their customized set (nested) class,
-we will see more about that when we discuss collections.
 
 WTitle((5/5) Summary)
 
 <ul><li>
-Base classes are the minimal building block for your program;
-be sure to define all the right base classes to establish a convenient vocabulary
-to talk about your problem domain.
-</li><li>
-Use Wcode(Num) as your first guess for numeric types,
-if you have special needs, consider loading a numeric library.
-</li><li>
-Use Wcode(Size) for indexing linear datastructures like vectors and strings.
-Beware of the tricky modulo arithmetic.
+We gave a look at the most basic features of 42.
+There is rich support to define your own specialized datastructures instead of having to rely on the ones provided by default.
 </li><li>
 Use Wcode(Units) 
-and Wcode(Alphanumeric) to give meaning to your constants.
+and Wcode(S.Alphanumeric) to give meaning to your constants.
 In this way, the type system will help you to use values with the semantics you decided.
-</li><li>
-Both alphanumerics and enumerations
-offer  the string literal postfix operator to
-provide a compact initialization syntax.
+Be sure to define all the right base classes to establish a convenient vocabulary
+to talk about your problem domain.
 </li></ul>

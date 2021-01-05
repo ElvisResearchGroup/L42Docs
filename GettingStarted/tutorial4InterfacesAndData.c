@@ -3,19 +3,20 @@ WBigTitle(`Interfaces, Concept and Data')
 WTitle((1/5)`Interfaces, Basis and Details')
 WTitle( Interfaces Basis)
 In 42 interfaces are quite similar to interfaces in other OO languages.
-There are however a couple of important differences: 
+There are however a couple of important differences.
 
-WBR
-while implementing an interface method, do not repeat the
+WP
+
+While implementing an interface method, you can avoid the
 type signature.
 For example, in the following code, to implement Wcode(Shape.draw(that)) inside
 of Wcode(Square), the types Wcode(Void) and Wcode(mut Canvas) are not repeated.
 OBCode
-Shape: {interface
+Shape = {interface
   method Void draw(mut Canvas that)
   }
-Square: {implements Shape
-  method draw(that){..}
+Square = {[Shape]
+  method draw(that) = /*..*/
   }
 CCode
 
@@ -34,49 +35,50 @@ satisfy multiple interfaces declaring methods
 with the same name.
 For example, this code is ill-typed: 
 OBCode
-Card: {interface
+Card = {interface
   method Num draw() //the value of the drawn card
   }
-Gun: {interface
+Gun = {interface
   method Num draw() //the time it takes to drawn the gun
   }
-Wrong: {implements Card,Gun //not allowed
+Wrong = {[Card,Gun] //not allowed
   }
 CCode
 
 
-Note that that would be bad 42 code anyway, you should define an
-enumeration (or an alphanumeric)
- for your cards and use a Wcode(Second) unit of measure
+Note that would be bad 42 code anyway, you should define an enumeration (or an alphanumeric)
+for your cards and use a Wcode(Second) unit of measure
 for the time.
 
-WTitle(Interfaces Details)
+WP
+
 However, interface diamond is allowed, that is, the following code is correct: 
 OBCode
-Shape: {interface
+Shape = {interface
   method Void draw(mut Canvas that)
   }
-Animal: {interface implements Shape
-  method Meter run(){/*..*/}
+Animal = {interface [Shape]
+  method Meter run()
   }
-Noisy: {interface implements Shape
-  method Void play(mut Audio that){/*..*/}
+Noisy = {interface [Shape]
+  method Void play(mut Audio that)
   }
-LoudCat: {implements Animal, Noisy
-  method draw(that){/*..*/}
-  method run(){/*..*/}
-  method play(that){/*..*/}
+LoudCat = {[Animal, Noisy]
+  method draw(that) = /*..*/
+  method run() = /*..*/
+  method play(that) = /*..*/
   }
 CCode
 
-You can further specify the type of an interface method by using the keyword 
-Wcode(refine): 
+WP
+
+You can refine the return type of an interface method, by repeating the full type signature with the desired return type.
 OBCode
-Monster: {interface
+Monster = {interface
   method Monster spawnMinion()
   }
-BigMonster: {implements Monster
-  refine method BigMonster spawnMinion(){..}
+BigMonster = {[Monster]
+  method BigMonster spawnMinion() = /*..*/
   }
 CCode
 
@@ -84,13 +86,13 @@ However, the parameter types can not be refined.
 
 WTitle((2/5) Interfaces and class methods)
 
-Interface methods in 42 are all abstract, that is, without body.
+Interface methods in 42 are all abstract, that is, without bodies.
 A version of the body will be provided by all classes implementing the interface.
 WEmph(This also include class methods.)
 WBR
 For example, consider the following code: 
 OBCode
-Shape: {interface
+Shape = {interface
   class method 
   Num numberOfSides()
   class method
@@ -99,14 +101,14 @@ Shape: {interface
   Void draw(Canvas that)
   }
 
-Square: {implements Shape
+Square = {[Shape]
   Color color
-  method numberOfSides() //class method implemented
+  method numberOfSides() = //class method implemented
     4Num
   method newShape(that) //class method implemented
-    This(color: that)
-  method draw(that) ( //method implemented
-    /*..*/)
+    This(color=that)
+  method draw(that) = //immutable method implemented
+    /*..*/
   }
 /*..*/
 class Shape kindOfShape= Square
@@ -122,34 +124,26 @@ a specific kind of shape.
 WP
 
 In 42 interfaces can not have 
-implemented static methods.
+implemented class methods.
 Sometimes there is the need of semantically associate some behaviour with an interface.
 For example we could check intersections between shapes using
 the draw method.
+What we would need, is a traditional (non dynamically dispatched) static method.
+In 42, static methods are just nested classes with a single class method with the empty name. In 42 adding new classes is very common, so do not be scared of adding a new class just to host a method.
 
-This can be done, since interfaces can have nested classes, that can have (class) methods.
-Conventionally, if you need behaviour associated with the concept represented by the interface, you can just declare a nested class,
-conventionally called Wcode($), containing you needed methods.
 WBR
 For example
-
-
 OBCode
-Shape: {interface
+Shape = {interface
   /*..*/
-  $: {
-    class method
-    Bool intersect(Shape left,Shape right) {
+  Intersect = {class method
+    Bool (Shape left, Shape right) = 
       /*..*/
-      }
     }
   }
 CCode
 
-Such Wcode($) classes are referred as service classes.
-They are needed by the code but do not serve any role
-in the abstract model of the application.
-
+INTERFACES AND DATA, was together since Data relied on many interfaces at the time!!
 WTitle((3/5)`Concept: ToS, Equals, Classable, ...')
 Wcode(Concept) is a class defined in AdamsTowel,
 containing interfaces commonly used by many classes.
