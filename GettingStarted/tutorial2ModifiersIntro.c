@@ -149,10 +149,10 @@ The Wcode(capsule)
  the Wcode(Animal) data is well encapsulated.
 WP
 To ensure that the mutable path is not exposed, we must use
-the Wcode(@Cache.Clear) annotation to define a \Wemph(capsule mutator): a class method taking in input the value of the capsule field as Wcode(mut).
+the Wcode(@Cache.Clear) annotation to define a Wemph(capsule mutator): a class method taking in input the value of the capsule field as Wcode(mut).
 This method can then be safely accessed as an instance method with the same name.
-The annotation is called Wcode(@Cache.Clear) because 
-capsule mutators also clear all the object based caches. Automatic caching is one of the coolest features of 42 and we will explore it late on.
+The annotation is called Wcode(@Cache.Clear) because
+capsule mutators also clear all the object based caches. Automatic caching is one of the coolest features of 42 and we will explore it in the next chapter.
 WP
 With Wcode(capsule Points path), we are forced to initialize two animals using different paths:
 OBCode

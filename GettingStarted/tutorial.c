@@ -5,6 +5,7 @@ ContinueFloat
 <ol>
 WMenuItem(`#Basics',`Basic concepts')
 WMenuItem(`#ModifiersIntro',`Introduction to modifiers')
+WMenuItem(`#Caching',`Caching')
 WMenuItem(`#BasicClasses',`Basic Classes')
 WMenuItem(`#InterfacesAndData',`Interfaces and Data')
 WMenuItem(`#Sequences',`Collections and Sequences')
@@ -19,6 +20,7 @@ CFloat
 
 WChapter(`Basics',`tutorial1Basics.c')
 WChapter(`ModifiersIntro',`tutorial2ModifiersIntro.c')
+WChapter(`Caching',`tutorial3Caching.c')
 WChapter(`BasicClasses',`tutorial3BasicClasses.c')
 WChapter(`InterfacesAndData',`tutorial4InterfacesAndData.c')
 WChapter(`Sequences',`tutorial5Sequences.c')

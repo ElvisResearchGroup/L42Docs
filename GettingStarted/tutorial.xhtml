@@ -33,6 +33,7 @@
 <ol>
  <li><a href="#Basics"> Basic concepts </a></li>
  <li><a href="#ModifiersIntro"> Introduction to modifiers </a></li>
+ <li><a href="#Caching"> Caching </a></li>
  <li><a href="#BasicClasses"> Basic Classes </a></li>
  <li><a href="#InterfacesAndData"> Interfaces and Data </a></li>
  <li><a href="#Sequences"> Collections and Sequences </a></li>
@@ -436,10 +437,10 @@ The '<span class="code"><![CDATA[capsule]]></span>'
  the '<span class="code"><![CDATA[Animal]]></span>' data is well encapsulated.
 </p><p>
 To ensure that the mutable path is not exposed, we must use
-the '<span class="code"><![CDATA[@Cache.Clear]]></span>' annotation to define a \Wemph(capsule mutator): a class method taking in input the value of the capsule field as '<span class="code"><![CDATA[mut]]></span>'.
+the '<span class="code"><![CDATA[@Cache.Clear]]></span>' annotation to define a Wemph(capsule mutator): a class method taking in input the value of the capsule field as '<span class="code"><![CDATA[mut]]></span>'.
 This method can then be safely accessed as an instance method with the same name.
-The annotation is called '<span class="code"><![CDATA[@Cache.Clear]]></span>' because 
-capsule mutators also clear all the object based caches. Automatic caching is one of the coolest features of 42 and we will explore it late on.
+The annotation is called '<span class="code"><![CDATA[@Cache.Clear]]></span>' because
+capsule mutators also clear all the object based caches. Automatic caching is one of the coolest features of 42 and we will explore it in the next chapter.
 </p><p>
 With '<span class="code"><![CDATA[capsule Points path]]></span>', we are forced to initialize two animals using different paths:
 <pre class="l42Big"><![CDATA[
@@ -585,6 +586,198 @@ It is also possible to
 store them into (class) local binding.
 Some programmers found the fact that class objects are instances of themselves deeply concerning
 or disturbing, while for others it is just a good story to tell to break the ice at parties.
+</li></ul>
+ </p><p id="Caching"> </p><h1> Caching </h1> <p>
+</p><h2> (1/5) Normalization </h2> <p>
+One of the big advantages of deeply immutable objects is that two structurally identical objects are referentially transparent, that is, you can not distinguish if they are represented in memory by a single object or two.
+This means that it is possible to reuse the same objects to save memory. While in other languages the programmer would have to implement some ad hoc support to reuse objects, in L42 this is supported directly by the language, in a process called Wemph(normalization).
+An immutable object can be turned into its normalized version using '<span class="code"><![CDATA[.norm()]]></span>'
+<pre class="l42Big"><![CDATA[
+Person = Data:{S name}
+..
+var bob1 = Person(S"Bob")//one bob in memory
+var bob2 = Person(S"Bob")//two bobs in memory
+bob1:=bob1.norm()
+bob2:=bob2.norm()//most likely now bob2 referes to
+//the same object of bob1.
+//The object originally pointed by bob2 can now be
+//garbage collected.
+bob2:=bob2.norm()//repeating normalization has no effect.
+//The second calls to norm is as fast as a field access.
+]]></pre>
+As you can see, objects are born not normalized and can be normalized manually by the programmer.
+Normalization is cheap but it is not free, so it is not convenient to apply it on short lived objects.
+The programmer can express that all objects of a class are normalized during creation by passing parameters to '<span class="code"><![CDATA[Data]]></span>':
+<pre class="l42Big"><![CDATA[
+Person = Data('This,autoNorm=\.true()):{S name}
+..
+var bob1 = Person(S"Bob")//one bob in memory
+var bob2 = Person(S"Bob")//two bobs in memory
+bob2:=bob2.norm()//no-op, bob2 was already normalized
+]]></pre>
+Normalizing requires to check if another structurally equivalent object has ever been normalized. This also support circular objects and normalizes all the sub objects.
+Consider the following richer example:
+<pre class="l42Big"><![CDATA[
+Person = Data:{S name}
+Dog = Data:{S name, Person owner}
+..
+bob1 = Person(S"Bob")//one bob in memory
+bob2 = Person(S"Bob")//two bobs in memory
+dog1 = Dog(S"Grunthos", bob1)
+dog2 = Dog(S"Agrajag", bob2)
+//dog1.owner() is a different object of dog2.owner()
+//abait there are structurally identical and we can
+//not tell them apart using L42.
+dog1.norm()//note: we do not reassign dog1
+dog2.norm()
+//dog1 and dog 2 are different objects, but
+//dog1.owner() is now the same object of dog2.owner()
+//bob1 and bob2 are still two different objects.
+]]></pre>
+The logic needed for normalization is the same needed to check if two arbitrary objects are structurally equal, to print an object to a redable string and to clone objects.
+Thus data allows for all of those operations indireclty relying on normalization.
+Those are all operations requiring to scan the whole ROG of the object, so the cost of normalization is acceptable in context.
+
+</p><h2> (2/5) Lazy Caching </h2> <p>
+
+Some methods may take a long time to compute, but the are deterministic, and thus we could cache the result and reuse it many times.
+A typical example is fibonacci:
+<pre class="l42Big"><![CDATA[
+class method Num slowFibo(Num n) = {
+  if n==0Num || n==1Num (return n)
+  return This.slowFibo(n=n-1\)+This.slowFibo(n=n-2\)
+  }
+]]></pre>
+This fibonacci implementation would take a very long time to run, since it would require recomputing the same
+results an exponential amount of times.
+
+This tweaked implementation relying on caching is much faster.
+<pre class="l42Big"><![CDATA[
+ComputeFibo=Data:{
+  Num that
+  @Cache.Lazy method Num () = {
+    n=this.that()
+    if n==0Num ||n==1Num ( return n )
+    This fibo1=This(n-1Num)//a 'computational object'
+    return fibo1()+This(n-2Num)()
+    }
+  }
+]]></pre>
+As you can see, instead of a method with parameters we can declare a class with fields and an unnamed method doing the actual computation.
+'<span class="code"><![CDATA[Cache.Lazy]]></span>' is an annotation recognized by '<span class="code"><![CDATA[Data]]></span>' that works only on '<span class="code"><![CDATA[imm]]></span>' or '<span class="code"><![CDATA[class]]></span>' methods with no arguments and with an '<span class="code"><![CDATA[imm]]></span>' result.
+The method is computed only one time and then cached on the normalized version of the receiver. In this way, 
+all the redundant fibonacci calls are avoided.
+
+</p><p>
+As you can see, the caching is is completly handled by the language and is not connected with the specific algorithm. This pattern is general enought to support any method from immuttable data to an immutable result.
+
+</p><h2> (3/5) Automatic parallelism </h2> <p>
+'<span class="code"><![CDATA[Cache.Lazy]]></span>' allows to cache the result of methods after they have been called the first time.
+However, why wait for the method to be called?
+once the receiver object is created, the method could be computed Wemph(eagerly) in a separed worker, so that when we call the method, we get the result without any wait at all.
+That is, if we use '<span class="code"><![CDATA[Cache.Eager]]></span>' we can get automatic parallelism: the language will handle a set of parallel workers to execute such method bodies.
+
+</p><p>
+An important consideration here is that both '<span class="code"><![CDATA[Cache.Lazy]]></span>' and '<span class="code"><![CDATA[Cache.Eager]]></span>' are unobservable; that is, the observed result of the code is not impacted by lazy or eager cache.
+
+Consider the following code:
+
+<pre class="l42Big"><![CDATA[
+Task = Data:{
+  S text
+  @Cache.Eager method Bool isPolite() = ( .. )
+  @Cache.Eager method Bool isGrammatical() = ( .. )
+  }
+Tasks = Collection.list(Task)
+
+Main=(
+  tasks=Tasks[
+    \(text=S"..");
+    ..
+    \(text=S"..");
+    ]
+  for t in tasks (
+    Debug( t.isPolite() )
+    )
+  )
+]]></pre>
+Here we declare a Task object with a string field and two eager methods: one will check if the text in the string is polite and another will check if the string is grammatically correct.
+This can take quite a while. By using eager methods, it is sufficient to just create the objects to start those computations in parallel.
+When we need the results, we can just iterate on those task objects and call the methods.
+Objects with eager methods are automatically normed during creation, as if we used 
+'<span class="code"><![CDATA[Data('This,autoNorm=\.true())]]></span>' instead of '<span class="code"><![CDATA[Data]]></span>'.
+
+As you can see, parallelism and caching are just two sides of the same coin.
+
+</p><h2> (4/5) Invariants and derived fields </h2> <p>
+We have seen that cached behaviour can be computed lazily or eagerly on immutable objects.
+But we can bring caching even earlier and compute some behaviour Wemph(at the same time) of the object creation.
+This allows to encode derived fields: fields whose value must depend from the other object fields.
+Consider the following example:
+<pre class="l42Big"><![CDATA[
+Point = Data:{//not ok, the tree arg factory still exists
+  Double x
+  Double y
+  Double distanceFromOrigin
+  //should always be (x^2+y^2)^0.5
+  class method This (Double x, Double y) = \(
+    x=x
+    y=y
+    distanceFromOrigin=((x*x)+(y*y)).pow(exp=\"0.5")
+    )
+  }
+]]></pre>
+Where the class '<span class="code"><![CDATA[Point]]></span>' has 3 fields, but the value of the third one should depend from the other two.
+In 42 the code above would simply define a class with tree unrelated fields, and while we are offering a factory that conveniently takes x and y and initialize the third field with 
+the computed value, the user could easly create invalid instances by calling the factory method with three arguments.
+As we will see later, in 42 we can prevent this from happening by making such method private.
+For the class '<span class="code"><![CDATA[Point]]></span>' as presented, this would be a 
+satisfactory solution, since all '<span class="code"><![CDATA[Point]]></span>' objects are deeply immutable.
+However, what if the fields could be updated?
+<pre class="l42Big"><![CDATA[
+Point = Data:{
+  var Double x
+  var Double y
+  var Double distanceFromOrigin
+  //should always be (x^2+y^2)^0.5
+  //should be recomputed when x or y are updated
+  }
+]]></pre>
+
+In other programming languages this can be encoded by
+making the fields private and customizing the implementations of the setters to recompute the distance when needed. This pattern can grow very complex very fast.
+In 42 we can avoid manually handling those checks and recomputations by using '<span class="code"><![CDATA[Cache.Now]]></span>'
+<pre class="l42Big"><![CDATA[
+Point = Data:{
+  var Double x
+  var Double y
+  @Cache.Now class method Double distanceFromOrigin(Double x, Double y) = 
+    ((x*x)+(y*y)).pow(exp=\"0.5")
+  }
+]]></pre>
+The '<span class="code"><![CDATA[Point]]></span>' class defined abouve has a single factory method taking just '<span class="code"><![CDATA[x]]></span>' and '<span class="code"><![CDATA[y]]></span>'. In this way there is not need to have multiple ways to build the object and then hide the dangerous ones after the fact.
+
+The method '<span class="code"><![CDATA[distanceFromOrigin(x,y)]]></span>' is computed when the code 
+
+</p><h2> (5/5) Summary </h2> <p>
+
+</p><h1> Caching on mutable objects </h1> <p>
+then on mutable
+
+
+also on mutable objects
+
+also lazy
+
+<ul><li>
+We gave a look at the most basic features of 42.
+There is rich support to define your own specialized datastructures instead of having to rely on the ones provided by default.
+</li><li>
+Use '<span class="code"><![CDATA[Units]]></span>' 
+and '<span class="code"><![CDATA[S.Alphanumeric]]></span>' to give meaning to your constants.
+In this way, the type system will help you to use values with the semantics you decided.
+Be sure to define all the right base classes to establish a convenient vocabulary
+to talk about your problem domain.
 </li></ul>
  </p><p id="BasicClasses"> </p><h1> Basic classes </h1> <p>
 
@@ -802,19 +995,20 @@ to talk about your problem domain.
 </p><h2> (1/5)Interfaces, Basis and Details </h2> <p>
 </p><h2> Interfaces Basis </h2> <p>
 In 42 interfaces are quite similar to interfaces in other OO languages.
-There are however a couple of important differences: 
+There are however a couple of important differences.
 
-<br/>
-while implementing an interface method, do not repeat the
+</p><p>
+
+While implementing an interface method, you can avoid the
 type signature.
 For example, in the following code, to implement '<span class="code"><![CDATA[Shape.draw(that)]]></span>' inside
 of '<span class="code"><![CDATA[Square]]></span>', the types '<span class="code"><![CDATA[Void]]></span>' and '<span class="code"><![CDATA[mut Canvas]]></span>' are not repeated.
 <pre class="l42Big"><![CDATA[
-Shape: {interface
+Shape = {interface
   method Void draw(mut Canvas that)
   }
-Square: {implements Shape
-  method draw(that){..}
+Square = {[Shape]
+  method draw(that) = /*..*/
   }
 ]]></pre>
 
@@ -833,49 +1027,50 @@ satisfy multiple interfaces declaring methods
 with the same name.
 For example, this code is ill-typed: 
 <pre class="l42Big"><![CDATA[
-Card: {interface
+Card = {interface
   method Num draw() //the value of the drawn card
   }
-Gun: {interface
+Gun = {interface
   method Num draw() //the time it takes to drawn the gun
   }
-Wrong: {implements Card,Gun //not allowed
+Wrong = {[Card,Gun] //not allowed
   }
 ]]></pre>
 
 
-Note that that would be bad 42 code anyway, you should define an
-enumeration (or an alphanumeric)
- for your cards and use a '<span class="code"><![CDATA[Second]]></span>' unit of measure
+Note that would be bad 42 code anyway, you should define an enumeration (or an alphanumeric)
+for your cards and use a '<span class="code"><![CDATA[Second]]></span>' unit of measure
 for the time.
 
-</p><h2> Interfaces Details </h2> <p>
+</p><p>
+
 However, interface diamond is allowed, that is, the following code is correct: 
 <pre class="l42Big"><![CDATA[
-Shape: {interface
+Shape = {interface
   method Void draw(mut Canvas that)
   }
-Animal: {interface implements Shape
-  method Meter run(){/*..*/}
+Animal = {interface [Shape]
+  method Meter run()
   }
-Noisy: {interface implements Shape
-  method Void play(mut Audio that){/*..*/}
+Noisy = {interface [Shape]
+  method Void play(mut Audio that)
   }
-LoudCat: {implements Animal, Noisy
-  method draw(that){/*..*/}
-  method run(){/*..*/}
-  method play(that){/*..*/}
+LoudCat = {[Animal, Noisy]
+  method draw(that) = /*..*/
+  method run() = /*..*/
+  method play(that) = /*..*/
   }
 ]]></pre>
 
-You can further specify the type of an interface method by using the keyword 
-'<span class="code"><![CDATA[refine]]></span>': 
+</p><p>
+
+You can refine the return type of an interface method, by repeating the full type signature with the desired return type.
 <pre class="l42Big"><![CDATA[
-Monster: {interface
+Monster = {interface
   method Monster spawnMinion()
   }
-BigMonster: {implements Monster
-  refine method BigMonster spawnMinion(){..}
+BigMonster = {[Monster]
+  method BigMonster spawnMinion() = /*..*/
   }
 ]]></pre>
 
@@ -883,13 +1078,13 @@ However, the parameter types can not be refined.
 
 </p><h2> (2/5) Interfaces and class methods </h2> <p>
 
-Interface methods in 42 are all abstract, that is, without body.
+Interface methods in 42 are all abstract, that is, without bodies.
 A version of the body will be provided by all classes implementing the interface.
 <span style="color:#ff1111; font-weight: bold;"> This also include class methods. </span>
 <br/>
 For example, consider the following code: 
 <pre class="l42Big"><![CDATA[
-Shape: {interface
+Shape = {interface
   class method 
   Num numberOfSides()
   class method
@@ -898,14 +1093,14 @@ Shape: {interface
   Void draw(Canvas that)
   }
 
-Square: {implements Shape
+Square = {[Shape]
   Color color
-  method numberOfSides() //class method implemented
+  method numberOfSides() = //class method implemented
     4Num
   method newShape(that) //class method implemented
-    This(color: that)
-  method draw(that) ( //method implemented
-    /*..*/)
+    This(color=that)
+  method draw(that) = //immutable method implemented
+    /*..*/
   }
 /*..*/
 class Shape kindOfShape= Square
@@ -921,34 +1116,26 @@ a specific kind of shape.
 </p><p>
 
 In 42 interfaces can not have 
-implemented static methods.
+implemented class methods.
 Sometimes there is the need of semantically associate some behaviour with an interface.
 For example we could check intersections between shapes using
 the draw method.
+What we would need, is a traditional (non dynamically dispatched) static method.
+In 42, static methods are just nested classes with a single class method with the empty name. In 42 adding new classes is very common, so do not be scared of adding a new class just to host a method.
 
-This can be done, since interfaces can have nested classes, that can have (class) methods.
-Conventionally, if you need behaviour associated with the concept represented by the interface, you can just declare a nested class,
-conventionally called '<span class="code"><![CDATA[$]]></span>', containing you needed methods.
 <br/>
 For example
-
-
 <pre class="l42Big"><![CDATA[
-Shape: {interface
+Shape = {interface
   /*..*/
-  $: {
-    class method
-    Bool intersect(Shape left,Shape right) {
+  Intersect = {class method
+    Bool (Shape left, Shape right) = 
       /*..*/
-      }
     }
   }
 ]]></pre>
 
-Such '<span class="code"><![CDATA[$]]></span>' classes are referred as service classes.
-They are needed by the code but do not serve any role
-in the abstract model of the application.
-
+INTERFACES AND DATA, was together since Data relied on many interfaces at the time!!
 </p><h2> (3/5)Concept: ToS, Equals, Classable, ... </h2> <p>
 '<span class="code"><![CDATA[Concept]]></span>' is a class defined in AdamsTowel,
 containing interfaces commonly used by many classes.

@@ -9,22 +9,12 @@ While it is possible to thrown informative strings, they do no offer enough
 structure to fully take advantage of the error mechanism.
 AdamsTowel defines the interface Wcode(Message): 
 a structured way to provide a certain kind of message to the user.
-Wcode(Message)s has Wcode(.text()) ,
-Wcode(.isResponse()) and Wcode(.responseOf()).
-The text is the informative string, while if there is
-a response (Wcode(msg.isResponse()==Bool.true()) 
-then Wcode(msg.responseOf()) will be the 
-former message in the chain, else Wcode(msg.responseOf())
-will produce a run time error.
-
 There are two main kinds of Wcode(Message)s: 
 Wcode(Guard) and Wcode(Assert).
 While Assertions are useful to observe bugs, the application
 logic should not depend on them, since they may change
-in unpredictable ways during library evolutions, and can be
-enabled or disabled.
-A guard is guaranteed to be consistent across library evolution
-thus program logic can depend on them being thrown.
+in unpredictable ways during library evolutions, and can be enabled or disabled.
+A guard is guaranteed to be consistent across library evolution thus program logic can depend on them being thrown.
 
 Assertions are the right tool to prevent the code from proceding
 out of our designed space. The assertion class called Wcode(X) 
@@ -344,3 +334,14 @@ Up to half of good 42 code will be composed of
 just error/exception handling/lifting and management.
 Do not be scared of turning your code in it's own policemen.
 </li></ul>
+
+Wcode(Message)s has Wcode(.text()) 
+and Wcode(.#whoopsed(atPos))
+methods.
+
+Wcode(.isResponse()) and Wcode(.responseOf()).
+The text is the informative string, while if there is
+a response (Wcode(msg.isResponse()==Bool.true()) 
+then Wcode(msg.responseOf()) will be the 
+former message in the chain, else Wcode(msg.responseOf())
+will produce a run time error.
