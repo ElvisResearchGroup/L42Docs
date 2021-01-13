@@ -31,31 +31,32 @@ OBCode
 method Nat confirmAnswer(Nat answer) (
   X.Pre[ //preconditions
     answer>0Num; //simplest form
-    answer<10000Num msg: S"here with personalized message answer= "[answer]"";
-    answer expected: 42Num //call equals and do a better error reporting
+    answer<10000Num msg=S"here with personalized message answer= %answer";
+    actual=answer, expected=42Num //do a better error reporting
     ] //in a bunch of assertions, they are all going to be checked/reported together.
-  Nat recomputedAnswer=6Num*7Num
-  X[ //postconditions/checks in the middle
-    recomputedAnswer expected: 42Num msg: S"arithmetic mess"
+  recomputedAnswer=6Num*7Num
+  X[//postconditions/checks in the middle
+    actual=recomputedAnswer
+    expected=42Num
     ]
-
-  X[answer==recomputedAnswer] 
-
-if answer>50Num (//how to just throw error X
-  error X""
-  )
+  X[answer==recomputedAnswer]
+  if answer>50Num (//how to just throw error X
+    error X""
+    )
 CCode
 
 Wcode(X) is often used as last case in a sequence of if-return:
 
 OBCode
-Direction: Enumeration"north, east, south, west"
+Direction = Collection.Enum:{
+  North={} East={} South={} Weast={}
+  }
 /*..*/
 Direction opposite={
-  if d.isNorth() return Direction.south()
-  if d.isSouth() return Direction.north()
-  if d.isEast() return Direction.west()
-  X[d.isWest()] return Direction.east()
+  if d==Direction.North() return Direction.South()
+  if d==Direction.South() return Direction.North()
+  if d==Direction.East() return Direction.West()
+  X[d==Direction.West()] return Direction.East()
   }
 CCode
 As you can see, since there are only 4 directions, we believe by exclusion that the last case must hold. However, we prefer to
@@ -66,68 +67,52 @@ WTitle(`(2/5) Create, throw and capture')
 
 WTitle(Create and throw)
 
-You can create new kinds of messages using the 
-service class of the message interface: 
+You can create new kinds of messages using Wcode(Message)
+as a decorator:
 
 OBCode
-AnswerNotUnderstood: Message.$ <>< {implements Guard}
+AnswerNotUnderstood = Message:{[Message.Guard]}
 //this is a new kind of message, implementing Guard.
 //you can also add methods to your kind of message.
 //you can add fields, we will see this more in detail later.
 /*..*/
 //throwing an error
 if this.ohNoNoNOOO() (error AnswerNotUnderstood"Well, too bad")
-
-if this.iWasDistracted() (
-  //throwing an error in response of another
-  Guard other= NotListening"" //empty message
-  error AnswerNotUnderstood"Try again"(other)
-  )
-
 CCode
 
-As you can see, since Wcode(Message) is an interface, it can not help us directly
-to create messages, however it has a service nested class called Wcode($), which
-is a class decorator helping us to create valid messages.
-As you can see we can create messages with text, in which we can optionally include a response.
+You may be surprised that we can use Wcode(Message) as a decorator, since it is an interface.
+When operators are called on class names directly, they are desugared as a method on one of the class nested classes. For example
+Wcode(`Message:{..}') becomes
+Wcode(`Message.ClassOperators.#colon0({..})').
+It is very common for interfaces to be usable as decorator creating new code with a meaningful default implelemtation for such an interface.
 
 WTitle(Capturing errors and exceptions)
 
 In 42 there is no explicit Wcode(try) statement,
-but any block of code can contain Wcode(catch).
-This logically separe any block of code into WEmph(paragraphs.)
+but any block of code delimited by round or curly brackets can contain Wcode(catch).
 
-For example, in the following code we have 3 paragraphs: line 2-3,
- line 6-7 and line 9.
 OBCode
-res= (
- b1= CanGoWrong()
- b2= CanGoWrong() //see b1
- catch error Wrong msg1  S"hi 1" //not see b1,b2
- catch error Guard msg2  S"hi 2" //not see b1,b2
- b3= CanGoWrong() //can see b1, b2
- b4= CanGoWrong() //can see b1, b2
- catch error Wrong msg3  S"hi 3" //see b1,b2, not see b3,b4
- S"hi 4" //see b1,b2,b3
+res = (
+ b1 = CanGoWrong()
+ b2 = CanGoWrong() //see b1
+ catch error Wrong msg1  S"hi 1" //not see b1, b2
+ catch error Message.Guard msg2  S"hi 2" //not see b1, b2
+ b3 = CanGoWrong() //can see b1, b2
+ b4 = CanGoWrong() //can see b1, b2, b3
+ S"hi 3" //can see b1, b2, b3, b4
  )
 CCode
-
-Paragraphs are separated by catches.
-Each catch capture only exceptions/errors that happens inside of
-the paragraph directly above, and can not see the local binding
-declared in such paragraph.
+The catches above do not see local variables Wcode(b1) and Wcode(b2) because they may be capturing an error raised by the execution of the initialization of such variable.
+L42 never exposes uninitialized data.
 If a catch is successful, then the result of its catch expression
 will be the result of the whole code block.
 In this way, blocks with catches behave like conditionals.
 That is, The code above can assign to Wcode(res) either 
 Wcode(S"hi 1"),
-Wcode(S"hi 2"),
-Wcode(S"hi 3") or
-Wcode(S"hi 4").
-
+Wcode(S"hi 2") or
+Wcode(S"hi 3").
 
 WTitle(Strong error safety)
-
 
 Errors guarantee a property called strong error safety
 (strong exception safety in the Java/C++ terminology)
@@ -137,11 +122,12 @@ This is enforced by disallowing catching errors if the paragraph can mutate obje
 WBR
 That is, the following code do not compile
 OBCode
-p= Person(name: S"Bill" age: 23Year)
-res= (
+p = Person(name=S"Bill" age=23Year)
+res = (
  p.age(p.age()+1Year)
  p.age(p.age()+1Year)
- catch error Guard msg2  (/*could see p with 23 or 24 years*/)
+ catch error Message.Guard msg2 (
+   /*could see p with 23 or 24 years*/)
  p
  )
 CCode
@@ -149,11 +135,11 @@ CCode
 While the following is accepted.
 
 OBCode
-res= (
- p= Person(name: S"Bill" age: 23Year)
+res = (
+ p = Person(name=S"Bill" age=23Year)
  p.age(p.age()+1Year)
  p.age(p.age()+1Year)
- catch error Guard msg2  (/*can not see p*/)
+ catch error Message.Guard msg2 (/*can not see p*/)
  p
  )
 CCode
@@ -162,7 +148,8 @@ WTitle(`(3/5) Exceptions and errors')
 
 Exceptions are like checked exceptions in java.
 As with errors, every immutable object can be thrown as an exception.
-just write Wcode(exception) instead of Wcode(error) while throwing or capturing.
+You can just write Wcode(exception) instead of Wcode(error) while throwing or capturing. When capturing, Wcode(exception) is the default, so you can write Wcode(catch Foo x)
+instead of Wcode(catch exception Foo x)
 Exceptions represent expected, documented and reliable behaviour,
 they are just another way to express control flow.
 They are useful to characterize multiple outcomes of an operation,
@@ -173,55 +160,59 @@ mention it in their header, as in the following.
 OBCode
 /*somewhere in a GUI library*/
 method
-S promptUser(S text)
-exception CancelPressed {
+S promptUser(S text)[CancelPressed] = {
   /*implementation to open a text dialog*/
   }
 CCode
 The programmer using Wcode(promptUser) has to handle 
 the possibility that the cancel button was pressed.
-
+However, L42 supports exception inference; to simply propagate all the exceptions leaked out by the other methods called in a method body, you can write Wcode(_), as shown below:
+OBCode
+/*somewhere in a GUI library*/
+method
+S promptUser(S text)[_] = {
+  /*implementation to open a text dialog*/
+  }
+CCode
 Exceptions does not enforce strong exception safety as errors do,
 so they can be used more flexibly, and since they are documented in
 the types, we can take their existence in account while writing imperative programs.
 WP
-Often, the programmer wants to just turn exceptions into errors or other exceptions.
-This is possible with the following code: 
-
+Often, the programmer wants to just turn exceptions into errors.
+While this can be done manually, L42 offers a convenient syntax: Wcode(whoops).
 
 OBCode
 //long version
-DoStuff()
-catch exception FileNotFound fnf 
-  error X"I just created it!"(fnf)
+Res foo = {
+  return DoStuff()
+  catch FileNotFound fnf 
+    error fnf
+  catch FileCorrupted fc
+    error fc
+  }
 
 //short version
-DoStuff()
-error on FileNotFound
-  X"I just created it!"
+Res foo = {
+  return DoStuff()
+  whoops FileNotFound, FileCorrupted
+  }
 CCode
 
-The two snippets of code behave identically: the first
-show a very common patter; 42 supports syntactic sugar to
-ease following that pattern, as you can see in the second snippet.
+The two snippets of code behave near identically: 
+in the second the exceptions are also notified of the 
+position in the code where they are Wcode(whoopsed).
+This is conceptually similar to the very common Java patten to wrap checked exceptions into uncheced ones.
 WBR
-This short form exists only for wrapping exceptions, and there is no
-corresponding short form for the much less common case of 
-wrapping errors.
-WP
 
-As you can see, we can use Wcode(X) to mark branches of code
+As we shown before,  we can use Wcode(X) to mark branches of code
 that the programmer believes would never be executed.
 Wcode(X) implements Wcode(Assert), thus code capturing
-Wcode(X) is unreliable: as explained before, programmers are free
+Wcode(X) is unreliable: as explained before, AdamTowel programmers are free
 to change when and how assertion violations are detected.
 In particular, the programmer may recognize that
 such branch could be actually executed, and thus replace the error with correct behaviour.
 WP
 Wcode(Assert)ions should not be thrown as exceptions, but only as errors.
-
-
-
 
 
 WTitle(`(4/5) Return')
@@ -236,28 +227,30 @@ Wcode(exception).
 WBR Let's see some examples: 
 OBCode
 {
-x= DoStuff()
-catch exception Stuff e1
-  return void //just swallow the exception (this block return 'Void')
-catch exception Guard e2 (
-  obj.doSideEffect()
-  return void //do something and return
-  )
-catch error Message e3
-  error X"not supposed to happen"
-y= DoStuff(x)
-return y
-error on Guard 
-  X"not supposed to happen"
-}  
+  x = DoStuff()
+  catch Stuff e1
+    return void //just swallow the exception (this block return 'Void')
+  catch Message.Guard e2 (
+    obj.doSideEffect()
+    return void //do something and return
+    )
+  catch error Message e3
+    error X"not supposed to happen"
+  (//example of a nested block
+    y = DoStuff(x)
+    return y
+    whoops Message.Guard
+    )
+  }  
 CCode
 
 Moreover, curly brackets/return can be used
 to provide a different result if some computation fails: 
 
 OBCode
-res= {return PlanA()
-  catch error Guard x
+res = {
+  return PlanA()
+  catch error Message.Guard x
     return PlanB()
   }
 CCode
@@ -271,7 +264,7 @@ Hold your head before it explodes, but curly brackets are just a syntactic sugar
  to capture returns; these two snippets of code are equivalent: 
 <div class= "compare">
 OBCode
-N res= {
+N res = {
   
   if bla (return e1)
   return e2
@@ -282,13 +275,12 @@ N res= {
   }
 CCode
 OBCode
-N res= (
+N res = (
   Void unused= (
-    if bla (return e1)
+    if bla ( return e1 )
     return e2
     )
-  catch return N x
-    x
+  catch return N x ( x )
   error void //this line is never executed
   )
 CCode
@@ -312,7 +304,7 @@ terminate it with an Wcode(Assert)
 Whenever something out of your
 control happen, Give it a name and throw it as an error, as in
 OBCode
-NameOfIssue: Message.$ <>< {implements Guard}
+NameOfIssue = Message:{[Message.Guard]}
 /*...*/
 if /*..*/ ( error NameOfIssue"more info" )
 CCode
@@ -324,8 +316,9 @@ but use exceptions sparsely: they are needed only in few
 cases, mostly when designing public libraries.
 </li><li>
 To convert exception into errors or other exceptions, use the convenient short
-syntax Wcode(`error on T1,..,Tn  OtherMessage""') or 
-Wcode(`exception on T1,..,Tn  OtherMessage""')
+syntax Wcode(`whoops T1,..,Tn""').
+</li><li>
+Instead of manually writing long lists of leaked exceptions, just use Wcode([_]).
 </li><li>
 It is sometimes possible to write elegant and correct code
 that is not covered in layers upon layers of error/exception checking,
@@ -334,14 +327,3 @@ Up to half of good 42 code will be composed of
 just error/exception handling/lifting and management.
 Do not be scared of turning your code in it's own policemen.
 </li></ul>
-
-Wcode(Message)s has Wcode(.text()) 
-and Wcode(.#whoopsed(atPos))
-methods.
-
-Wcode(.isResponse()) and Wcode(.responseOf()).
-The text is the informative string, while if there is
-a response (Wcode(msg.isResponse()==Bool.true()) 
-then Wcode(msg.responseOf()) will be the 
-former message in the chain, else Wcode(msg.responseOf())
-will produce a run time error.
