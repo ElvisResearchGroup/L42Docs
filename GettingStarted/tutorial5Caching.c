@@ -69,14 +69,16 @@ ComputeFibo=Data:{
   @Cache.Lazy method Num () = {
     n=this.that()
     if n==0Num ||n==1Num ( return n )
-    This fibo1=This(n-1Num)//a 'computational object'
+    This fibo1=This(n-1Num)//a 'computation object'
     return fibo1()+This(n-2Num)()
     }
   }
 CCode
 As you can see, instead of a method with parameters we can declare a class with fields and an unnamed method doing the actual computation.
 Wcode(Cache.Lazy) is an annotation recognized by Wcode(Data) that works only on Wcode(imm) or Wcode(class) methods with no arguments and with an Wcode(imm) result.
-The method is computed only one time and then cached on the normalized version of the receiver. In this way, 
+Wcode(ComputeFibo fibo1) is a Wemph(computation object): an imm object whose only goal is to support one (or more) computationally intense methods.
+Thanks to normalization, the cache of computation objects is centrally stored, and thus recursive calls computing fibonacci will be able to reuse the cache from other objects.
+That is, the method result is cached on the normalized version of the receiver. In this way, 
 all the redundant fibonacci calls are avoided.
 
 WP
@@ -94,7 +96,7 @@ An important consideration here is that both Wcode(Cache.Lazy) and Wcode(Cache.E
 Consider the following code:
 
 OBCode
-Task = Data:{
+Task = Data:{ //Tasks are also computation objects
   S text
   @Cache.Eager method Bool isPolite() = ( .. )
   @Cache.Eager method Bool isGrammatical() = ( .. )
@@ -142,36 +144,24 @@ Where the class Wcode(Point) has 3 fields, but the value of the third one should
 In 42 the code above would simply define a class with tree unrelated fields, and while we are offering a factory that conveniently takes x and y and initialize the third field with 
 the computed value, the user could easly create invalid instances by calling the factory method with three arguments.
 As we will see later, in 42 we can prevent this from happening by making such method private.
-For the class Wcode(Point) as presented, this would be a 
-satisfactory solution, since all Wcode(Point) objects are deeply immutable.
-However, what if the fields could be updated?
-OBCode
-Point = Data:{
-  var Double x
-  var Double y
-  var Double distanceFromOrigin
-  //should always be (x^2+y^2)^0.5
-  //should be recomputed when x or y are updated
-  }
-CCode
+However, we would still be able to create an invalid Wcode(Point) inside of other Wcode(Point) methods.
+Ideally, we would like to truly have only two fields, and have the third one as a precomputed derived data.
 
-In other programming languages this can be encoded by
-making the fields private and customizing the implementations of the setters to recompute the distance when needed. This pattern can grow very complex very fast.
-In 42 we can avoid manually handling those checks and recomputations by using Wcode(Cache.Now)
+In 42, we can encode such concept using Wcode(Cache.Now):
 OBCode
 Point = Data:{
-  var Double x
-  var Double y
+  Double x
+  Double y
   @Cache.Now class method Double distanceFromOrigin(Double x, Double y) = 
     ((x*x)+(y*y)).pow(exp=\"0.5")
   }
 CCode
 The Wcode(Point) class defined abouve has a single factory method taking just Wcode(x) and Wcode(y). In this way there is not need to have multiple ways to build the object and then hide the dangerous ones after the fact.
 
-The method Wcode(distanceFromOrigin(x,y)) is computed when a Wcode(Point) object is created, and it is recomputed when Wcode(x) or Wcode(y) are updated.
+The method Wcode(distanceFromOrigin(x,y)) is computed when a Wcode(Point) object is created.
 Morever, Wcode(Data) adds a method Wcode(distanceFromOrigin()), allowing to read the computed/cached value as if it were a field.
 
-If the method Wcode(distanceFromOrigin(x,y)) where to leak an error, such error would be propagated out as it would happen if the method were manually called.
+If the method Wcode(distanceFromOrigin(x,y)) where to leak an error, such error would be propagated out as it would happen if the method were manually called during object construction.
 
 This means that any time you receive a Wcode(Point), it has a valid distance.
 We can leverege on this behaviour to encode class invariants:
@@ -181,12 +171,12 @@ For example, consider this updated version of Wcode(Point):
 
 OBCode
 Point = Data:{
-  var Double x
-  var Double y
+  Double x
+  Double y
   @Cache.Now class method Double distanceFromOrigin(Double x, Double y) = 
     ((x*x)+(y*y)).pow(exp=\"0.5")
   @Cache.Now class method Void invariant(Double x, Double y) = 
-    if x<0Double || y<0Duble X"""
+    if x<0Double || y<0Double error X"""%
       | Invalid state:
       | x = %x
       | y = %y
@@ -197,24 +187,152 @@ CCode
 Now, every time user code receives a Wcode(Point), they can rely on the fact that Wcode(x) and Wcode(y) are positive.
 
 WTitle((5/5) Summary)
+In 42 immutable objects can be normalized in order to save memory space.
+This works also on circular object graphs and relies on a variation of DFA normalization.
+As a special case, objects without fields (immutable or not) are always represented in memory as a single object.
+Cached informations are attached to the normalized version of objects, thus making it possible to recover the cache simply by rebuiling a structurally identical object.
 
-WBigTitle(Caching on mutable objects)
-then on mutable
-
-
-also on mutable objects
-
-also lazy
-
-Should discuss exceptions before??
+There are tree kinds of caching, depending on the time the caching behaviour activates:
 
 <ul><li>
-We gave a look at the most basic features of 42.
-There is rich support to define your own specialized datastructures instead of having to rely on the ones provided by default.
+Wcode(Cache.Lazy) computes the cached value when the annotated method is first called.
+It works on Wcode(imm) and Wcode(class) no-args methods.
+An obvious workaround for the no-args limitation is to define computation objects; this also works well with normalization: computation objects will remember the cache of any structurally equivalent object.
 </li><li>
-Use Wcode(Units) 
-and Wcode(S.Alphanumeric) to give meaning to your constants.
-In this way, the type system will help you to use values with the semantics you decided.
-Be sure to define all the right base classes to establish a convenient vocabulary
-to talk about your problem domain.
+Wcode(Cache.Eager) computes the cached value in a separate parallel worker, starting when the object is created. It only works on Wcode(imm) no-args methods of class whose objects are all deeply immutable.
+Those classes will automatically normalize their instances upon creation.
+</li><li>
+Wcode(Cache.Now) computes the cached value during object construction.
+Since the object does not exists yet, the annotation is not placed on an instance method, but on a Wcode(class) method whose parameters represent the needed object fields.
+This annotation does influence the observable behaviour: if an error is raised computing the cache, the error is leaked during object construction and not while trying to observe the cached value.
+This, in turn, allows to encode class invariants and to provide a static guarantee that users of a class can rely upon.
 </li></ul>
+
+WBigTitle(Caching on Mutable objects)
+WTitle((1/5) Cache invalidation)
+The main advantage of caching method of immutable objects is that the cache is always valid.
+L42 allows to cache also methods of mutable objects, and discovers on its own when the cache needs to be invalidated.
+Consider this trivial variation of the Wcode(Point) example above where the fields can be updated:
+
+OBCode
+Point = Data:{
+  var Double x
+  var Double y
+  @Cache.Now class method Double distanceFromOrigin(Double x, Double y) = 
+    ((x*x)+(y*y)).pow(exp=\"0.5")
+  @Cache.Now class method Void invariant(Double x, Double y) = 
+    if x<0Double || y<0Double error X".."
+  }
+CCode
+When a setter for Wcode(x) or Wcode(y) is invoked, then two Wcode(Cache.Now) methods are recomputed.
+
+In other programming languages, this behaviour can be encoded by
+making the fields private and customizing the implementations of the setters to recompute the distance when needed. This pattern can grow very complex very fast.
+L42 guarantees that a chached value is always structurally equivalent to the value that would be returned by calling the method again.
+Moreover, for Wcode(Cache.Now) L42 also guarantees that such computation would terminate without errors.
+Thus, when Wcode(Cache.Now) is used to emulate invariants, those invariants are guaranteed to hold for all observable objects, that is, all objects where the annotated method could possibly be called.
+
+This is possible thanks to the strong L42 type system, and we believe this property can not be broken.
+That is, we belive this property to hold even in the presence of exceptions, errors, aliasing, input output and non deterministic behaviour.
+It is possible to make L42 work together with Java or even (possibly broken) native code, and we believe our property will hold also in those cases.
+
+WTitle((2/5) Deeply mutable objects)
+As discussed above, a deeply mutable object is a mutable object with some mutable fields.
+Also deeply mutable objects can support Wcode(Cache.Now), but such mutable state needs to be Wemph(encapsulated), as we have seen before for the class Wcode(Animal)
+OBCode
+Animal = Data:{
+  var Point location
+  capsule Points path
+  mut method
+  Void move() = (
+    this.location(\path.left())
+    this.removeLeftPath()
+    )
+  @Cache.Clear class method
+  Void removeLeftPath(mut Points path) =
+    path.removeLeft()
+  }
+CCode
+
+The field Wcode(`capsule Points path') is an encapsulated mutable field.
+It can be accessed as Wcode(read) by doing Wcode(`this.path()'), but can not be directly accessed as Wcode(mut).
+However, we can write Wemph(capsule mutator) methods by using Wcode(Cache.Clear).
+Similarly to Wcode(Cache.Now), a class method can be annotated with Wcode(Cache.Clear) and can
+take parameters representing the object fields.
+In addition, more parameters can be present encoding extra arguments.
+To clarify, consider this richer example, where our Wcode(Animal) has an invariant and another capsule mutator method:
+
+OBCode
+Point = Data:{ Double x, Double y
+  Double distance(Point that) = (..)
+  }
+Points = Collection.list(Point)
+Animal = Data:{
+  var Point location
+  capsule Points path
+  mut method
+  Void move() = (
+    this.location(\path.left())
+    this.removeLeftPath()
+    )
+  mut method
+  Void trim() = 
+    this.removeFarthest(distance=3\)
+  @Cache.Clear class method
+  Void removeLeftPath(mut Points path) =
+    path.removeLeft()
+  
+  @Cache.Clear class method
+  Void removeFarthest(mut Points path,Point location, Double distance) = (
+    var maxD=distance
+    var maxI=I"-1"
+    for p in path, i in Range(path.size()) (
+      currentD = location.distance(p)
+      if currentD>maxD (
+        maxI:=i
+        maxD:=currentD
+        )
+      )
+    if maxI!+I"-1" path.remove(index=maxI)
+    )
+  @Cache.Now class method
+  Void invariant(read Points path, Point location) = 
+    if path.contains(location) error X"..."
+  }
+CCode
+We added a method to remove the farthest away point if it is over a certain distance.
+As you can see, the parameters Wcode(path) and Wcode(location) corresponds to fields, while
+the parameter Wcode(distance) is extra needed information.
+When we call Wcode(`this.removeFarthest(distance=3\)') we pass only Wcode(distance); the other parameters are passed automatically.
+As an invarian, here we require that the current location is not in the Wcode(path).
+This code, in the current form, has a bug; can you spot it?
+Look carefully to the method Wcode(move()):
+
+OBCode
+  Void move() = (
+    this.location(\path.left())
+    this.removeLeftPath()
+    )
+CCode
+Here we first set up the location, then we remove it from the path.
+The method Wcode(move()) recomputes the invariant twice: one after the field setter 
+and one after the call to the Wcode(Cache.Clear) method.
+This first check is going to fail, since the leftmost element of the path has not being removed yet.
+In this case we can solve the problem by swapping the lines:
+
+OBCode
+  Void move() = (
+    left=this.path().left()
+    this.removeLeftPath()
+    this.location(left)
+    )
+CCode
+
+However, this kind of solution does not scales in the general case; next we will see a programming pattern allowing to delay in a controlled way the invariant checks, or more in general, the recomputation of Wcode(Cache.Now).
+
+WTitle((3/5) Box patten)
+
+WTitle((4/5) lazy on mutable)
+
+
+WTitle((5/5) Summary)
