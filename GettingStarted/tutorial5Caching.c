@@ -1,8 +1,8 @@
 WBigTitle(Caching)
 WTitle((1/5) Normalization)
 One of the big advantages of deeply immutable objects is that two structurally identical objects are referentially transparent, that is, you can not distinguish if they are represented in memory by a single object or two.
-This means that it is possible to reuse the same objects to save memory. While in other languages the programmer would have to implement some ad hoc support to reuse objects, in L42 this is supported directly by the language, in a process called Wemph(normalization).
-An immutable object can be turned into its normalized version using Wcode(.norm())
+This means that it is possible to reuse the same objects to save memory. While in other languages the programmer would have to implement some ad. hoc. support to reuse objects, in L42 this is supported directly by the language, in a process called WEmph(normalization).
+An immutable object can be turned into its normalized version using Wcode(.norm()).
 OBCode
 Person = Data:{S name}
 ..
@@ -45,8 +45,8 @@ dog2.norm()
 //dog1.owner() is now the same object of dog2.owner()
 //bob1 and bob2 are still two different objects.
 CCode
-The logic needed for normalization is the same needed to check if two arbitrary objects are structurally equal, to print an object to a redable string and to clone objects.
-Thus data allows for all of those operations indireclty relying on normalization.
+The logic needed for normalization is the same needed to check if two arbitrary objects are structurally equal, to print an object to a readable string and to clone objects.
+Thus data allows for all of those operations indirectly relying on normalization.
 Those are all operations requiring to scan the whole ROG of the object, so the cost of normalization is acceptable in context.
 
 WTitle((2/5) Lazy Caching)
@@ -73,10 +73,13 @@ ComputeFibo=Data:{
     return fibo1()+This(n-2Num)()
     }
   }
+//...
+//usage example
+ComputeFibo(42\)() == 267914296Num
 CCode
 As you can see, instead of a method with parameters we can declare a class with fields and an unnamed method doing the actual computation.
 Wcode(Cache.Lazy) is an annotation recognized by Wcode(Data) that works only on Wcode(imm) or Wcode(class) methods with no arguments and with an Wcode(imm) result.
-Wcode(ComputeFibo fibo1) is a Wemph(computation object): an imm object whose only goal is to support one (or more) computationally intense methods.
+Wcode(ComputeFibo fibo1) is a WEmph(computation object): an imm object whose only goal is to support one (or more) computationally intense methods.
 Thanks to normalization, the cache of computation objects is centrally stored, and thus recursive calls computing fibonacci will be able to reuse the cache from other objects.
 That is, the method result is cached on the normalized version of the receiver. In this way, 
 all the redundant fibonacci calls are avoided.
@@ -87,7 +90,7 @@ As you can see, the caching is is completly handled by the language and is not c
 WTitle((3/5) Automatic parallelism)
 Wcode(Cache.Lazy) allows to cache the result of methods after they have been called the first time.
 However, why wait for the method to be called?
-once the receiver object is created, the method could be computed Wemph(eagerly) in a separed worker, so that when we call the method, we get the result without any wait at all.
+once the receiver object is created, the method could be computed WEmph(eagerly) in a separed worker, so that when we call the method, we get the result without any wait at all.
 That is, if we use Wcode(Cache.Eager) we can get automatic parallelism: the language will handle a set of parallel workers to execute such method bodies.
 
 WP
@@ -124,7 +127,7 @@ As you can see, parallelism and caching are just two sides of the same coin.
 
 WTitle((4/5) Invariants and derived fields)
 We have seen that cached behaviour can be computed lazily or eagerly on immutable objects.
-But we can bring caching even earlier and compute some behaviour Wemph(at the same time) of the object creation.
+But we can bring caching even earlier and compute some behaviour WEmph(at the same time) of the object creation.
 This allows to encode derived fields: fields whose value must depend from the other object fields.
 Consider the following example:
 OBCode
@@ -141,7 +144,7 @@ Point = Data:{//not ok, the tree arg factory still exists
   }
 CCode
 Where the class Wcode(Point) has 3 fields, but the value of the third one should depend from the other two.
-In 42 the code above would simply define a class with tree unrelated fields, and while we are offering a factory that conveniently takes x and y and initialize the third field with 
+In 42 the code above would simply define a class with three unrelated fields, and while we are offering a factory that conveniently takes x and y and initialize the third field with 
 the computed value, the user could easly create invalid instances by calling the factory method with three arguments.
 As we will see later, in 42 we can prevent this from happening by making such method private.
 However, we would still be able to create an invalid Wcode(Point) inside of other Wcode(Point) methods.
@@ -156,7 +159,7 @@ Point = Data:{
     ((x*x)+(y*y)).pow(exp=\"0.5")
   }
 CCode
-The Wcode(Point) class defined abouve has a single factory method taking just Wcode(x) and Wcode(y). In this way there is not need to have multiple ways to build the object and then hide the dangerous ones after the fact.
+The Wcode(Point) class defined abouve has a single factory method taking just Wcode(x) and Wcode(y). In this way there is no need to have multiple ways to build the object and then hide the dangerous ones after the fact.
 
 The method Wcode(distanceFromOrigin(x,y)) is computed when a Wcode(Point) object is created.
 Morever, Wcode(Data) adds a method Wcode(distanceFromOrigin()), allowing to read the computed/cached value as if it were a field.
@@ -199,7 +202,7 @@ Wcode(Cache.Lazy) computes the cached value when the annotated method is first c
 It works on Wcode(imm) and Wcode(class) no-args methods.
 An obvious workaround for the no-args limitation is to define computation objects; this also works well with normalization: computation objects will remember the cache of any structurally equivalent object.
 </li><li>
-Wcode(Cache.Eager) computes the cached value in a separate parallel worker, starting when the object is created. It only works on Wcode(imm) no-args methods of class whose objects are all deeply immutable.
+Wcode(Cache.Eager) computes the cached value in a separate parallel worker, starting when the object is created. It only works on Wcode(imm) no-args methods of classes whose objects are all deeply immutable.
 Those classes will automatically normalize their instances upon creation.
 </li><li>
 Wcode(Cache.Now) computes the cached value during object construction.
@@ -238,16 +241,20 @@ It is possible to make L42 work together with Java or even (possibly broken) nat
 
 WTitle((2/5) Deeply mutable objects)
 As discussed above, a deeply mutable object is a mutable object with some mutable fields.
-Also deeply mutable objects can support Wcode(Cache.Now), but such mutable state needs to be Wemph(encapsulated), as we have seen before for the class Wcode(Animal)
+Also deeply mutable objects can support Wcode(Cache.Now), but such mutable state needs to be WEmph(encapsulated), as we have seen before for the class
+Wcode(Animal).
+
 OBCode
 Animal = Data:{
   var Point location
   capsule Points path
+
   mut method
   Void move() = (
     this.location(\path.left())
     this.removeLeftPath()
     )
+
   @Cache.Clear class method
   Void removeLeftPath(mut Points path) =
     path.removeLeft()
@@ -256,7 +263,8 @@ CCode
 
 The field Wcode(`capsule Points path') is an encapsulated mutable field.
 It can be accessed as Wcode(read) by doing Wcode(`this.path()'), but can not be directly accessed as Wcode(mut).
-However, we can write Wemph(capsule mutator) methods by using Wcode(Cache.Clear).
+However, we can write WEmph(capsule mutator) methods by using 
+Wcode(Cache.Clear).
 Similarly to Wcode(Cache.Now), a class method can be annotated with Wcode(Cache.Clear) and can
 take parameters representing the object fields.
 In addition, more parameters can be present encoding extra arguments.
@@ -264,26 +272,31 @@ To clarify, consider this richer example, where our Wcode(Animal) has an invaria
 
 OBCode
 Point = Data:{ Double x, Double y
-  Double distance(Point that) = (..)
+  method Double distance(Point that) = 3Double
   }
+
 Points = Collection.list(Point)
+
 Animal = Data:{
   var Point location
   capsule Points path
+
   mut method
   Void move() = (
     this.location(\path.left())
     this.removeLeftPath()
     )
+
   mut method
   Void trim() = 
-    this.removeFarthest(distance=3\)
+    this.removeFarthest(location=\location, distance=3Double)
+
   @Cache.Clear class method
   Void removeLeftPath(mut Points path) =
     path.removeLeft()
   
   @Cache.Clear class method
-  Void removeFarthest(mut Points path,Point location, Double distance) = (
+  Void removeFarthest(mut Points path, Point location, Double distance) = (
     var maxD=distance
     var maxI=I"-1"
     for p in path, i in Range(path.size()) (
@@ -293,8 +306,9 @@ Animal = Data:{
         maxD:=currentD
         )
       )
-    if maxI!+I"-1" path.remove(index=maxI)
+    if maxI!=I"-1" path.remove(maxI)
     )
+
   @Cache.Now class method
   Void invariant(read Points path, Point location) = 
     if path.contains(location) error X"..."
@@ -304,11 +318,12 @@ We added a method to remove the farthest away point if it is over a certain dist
 As you can see, the parameters Wcode(path) and Wcode(location) corresponds to fields, while
 the parameter Wcode(distance) is extra needed information.
 When we call Wcode(`this.removeFarthest(distance=3\)') we pass only Wcode(distance); the other parameters are passed automatically.
-As an invarian, here we require that the current location is not in the Wcode(path).
+As an invariant, here we require that the current location is not in the Wcode(path).
 This code, in the current form, has a bug; can you spot it?
 Look carefully to the method Wcode(move()):
 
 OBCode
+  mut method
   Void move() = (
     this.location(\path.left())
     this.removeLeftPath()
@@ -321,6 +336,7 @@ This first check is going to fail, since the leftmost element of the path has no
 In this case we can solve the problem by swapping the lines:
 
 OBCode
+  mut method
   Void move() = (
     left=this.path().left()
     this.removeLeftPath()
