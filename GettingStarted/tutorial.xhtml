@@ -1452,6 +1452,7 @@ This code, in the current form, has a bug; can you spot it?
 Look carefully to the method '<span class="code"><![CDATA[move()]]></span>':
 
 <pre class="l42Big"><![CDATA[
+  mut method
   Void move() = (
     this.location(\path.left())
     this.removeLeftPath()
@@ -1464,6 +1465,7 @@ This first check is going to fail, since the leftmost element of the path has no
 In this case we can solve the problem by swapping the lines:
 
 <pre class="l42Big"><![CDATA[
+  mut method
   Void move() = (
     left=this.path().left()
     this.removeLeftPath()

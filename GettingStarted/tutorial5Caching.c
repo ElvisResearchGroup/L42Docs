@@ -346,9 +346,122 @@ CCode
 
 However, this kind of solution does not scales in the general case; next we will see a programming pattern allowing to delay in a controlled way the invariant checks, or more in general, the recomputation of Wcode(Cache.Now).
 
+Every method annotated as Wcode(Cache.Now) can insted be annotated as 
+Wcode(Cache.Lazy).
+This allows to encode conventional caching on mutable datastructures and automatic cache invalidation:
+The operations are computed when they are first asked, and the cache is automatically invalidated when a Wcode(Cache.Clear) method terminates.
+Again, we think that at all times Wcode(Cache.Lazy) has the same semantic as recomputing the value, but with a diffenrent performance.
+
+Cache invalidation is considered one of the great challenges in writing correct programs; L42 can handle it correctly and automatically.
+However, there is a cost: you have to encode the algorithm so that the type system accepts your code and that the caching annotations can be applied.
+
 WTitle((3/5) Box patten)
 
-WTitle((4/5) lazy on mutable)
+As we have seen, in order to write well encapsulated mutable objects we need to designed them well, using Wcode(capsule) to initialize the mutable data, using Wcode(Cache.Clear) to mutate such state and Wcode(Cache.Now) for the invariant.
+However, we can also program a naive deeply mutable object and boxit up as a second step.
+This can require a little more code, but it is more intuitive, and works very well for arbitrarly complex cases.
+Consider the following code:
 
+OBCode
+Bike = Data:{
+  var mut Wheel front
+  var mut Wheel back
+  var mut Seat seat
+  var mut Chain chain
+  mut method Void nail() = this.#front().addHole()
+  mut method Void rain(Second time) = this.#chain().addRust(time)
+  read method Void invariant() = X[
+    this.front().size()==this.back().size();
+    this.seat().isConfortable();
+    ]    
+  }
+//components can mutate (get damaged)
+//and be updated (replaced with new ones)
+CCode
+As you can see, the Wcode(Bike) is a deeply mutable class, design with no attention to
+correctness: if the programmer is not carefully, the same Wcode(Weel) 
+may end up used for multiple bikes at the same time.
+Also, the method called Wcode(invariant) only represents a programmer intention, but it is not enforced in any way and thus it could be silently broken.
+
+We can easly create a Wcode(BikeBox) class containing and encapsulating, such a Wcode(Bike):
+OBCode
+BikeBox = Data:{
+  capsule Bike box
+  
+  @Cache.Now class method
+  Void invariant(read Bike box) = box.invariant()
+  
+  @Cache.Clear class method
+  Void nail(mut Bike box) = box.nail()
+  
+  @Cache.Clear class method
+  Void nail(mut Bike box, Second time) = box.nail(time=time)
+
+  @Cache.Clear class method
+  Void front(mut Bike box, capsule Wheel that) = box.front(that)
+  }
+..
+//user code
+b = BikeBox(box=\(front=\(..) back=\(..) seat=\(..) chain=\(..)))
+b.nail()
+//b.box().nail()/ ill-typed
+Debug(b.box().front())//will display the unfortunate wheel
+b.front(\(..)) //looks just like a normal setter, but acts on the internal object
+CCode
+
+As you can see, no matter how complex some class code is, we can simply wrap it into a box and apply Wcode(Cache.Now)
+ and Wcode(Cache.Clear) on top of it.
+In this way we end up with two types:
+Wcode(Bike), that does not offers any guarantee,
+ and Wcode(BikeBox), ensuring the invariant and that the state is well encapsulated.
+The methods Wcode(`BikeBox.nail()'),
+Wcode(`BikeBox.rail(time)')
+and
+Wcode(`BikeBox.front(that)')
+ will check for the invariant exactly one time, at the end of their execution.
+Following this pattern, the programmer can perform an arbitrarly long computation before the checks are triggered.
+
+When writing other classes we can chose to use Wcode(Bike)
+or Wcode(BikeBox) depending on the specific details of our code.
+If we chose to use Wcode(Bike) as a field of another class, we can still check 
+the Wcode(Bike) invariant inside the invariant of the composite class:
+OBCode
+FamilyGarage = Data:{
+  mut Bike daddyBike
+  mut Bike mummyBike
+  mut Trike timmyBike  
+  ..
+  read method Void invariant() = X[
+    this.daddyBike().invariant();
+    this.mummyBike().invariant();
+    this.timmyBike().invariant();
+    ]
+  }
+FamilyGarageBox = Data:{
+  capsule FamiliyGarage box
+
+  @Cache.Now class method
+  Void invariant(read FamilyGarage box) = box.invariant()  
+  }
+CCode
+
+There is a specific situation where using the box pattern is not sufficuent:
+when we want to ensure a tree shape of our graph; in the case of the bike before,
+an attent reader may have notice that we would allow for fields Wcode(left)
+ and Wcode(right) to point to the
+ same Wcode(Wheel) object.
+There are various ways to prevent that
+
+System.mutReferenceEquality(a,and=b)
+WTitle((4/5) lazy on mutable)
+Every method annotated as Wcode(Cache.Now) can insted be annotated as 
+Wcode(Cache.Lazy).
+This allows to encode conventional caching on mutable datastructures and automatic cache invalidation:
+The operations are computed when they are first asked, and the cache is automatically invalidated when a Wcode(Cache.Clear) method terminates.
+Again, we think that at all times Wcode(Cache.Lazy) has the same semantic as recomputing the value, but with a diffenrent performance.
+
+Cache invalidation is considered one of the great challenges in writing correct programs; L42 can handle it correctly and automatically.
+However, there is a cost: you have to encode the algorithm so that the type system accepts your code and that the caching annotations can be applied.
+The box pattern is the best tool to this aim.
 
 WTitle((5/5) Summary)
