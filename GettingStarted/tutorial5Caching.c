@@ -85,7 +85,7 @@ That is, the method result is cached on the normalized version of the receiver. 
 all the redundant fibonacci calls are avoided.
 
 WP
-As you can see, the caching is is completly handled by the language and is not connected with the specific algorithm. This pattern is general enought to support any method from immuttable data to an immutable result.
+As you can see, the caching is is completely handled by the language and is not connected with the specific algorithm. This pattern is general enough to support any method from immutable data to an immutable result.
 
 WTitle((3/5) Automatic parallelism)
 Wcode(Cache.Lazy) allows to cache the result of methods after they have been called the first time.
@@ -145,7 +145,7 @@ Point = Data:{//not ok, the tree arg factory still exists
 CCode
 Where the class Wcode(Point) has 3 fields, but the value of the third one should depend from the other two.
 In 42 the code above would simply define a class with three unrelated fields, and while we are offering a factory that conveniently takes x and y and initialize the third field with 
-the computed value, the user could easly create invalid instances by calling the factory method with three arguments.
+the computed value, the user could easy create invalid instances by calling the factory method with three arguments.
 As we will see later, in 42 we can prevent this from happening by making such method private.
 However, we would still be able to create an invalid Wcode(Point) inside of other Wcode(Point) methods.
 Ideally, we would like to truly have only two fields, and have the third one as a precomputed derived data.
@@ -159,15 +159,17 @@ Point = Data:{
     ((x*x)+(y*y)).pow(exp=\"0.5")
   }
 CCode
-The Wcode(Point) class defined abouve has a single factory method taking just Wcode(x) and Wcode(y). In this way there is no need to have multiple ways to build the object and then hide the dangerous ones after the fact.
+The Wcode(Point) class defined above has a single factory method taking just Wcode(x) and Wcode(y). In this way there is no need to have multiple ways to build the object and then hide the dangerous ones after the fact.
 
 The method Wcode(distanceFromOrigin(x,y)) is computed when a Wcode(Point) object is created.
-Morever, Wcode(Data) adds a method Wcode(distanceFromOrigin()), allowing to read the computed/cached value as if it were a field.
+Moreover, Wcode(Data) adds a method Wcode(read method Double distanceFromOrigin()), allowing to read the computed/cached value as if it were a field. Note how the 
+Wcode(class)
+method is turned into a Wcode(read) method.
 
 If the method Wcode(distanceFromOrigin(x,y)) where to leak an error, such error would be propagated out as it would happen if the method were manually called during object construction.
 
 This means that any time you receive a Wcode(Point), it has a valid distance.
-We can leverege on this behaviour to encode class invariants:
+We can leverage on this behaviour to encode class invariants:
 Wcode(Cache.Now) methods with Wcode(Void) return type
 designed to simply throw error if the state is incorrect.
 For example, consider this updated version of Wcode(Point):
@@ -193,7 +195,7 @@ WTitle((5/5) Summary)
 In 42 immutable objects can be normalized in order to save memory space.
 This works also on circular object graphs and relies on a variation of DFA normalization.
 As a special case, objects without fields (immutable or not) are always represented in memory as a single object.
-Cached informations are attached to the normalized version of objects, thus making it possible to recover the cache simply by rebuiling a structurally identical object.
+Cached informations are attached to the normalized version of objects, thus making it possible to recover the cache simply by rebuilding a structurally identical object.
 
 There are tree kinds of caching, depending on the time the caching behaviour activates:
 
@@ -231,12 +233,12 @@ When a setter for Wcode(x) or Wcode(y) is invoked, then two Wcode(Cache.Now) met
 
 In other programming languages, this behaviour can be encoded by
 making the fields private and customizing the implementations of the setters to recompute the distance when needed. This pattern can grow very complex very fast.
-L42 guarantees that a chached value is always structurally equivalent to the value that would be returned by calling the method again.
+L42 guarantees that a cached value is always structurally equivalent to the value that would be returned by calling the method again.
 Moreover, for Wcode(Cache.Now) L42 also guarantees that such computation would terminate without errors.
 Thus, when Wcode(Cache.Now) is used to emulate invariants, those invariants are guaranteed to hold for all observable objects, that is, all objects where the annotated method could possibly be called.
 
 This is possible thanks to the strong L42 type system, and we believe this property can not be broken.
-That is, we belive this property to hold even in the presence of exceptions, errors, aliasing, input output and non deterministic behaviour.
+That is, we believe this property to hold even in the presence of exceptions, errors, aliasing, input output and non deterministic behaviour.
 It is possible to make L42 work together with Java or even (possibly broken) native code, and we believe our property will hold also in those cases.
 
 WTitle((2/5) Deeply mutable objects)
@@ -346,11 +348,14 @@ CCode
 
 However, this kind of solution does not scales in the general case; next we will see a programming pattern allowing to delay in a controlled way the invariant checks, or more in general, the recomputation of Wcode(Cache.Now).
 
-Every method annotated as Wcode(Cache.Now) can insted be annotated as 
-Wcode(Cache.Lazy).
-This allows to encode conventional caching on mutable datastructures and automatic cache invalidation:
+Every method annotated as Wcode(Cache.Now) can instead be annotated as 
+Wcode(Cache.LazyRead).
+Wcode(Cache.LazyRead) allows to encode conventional caching on mutable datastructures and automatic cache invalidation:
 The operations are computed when they are first asked, and the cache is automatically invalidated when a Wcode(Cache.Clear) method terminates.
-Again, we think that at all times Wcode(Cache.Lazy) has the same semantic as recomputing the value, but with a diffenrent performance.
+Again, we think that at all times Wcode(Cache.LazyRead) has the same semantic as recomputing the value, but with a different performance.
+This annotation is called Wcode(Cache.LazyRead) because it produces a 
+Wcode(read) method, while 
+Wcode(Cache.Lazy) works on immutable ones.
 
 Cache invalidation is considered one of the great challenges in writing correct programs; L42 can handle it correctly and automatically.
 However, there is a cost: you have to encode the algorithm so that the type system accepts your code and that the caching annotations can be applied.
@@ -419,7 +424,7 @@ Wcode(`BikeBox.rail(time)')
 and
 Wcode(`BikeBox.front(that)')
  will check for the invariant exactly one time, at the end of their execution.
-Following this pattern, the programmer can perform an arbitrarly long computation before the checks are triggered.
+Following this pattern, the programmer can perform an arbitrary long computation before the checks are triggered.
 
 When writing other classes we can chose to use Wcode(Bike)
 or Wcode(BikeBox) depending on the specific details of our code.
@@ -445,23 +450,13 @@ FamilyGarageBox = Data:{
   }
 CCode
 
-There is a specific situation where using the box pattern is not sufficuent:
-when we want to ensure a tree shape of our graph; in the case of the bike before,
-an attent reader may have notice that we would allow for fields Wcode(left)
+WTitle((4/5) Controlling the ROG shape)
+
+An attentive reader may have notice that we would allow for fields Wcode(left)
  and Wcode(right) to point to the
  same Wcode(Wheel) object.
 There are various ways to prevent that
 
-System.mutReferenceEquality(a,and=b)
-WTitle((4/5) lazy on mutable)
-Every method annotated as Wcode(Cache.Now) can insted be annotated as 
-Wcode(Cache.Lazy).
-This allows to encode conventional caching on mutable datastructures and automatic cache invalidation:
-The operations are computed when they are first asked, and the cache is automatically invalidated when a Wcode(Cache.Clear) method terminates.
-Again, we think that at all times Wcode(Cache.Lazy) has the same semantic as recomputing the value, but with a diffenrent performance.
-
-Cache invalidation is considered one of the great challenges in writing correct programs; L42 can handle it correctly and automatically.
-However, there is a cost: you have to encode the algorithm so that the type system accepts your code and that the caching annotations can be applied.
-The box pattern is the best tool to this aim.
+Wcode(System.mutReferenceEquality(a,and=b))
 
 WTitle((5/5) Summary)
