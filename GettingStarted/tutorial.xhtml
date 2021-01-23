@@ -36,6 +36,7 @@
  <li><a href="#BasicClasses"> Basic Classes </a></li>
  <li><a href="#ErrorsAndExceptions"> Errors and Exceptions </a></li>
  <li><a href="#Caching"> Caching </a></li>
+ <li><a href="#CachingMut"> Caching on Mutable objects </a></li>
  <li><a href="#InterfacesAndData"> Interfaces and Data </a></li>
  <li><a href="#Sequences"> Collections and Sequences </a></li>
  <li><a href="#Exercises"> Exercises </a></li>
@@ -1214,7 +1215,7 @@ That is, the method result is cached on the normalized version of the receiver. 
 all the redundant fibonacci calls are avoided.
 
 </p><p>
-As you can see, the caching is is completly handled by the language and is not connected with the specific algorithm. This pattern is general enought to support any method from immuttable data to an immutable result.
+As you can see, the caching is is completely handled by the language and is not connected with the specific algorithm. This pattern is general enough to support any method from immutable data to an immutable result.
 
 </p><h2> (3/5) Automatic parallelism </h2> <p>
 '<span class="code"><![CDATA[Cache.Lazy]]></span>' allows to cache the result of methods after they have been called the first time.
@@ -1274,7 +1275,7 @@ Point = Data:{//not ok, the tree arg factory still exists
 ]]></pre>
 Where the class '<span class="code"><![CDATA[Point]]></span>' has 3 fields, but the value of the third one should depend from the other two.
 In 42 the code above would simply define a class with three unrelated fields, and while we are offering a factory that conveniently takes x and y and initialize the third field with 
-the computed value, the user could easly create invalid instances by calling the factory method with three arguments.
+the computed value, the user could easy create invalid instances by calling the factory method with three arguments.
 As we will see later, in 42 we can prevent this from happening by making such method private.
 However, we would still be able to create an invalid '<span class="code"><![CDATA[Point]]></span>' inside of other '<span class="code"><![CDATA[Point]]></span>' methods.
 Ideally, we would like to truly have only two fields, and have the third one as a precomputed derived data.
@@ -1288,15 +1289,17 @@ Point = Data:{
     ((x*x)+(y*y)).pow(exp=\"0.5")
   }
 ]]></pre>
-The '<span class="code"><![CDATA[Point]]></span>' class defined abouve has a single factory method taking just '<span class="code"><![CDATA[x]]></span>' and '<span class="code"><![CDATA[y]]></span>'. In this way there is no need to have multiple ways to build the object and then hide the dangerous ones after the fact.
+The '<span class="code"><![CDATA[Point]]></span>' class defined above has a single factory method taking just '<span class="code"><![CDATA[x]]></span>' and '<span class="code"><![CDATA[y]]></span>'. In this way there is no need to have multiple ways to build the object and then hide the dangerous ones after the fact.
 
 The method '<span class="code"><![CDATA[distanceFromOrigin(x,y)]]></span>' is computed when a '<span class="code"><![CDATA[Point]]></span>' object is created.
-Morever, '<span class="code"><![CDATA[Data]]></span>' adds a method '<span class="code"><![CDATA[distanceFromOrigin()]]></span>', allowing to read the computed/cached value as if it were a field.
+Moreover, '<span class="code"><![CDATA[Data]]></span>' adds a method '<span class="code"><![CDATA[read method Double distanceFromOrigin()]]></span>', allowing to read the computed/cached value as if it were a field. Note how the 
+'<span class="code"><![CDATA[class]]></span>'
+method is turned into a '<span class="code"><![CDATA[read]]></span>' method.
 
 If the method '<span class="code"><![CDATA[distanceFromOrigin(x,y)]]></span>' where to leak an error, such error would be propagated out as it would happen if the method were manually called during object construction.
 
 This means that any time you receive a '<span class="code"><![CDATA[Point]]></span>', it has a valid distance.
-We can leverege on this behaviour to encode class invariants:
+We can leverage on this behaviour to encode class invariants:
 '<span class="code"><![CDATA[Cache.Now]]></span>' methods with '<span class="code"><![CDATA[Void]]></span>' return type
 designed to simply throw error if the state is incorrect.
 For example, consider this updated version of '<span class="code"><![CDATA[Point]]></span>':
@@ -1322,7 +1325,7 @@ Now, every time user code receives a '<span class="code"><![CDATA[Point]]></span
 In 42 immutable objects can be normalized in order to save memory space.
 This works also on circular object graphs and relies on a variation of DFA normalization.
 As a special case, objects without fields (immutable or not) are always represented in memory as a single object.
-Cached informations are attached to the normalized version of objects, thus making it possible to recover the cache simply by rebuiling a structurally identical object.
+Cached informations are attached to the normalized version of objects, thus making it possible to recover the cache simply by rebuilding a structurally identical object.
 
 There are tree kinds of caching, depending on the time the caching behaviour activates:
 
@@ -1339,8 +1342,7 @@ Since the object does not exists yet, the annotation is not placed on an instanc
 This annotation does influence the observable behaviour: if an error is raised computing the cache, the error is leaked during object construction and not while trying to observe the cached value.
 This, in turn, allows to encode class invariants and to provide a static guarantee that users of a class can rely upon.
 </li></ul>
-
-</p><h1> Caching on Mutable objects </h1> <p>
+ </p><p id="CachingMut"> </p><h1> Caching on Mutable objects </h1> <p>
 </p><h2> (1/5) Cache invalidation </h2> <p>
 The main advantage of caching method of immutable objects is that the cache is always valid.
 L42 allows to cache also methods of mutable objects, and discovers on its own when the cache needs to be invalidated.
@@ -1360,12 +1362,12 @@ When a setter for '<span class="code"><![CDATA[x]]></span>' or '<span class="cod
 
 In other programming languages, this behaviour can be encoded by
 making the fields private and customizing the implementations of the setters to recompute the distance when needed. This pattern can grow very complex very fast.
-L42 guarantees that a chached value is always structurally equivalent to the value that would be returned by calling the method again.
+L42 guarantees that a cached value is always structurally equivalent to the value that would be returned by calling the method again.
 Moreover, for '<span class="code"><![CDATA[Cache.Now]]></span>' L42 also guarantees that such computation would terminate without errors.
 Thus, when '<span class="code"><![CDATA[Cache.Now]]></span>' is used to emulate invariants, those invariants are guaranteed to hold for all observable objects, that is, all objects where the annotated method could possibly be called.
 
 This is possible thanks to the strong L42 type system, and we believe this property can not be broken.
-That is, we belive this property to hold even in the presence of exceptions, errors, aliasing, input output and non deterministic behaviour.
+That is, we believe this property to hold even in the presence of exceptions, errors, aliasing, input output and non deterministic behaviour.
 It is possible to make L42 work together with Java or even (possibly broken) native code, and we believe our property will hold also in those cases.
 
 </p><h2> (2/5) Deeply mutable objects </h2> <p>
@@ -1475,14 +1477,183 @@ In this case we can solve the problem by swapping the lines:
 
 However, this kind of solution does not scales in the general case; next we will see a programming pattern allowing to delay in a controlled way the invariant checks, or more in general, the recomputation of '<span class="code"><![CDATA[Cache.Now]]></span>'.
 
+Every method annotated as '<span class="code"><![CDATA[Cache.Now]]></span>' can instead be annotated as 
+'<span class="code"><![CDATA[Cache.LazyRead]]></span>'.
+'<span class="code"><![CDATA[Cache.LazyRead]]></span>' allows to encode conventional caching on mutable datastructures and automatic cache invalidation:
+The operations are computed when they are first asked, and the cache is automatically invalidated when a '<span class="code"><![CDATA[Cache.Clear]]></span>' method terminates.
+Again, we think that at all times '<span class="code"><![CDATA[Cache.LazyRead]]></span>' has the same semantic as recomputing the value, but with a different performance.
+This annotation is called '<span class="code"><![CDATA[Cache.LazyRead]]></span>' because it produces a 
+'<span class="code"><![CDATA[read]]></span>' method, while 
+'<span class="code"><![CDATA[Cache.Lazy]]></span>' works on immutable ones.
+
+Cache invalidation is considered one of the great challenges in writing correct programs; L42 can handle it correctly and automatically.
+However, there is a cost: you have to encode the algorithm so that the type system accepts your code and that the caching annotations can be applied.
+
 </p><h2> (3/5) Box patten </h2> <p>
 
-</p><h2> (4/5) lazy on mutable </h2> <p>
+As we have seen, in order to write well encapsulated mutable objects we need to designed them well, using '<span class="code"><![CDATA[capsule]]></span>' to initialize the mutable data, using '<span class="code"><![CDATA[Cache.Clear]]></span>' to mutate such state and '<span class="code"><![CDATA[Cache.Now]]></span>' for the invariant.
+However, we can also program a naive deeply mutable object and boxit up as a second step.
+This can require a little more code, but it is more intuitive, and works very well for arbitrarly complex cases.
+Consider the following code:
 
+<pre class="l42Big"><![CDATA[
+Bike = Data:{
+  var mut Wheel front
+  var mut Wheel back
+  var mut Seat seat
+  var mut Chain chain
+  mut method Void nail() = this.#front().addHole()
+  mut method Void rain(Second time) = this.#chain().addRust(time)
+  read method Void invariant() = X[
+    this.front().size()==this.back().size();
+    this.seat().isConfortable();
+    ]    
+  }
+//components can mutate (get damaged)
+//and be updated (replaced with new ones)
+]]></pre>
+As you can see, the '<span class="code"><![CDATA[Bike]]></span>' is a deeply mutable class, design with no attention to
+correctness: if the programmer is not carefully, the same '<span class="code"><![CDATA[Weel]]></span>' 
+may end up used for multiple bikes at the same time.
+Also, the method called '<span class="code"><![CDATA[invariant]]></span>' only represents a programmer intention, but it is not enforced in any way and thus it could be silently broken.
+
+We can easly create a '<span class="code"><![CDATA[BikeBox]]></span>' class containing and encapsulating, such a '<span class="code"><![CDATA[Bike]]></span>':
+<pre class="l42Big"><![CDATA[
+BikeBox = Data:{
+  capsule Bike box
+  
+  @Cache.Now class method
+  Void invariant(read Bike box) = box.invariant()
+  
+  @Cache.Clear class method
+  Void nail(mut Bike box) = box.nail()
+  
+  @Cache.Clear class method
+  Void nail(mut Bike box, Second time) = box.nail(time=time)
+
+  @Cache.Clear class method
+  Void front(mut Bike box, capsule Wheel that) = box.front(that)
+  }
+..
+//user code
+b = BikeBox(box=\(front=\(..) back=\(..) seat=\(..) chain=\(..)))
+b.nail()
+//b.box().nail()/ ill-typed
+Debug(b.box().front())//will display the unfortunate wheel
+b.front(\(..)) //looks just like a normal setter, but acts on the internal object
+]]></pre>
+
+As you can see, no matter how complex some class code is, we can simply wrap it into a box and apply '<span class="code"><![CDATA[Cache.Now]]></span>'
+ and '<span class="code"><![CDATA[Cache.Clear]]></span>' on top of it.
+In this way we end up with two types:
+'<span class="code"><![CDATA[Bike]]></span>', that does not offers any guarantee,
+ and '<span class="code"><![CDATA[BikeBox]]></span>', ensuring the invariant and that the state is well encapsulated.
+The methods '<span class="code"><![CDATA[BikeBox.nail()]]></span>',
+'<span class="code"><![CDATA[BikeBox.rail(time)]]></span>'
+and
+'<span class="code"><![CDATA[BikeBox.front(that)]]></span>'
+ will check for the invariant exactly one time, at the end of their execution.
+Following this pattern, the programmer can perform an arbitrary long computation before the checks are triggered.
+
+When writing other classes we can chose to use '<span class="code"><![CDATA[Bike]]></span>'
+or '<span class="code"><![CDATA[BikeBox]]></span>' depending on the specific details of our code.
+If we chose to use '<span class="code"><![CDATA[Bike]]></span>' as a field of another class, we can still check 
+the '<span class="code"><![CDATA[Bike]]></span>' invariant inside the invariant of the composite class:
+<pre class="l42Big"><![CDATA[
+FamilyGarage = Data:{
+  mut Bike daddyBike
+  mut Bike mummyBike
+  mut Trike timmyBike  
+  ..
+  read method Void invariant() = X[
+    this.daddyBike().invariant();
+    this.mummyBike().invariant();
+    this.timmyBike().invariant();
+    ]
+  }
+FamilyGarageBox = Data:{
+  capsule FamiliyGarage box
+
+  @Cache.Now class method
+  Void invariant(read FamilyGarage box) = box.invariant()  
+  }
+]]></pre>
+
+</p><h2> (4/5) Controlling the ROG shape </h2> <p>
+
+An attentive reader may have notice that we would allow for fields '<span class="code"><![CDATA[left]]></span>'
+ and '<span class="code"><![CDATA[right]]></span>' to point to the
+ same '<span class="code"><![CDATA[Wheel]]></span>' object.
+A Java programmer may be tempted to just add 
+'<span class="code"><![CDATA[this.front()!=this.back();]]></span>' in the invariant,
+but this would just use the user defined '<span class="code"><![CDATA[!=]]></span>' operator, that
+on classes created using '<span class="code"><![CDATA[Data]]></span>' is likely to check for structural equality instead of pointer equality.
+AdamTowel offers '<span class="code"><![CDATA[System.mutReferenceEquality(a and=b)]]></span>' to check for reference equality, but 
+this method only works for '<span class="code"><![CDATA[mut]]></span>' objects.
+The wheels are mut objects indeed, but the invariant method takes a '<span class="code"><![CDATA[read]]></span>' receiver, thus we can only see the wheels as '<span class="code"><![CDATA[read]]></span>'.
+In this case, the inability of using pointer equality is actully a good thing, since it does not correspond to what we really wanted to express: What if the two weels are different objects but they share the same '<span class="code"><![CDATA[mut Tire]]></span>' object?
+What we want is to check that the mutable objects are not aliased in phisically unreasonable ways.
+More in general, we want to ensure a tree shape of the mutable part of the object graph.
+
+In 42 we can create classes where all the instances are guaranteed to follow this property, by making all fields either '<span class="code"><![CDATA[imm]]></span>' or
+'<span class="code"><![CDATA[capsule]]></span>' of a class recursvelly respecting this property.
+However, according to what we have seen up to now, '<span class="code"><![CDATA[capsule]]></span>' fields can only be mutated by defining '<span class="code"><![CDATA[Cache.Clear]]></span>' methods, and those methods will be unable to mutate any other 
+'<span class="code"><![CDATA[capsule]]></span>' field.
+Consider the following code:
+
+<pre class="l42Big"><![CDATA[
+Tire = Data:{var Num pressure}
+Wheel = Data:{var mut Tire tire}
+Seat = Data:{var S description}
+Chain = Data:{ var Num damage 
+  mut method Void onWheel(lent Wheel that) = (
+    lent Tire t=that.#tire()
+    t.pressure(\pressure-1\)
+    this.damage(\damage+1\)
+    )
+  }
+]]></pre>
+
+Here the '<span class="code"><![CDATA[Chain]]></span>' can rub onto the wheel damaging it.
+The parameter of method '<span class="code"><![CDATA[onWheel]]></span>' is
+'<span class="code"><![CDATA[lent]]></span>'. This guarantees that the object graphs of the chain and the wheel will 
+not be mangled together by the method '<span class="code"><![CDATA[onWheel]]></span>'.
+Can we assemble a '<span class="code"><![CDATA[Bike]]></span>' while being able to both use 
+'<span class="code"><![CDATA[onWheel]]></span>' and guaranteeing the tree structure?
+The trick is to declare '<span class="code"><![CDATA[lent]]></span>' exposers manually:
+<pre class="l42Big"><![CDATA[
+Bike = Data:{
+  var capsule Wheel front
+  var capsule Wheel back
+  lent method lent Wheel #back() //lent exposer
+  var capsule Seat seat
+  var capsule Chain chain
+  lent method lent Chain #chain()//lent exposer
+  mut method Void chainOnWheel() = 
+    this.#chain().onWheel(this.#back())
+    
+  }
+BikeBox = Data:{..}//as before
+]]></pre>
+That is, by declaring lent exposers manually we gain the possibility of writing methos mutating the capsule fields without using the '<span class="code"><![CDATA[Cache.Clear]]></span>' pattern.
+In exchange for this extra flexibility, the class can not use 
+'<span class="code"><![CDATA[Cache.Clear]]></span>', '<span class="code"><![CDATA[Cache.Now]]></span>' or '<span class="code"><![CDATA[Cache.LazyRead]]></span>' directly.
+However, we can still use through the box pattern, as show before.
 
 </p><h2> (5/5) Summary </h2> <p>
 
- </p><p id="InterfacesAndData"> </p><h1> Interfaces, Concept and Data </h1> <p>
+Caching and representation invariants can be applied also to mutable objects.
+Proving properties on mutable objects requieres to know and apply varius patterns.
+Historically, in softwere verification, representation invariants where small 
+units of code, mostly focusing on the direct content of the fields and mostly relying on either pointer equality or the binary value of primitive datatypes, where the invariants could be purposly broken while still being able to observe the broken object.
+Nothing of this is possible in 42; in particular, 42 guarantees that broken object can not be observed.
+The box patterns allows to divide the value in two types: the one with an enforced invariant and the raw object state, recovering the flexibility of temporarelly open invariants wihtout any of the drawbacks.
+
+Note how avoiding pointer equality tests is required when normalization is took into account.
+Consider the example of a list whose invariant requires all object to  pointer unique.
+A valid list of such type may contain two structurally equal but not pointer equal objects.
+If such a list becomed immutable and was normalized, those two objects would become point equals, and the invariant would be broken by normalization.
+ </p><p id="InterfacesAndData"> </p><h1> Interfaces, subtypes and matching </h1> <p>
 
 </p><h2> (1/5)Interfaces, Basis and Details </h2> <p>
 </p><h2> Interfaces Basis </h2> <p>
@@ -1627,121 +1798,92 @@ Shape = {interface
   }
 ]]></pre>
 
-INTERFACES AND DATA, was together since Data relied on many interfaces at the time!!
-</p><h2> (3/5)Concept: ToS, Equals, Classable, ... </h2> <p>
-'<span class="code"><![CDATA[Concept]]></span>' is a class defined in AdamsTowel,
-containing interfaces commonly used by many classes.
-</p><p>
-The most well known one is 
-'<span class="code"><![CDATA[Concept.ToS]]></span>', implemented by all objects that can
-be converted in human readable strings.
+</p><h2> (3/5)Subtyping </h2> <p>
+Dynamic dispatch is the most important feature of Object oriented languages.
+Subtiping is the main feature supporting dynamic dispach; for example 
+we can iterate over a list of '<span class="code"><![CDATA[Shape]]></span>'
+and '<span class="code"><![CDATA[draw]]></span>' them without the need to consider case by case all the possible kinds of 
+'<span class="code"><![CDATA[Shape]]></span>'.
+ 
+Note how modifiers ('<span class="code"><![CDATA[mut]]></span>',
+'<span class="code"><![CDATA[read]]></span>',
+'<span class="code"><![CDATA[capsule]]></span>',..)) offers subtyping but not dynamic dispatch.
 
-In AdamsTowel, all basic classes (as alphanumeric, numeric and units) just return the simplest
-representation for the string or the number.
-For example '<span class="code"><![CDATA[Url"foo".toS()==S"foo"]]></span>'
-and '<span class="code"><![CDATA[Meter"12".toS()==S"12"]]></span>'.
+There is a fundamental compromise between interfaces and classes:
+<ul><li>
+Interfaces allows client code to be implicitly parametric on the behaviour of individual objects.
+The client code can take no assumption on the specific implementation of the interface.
+</li><li>
+Classes allows client code to rely on their invariant.
+The user code is forced to pass only a specific kind of implementation.
+</li></ul>
 
 
-</p><p>
-Other objects prints their fields content in square brackets.
-'<span class="code"><![CDATA[Data]]></span>' generates a reasonable
-'<span class="code"><![CDATA[Concept.ToS]]></span>' implementation, following this patter. For fields of interface type,
-the class name of the stored instance is also produced.
-Plain representations from basic classes are escaped and enclosed with double quotes.
+</p><h2> (4/5)Matching </h2> <p>
 
-</p><p>
-Another very well known interface is '<span class="code"><![CDATA[Concept.Equals]]></span>'
-implemented by objects that can be compared with
-'<span class="code"><![CDATA[read method Bool equals(read Concept.Equals that)]]></span>'.
-Such objects usually also define methods '<span class="code"><![CDATA[==]]></span>' and '<span class="code"><![CDATA[!= ]]></span>'
-based on '<span class="code"><![CDATA[equals]]></span>', but is not required by the interface.
+It is possible to inspect the runtime type of object by using matching.
+We will now provide varius examples of matching and explain the behaviour.
 
-'<span class="code"><![CDATA[Data]]></span>' will automatically generate a valid '<span class="code"><![CDATA[Concept.Equals]]></span>'
-implementation, and derived methods '<span class="code"><![CDATA[==]]></span>' and '<span class="code"><![CDATA[!= ]]></span>'.
-The default implementation of 
-'<span class="code"><![CDATA[Data]]></span>' does not takes circular object graphs in account, and will loop in those cases. We discuss how to personalize the behaviour of '<span class="code"><![CDATA[Data]]></span>' in <a href="dataAndInvariants.xhtml">Data documentation</a>.
-
-</p><p>
-Finally, an interface that nearly every class or interface implements is '<span class="code"><![CDATA[Concept.Classable]]></span>'.
-It allows us to get the class object out of an ordinary instance.
-This is very useful when wanting to create an instance based on another.
-For example, to create another shape of the same kind as a given shape,
-we could do the following: 
 <pre class="l42Big"><![CDATA[
-Shape: {interface implements Concept.Classable
-  class method This newShape(Color that)
-  refine method This class()
+method Square example1(Shape s1, Shape s2) = {
+  if s1 <: Square ( return x )//s1 is of type Square in the if body
+  if Square y = s1.bar() ( return y ) //if bar returns a Square, we call it y
+  if x<: HasToS, z<:Triangle ( return z.with(x.toS()) )
+  error X""
   }
-Square: {implements Shape
-  Color color
-  method newShape(that) //implemented from Shape
-    This(color: that)
-  refine method This class() //implemented from Concept.Classable
-    This //this implementation can be omitted if "Data <>< " is used
-  }
-/*..*/
-Shape s= ..
-s.class().newShape(Color.red())
-]]></pre>
-Where the interface '<span class="code"><![CDATA[Shape]]></span>' defines an abstract factory method (that is,
-an interface class method returning something of type '<span class="code"><![CDATA[This]]></span>')
-and class '<span class="code"><![CDATA[Square]]></span>' implements
- '<span class="code"><![CDATA[Shape]]></span>' (and thus also '<span class="code"><![CDATA[Concept.Classable]]></span>').
- 
- 
-</p><h2> (4/5)Concept.Invariant </h2> <p>
- 
-'<span class="code"><![CDATA[Concept.Invariant]]></span>' is another interface implemented very often and
- that can be handled by '<span class="code"><![CDATA[Data]]></span>', but in a different way from the former ones: 
- An object is more than just a record storing other objects of various types;
- those values are bond together by an invariant: a property that
- holds for all objects of that class.
- AdamsTowel and '<span class="code"><![CDATA[Data]]></span>'
- use '<span class="code"><![CDATA[Concept.Invariant]]></span>' to represent this idea: 
- a class that does not implement '<span class="code"><![CDATA[Concept.Invariant]]></span>' just has the
- empty invariant enforced by the types of its fields, but the programmer can specify a
- more stringent invariant by implementing '<span class="code"><![CDATA[Concept.Invariant]]></span>', as 
- in the following code: 
- 
- <pre class="l42Big"><![CDATA[
-BoundingBox: Data <>< {implements Concept.Invariant
-  var Meter minX
-  var Meter minY
-  var Meter maxX
-  var Meter maxY
-  method invariant()
-    this.minX()<= this.maxX() & this.minY()<= this.maxY()
-  }
-]]></pre>
+]]></pre> 
+We can use an '<span class="code"><![CDATA[if]]></span>' to check for the type of a local binding or an expression.
+We can also check for more then one local binding at a time.
+This '<span class="code"><![CDATA[if-return]]></span>' pattern allows to write complex dispatch in a compact way.
+The syntax '<span class="code"><![CDATA[<:]]></span>' can also be used in expressions when the type system is unable to figure out
+the type, usually because some information will be generated by a decorator on a later stage, thus sometimes we may have to write code like the following
+'<span class="code"><![CDATA[a.bla()<:mut Foo.baz()]]></span>': the method 
+'<span class="code"><![CDATA[baz()]]></span>' is called on the result of 
+'<span class="code"><![CDATA[a.bla()]]></span>', that we expect to return a
+'<span class="code"><![CDATA[mut Foo]]></span>'.
+While the '<span class="code"><![CDATA[if _ <: _]]></span>' will run the check at run time,
+the cast is checked at compile time, as if we wrote 
+'<span class="code"><![CDATA[(mut Foo tmp = a.bla(), tmp.baz())]]></span>'
 
-Here we define a class '<span class="code"><![CDATA[BoundingBox]]></span>', where the invariant
-states that the min coordinates have to be smaller that the max ones.
-
-'<span class="code"><![CDATA[Data]]></span>' will generate code so that the invariant is checked 
-directly after the object is created
-and directly after any field update.
-'<span class="code"><![CDATA[Data]]></span>' guarantees that no '<span class="code"><![CDATA[Margin]]></span>' object that does not 
-satisfy the invariant will ever be visible outside of the scope of the '<span class="code"><![CDATA[invariant()]]></span>' method itself.
-
-See more about restrictions of this mechanism in <a href="dataAndInvariants.xhtml">Data documentation</a>
 <br/>
-The example above shows a class with all immutable fields.
-It is possible to enforce the invariant also on classes with immutable
-and capsule fields.
-Then '<span class="code"><![CDATA[Data]]></span>' will additionally check that the
-lent exposers are used in a safe pattern: 
-that they are used only on the '<span class="code"><![CDATA[this]]></span>' receiver,
-and every method using the lent exposer do not return
-a lent result.
-Invariant is checked again after each method using exposers over '<span class="code"><![CDATA[this]]></span>'.
-</p><p>
-It may be unobvious why such requirements suffice; the idea is that the only way that a mutable/lent reference
-to the content of a capsule field can be
-accessed is by the exposer. The reference produced by the lent exposer can only be returned as lent,
-or wrapped inside of freshly created objects referred to by lent references.
+The code below
+<pre class="l42Big"><![CDATA[
+method Point example2(Point left,Point right) = {
+  (x1,y1) = left
+  (x2,y2) = right
+  return Point(x=x1+x2,y=y1+y2)  
+  }
+]]></pre>
+is equivalent to
+<pre class="l42Big"><![CDATA[
+method Point example2(Point left,Point right) = {
+  x1=left.x()
+  y1=left.y()
+  x2=right.x()
+  y2=right.y()
+  return Point(x=x1+x2,y=y1+y2)  
+  }
+]]></pre>
+That is: we can match out the result of any no-arg method into a variable with the same name, plus an optional numeric index.
+This syntax can also be used inside of the '<span class="code"><![CDATA[if]]></span>'.
+This is often done for fields. Of course it works also to extract a sigle field:
 
+<pre class="l42Big"><![CDATA[
+method Square example3(Shapes ss) = {
+  (size) = ss //extracts the 'size' from ss
+  (I size1) = ss//same but with explicit type
+  if (Square left) = ss ( return left )//matches if the leftmost element of the list is a Square
+  if (Triangle left, Square right) = ss ( return right )//matches if the leftmost and the
+    //rightmost elements are a Triangle and a Square.
+  if Circle(Point center) = ss.left() ( return center.squareAround() ) //matches if the leftmost
+    //is a Circle and the method center() returns a Point. Both checks are dynamic.
+  error X""
+  }
+]]></pre>
 
-</p><h2> (5/5)Interfaces and Data, summary </h2> <p>
+As we have seen, matches are a form of syntactic sugar allowing to be more compact when extracting subcomponents and taking decisions about their dynamic types.
+
+</p><h2> (5/5)Interfaces, subtypes and matching, summary </h2> <p>
 
 Interfaces in 42 serves the same role that they serve in other languages,
 with a little bit of a twist in the details.
@@ -1751,163 +1893,31 @@ provide the boilerplate implementations for free.
 This is much more powerful than traits, multiple inheritance or
 Java 8 default methods, since the implementation can be generated by examining the class.
  
- </p><p id="Sequences"> </p><h1> High level sequences manipulation </h1> <p>
-
-</p><h2> (1/5)Vectors as Sequences </h2> <p>
-
-As we have seen before, vectors can be defined using '<span class="code"><![CDATA[Collections.vector(of)]]></span>', as in the example below.
-
-<pre class="l42Big"><![CDATA[
-Nums: Collections.vector(of: Num) //declaration for vectors of nums
-/*..*/
-Nums xs= Nums[10Num;20Num;30Num] //immutable vector
-//note that we write the type of 'xs' explicitly,
-//otherwise the vector would be mutable.
-]]></pre>
-
-Sequences can be created with square brackets,
-and can be combined with operators.
-The general idea is that operators 
-'<span class="code"><![CDATA[+,-,<,>]]></span>' works 
-on one sequences and one element,
-while the corresponding doubled-up operators
-'<span class="code"><![CDATA[++,--, <>< ,>>, >>= , <>< = ,==]]></span>'
-works on two sequences.
-You can see the details of this below.
-<pre class="l42Big"><![CDATA[
-//element addition
-Nums[a;b;c]+d==Nums[a;b;c;d]
-//sequence concatenation
-Nums[a;b]++Nums[c;d]==Nums[a;b;c;d]
-//element removal
-Nums[a;b;b;c] - b==Nums[a;c] //only if elements implements Concept.Equals
-//set subtraction
-Nums[a;b;b;c] -- Nums[b;c]==Nums[a] //same for all the operators under
-//set intersection
-Nums[a;b]& Nums[b;c]==Nums[b]
-//superset
-Nums[a;b;c]>>Nums[a;c] //holds
-//superseteq
-Nums[a;b]>>= Nums[a;c] //holds but [a;b]>>Nums[a;c] does not
-//contains element
-Nums[a;b]>b //holds
-//is element contained
-b<Nums[a;b] //holds
-]]></pre>
-In addition of operators, many sequences can
-be manipulated by the following methods: 
-
-<pre class="l42Big"><![CDATA[
-//replacement
-Nums[a;b;c;d].withLeft(e) == Nums[e;b;c;d]
-Nums[a;b;c;d].withRight(e) == Nums[a;b;c;e]
-Nums[a;b;c;d].with(2Size,val: e) == Nums[a;b;e;d]
-
-//insertion
-Nums[a;b;c;d].withAlsoLeft(e) == Nums[e;a;b;c;d]
-Nums[a;b;c;d].withAlsoRight(e) == Nums[a;b;c;d;e]
-Nums[a;b;c;d].withAlso(2Size,val: e) == Nums[a;b;e;c;d]
-
-//skipping/filtering
-Nums[a;b;c;d].without(index: 2Size) == Nums[a;b;d]
-Nums[a;b;c;d].withoutLeft() == Nums[b;c;d]
-Nums[a;b;c;d].withoutRight() == Nums[a;b;c]
-
-//filtering, if elements implements Concept.Equals
-Nums[a;b;c;b;d].withoutAll(val: b) == Nums[a;c;d]
-Nums[a;b;c;b;d].withoutLeft(val: b) == Nums[a;c;b;d] //filter out the leftmost b
-Nums[a;b;c;b;d].withoutRight(val: b) == Nums[a;b;c;d] //filter out the rightmost b
-]]></pre>
-As you notice, there are different kind of actions: 
-replace an element ('<span class="code"><![CDATA[with]]></span>'),
-insert an element ('<span class="code"><![CDATA[withAlso]]></span>')
-and skipping/filtering elements out ('<span class="code"><![CDATA[without]]></span>').
-Then, elements can be specified by ('<span class="code"><![CDATA[index]]></span>'), by being
-the leftmost or the rightmost. To filter elements
-out, you can also just provide the element.
-
-</p><p>
-
-
-Immutable collections (and also mutable ones, as we will see later)
-can be accessed with the following methods: 
-
-<pre class="l42Big"><![CDATA[
-//access
-Nums[a;b;c;d].left() //a
-Nums[a;b;c;d].right() //d
-Nums[a;b;c;d].val(2Size) //c
-Nums[a;b;c;d].size() //4Size
-Nums[a;b;c;d].isEmpty() //does not hold
-]]></pre>
-
-
-
-
-
-</p><h2> (2/5) Suggested parameter values using "\" </h2> <p>
-
-In 42 is possible to use '<span class="code"><![CDATA[\]]></span>' while calling a method or using the square brackets,
-to ask the receiver for a suggestion about the parameter values.
-The library designer has full freedom to implement those suggestion in the most opportune way, however we
-recognize three important common patterns: 
-</p><p>
-When setting/updating a value, the old value is suggested.
-</p><p>
-When adding a new value, the factory is suggested.
-</p><p>
-When the parameter is a number from zero to a max, the maximum is suggested.
-</p><p>
-For example: 
-<pre class="l42Big"><![CDATA[
-Nums[a;b;c;d].withAlso(left: 42\) //the \ is Num
-Nums[a;b;c;d].without(index: \ - 1Size) //remove the last (the right-most)
-Nums[a;b;c;d].with(left: \ * 2Num) //the leftmost is now a*2
-
-Points[\(x: 12\ y: 0\)]==Points[Point(x: 12Num, y: 0Num)]
-]]></pre>
-Sometime, using '<span class="code"><![CDATA[\]]></span>' makes a huge difference,
-for example, for the animal example of before: 
-<pre class="l42Big"><![CDATA[
-horse.location(\.with(x: \+20\)
-//is equivalent to the much longer
-horse.location(horse.location().with(
-  x: horse.location().x()+20Num)
-]]></pre>
-
-Is also possible to use '<span class="code"><![CDATA[\]]></span>' followed by an identifier, that will denote the method
-with the same name on the receiver.
-For example, if we want to reflect a point, and invert x and y coordinate, we can write
-
-<pre class="l42Big"><![CDATA[
-p= point.with(x: \y, y: \x)
-//is equivalent to
-p= point.with(x: point.y(), y: point.x())
-]]></pre>
-
-The '<span class="code"><![CDATA[\]]></span>' is also very convenient while initializing a list/set of enumerated values.
 <br/>
-For example: 
+In the right conditions, matching is a useful tool to reduce code size and complexity.
+However, dynamic dispach is still the preferred option in the general case: we can only match on a finite
+amount of pre-defined cases, thus matching is fragile with respect to code evolution.
+ </p><p id="Sequences"> </p><h1> Collection: list, map, set, optional and their operations </h1> <p>
+
+</p><h2> (1/5)lists manipulation </h2> <p>
+
+As we have seen before, lists can be defined using '<span class="code"><![CDATA[Collection.list(that)]]></span>', as in the example below.
 
 <pre class="l42Big"><![CDATA[
-Direction= Enumeration"north, east, south, west"
-Direction.Set[ \north; \east ] //the bitflag corresponding to the set of north and east.
-//is equivalent to the much longer
-Direction.Set[ Direction.north(); Direction.east() ]
+Nums: Collection.list(Num) //declaration for a list of nums
+/*..*/
+xs0 = Nums[10\;20\;30\] //xs0 <: mut Nums
+Nums xs1 = Nums[10\;20\;30\] //xs1 <: imm Nums == //xs1 <: Nums
+imm xs2 = Nums[10\;20\;30\] //xs2 <: imm Nums == //xs2 <: Nums
+xs3 = Num.List[10\;20\;30\] //xs3 is another kind of list of nums
 ]]></pre>
+As you can see above, many of the most common '<span class="code"><![CDATA[AdamTowel]]></span>' classes have a nested class
+called '<span class="code"><![CDATA[.List]]></span>' as a convenience feature, to avoid having to define your own in most programs.
 
+<br/>
 
-
-
-
-
-
-
-</p><h2> (3/5) Mutate sequences </h2> <p>
-The same sequence class can offer both immutable and mutable methods.
-Sequences are created mutable by '<span class="code"><![CDATA[[..]]]></span>'.
-</p><p>
-Mutable references can become immutable by promotion; for example,
+Lists can be created with square brackets; they are born mutable but can become immutable 
+if they are directly assigned to an immutable local binding or parameter, or by other forms of promotion; for example,
 a method without '<span class="code"><![CDATA[mut]]></span>' parameters returning a 
 '<span class="code"><![CDATA[mut]]></span>' reference
 can be used to initialize an immutable binding.
@@ -1920,6 +1930,76 @@ Nums myNums= DoIt.getMutableNums() //ok promotions happens, myNums is immutable
 
 myNums= DoIt.getMutableNums() //myNums type is inferred to be mut Nums
 ]]></pre>
+
+Immutable lists can be combined with operators.
+The general idea is that operators 
+'<span class="code"><![CDATA[+,-]]></span>' works 
+on one sequences and one element,
+while the corresponding doubled-up operators
+'<span class="code"><![CDATA[++,--]]></span>'
+works on two sequences.
+You can see the details of this below.
+<pre class="l42Big"><![CDATA[
+X[
+  //element addition
+  Nums[a;b;c]+d == Nums[a;b;c;d];
+  //element addition works both ways
+  k+Nums[a;b;c]+d == Nums[k;a;b;c;d];
+  //sequence concatenation
+  Nums[a;b]++Nums[c;d] == Nums[a;b;c;d];
+  //element removal
+  Nums[a;b;b;c]-b == Nums[a;c]; //how to tell two elements apart?
+  //sequence subtraction (like removeAll / set minus)
+  Nums[a;b;b;c]--Nums[b;c] == Nums[a];
+  ]
+]]></pre>
+In addition of operators, immutable lists also supports a pletora of methods:
+<pre class="l42Big"><![CDATA[
+X[
+  //replacement
+  Nums[a;b;c;d].with(2I,val=e) == Nums[a;b;e;d];
+  Nums[a;b;c;d].withLeft(e) == Nums[e;b;c;d];//==Nums[..].with(0I val=e)
+  Nums[a;b;c;d].withRight(e) == Nums[a;b;c;e];//==Nums[..].with(\size-1I val=e)
+  //insertion
+  Nums[a;b;c;d].withAlso(2I,val=e) == Nums[a;b;e;c;d];
+  Nums[a;b;c;d].withAlsoLeft(e) == Nums[e;a;b;c;d];//==Nums[..].withAlso(0I val=e)
+  Nums[a;b;c;d].withAlsoRight(e) == Nums[a;b;c;d;e];//==Nums[..].withAlso(0I val=e)
+  //skipping/filtering
+  Nums[a;b;c;d].without(index=2I) == Nums[a;b;d];
+  Nums[a;b;c;d].withoutLeft() == Nums[b;c;d];//==Nums[..].without(0I)
+  Nums[a;b;c;d].withoutRight() == Nums[a;b;c];//==Nums[..].without(\size-1I)
+  Nums[a;b;c;b;d].withoutAll(val=b) == Nums[a;c;d];
+  Nums[a;b;c;b;d].withoutLeft(val: b) == Nums[a;c;b;d]; //filter out the leftmost b
+  Nums[a;b;c;b;d].withoutRight(val: b) == Nums[a;b;c;d]; //filter out the rightmost b
+  ]
+]]></pre>
+As you notice, there are different kind of actions: 
+replace an element ('<span class="code"><![CDATA[with]]></span>'),
+insert an element ('<span class="code"><![CDATA[withAlso]]></span>')
+and skipping/filtering elements out ('<span class="code"><![CDATA[without]]></span>').
+Then, elements can be specified by index, by being
+the leftmost or the rightmost.
+To filter elements
+out, you can also just provide the element.
+
+</p><p>
+
+
+Immutable collections (and also mutable ones, as we will see later)
+can be accessed with the following methods: 
+
+<pre class="l42Big"><![CDATA[
+X[
+  //access
+  Nums[a;b;c;d].left() == a;
+  Nums[a;b;c;d].right() == d;
+  Nums[a;b;c;d].val(2I) == c;
+  Nums[a;b;c;d].size() == 4I;
+  !Nums[a;b;c;d].isEmpty();
+  ]
+]]></pre>
+
+</p><h2> Mutate sequences </h2> <p>
 
 Mutable sequences can contains mutable objects.
 While this can be useful in special circumstances, it can create aliasing issues similar to the
@@ -1937,205 +2017,209 @@ Mutable sequences can be more efficient that
 immutable ones, and are more general, since they 
 can store mutable objects.
 <br/>
-The square brackets create mutable sequences/collections,
-so: 
-
-<pre class="l42Big"><![CDATA[
-foo= Nums[a;b;c;d]
-//equivalent to 
-mut Nums foo= Nums[a;b;c;d]
-]]></pre>
 
 
-Now we show some methods over mutable collections, consider each following line independently: 
+Now we show some methods over a mutable list '<span class="code"><![CDATA[foo = Nums[a;b;c;d]]]></span>'; consider each following line independently: 
 <pre class="l42Big"><![CDATA[
 //setting a value in a position
-foo(2Size,val: e) //foo == Nums[a;b;e;d]
+foo.set(2I val=e) //foo == Nums[a;b;e;d]
 //setting at left or right
 foo.left(e) //foo == Nums[e;b;c;d]
 foo.right(e) //foo == Nums[a;b;c;e]
 
 //add a value in a position
-foo.add(2Size,val: e) //foo == Nums[a;b;e;c;d]
+foo.add(2I val=e) //foo == Nums[a;b;e;c;d]
 
 //add at left or right
-foo.add(left: e) //foo == Nums[e;a;b;c;d]
-foo.add(right: e) //foo == Nums[a;b;c;d;e]
+foo.add(left=e) //foo == Nums[e;a;b;c;d]
+foo.add(right=e) //foo == Nums[a;b;c;d;e]
 
 //removal
-foo.remove(index: 2Size) //foo == Nums[a;b;d]
+foo.remove(2I) //foo == Nums[a;b;d]
 foo.removeLeft() //foo == Nums[b;c;d]
 foo.removeRight() //foo == Nums[a;b;c]
 
-//removal, if elements implements Concept.Equals
-foo.removeAll(val: b) //foo == Nums[a;c;d]
-foo.removeLeft(val: b) //remove the leftmost b
-foo.removeRight(val: b) //remove the rightmost b
+//removal
+foo.removeAll(val=b) //foo == Nums[a;c;d]
+foo.removeLeft(val=b) //remove the leftmost b
+foo.removeRight(val=b) //remove the rightmost b
 ]]></pre>
 
 
+</p><h2> (2/5) Iterations on lists </h2> <p>
 
-
-
-</p><h2> (4/5) '<span class="code"><![CDATA[with]]></span>': a Swiss army knife to encode complex behaviour </h2> <p>
-
-
-There are two basic usage for the '<span class="code"><![CDATA[with]]></span>' statement: as for-each and as a typecase.
-
+We now show various pattens to iterate on lists.
+First some usual foreach:
 <pre class="l42Big"><![CDATA[
-//as a for each loop
-vec=  Strings[S"foo"; S"bar"; S"beer"]
-var S result= S""
-with myElem in vec.vals() (result:= result++myElem) //like for(myElem: vec){..}
+vec = S.List[S"foo"; S"bar"; S"beer"]
+var S result = S""
+for myElem in vec ( result++=myElem ) 
 //result==S"foobarbeer"
-
-//as a typecase
-with myData= foo.bar() ( //like a typecase/switch/chain of instanceof
-  on S  Debug(S"A string "++myData) //print strings
-  on Num  void //do nothing if is a number
-  on Concept.ToS Debug(myData) //print stringables that are not numbers. 
-  )
-]]></pre>
-The semantics of '<span class="code"><![CDATA[with-on]]></span>' is that the
-first match is executed. No
-confusing fall-through semantics as in C/Java switch.
-</p><p>
-If '<span class="code"><![CDATA[myData]]></span>' is already in scope, one can simply write
-<pre class="l42Big"><![CDATA[
-with myData (
-  on S Debug(myData) //here 'myData' is seen of 'S' type
-  default Debug(S"Your data is not a string")
-  )
 ]]></pre>
 
-Those two modes can be combined
-<pre class="l42Big"><![CDATA[
-vec=  Anys[S"foo"; 12Num; S"beer";]
-var S result= S""
-with myElem in vec.vals() (on S  result:= result++myElem  ) 
-//result==S"foobeer", composed by all strings inside vec
-]]></pre>
-
-'<span class="code"><![CDATA[with]]></span>' can be used as list comprehension; where 
-
-'<span class="code"><![CDATA[use]]></span>' inserts elements in the sequence under construction
-<pre class="l42Big"><![CDATA[
-vec= Anys[S"foo"; 12Num; S"beer";]
-v= Strings[with myElem in vec.vals() (on S use[myElem] )] //filter out non-strings
-//v==Strings[S"foo"; S"beer";]
-]]></pre>
-
-'<span class="code"><![CDATA[with]]></span>' can be used for multiple dispatch: 
-
-<pre class="l42Big"><![CDATA[
-method Num m(Shape x, Person y, Vehicle z) //example of method using with
- with x y z (
- on Square Student Car (.. return ..) //x here is a Square
- on Circle Person Airplane (..) //x here is a Circle
- default (..) //default case, here x is just a Shape
-  )}
-]]></pre>
-
-'<span class="code"><![CDATA[with]]></span>' can be used to iterate over multiple collections at once: 
+In 42 foreach allows to iterate on multiple collections at onece, and also to update the collections:
 <pre class="l42Big"><![CDATA[
 rs= Nums[1\;2\;3\;]
 as=  Nums[10\;20\;30\;]
 bs=  Nums[100\;200\;300\;]
-//here a, b and r iterate over my data
-with a in as.vals(), b in bs.vals(), var r in rs.vals() (r:= r+a+b)
+for a in as, b in bs, var r in rs ( r:= r+a+b )
 //now rs==Nums[111\;222\;333\;]
 ]]></pre>
 
-while iterating on multiple collections, a dynamic error is raised if 
+In the example above, a dynamic error would be raised if 
 '<span class="code"><![CDATA[rs]]></span>',
  '<span class="code"><![CDATA[as]]></span>' and
  '<span class="code"><![CDATA[bs]]></span>' have different length.
 This behaviour can be tuned in many way: 
 iterators can be parametrized with
-'<span class="code"><![CDATA[from]]></span>' , '<span class="code"><![CDATA[maxTo]]></span>', '<span class="code"><![CDATA[fill]]></span>' and 
-'<span class="code"><![CDATA[minTo]]></span>'
+'<span class="code"><![CDATA[cut()]]></span>' , '<span class="code"><![CDATA[vals(that,to)]]></span>' and '<span class="code"><![CDATA[cutVals(that,to)]]></span>':
+'<span class="code"><![CDATA[cut()]]></span>' allows to skip extra elements, while '<span class="code"><![CDATA[vals(that,to)]]></span>'
+allows iterate on a subsequence only.
 
-'<span class="code"><![CDATA[from]]></span>' and '<span class="code"><![CDATA[maxTo]]></span>' are on default zero and the sequence length,
-and can be specified to start from another value, like 1 or 2, and
-to end before the very end.
-
-'<span class="code"><![CDATA[fill]]></span>' can be used in combination with 
-'<span class="code"><![CDATA[from]]></span>' and '<span class="code"><![CDATA[maxTo]]></span>'
-to iterate outside of the sequence range.
-If '<span class="code"><![CDATA[fill]]></span>' is used without specifying '<span class="code"><![CDATA[maxTo]]></span>', the
-sequence is considered infinite and iteration may go on forever.
-
-'<span class="code"><![CDATA[minTo]]></span>' is useful when multiple collections are iterated at once,
-and specify the minimal allowed iteration cycles.
 <br/>
 Let see some examples: 
 <pre class="l42Big"><![CDATA[
-with x in xs.vals(), y in ys.vals(fill: 10Num)
-//will iterate for as long as xs, even if ys is shorter
-//will stop after xs.size() cycles, and fail if xs.size()<ys.size()
+for x in xs.cut(), y in ys ( .. )
+//will iterate as long as xs, even if ys is longer.
+//will stop after xs.size() cycles, and fail if xs.size()>ys.size()
 
-with x in xs.vals(), y in ys.vals(fill: 10Num, minTo: 0Size)
-//will iterate for as long as xs, even if ys is shorter
-//will stop after xs.size() cycles
+for x in xs.vals(5I to 10I), y in ys ( .. )
+//will iterate across xs elements from position 5 to 10, pairing them up with elements 0-5 of ys.
+//will stop after 5 cycles, and go in error is ys.size()!=5 or xs.size()<10
 
-with x in xs.vals(minTo: 0Size), y in ys.vals(minTo: 0Size)
-//will iterate for as long as both xs and ys have elements
+for x in xs.cut(), y in ys.cut() ( .. )
+//will iterate for as long as both xs and ys have elements.
+//similar to a functional zip
 
-with x in xs.vals(fill: 10Num), y in ys.vals(fill: 10Num)
-//will go on forever
-
-with x in xs.vals(minTo: 5Size), y in ys.vals(from: 1Size maxTo: \ - 1Size minTo: 3Size )
-//will extract at least 5 elements from xs, will skip the first 
-//and the last element of ys and extract at least 2 elements from ys.
-]]></pre>
-
-
-And, in a case similar of before: 
-<pre class="l42Big"><![CDATA[
-rs= Nums[1\;2\;3\;]
-as=  Nums[10\;20\;30\;40\;50\;]
-bs=  Nums[100\;200\;]
-with a in as.vals(minTo: 0Size), b in bs.vals(fill: 300Num), var r in rs.vals() (
-  r:= r+a+b)
+rs = Nums[1\;2\;3\;]
+imm as =  Nums[10\;20\;30\;40\;50\;]
+imm bs =  Nums[100\;200\]
+for a in as.cut(), b in bs+300Num, var r in rs ( r:= r+a+b )
 //rs==Nums[111\;222\;333\;]
 ]]></pre>
 
+</p><h2> The power of the \ </h2> <p>
 
-</p><h2> Strings interpolation, even better with '<span class="code"><![CDATA[with]]></span>' </h2> <p>
+There are varius methods taking advantage of the '<span class="code"><![CDATA[\]]></span>' syntactic sugar.
+They provides an expressive power similar to what list comprehensions provides in python and streams in Java, but by just using simple control flow like for/if:
 
-Alphanumeric classes and strings can be seen as immutable
-sequences of Strings of length 1.
-
-All the operators working on immutable sequences works on strings and alphanumerics.
-
-However, they can not be constructed with square brackets, that is '<span class="code"><![CDATA[S[a;b;c]]]></span>' does not compile.
-<br/>
-Square brackets can be used to interpolate strings and alphanumerics; as in: 
 <pre class="l42Big"><![CDATA[
-S"hello "[name]", have a good day, and do not panic!"
+as =  Nums[1\;2\;3\;4\;]
+//mapping
+bs0 = Nums[](for a in as \add(a*10Num))
+//bs0==Nums[10\;20\;30\;40\]
+//filtering
+bs1 = Nums[](for a in as if a>2Num \add(a))
+//bs1==Nums[3\;4\]
+//flatmapping
+bs2 = Nums[](for a in as for b in bs0 \add(a+b))
+//bs0==Nums[11\;21\;31\;41\;12\;22\;32\;42\;13\;23\;33\;43\;14\;24\;34\;44\;]
+//reduce
+tot0 = as.reduce()(for v in \vals \add(\acc+v)) //would go in error if as.isEmpty()
+tot1 = as.reduce(0\)(for v in \vals \add(\acc+v)) //ok also if as.isEmpty()
+//tot0 == tot1 == 10Num
+
+//checks a property; great in an if or an X[]
+ok0 = Match.Some()(for a in as \add(a>3Num))
+//ok0==true
+ok1 = Match.All()(for a in as \add(a>3Num))
+//ok1==false
+ok2 = Match.None()(for a in as \add(a>3Num))
+//ok2==false
+ok3 = Match.Count()(for a in as \add(a>3Num))
+//ok3==2I
+asContainsAllBs = Match.All()(for b in bs \add(b in as))
+asIntersectBs = Match.Some()(for b in bs \add(b in as))
+asDisjointBs = Match.None()(for b in bs \add(b in as))
+//Note: b in as == as.contains(b)
+
 ]]></pre>
-However, also '<span class="code"><![CDATA[with]]></span>' can be used; this can make code very compact,
-for example assume we want to collect some names and numbers in a string: 
-<pre class="l42Big"><![CDATA[
-res= S"your info: "[with name in names.vals(), num in nums.vals()  (
-  use[ S"name: "[name]", num: "[num]""]
-  )]"" //we always need the ending string, even if empty.
-]]></pre>
-In order to put a semicolon between elements in our string, we can use '<span class="code"><![CDATA[sep]]></span>'
-<pre class="l42Big"><![CDATA[
-res= S"your info: "[with name in names.vals(), num in nums.vals()  (
-  use[ S"name: "[name]", num: "[num]"", sep: S"; "]
-  )]"" //we always need the ending string, even if empty.
-]]></pre>
+The language 42 is expression based. Expressions that look like statements are just expressions with the
+'<span class="code"><![CDATA[Void]]></span>' return type.
+Those methods that take advantage of the '<span class="code"><![CDATA[\]]></span>' are simply methods with a single parameter 
+'<span class="code"><![CDATA[Void that]]></span>'.
+The '<span class="code"><![CDATA[\add(that)]]></span>' method in the 
+'<span class="code"><![CDATA[Match.**]]></span>' examples short circuit when appropriate, so that the for can terminate as soon as the result is known.
 
 
-</p><h2> (5/5) Collections summary </h2> <p>
+</p><h2> (3/5) Lists with mutable and immutable elements </h2> <p>
+
+Up to now we focused on lists of '<span class="code"><![CDATA[Num]]></span>', but 
+all instances of '<span class="code"><![CDATA[Num]]></span>' are immutable; we now discuss what happens where
+mutable lists contains a mixture of mutable and immutable elements.
+Consider the following code:
+Finally, we conclude discussing iteration on mutable elements:
+Mutable lists can contains
+<pre class="l42Big"><![CDATA[
+Point = Data:{var Num x, var Num y}
+Points = Collection.list(Point)
+..
+imm p0=Point(x=0\,y=0\) //an imm point
+p1=Point(x=1\,y=1\) //a mut point
+ps=Points[p0;mutVal=p1] //a mut list with both points
+X[
+  p0==ps.val(0\);
+  p0==ps.left();
+  p1.readEquality(ps.#val(1\)); //== only works on imms,
+  p1.readEquality(ps.#right()); //readEquality checks for structural equality
+  p0.readEquality(ps.readVal(0\)); // .readVal generalizes over imm/mut values
+  p1.readEquality(ps.readVal(1\));
+  ]
+for read p in ps ( Debug(p) )
+]]></pre>
+
+As you can see, to insert a mutable point we need to use '<span class="code"><![CDATA[mutVal]]></span>' and to
+take the point out we have to add the '<span class="code"><![CDATA[#]]></span>' to the method.
+When iterating on a list, if we expect a mixture of mut and imm values we must add '<span class="code"><![CDATA[read]]></span>'
+to avoid a runtime error.
+If we expect all values to be '<span class="code"><![CDATA[mut]]></span>', we can write '<span class="code"><![CDATA[mut]]></span>' instead.
+When a mut collection is promoted to '<span class="code"><![CDATA[imm]]></span>', it still remembers what values were originally inserted as
+ '<span class="code"><![CDATA[mut]]></span>'.
+To make it so that all values can be read as '<span class="code"><![CDATA[imm]]></span>', we can use the method
+'<span class="code"><![CDATA[.immNorm()]]></span>'. In addtion of normalizing the collection, it also marks all values
+accessible as '<span class="code"><![CDATA[imm]]></span>', as shown in the code below:
+
+<pre class="l42Big"><![CDATA[
+Points immPs=(
+  imm p0=Point(x=0\,y=0\) //an imm point
+  p1=Point(x=1\,y=1\) //a mut point
+  Points[p0;mutVal=p1] //a mut list with both points
+  ).immNorm()
+for p in ps ( Debug(p) ) //works, it would fail without 'immNorm()'
+]]></pre>
+
+</p><h2> (4/5) Map </h2> <p>
+
+'<span class="code"><![CDATA[Collection]]></span>' also support maps, sets, optional and enumerations.
+We will add more kinds of collections in the future.
+
+
+</p><h2> Map and Set </h2> <p>
+Thanks to normalization 42 can have very fast and most reliable hash sets and hash maps.
+The values of sets and the keys of maps must be immutable, and are normalized just before being intserted in the collection.
+Then, the value of the normalized pointer is used to check for equality and hashcode.
+This have various positive effects:
+
+<ul><li>
+The user does not need to write equality and hashing behaviour
+</li><li>
+There is no risk of mistake in the equality and hashing behaviour
+</li><li>
+The intrinsic invariants of the hashmap/hashset are never violated/corrupted.
+</li><li>
+The equality is a perfect structural equality, but is as fast as a pointer equality; for maps with large keys this can make a massive performance difference.
+</li></ul>
+
+Maps and sets have less methods that lists, but they can still be iterated upon:
+
+
+</p><h2> (5/5) Collection summary </h2> <p>
 
 <ul><li>
 There are a tons of methods and operators to know, but since most code works 
 around collections, it is worth the effort to memorize them.
 </li><li>
-Immutable collections are easy to play with, using operators and with methods.
+Immutable collections are easy to play with, using operators and '<span class="code"><![CDATA[with**]]></span>' methods.
 </li><li>
 Mutable collections can be more efficient and flexible, but they come with additional
 difficulties.
@@ -2145,8 +2229,8 @@ Most methods have a general version that works with an index, and specialized '<
 </li><li>
 '<span class="code"><![CDATA[\]]></span>' can help remove a lot of boilerplate, but is a concept unique to 42, and require some effort to get used to.
 </li><li>
-'<span class="code"><![CDATA[with]]></span>' is very useful and flexible. It is common to find methods composed from just a large
-'<span class="code"><![CDATA[with]]></span>' statement plus a little pre and post processing around it.
+'<span class="code"><![CDATA[for]]></span>' is very useful and flexible. It is common to find methods composed from just a large
+'<span class="code"><![CDATA[for]]></span>' statement plus a little pre and post processing around it.
 </li></ul>
  </p><p id="Exercises"> </p><h1> Exercises </h1> <p>
 
