@@ -1,3 +1,4 @@
+m4_changecom()m4_dnl
 m4_define(`OCode',`<pre class="l42"><![CDATA[')m4_dnl
 m4_define(`CCode',`]]></pre>')m4_dnl
 m4_define(`OBCode',`<pre class="l42Big"><![CDATA[')m4_dnl
@@ -19,3 +20,4 @@ m4_define(`OFloatClass',`<div class="$1"><div class="wrapFloat"><div class="inFl
 m4_define(`OFloat',`<div><div class="wrapFloat"><div class="inFloat">')m4_dnl
 m4_define(`ContinueFloat',`</div><div class="inFloat">')m4_dnl
 m4_define(`CFloat',`</div></div><div class="finishFloat"></div></div>')m4_dnl
+m4_define(`WComm',`m4_dnl ')m4_dnl

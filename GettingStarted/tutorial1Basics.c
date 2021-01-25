@@ -1,9 +1,9 @@
-WBigTitle(Target audience)
+WBigTitle(`Target audience')
 This tutorial is design for expert programmers, already knowledgeable in 
 at least two or three of the languages Java, C#, C++ and Python.
 This tutorial lays out the basic knowledge for programming in 42 using AdamsTowel, but
 does not explore the foundational theory behind 42,
-or the mathematical rational for the correctness of 42.
+or the mathematical rationale for the correctness of 42.
 WBR
 The language 42 and many 42 metaphors are inspired by
  The Hitchhiker's Guide to the Galaxy by Douglas Adams.
@@ -20,13 +20,13 @@ When we write Wcode(reuse L42.is/AdamsTowel) we are asking 42 to
 reuse the code of the library found in the internet address 
 Wcode(L42.is/AdamsTowel).
 AdamsTowel is our Towel, that is the set of classes and interfaces that we wish to start from.
-<!--(Wlink(towel,Deploy code))-->
+WComm Wlink(towel,Deploy code)
 A Towel usually plays the role of "the standard library" of most languages.
 Wcode(L42.is) is the main website of 42, where most commonly used libraries are hosted. To reuse code you 
 need an internet connection; but this also means that you will never have to manually import any code.
-Required code will be transitively downloaded and cached on your machine, so you need not to be aware of the existence of this mechanism.
+Required code will be downloaded and cached on your machine, so you need not to be aware of the existence of this mechanism.
 WP
-We do not need to always start from AdamsTowel, there are many interesting towels out there, and you may also become skilled in the 
+We do not need to always start from AdamsTowel; there are many interesting towels out there, and you may also become skilled in the 
 advanced technique of towel embroidery.
 WP
 
@@ -40,7 +40,7 @@ WP
 Wcode(Debug)
 is a simple class whose most important method print a message on the console.
 WP
-In 42, when a class has a WEmph(most important) method, it is conventional to use the empty name, so that can be used with the short syntax Wcode(Debug(S"Hello world")) instead of a more verbose Wcode(Debug.println(..)). 
+In 42, when a class has a WEmph(`most important') method, it is conventional to use the empty name, so that can be used with the short syntax Wcode(`Debug(S"Hello world")') instead of a more verbose Wcode(Debug.println(..)). 
 
 WBR
 In 42 Strings and numbers need to be created by their type, as in

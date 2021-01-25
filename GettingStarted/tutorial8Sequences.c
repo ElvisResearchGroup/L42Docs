@@ -294,8 +294,58 @@ WTitle((4/5) Map, set, opt..)
 Wcode(Collection) also support maps, sets, optional and enumerations.
 We will add more kinds of collections in the future.
 
+WTitle(`Optional')
+In 42 there is no concept of null, and all the values are always intentially initialized before
+they can be read.
+There are two main reasons programmers relies on nulls: optional values and circular/delayed initialization.
+Circuar initialization can be solved with a Wcode(fwd) types, an advanced typing feature that we do not discuss here.
+Optional values are a staple of functional programming and are logically equivalent to a collection of zero or one element, or, if you prefer, a box that may or may not contain an element of a certain type.
+Optionals values can be obtained with Wcode(Collection.optional(that)) as shown below.
+Optionals are also optimized so that they do not require the creation of any new objects at run time.
 
-WTitle(`Map and Set')
+OBCode
+Point = Data:{var Num x, var Num y}
+OPoint = Collection.optional(Point)
+Main = (
+  imm p00=Point(x=0\ y=0\)//an imm Point in 00
+  mut p01=Point(x=0\ y=1\)//a mut Point originally in 01
+  var imm p00Box = OPoint(p00) //immutable Optional Point
+  var mut p01Box = OPoint(p01) //mutable Optional Point
+  X[
+    p00 in p00Box; //the in syntax checks if an object is in the box
+    p00Box.val()==p00; //Data defines == only for imm references
+    p01Box.val().readEquality(p01);//here .val() gives us a read reference
+    ]
+  if p00Box ( Debug(S"printing %p00Box") )//printing [Point(x=0, y=0)]
+  //we can just check if a box is not empty as if it was a boolean
+  p01Box.#val().x(50\)//updates the x value of the point
+  Debug(S"printing %p01")//printing Point(x=50, y=1)
+  p00Box:= OPoint()//updates the local variables with empty boxes
+  p01Box:= OPoint()
+  if !p00Box ( Debug(S"printing %p00Box") )//printing []
+    X[
+    !(p00 in p00Box);
+    !p00Box;//using isPresent() or not is just a matter of style
+    !p00Box.isPresent();
+    ]
+  )
+CCode
+At this point in the tutorial, some readers will be confused that we can update the local variable binding 
+Wcode(p00Box:= OPoint()) even if it is immutable.
+Other readers instead will remember that immutability is a property of the reference and not of the binding/field: a local binding and fields declared Wcode(var) can be updated.
+The updated value need to respect the modifier of the fild/binding type: if it is Wcode(mut/imm) it needs to be updated with another Wcode(mut/imm); if it is Wcode(read) than it can be updated with either
+Wcode(mut), Wcode(imm) or Wcode(read).
+Oh, yes, another reader will realize ... and a Wcode(capsule) reference can be assigned to any of Wcode(mut), Wcode(imm), Wcode(lent) or Wcode(read).
+
+Note how both local bindings are updated using the same exact expression :
+Wcode(p00Box:= OPoint()    p01Box:= OPoint())
+In 42 Wcode(OPoint()) can be either Wcode(mut) or Wcode(imm) (or Wcode(capsule) indeed)
+On the other side, consider 
+Wcode(OPoint(p00)) and Wcode(OPoint(p01)): the first one is immutable since Wcode(p00) is Wcode(imm),
+while the second one is mutable since Wcode(p01) is Wcode(mut).
+
+
+WTitle(`Map')
 Thanks to normalization 42 can have very fast and most reliable hash sets and hash maps.
 The values of sets and the keys of maps must be immutable, and are normalized just before being intserted in the collection.
 Then, the value of the normalized pointer is used to check for equality and hashcode.
@@ -311,9 +361,70 @@ The intrinsic invariants of the hashmap/hashset are never violated/corrupted.
 The equality is a perfect structural equality, but is as fast as a pointer equality; for maps with large keys this can make a massive performance difference.
 </li></ul>
 
-Maps and sets have less methods that lists, but they can still be iterated upon:
+Maps and sets have less methods that lists, but they can still be iterated upon, as shown in the following code:
 
+OBCode
+Point = Data:{var Num x, var Num y}
+Points = Collection.list(Point)
+PointToString = Collection.map(key=Point, val=S)
+Roads = Collection.map(key=Point, val=Point)
+Main = (
+  map = PointToString[
+    key=\(x=3\ y=4\), val=S"MyBase";
+    key=\(x=0\ y=0\), val=S"Source";
+    key=\(x=5\ y=8\), val=S"EnemyBase";
+    ]
+  for (key,val) in map ( Debug(S"%key->%val") )
+  //we can use (..) to extract the key/val fields from PointToString.Entry
+  //this iteration is straightforward since all values are imm
+  roads = Roads[
+    key=\(x=3\ y=4\), val=\(x=0\ y=0\); //immutable to immutable
+    key=\(x=0\ y=0\), mutVal=\(x=0\ y=0\);//immutable to mutable
+    key=\(x=5\ y=8\), mutVal=\(x=0\ y=0\);//immutable to mutable
+    ]
+  for read (key, val) in roads ( Debug(S"%key->%val") )
+  //we add 'read' in front to be able to read mixed imm/mut values
+  //if all the values were mutable, we could just add 'mut' in front
+  )
+  mut Roads.Opt?? optPoint = roads.#val(key=\(x=0\ y=0\)))
+  optPoint.#val().x(50\)//update the field of the objectv inside the map
+  CCode
 
+As you can see, when objects are retrived from the map, we obtain an optional value; this is because statically we can not know if a key is mapped to a value or not.
+WBR
+In addition to conventional Wcode(size()) and Wcode(isEmpty()),
+maps offers the following methods:
+<ul><li>
+To extract a value using the key:
+Wcode(val(key)), Wcode(#val(key)) and Wcode(readVal(key)); to extract an optional
+Wcode(imm), Wcode(mut) or a Wcode(read) reference, respectivelly.
+As for lists, it is always safe to extract a Wcode(read) reference. An empty optional will be produced when attempting to extract as Wcode(imm/mut) a value that was inserted as Wcode(mut/imm) instead, so to relayably ask if a key is contained in the map we should write Wcode(map.readVal(key=myKey).isPresent()).
+
+</li><li>
+Mutable maps can be modified by
+inserting immutable values with Wcode(put(key,val)) and mutable values with Wcode(#put(key,val)).
+Finally, an association can be removed using Wcode(remove(key)).
+</li><li>
+Wcode(Collection.map(that)) creates a class remembering the insertion order.
+This is needed to make the iteration deterministic.
+The keys can be retreived with their order using
+Wcode(key(that)) passing the desired Wcode(I index), from zero to Wcode(\size-1I)
+The corresponding value can be retreived by methods Wcode(val(that)), Wcode(#val(that)) and Wcode(readVal(that)) 
+to extract a
+Wcode(imm), Wcode(mut) or a Wcode(read) (not optional) reference to the value, respectivelly.
+</li></ul>
+     
+
+WTitle(`Set')
+Sets behaves a lot like maps where the values are irrelevant, and have differently named methods.
+In particular, in addition to conventional Wcode(size()) and Wcode(isEmpty()),
+sets offers method Wcode(add(that)) and Wcode(remove(that)) to add and remove an element,
+and elements can be extracted in the insertion order by using method Wcode(val(that))
+
+We are considering adding operators Wcode(+,-,++,--) as for lists, and
+support for the Wcode(\) like for lists.
+An operator Wcode(&&) returning the intersection of the two sets.
+On the other side, boolean methods like Wcode(intersect(that)) Wcode(disjoint(that)) and Wcode(containsAll(that)) can already be easily emulated with Wcode(Match) as we shown for lists.
 WTitle(`(5/5) Collection summary')
 
 <ul><li>

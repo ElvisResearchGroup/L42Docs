@@ -48,11 +48,18 @@
 </div></div><div class="finishFloat"></div></div>
 
  </p><p id="Basics"> </p><h1> Target audience </h1> <p>
+1Hi, this is text
+## 2and this is comment
+3And this is more text
+## 4and more comment <br/>
+## 5and this is comment
+6And this is more text ## 7and more comment
+<br/>
 This tutorial is design for expert programmers, already knowledgeable in 
 at least two or three of the languages Java, C#, C++ and Python.
 This tutorial lays out the basic knowledge for programming in 42 using AdamsTowel, but
 does not explore the foundational theory behind 42,
-or the mathematical rational for the correctness of 42.
+or the mathematical rationale for the correctness of 42.
 <br/>
 The language 42 and many 42 metaphors are inspired by
  The Hitchhiker's Guide to the Galaxy by Douglas Adams.
@@ -73,9 +80,9 @@ AdamsTowel is our Towel, that is the set of classes and interfaces that we wish 
 A Towel usually plays the role of "the standard library" of most languages.
 '<span class="code"><![CDATA[L42.is]]></span>' is the main website of 42, where most commonly used libraries are hosted. To reuse code you 
 need an internet connection; but this also means that you will never have to manually import any code.
-Required code will be transitively downloaded and cached on your machine, so you need not to be aware of the existence of this mechanism.
+Required code will be downloaded and cached on your machine, so you need not to be aware of the existence of this mechanism.
 </p><p>
-We do not need to always start from AdamsTowel, there are many interesting towels out there, and you may also become skilled in the 
+We do not need to always start from AdamsTowel; there are many interesting towels out there, and you may also become skilled in the 
 advanced technique of towel embroidery.
 </p><p>
 
@@ -89,7 +96,7 @@ For now you can think of '<span class="code"><![CDATA[Main = ]]></span>' as a to
 '<span class="code"><![CDATA[Debug]]></span>'
 is a simple class whose most important method print a message on the console.
 </p><p>
-In 42, when a class has a <span style="color:#ff1111; font-weight: bold;"> most important </span> method, it is conventional to use the empty name, so that can be used with the short syntax Wcode(Debug(S"Hello world")) instead of a more verbose Wcode(Debug.println(..)). 
+In 42, when a class has a <span style="color:#ff1111; font-weight: bold;"> most important </span> method, it is conventional to use the empty name, so that can be used with the short syntax '<span class="code"><![CDATA[Debug(S"Hello world")]]></span>' instead of a more verbose '<span class="code"><![CDATA[Debug.println(..)]]></span>'. 
 
 <br/>
 In 42 Strings and numbers need to be created by their type, as in
@@ -2059,9 +2066,9 @@ for myElem in vec ( result++=myElem )
 
 In 42 foreach allows to iterate on multiple collections at onece, and also to update the collections:
 <pre class="l42Big"><![CDATA[
-rs= Nums[1\;2\;3\;]
-as=  Nums[10\;20\;30\;]
-bs=  Nums[100\;200\;300\;]
+rs = Nums[1\;2\;3\;]
+as =  Nums[10\;20\;30\;]
+bs =  Nums[100\;200\;300\;]
 for a in as, b in bs, var r in rs ( r:= r+a+b )
 //now rs==Nums[111\;222\;333\;]
 ]]></pre>
@@ -2193,6 +2200,8 @@ for p in ps ( Debug(p) ) //works, it would fail without 'immNorm()'
 '<span class="code"><![CDATA[Collection]]></span>' also support maps, sets, optional and enumerations.
 We will add more kinds of collections in the future.
 
+</p><h2> Optional </h2> <p>
+needed to discuss map
 
 </p><h2> Map and Set </h2> <p>
 Thanks to normalization 42 can have very fast and most reliable hash sets and hash maps.
@@ -2210,8 +2219,52 @@ The intrinsic invariants of the hashmap/hashset are never violated/corrupted.
 The equality is a perfect structural equality, but is as fast as a pointer equality; for maps with large keys this can make a massive performance difference.
 </li></ul>
 
-Maps and sets have less methods that lists, but they can still be iterated upon:
+Maps and sets have less methods that lists, but they can still be iterated upon, as shown in the following code:
 
+<pre class="l42Big"><![CDATA[
+Point = Data:{var Num x, var Num y}
+Points = Collection.list(Point)
+PointToString = Collection.map(key=Point, val=S)
+Roads = Collection.map(key=Point, val=Point)
+..
+map = PointToString[
+  key=\(x=3\ y=4\), val=S"MyBase";
+  key=\(x=0\ y=0\), val=S"Source";
+  key=\(x=5\ y=8\), val=S"EnemyBase";
+  ]
+for (key,val) in map ( Debug(S"%key->%val") )
+//we can use (..) to extract the key/val fields from PointToString.Entry
+//this iteration is straightforward since all values are imm
+roads = Roads[
+  key=\(x=3\ y=4\), val=\(x=0\ y=0\); //immutable to immutable
+  key=\(x=0\ y=0\), mutVal=\(x=0\ y=0\);//immutable to mutable
+  key=\(x=5\ y=8\), mutVal=\(x=0\ y=0\);//immutable to mutable
+  ]
+for read (key, val) in roads ( Debug(S"%key->%val") )
+//we add 'read' in front to be able to read mixed imm/mut values
+//if all the values were mutable, we could just add 'mut' in front
+]]></pre>
+TODO: show how to mutate element in 0 0, need to discuss about opt before
+-val by key
+-val by insertion order
+-val 
+
+current method names; may be to make more consistent?
+      @This2.Public read method This1.Point key(This2.I that)=(..)
+      @This2.Public read method This2.S val(This2.I that)=(..)
+      @This2.Public mut method mut This2.S #val(This2.I that)=(..)
+      @This2.Public read method read This2.S readVal(This2.I that)=(..)
+        @This2.Public read method read This.OVal val(This1.Point key)=(..)
+        @This2.Public read method This.OVal immVal(This1.Point key)=(..)
+        @This2.Public mut method mut This.OVal #val(This1.Point key)=(..)
+
+      @This2.Public read method This2.I size()=(..)      
+      @This2.Public read method This2.Bool isEmpty()=(..)
+
+
+@This2.Public mut method Void put(This1.Point key, This2.S val)=(..)
+@This2.Public mut method Void #put(This1.Point key, mut This2.S val)=(..)
+@This2.Public mut method Void remove(This1.Point key)=(..)
 
 </p><h2> (5/5) Collection summary </h2> <p>
 
