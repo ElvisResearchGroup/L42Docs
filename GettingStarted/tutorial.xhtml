@@ -48,13 +48,6 @@
 </div></div><div class="finishFloat"></div></div>
 
  </p><p id="Basics"> </p><h1> Target audience </h1> <p>
-1Hi, this is text
-## 2and this is comment
-3And this is more text
-## 4and more comment <br/>
-## 5and this is comment
-6And this is more text ## 7and more comment
-<br/>
 This tutorial is design for expert programmers, already knowledgeable in 
 at least two or three of the languages Java, C#, C++ and Python.
 This tutorial lays out the basic knowledge for programming in 42 using AdamsTowel, but
@@ -76,7 +69,6 @@ When we write '<span class="code"><![CDATA[reuse L42.is/AdamsTowel]]></span>' we
 reuse the code of the library found in the internet address 
 '<span class="code"><![CDATA[L42.is/AdamsTowel]]></span>'.
 AdamsTowel is our Towel, that is the set of classes and interfaces that we wish to start from.
-<!--(<a href="towel.xhtml">Deploy code</a>)-->
 A Towel usually plays the role of "the standard library" of most languages.
 '<span class="code"><![CDATA[L42.is]]></span>' is the main website of 42, where most commonly used libraries are hosted. To reuse code you 
 need an internet connection; but this also means that you will never have to manually import any code.
@@ -2201,9 +2193,57 @@ for p in ps ( Debug(p) ) //works, it would fail without 'immNorm()'
 We will add more kinds of collections in the future.
 
 </p><h2> Optional </h2> <p>
-needed to discuss map
+In 42 there is no concept of null, and all the values are always intentially initialized before
+they can be read.
+There are two main reasons programmers relies on nulls: optional values and circular/delayed initialization.
+Circuar initialization can be solved with a '<span class="code"><![CDATA[fwd]]></span>' types, an advanced typing feature that we do not discuss here.
+Optional values are a staple of functional programming and are logically equivalent to a collection of zero or one element, or, if you prefer, a box that may or may not contain an element of a certain type.
+Optionals values can be obtained with '<span class="code"><![CDATA[Collection.optional(that)]]></span>' as shown below.
+Optionals are also optimized so that they do not require the creation of any new objects at run time.
 
-</p><h2> Map and Set </h2> <p>
+<pre class="l42Big"><![CDATA[
+Point = Data:{var Num x, var Num y}
+OPoint = Collection.optional(Point)
+Main = (
+  imm p00=Point(x=0\ y=0\)//an imm Point in 00
+  mut p01=Point(x=0\ y=1\)//a mut Point originally in 01
+  var imm p00Box = OPoint(p00) //immutable Optional Point
+  var mut p01Box = OPoint(p01) //mutable Optional Point
+  X[
+    p00 in p00Box; //the in syntax checks if an object is in the box
+    p00Box.val()==p00; //Data defines == only for imm references
+    p01Box.val().readEquality(p01);//here .val() gives us a read reference
+    ]
+  if p00Box ( Debug(S"printing %p00Box") )//printing [Point(x=0, y=0)]
+  //we can just check if a box is not empty as if it was a boolean
+  p01Box.#val().x(50\)//updates the x value of the point
+  Debug(S"printing %p01")//printing Point(x=50, y=1)
+  p00Box:= OPoint()//updates the local variables with empty boxes
+  p01Box:= OPoint()
+  if !p00Box ( Debug(S"printing %p00Box") )//printing []
+    X[
+    !(p00 in p00Box);
+    !p00Box;//using isPresent() or not is just a matter of style
+    !p00Box.isPresent();
+    ]
+  )
+]]></pre>
+At this point in the tutorial, some readers will be confused that we can update the local variable binding 
+'<span class="code"><![CDATA[p00Box:= OPoint()]]></span>' even if it is immutable.
+Other readers instead will remember that immutability is a property of the reference and not of the binding/field: a local binding and fields declared '<span class="code"><![CDATA[var]]></span>' can be updated.
+The updated value need to respect the modifier of the fild/binding type: if it is '<span class="code"><![CDATA[mut/imm]]></span>' it needs to be updated with another '<span class="code"><![CDATA[mut/imm]]></span>'; if it is '<span class="code"><![CDATA[read]]></span>' than it can be updated with either
+'<span class="code"><![CDATA[mut]]></span>', '<span class="code"><![CDATA[imm]]></span>' or '<span class="code"><![CDATA[read]]></span>'.
+Oh, yes, another reader will realize ... and a '<span class="code"><![CDATA[capsule]]></span>' reference can be assigned to any of '<span class="code"><![CDATA[mut]]></span>', '<span class="code"><![CDATA[imm]]></span>', '<span class="code"><![CDATA[lent]]></span>' or '<span class="code"><![CDATA[read]]></span>'.
+
+Note how both local bindings are updated using the same exact expression :
+'<span class="code"><![CDATA[p00Box:= OPoint()    p01Box:= OPoint()]]></span>'
+In 42 '<span class="code"><![CDATA[OPoint()]]></span>' can be either '<span class="code"><![CDATA[mut]]></span>' or '<span class="code"><![CDATA[imm]]></span>' (or '<span class="code"><![CDATA[capsule]]></span>' indeed)
+On the other side, consider 
+'<span class="code"><![CDATA[OPoint(p00)]]></span>' and '<span class="code"><![CDATA[OPoint(p01)]]></span>': the first one is immutable since '<span class="code"><![CDATA[p00]]></span>' is '<span class="code"><![CDATA[imm]]></span>',
+while the second one is mutable since '<span class="code"><![CDATA[p01]]></span>' is '<span class="code"><![CDATA[mut]]></span>'.
+
+
+</p><h2> Map </h2> <p>
 Thanks to normalization 42 can have very fast and most reliable hash sets and hash maps.
 The values of sets and the keys of maps must be immutable, and are normalized just before being intserted in the collection.
 Then, the value of the normalized pointer is used to check for equality and hashcode.
@@ -2226,46 +2266,63 @@ Point = Data:{var Num x, var Num y}
 Points = Collection.list(Point)
 PointToString = Collection.map(key=Point, val=S)
 Roads = Collection.map(key=Point, val=Point)
-..
-map = PointToString[
-  key=\(x=3\ y=4\), val=S"MyBase";
-  key=\(x=0\ y=0\), val=S"Source";
-  key=\(x=5\ y=8\), val=S"EnemyBase";
-  ]
-for (key,val) in map ( Debug(S"%key->%val") )
-//we can use (..) to extract the key/val fields from PointToString.Entry
-//this iteration is straightforward since all values are imm
-roads = Roads[
-  key=\(x=3\ y=4\), val=\(x=0\ y=0\); //immutable to immutable
-  key=\(x=0\ y=0\), mutVal=\(x=0\ y=0\);//immutable to mutable
-  key=\(x=5\ y=8\), mutVal=\(x=0\ y=0\);//immutable to mutable
-  ]
-for read (key, val) in roads ( Debug(S"%key->%val") )
-//we add 'read' in front to be able to read mixed imm/mut values
-//if all the values were mutable, we could just add 'mut' in front
-]]></pre>
-TODO: show how to mutate element in 0 0, need to discuss about opt before
--val by key
--val by insertion order
--val 
+Main = (
+  map = PointToString[
+    key=\(x=3\ y=4\), val=S"MyBase";
+    key=\(x=0\ y=0\), val=S"Source";
+    key=\(x=5\ y=8\), val=S"EnemyBase";
+    ]
+  for (key,val) in map ( Debug(S"%key->%val") )
+  //we can use (..) to extract the key/val fields from PointToString.Entry
+  //this iteration is straightforward since all values are imm
+  roads = Roads[
+    key=\(x=3\ y=4\), val=\(x=0\ y=0\); //immutable to immutable
+    key=\(x=0\ y=0\), mutVal=\(x=0\ y=0\);//immutable to mutable
+    key=\(x=5\ y=8\), mutVal=\(x=0\ y=0\);//immutable to mutable
+    ]
+  for read (key, val) in roads ( Debug(S"%key->%val") )
+  //we add 'read' in front to be able to read mixed imm/mut values
+  //if all the values were mutable, we could just add 'mut' in front
+  )
+  mut Roads.Opt?? optPoint = roads.#val(key=\(x=0\ y=0\)))
+  optPoint.#val().x(50\)//update the field of the objectv inside the map
+  ]]></pre>
 
-current method names; may be to make more consistent?
-      @This2.Public read method This1.Point key(This2.I that)=(..)
-      @This2.Public read method This2.S val(This2.I that)=(..)
-      @This2.Public mut method mut This2.S #val(This2.I that)=(..)
-      @This2.Public read method read This2.S readVal(This2.I that)=(..)
-        @This2.Public read method read This.OVal val(This1.Point key)=(..)
-        @This2.Public read method This.OVal immVal(This1.Point key)=(..)
-        @This2.Public mut method mut This.OVal #val(This1.Point key)=(..)
+As you can see, when objects are retrived from the map, we obtain an optional value; this is because statically we can not know if a key is mapped to a value or not.
+<br/>
+In addition to conventional '<span class="code"><![CDATA[size()]]></span>' and '<span class="code"><![CDATA[isEmpty()]]></span>',
+maps offers the following methods:
+<ul><li>
+To extract a value using the key:
+'<span class="code"><![CDATA[val(key)]]></span>', '<span class="code"><![CDATA[#val(key)]]></span>' and '<span class="code"><![CDATA[readVal(key)]]></span>'; to extract an optional
+'<span class="code"><![CDATA[imm]]></span>', '<span class="code"><![CDATA[mut]]></span>' or a '<span class="code"><![CDATA[read]]></span>' reference, respectivelly.
+As for lists, it is always safe to extract a '<span class="code"><![CDATA[read]]></span>' reference. An empty optional will be produced when attempting to extract as '<span class="code"><![CDATA[imm/mut]]></span>' a value that was inserted as '<span class="code"><![CDATA[mut/imm]]></span>' instead, so to relayably ask if a key is contained in the map we should write '<span class="code"><![CDATA[map.readVal(key=myKey).isPresent()]]></span>'.
 
-      @This2.Public read method This2.I size()=(..)      
-      @This2.Public read method This2.Bool isEmpty()=(..)
+</li><li>
+Mutable maps can be modified by
+inserting immutable values with '<span class="code"><![CDATA[put(key,val)]]></span>' and mutable values with '<span class="code"><![CDATA[#put(key,val)]]></span>'.
+Finally, an association can be removed using '<span class="code"><![CDATA[remove(key)]]></span>'.
+</li><li>
+'<span class="code"><![CDATA[Collection.map(that)]]></span>' creates a class remembering the insertion order.
+This is needed to make the iteration deterministic.
+The keys can be retreived with their order using
+'<span class="code"><![CDATA[key(that)]]></span>' passing the desired '<span class="code"><![CDATA[I index]]></span>', from zero to '<span class="code"><![CDATA[\size-1I]]></span>'
+The corresponding value can be retreived by methods '<span class="code"><![CDATA[val(that)]]></span>', '<span class="code"><![CDATA[#val(that)]]></span>' and '<span class="code"><![CDATA[readVal(that)]]></span>' 
+to extract a
+'<span class="code"><![CDATA[imm]]></span>', '<span class="code"><![CDATA[mut]]></span>' or a '<span class="code"><![CDATA[read]]></span>' (not optional) reference to the value, respectivelly.
+</li></ul>
+     
 
+</p><h2> Set </h2> <p>
+Sets behaves a lot like maps where the values are irrelevant, and have differently named methods.
+In particular, in addition to conventional '<span class="code"><![CDATA[size()]]></span>' and '<span class="code"><![CDATA[isEmpty()]]></span>',
+sets offers method '<span class="code"><![CDATA[add(that)]]></span>' and '<span class="code"><![CDATA[remove(that)]]></span>' to add and remove an element,
+and elements can be extracted in the insertion order by using method '<span class="code"><![CDATA[val(that)]]></span>'
 
-@This2.Public mut method Void put(This1.Point key, This2.S val)=(..)
-@This2.Public mut method Void #put(This1.Point key, mut This2.S val)=(..)
-@This2.Public mut method Void remove(This1.Point key)=(..)
-
+We are considering adding operators '<span class="code"><![CDATA[+]]></span>' as for lists, and
+support for the '<span class="code"><![CDATA[\]]></span>' like for lists.
+An operator '<span class="code"><![CDATA[&&]]></span>' returning the intersection of the two sets.
+On the other side, boolean methods like '<span class="code"><![CDATA[intersect(that)]]></span>' '<span class="code"><![CDATA[disjoint(that)]]></span>' and '<span class="code"><![CDATA[containsAll(that)]]></span>' can already be easily emulated with '<span class="code"><![CDATA[Match]]></span>' as we shown for lists.
 </p><h2> (5/5) Collection summary </h2> <p>
 
 <ul><li>

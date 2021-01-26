@@ -9,64 +9,86 @@ Let's see some exercises and solutions
 to understand better how 42 code looks like
 
 WTitle((1/5) Max method)
-Write a class method Wcode(max) returning the max from a list of numbers
+Write a static method Wcode(MaxOfList) returning the max from a list of numbers
 WP
-Solution: 
+Basic Solution: 
 OBCode
-UndefinedOnEmpty: Message.$ <>< {implements Guard}
-//Max is undefined on empty lists.
-//Since there was no mention of preconditions, we should explicitly handle all the error cases!
-class method
-Num max(Nums that) {
-  if that.isEmpty() (error UndefinedOnEmpty"Max is undefined on empty lists")
-  //now that we know we can proceed: 
-  var Num maxCandidate= that.left()
-  //there is no such thing like a minimum number, we need to select one element from the list.
-  with n in that.vals() (
-    //we could write 'that.withoutLeft().vals()' to avoid cheching on the first again
-    if maxCandidate<n (maxCandidate:= n)
-    //update the variable to keep track of the max so far.
-    )
-  return maxCandidate
+MaxOfList = {//static method pattern
+  UndefinedOnEmpty: Message:{[Message.Guard]}
+  //Max is undefined on empty lists.
+  //Since there was no mention of preconditions, we should explicitly handle all the error cases!
+  class method
+  Num (Num.List that) = {
+    if that.isEmpty() ( error UndefinedOnEmpty"Max is undefined on empty lists" )
+    //now that we know we can proceed: 
+    var Num maxCandidate= that.left()
+    //there is no such thing like a minimum Num, we need to select one element from the list.
+    for n in that (
+      //we could write 'that.withoutLeft()' to avoid checking on the first again
+      if maxCandidate<n (maxCandidate:= n)
+      //update the variable to keep track of the max so far.
+      )
+    return maxCandidate
+    }
   }
 CCode
 
+Solution using Wcode(.reduce()): 
+OBCode
+MaxOfList = {
+  class method
+  Num (Num.List that) =
+    that.reduce()(
+      for e in \vals() (
+        if \acc < e \add(e) 
+        )
+      )
+  }
+CCode
+Where the method Wcode(reduce())  will already throw a meaningful error in case of an empty list: Wcode(Collection.OperationUndefinedOnEmpty).
+Defining your own error may still produce more readable errors, so feel free to mix and match the two approaches as show in the next exercise
+
+
 WTitle((2/5) Merge two lists of strings)
-Write a class method map producing a string from to lists of strings of the same length.
+Write a static method Wcode(MapText) producing a string from to lists of strings of the same length.
  For example
-Wcode(`map(keys: Strings[S"a";S"b";S"c"],vals: Strings[S"z";S"y";S"z"])')
+Wcode(`MapText(keys=S.List[S"a";S"b";S"c"] vals=S.List[S"z";S"y";S"z"])')
 should produce Wcode(`S"[a->z, b->y, c->z]"')
 WP
 Solution: 
 OBCode
-UnequalSize: Message.$ <>< {implements Guard}
-class method
-S map(Strings keys, Strings values) {
-  if keys.size() !=  values.size() (error UnequalSize
-    "keys= "[keys.size()]", values= "[values.size()]"" )
-  //the former formatting allows us to keep a whole line for the error message
-  return S"["[with k in keys.vals(), v in values.vals() (
-    use[k++S"->"++v, sep: S", "]
-    )]"]"
+MapText = {
+  UnequalSize = Message:{[Message.Guard]}
+  class method
+  S (S.List keys, S.List vals) = {
+    if keys.size() !=  vals.size() error UnequalSize
+      "keys= %keys.size(), values= %values.size()" 
+    //the former formatting allows us to keep a whole line for the error message
+    res = S.List()(for k in keys, v in vals \add(S"%k->%v"))
+    if res.isEmpty() return S"[]"
+    return S"["++res.reduce()(for s in \vals \add(S", %s"))++S"]"
+    }
   }
 CCode
 
 WTitle((3/5) Filtering)
-Write a Wcode(`class method Strings upTo(Strings that, Size size)') that filters out from a list of strings the ones longer
-than size.
+Write a static method Wcode(`FilterUpTo{ class method S.List(S.List that, I size)}') filtering out from a list of strings the ones longer
+than \Q@size@.
 For example 
-Wcode(`upTo(Strings[S"a";S"ab";S"abc"],size: 2Size)==Strings[S"a";S"ab"]')
+Wcode(`FilterUpTo(S.List[S"a";S"ab";S"abc"] size=2Size)==S.List[S"a";S"ab"]')
 WP
 Precondition: Wcode(size) is not negative
 WP
 Solution: 
 OBCode
-class method
-Strings upTo(Strings that, Size size) ( //no need of '{..return..}' for simple methods
-  Assert.Pre[size>= 0Size]
-  Strings[with s in that.vals() (  if s.size()<= size (use[s]) )]
-  )
+FilterUpTo = {
+  class method
+  S.List (S.List that, I size) = (
+    X.Pre[size >= 0I]
+    S.List()(for s in that if s.size()<= size \add(s))
+    )
 CCode
+Again we see yet another way to handle errors; preconditions are appropriate when it is an observed  bug if the user calls it with wrong parameters.
 
 WTitle((4/5) Random mole)
 For a longer example, represent a piece of land as a 80*80 bi-dimensional vector,
