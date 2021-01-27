@@ -68,8 +68,8 @@ Main = Debug(S"Hello world")
 When we write '<span class="code"><![CDATA[reuse L42.is/AdamsTowel]]></span>' we are asking 42 to
 reuse the code of the library found in the internet address 
 '<span class="code"><![CDATA[L42.is/AdamsTowel]]></span>'.
-AdamsTowel is our Towel, that is the set of classes and interfaces that we wish to start from.
-A Towel usually plays the role of "the standard library" of most languages.
+AdamsTowel is our <it style="font-style: italic;">towel</it>, that is the set of classes and interfaces that we wish to start from.
+A <it style="font-style: italic;">towel</it> usually plays the role of "the standard library" of most languages.
 '<span class="code"><![CDATA[L42.is]]></span>' is the main website of 42, where most commonly used libraries are hosted. To reuse code you 
 need an internet connection; but this also means that you will never have to manually import any code.
 Required code will be downloaded and cached on your machine, so you need not to be aware of the existence of this mechanism.
@@ -2353,64 +2353,86 @@ Let's see some exercises and solutions
 to understand better how 42 code looks like
 
 </p><h2> (1/5) Max method </h2> <p>
-Write a class method '<span class="code"><![CDATA[max]]></span>' returning the max from a list of numbers
+Write a static method '<span class="code"><![CDATA[MaxOfList]]></span>' returning the max from a list of numbers
 </p><p>
-Solution: 
+Basic Solution: 
 <pre class="l42Big"><![CDATA[
-UndefinedOnEmpty: Message.$ <>< {implements Guard}
-//Max is undefined on empty lists.
-//Since there was no mention of preconditions, we should explicitly handle all the error cases!
-class method
-Num max(Nums that) {
-  if that.isEmpty() (error UndefinedOnEmpty"Max is undefined on empty lists")
-  //now that we know we can proceed: 
-  var Num maxCandidate= that.left()
-  //there is no such thing like a minimum number, we need to select one element from the list.
-  with n in that.vals() (
-    //we could write 'that.withoutLeft().vals()' to avoid cheching on the first again
-    if maxCandidate<n (maxCandidate:= n)
-    //update the variable to keep track of the max so far.
-    )
-  return maxCandidate
+MaxOfList = {//static method pattern
+  UndefinedOnEmpty: Message:{[Message.Guard]}
+  //Max is undefined on empty lists.
+  //Since there was no mention of preconditions, we should explicitly handle all the error cases!
+  class method
+  Num (Num.List that) = {
+    if that.isEmpty() ( error UndefinedOnEmpty"Max is undefined on empty lists" )
+    //now that we know we can proceed: 
+    var Num maxCandidate= that.left()
+    //there is no such thing like a minimum Num, we need to select one element from the list.
+    for n in that (
+      //we could write 'that.withoutLeft()' to avoid checking on the first again
+      if maxCandidate<n (maxCandidate:= n)
+      //update the variable to keep track of the max so far.
+      )
+    return maxCandidate
+    }
   }
 ]]></pre>
 
+Solution using '<span class="code"><![CDATA[.reduce()]]></span>': 
+<pre class="l42Big"><![CDATA[
+MaxOfList = {
+  class method
+  Num (Num.List that) =
+    that.reduce()(
+      for e in \vals() (
+        if \acc < e \add(e) 
+        )
+      )
+  }
+]]></pre>
+Where the method '<span class="code"><![CDATA[reduce()]]></span>'  will already throw a meaningful error in case of an empty list: '<span class="code"><![CDATA[Collection.OperationUndefinedOnEmpty]]></span>'.
+Defining your own error may still produce more readable errors, so feel free to mix and match the two approaches as show in the next exercise
+
+
 </p><h2> (2/5) Merge two lists of strings </h2> <p>
-Write a class method map producing a string from to lists of strings of the same length.
+Write a static method '<span class="code"><![CDATA[MapText]]></span>' producing a string from to lists of strings of the same length.
  For example
-'<span class="code"><![CDATA[map(keys: Strings[S"a";S"b";S"c"],vals: Strings[S"z";S"y";S"z"])]]></span>'
+'<span class="code"><![CDATA[MapText(keys=S.List[S"a";S"b";S"c"] vals=S.List[S"z";S"y";S"z"])]]></span>'
 should produce '<span class="code"><![CDATA[S"[a->z, b->y, c->z]"]]></span>'
 </p><p>
 Solution: 
 <pre class="l42Big"><![CDATA[
-UnequalSize: Message.$ <>< {implements Guard}
-class method
-S map(Strings keys, Strings values) {
-  if keys.size() !=  values.size() (error UnequalSize
-    "keys= "[keys.size()]", values= "[values.size()]"" )
-  //the former formatting allows us to keep a whole line for the error message
-  return S"["[with k in keys.vals(), v in values.vals() (
-    use[k++S"->"++v, sep: S", "]
-    )]"]"
+MapText = {
+  UnequalSize = Message:{[Message.Guard]}
+  class method
+  S (S.List keys, S.List vals) = {
+    if keys.size() !=  vals.size() error UnequalSize
+      "keys= %keys.size(), values= %values.size()" 
+    //the former formatting allows us to keep a whole line for the error message
+    res = S.List()(for k in keys, v in vals \add(S"%k->%v"))
+    if res.isEmpty() return S"[]"
+    return S"["++res.reduce()(for s in \vals \add(S", %s"))++S"]"
+    }
   }
 ]]></pre>
 
 </p><h2> (3/5) Filtering </h2> <p>
-Write a '<span class="code"><![CDATA[class method Strings upTo(Strings that, Size size)]]></span>' that filters out from a list of strings the ones longer
-than size.
+Write a static method '<span class="code"><![CDATA[FilterUpTo{ class method S.List(S.List that, I size)}]]></span>' filtering out from a list of strings the ones longer
+than \Q@size@.
 For example 
-'<span class="code"><![CDATA[upTo(Strings[S"a";S"ab";S"abc"],size: 2Size)==Strings[S"a";S"ab"]]]></span>'
+'<span class="code"><![CDATA[FilterUpTo(S.List[S"a";S"ab";S"abc"] size=2Size)==S.List[S"a";S"ab"]]]></span>'
 </p><p>
 Precondition: '<span class="code"><![CDATA[size]]></span>' is not negative
 </p><p>
 Solution: 
 <pre class="l42Big"><![CDATA[
-class method
-Strings upTo(Strings that, Size size) ( //no need of '{..return..}' for simple methods
-  Assert.Pre[size>= 0Size]
-  Strings[with s in that.vals() (  if s.size()<= size (use[s]) )]
-  )
+FilterUpTo = {
+  class method
+  S.List (S.List that, I size) = (
+    X.Pre[size >= 0I]
+    S.List()(for s in that if s.size()<= size \add(s))
+    )
 ]]></pre>
+Again we see yet another way to handle errors; preconditions are appropriate when it is an observed  bug if the user calls it with wrong parameters.
 
 </p><h2> (4/5) Random mole </h2> <p>
 For a longer example, represent a piece of land as a 80*80 bi-dimensional vector,

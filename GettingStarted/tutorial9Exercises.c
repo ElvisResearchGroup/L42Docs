@@ -15,8 +15,8 @@ Basic Solution:
 OBCode
 MaxOfList = {//static method pattern
   UndefinedOnEmpty: Message:{[Message.Guard]}
-  //Max is undefined on empty lists.
-  //Since there was no mention of preconditions, we should explicitly handle all the error cases!
+  //MaxOfList is undefined on empty lists.
+  //Since there was no mention of preconditions, we should explicitly handle all the error cases (as guards)
   class method
   Num (Num.List that) = {
     if that.isEmpty() ( error UndefinedOnEmpty"Max is undefined on empty lists" )
@@ -75,7 +75,7 @@ WTitle((3/5) Filtering)
 Write a static method Wcode(`FilterUpTo{ class method S.List(S.List that, I size)}') filtering out from a list of strings the ones longer
 than \Q@size@.
 For example 
-Wcode(`FilterUpTo(S.List[S"a";S"ab";S"abc"] size=2Size)==S.List[S"a";S"ab"]')
+Wcode(`FilterUpTo(S.List[S"a";S"ab";S"abc"] size=2I)==S.List[S"a";S"ab"]')
 WP
 Precondition: Wcode(size) is not negative
 WP

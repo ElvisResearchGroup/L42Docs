@@ -19,9 +19,9 @@ CCode
 When we write Wcode(reuse L42.is/AdamsTowel) we are asking 42 to
 reuse the code of the library found in the internet address 
 Wcode(L42.is/AdamsTowel).
-AdamsTowel is our Towel, that is the set of classes and interfaces that we wish to start from.
+AdamsTowel is our WTerm(towel), that is the set of classes and interfaces that we wish to start from.
 WComm Wlink(towel,Deploy code)
-A Towel usually plays the role of "the standard library" of most languages.
+A WTerm(towel) usually plays the role of "the standard library" of most languages.
 Wcode(L42.is) is the main website of 42, where most commonly used libraries are hosted. To reuse code you 
 need an internet connection; but this also means that you will never have to manually import any code.
 Required code will be downloaded and cached on your machine, so you need not to be aware of the existence of this mechanism.

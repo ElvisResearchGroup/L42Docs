@@ -14,6 +14,7 @@ m4_define(`WTitle',`</p><h2> $1 </h2> <p>')m4_dnl
 m4_define(`WBigTitle',`</p><h1> $1 </h1> <p>')m4_dnl
 m4_define(`WMS',`<span style="color:#ff0000">Marco:$1</span>')m4_dnl
 m4_define(`WEmph',`<span style="color:#ff1111; font-weight: bold;"> $1 </span>')m4_dnl
+m4_define(`WTerm',`<it style="font-style: italic;">$1</it>')m4_dnl
 m4_define(`WChapter',` </p><p id="$1"> m4_include(`$2')')m4_dnl
 m4_define(`WMenuItem',` <li><a href="$1"> $2 </a></li>')m4_dnl
 m4_define(`OFloatClass',`<div class="$1"><div class="wrapFloat"><div class="inFloat">')m4_dnl
