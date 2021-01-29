@@ -14,9 +14,9 @@ WP
 Basic Solution: 
 OBCode
 MaxOfList = {//static method pattern
-  UndefinedOnEmpty: Message:{[Message.Guard]}
-  //MaxOfList is undefined on empty lists.
-  //Since there was no mention of preconditions, we should explicitly handle all the error cases (as guards)
+  UndefinedOnEmpty = Message:{[Message.Guard]}
+  //Max is undefined on empty lists.
+  //Since there was no mention of preconditions, we should explicitly handle all the error cases as Guards
   class method
   Num (Num.List that) = {
     if that.isEmpty() ( error UndefinedOnEmpty"Max is undefined on empty lists" )
@@ -33,7 +33,7 @@ MaxOfList = {//static method pattern
   }
 CCode
 
-Solution using Wcode(.reduce()): 
+Solution using Wcode(.reduce()):
 OBCode
 MaxOfList = {
   class method
@@ -46,7 +46,7 @@ MaxOfList = {
   }
 CCode
 Where the method Wcode(reduce())  will already throw a meaningful error in case of an empty list: Wcode(Collection.OperationUndefinedOnEmpty).
-Defining your own error may still produce more readable errors, so feel free to mix and match the two approaches as show in the next exercise
+Defining your own error may still produce more readable errors, so feel free to mix and match the two approaches as show in the next exercise:
 
 
 WTitle((2/5) Merge two lists of strings)
@@ -62,14 +62,18 @@ MapText = {
   class method
   S (S.List keys, S.List vals) = {
     if keys.size() !=  vals.size() error UnequalSize
-      "keys= %keys.size(), values= %values.size()" 
+      "keys= %keys.size(), values= %vals.size()" 
     //the former formatting allows us to keep a whole line for the error message
     res = S.List()(for k in keys, v in vals \add(S"%k->%v"))
     if res.isEmpty() return S"[]"
-    return S"["++res.reduce()(for s in \vals \add(S", %s"))++S"]"
+    text = res.reduce()(for s in \vals \add(\acc++S", %s"))
+    return S"[%text]"
     }
   }
 CCode
+Note how we write Wcode(`\add(\acc++S", %s")')
+instead of Wcode(`\add(S"%\acc, %s")') since 
+ string interpolation does not currently support the Wcode(`\').
 
 WTitle((3/5) Filtering)
 Write a static method Wcode(`FilterUpTo{ class method S.List(S.List that, I size)}') filtering out from a list of strings the ones longer
@@ -87,96 +91,138 @@ FilterUpTo = {
     X.Pre[size >= 0I]
     S.List()(for s in that if s.size()<= size \add(s))
     )
+  }
 CCode
 Again we see yet another way to handle errors; preconditions are appropriate when it is an observed  bug if the user calls it with wrong parameters.
 
 WTitle((4/5) Random mole)
-For a longer example, represent a piece of land as a 80*80 bi-dimensional vector,
+For a longer example, represent a piece of land as a 80*80 bi-dimensional map,
 where every cell can be full of dirt (90%) or rock (10%).
 Then a mole start from the left top corner and attempts to
 digs through dirt randomly.
-After 100 steps the mole stops.
-define the opportune classes and write a Wcode(randomDig)
+After 3000 steps the mole stops.
+Define the opportune classes and write a Wcode(randomDig)
 method. 
 WP
-You can use the library Wcode(L42.is/Random)
-for pseudo randomness. You can use Wcode(Range(stop)) to iterate over
-all (Wcode(Size)) numbers from 0 to Wcode(stop)-1 included.
-WP
-A possible solution: 
+To start, we define some auxiliary classes: 
 OBCode
-Random: Load <>< {reuse L42.is/Random}
+Point = Data:{I x, I y
+  @Cache.Now class method
+  Void invariant(I x, I y) = X.Guarded[
+    x>=0I; x<80I;
+    y>=0I; y<80I;
+    ]
 
-Cell: Enumeration"dirt, rock, empty, mole"
-
-Direction: Enumeration"up, down, left, right"
-
-Cells: Collections.vector(of: Cell)
-
-Point: Data <>< {implements Concept.Invariant
-  Size x, Size y
-
-  method invariant()
-    this.x()>= 0Size & this.x()<80Size & this.y()>= 0Size & this.y()<80Size
-
-  This go(Direction that) {
-    if that.isUp() return this.with(x: \-1Size)
-    if that.isDown() return this.with(x: \+1Size)
-    if that.isLeft() return this.with(y: \-1Size)
-    X[that.isRight()] return this.with(y: \+1Size)
-    catch error Concept.Invariant.Failure err  (return this)
+  method
+  This go(Direction that) = {
+    return that.go(this)
+    catch error X.Guarded _ return this
     }
+    
+  method
+  I index() = 
+    (this.y()*80I)+this.x()
   }
+CCode
+Wcode(Point) has an invariant ensuring that the coordinates are inside the 80*80 area.
+We use Wcode(X.Guarded) instead of Wcode(X) since Wcode(X.Guarded) implements Wcode(Guard), thus we can rely on such error to trigger predictably.
+We do this in method Wcode(go(that)), where we capture the invariant failure in case moving the point would push it outside of the boundary; in that case we keep the point in the original coordinates.
 
-Land: Data <>< { //we may want to put the field and the predefined factory private;
-  //you can search in the documentation of Data how to do it.
-  mut Cells cells
+OBCode
+Direction = Collection.Enum:{interface
+  method Point go(Point that)
+  Up={[This1] method go(that)=that.with(x=\x-1I)}
+  Down={[This1]method go(that)=that.with(x=\x+1I)}
+  Left={[This1]method go(that)=that.with(y=\y-1I)}
+  Right={[This1]method go(that)=that.with(y=\y+1I)}
+  }
+CCode
+Wcode(Direction) is an enumeration, and we leverage on dyanamic dispatch to encode the beaviour of the Wcode(go(that)) method.
+Note how in Wcode(Direction) we explicitly declared the top level Wcode(interface) and
+we implemented the outer level Wcode(This1) explicitly in all the cases.
+Then we could implemented the Wcode(go(that)) method without repeating the type signatore.
 
+OBCode
+Cell = Collection.Enum:{
+  method S symbol()
+  Dirt={method S symbol()=S"#"}
+  Rock={method S symbol()=S.percent()}
+  Empty={method S symbol()=S" "}
+  Mole={method S symbol()=S"M"}
+  }
+CCode
+Instead, while declaring Wcode(Cell) we omit the Wcode(interface) keyword and the explicit implementation.
+Then we had to repeat the type signature all the times while implementing the method Wcode(symbol()).
+Both ways to declare enumerations works and produce the same result.
+
+OBCode  
+Land = Data:{[HasToS]
+  mut Math.Random rand
+  mut Cell.List cells
+  
   class method
-  mut This ()
-    This(cells: Cells[
-      with i in Range(stop: 80Size*80Size) (
-        if Random(10Size)==0Size (use[Cell.rock()])
-        else (use[Cell.dirt()])
-        )
-      ])   
+  mut Cell.List #default#cells(mut Math.Random rand) = Cell.List[](
+    for i in Range(80I*80I) (
+      if rand.nextInRange(0I to=10I)==0I \add(Cell.Rock())
+      else \add(Cell.Dirt())
+      )
+    )
 
-  //implementation of the matrix as an example,
-  //in good 42 code should be imported from a library
   mut method 
-  Void set(Point that, Cell val)
-    this.#cells()(that.y()*80Size+that.x(), val: val)
+  Void set(Point that, Cell val) =
+    this.#cells().set(that.index() val=val)
     
   read method 
-  Cell get(Point that)
-    this.#cells().val(that.y()*80Size+that.x())    
-  
+  Cell val(Point that) =
+    this.cells().val(that.index())    
   
   mut method
-  Void randomDig() (
-    var Point current= Point(x: 0Size,y: 0Size)
-    with i in Range(stop: 100Size) (
-      this.set(current,val: Cell.empty())
-      d= Direction.from(index: Random(4Size))
-      newPoint= current.go(d)
-      if !this.get(d).isRock() ( //no digging in rock
-        current:= newPoint
-        )
+  Void randomDig() = (
+    var current = Point(x=0I y=0I)
+    for i in Range(3000I) (
+      this.set(current,val=Cell.Empty())
+      d = Direction.Vals().val(this.#rand().nextInRange(0I to=4I))
+      newPoint = current.go(d) //no digging in rock
+      if this.val(newPoint)!=Cell.Rock() ( current:=newPoint )
       )
-    this.set(current,val: Cell.mole()) //finally, the mole is where we ends up
+    this.set(current,val=Cell.Mole()) //finally, the mole is where we ends up
     )
   
-  toS() S""[with x in Range(stop: 80Size) (
-      use[S.nl()] //newline
-      with y in Range(stop: 80Size) {
-        p= this.get(Point(x: x,y: y))
-        if p.isRock() return use[S"#"]//common pattern: with {return use[..]}
-        if p.isDirt() return use[S"%"]//use[..] return void, so is ok
-        if p.isEmpty() return use[S" "]//as final result of a with block
-        X[p.isMole()] return use[S"M"]         
-      })]""++S.nl()
+  method toS() = (
+    var res=S""
+    for x in Range(80I) (
+      res++=S.nl()//newline
+      for y in Range(80I) res++=this.val(\(x=x,y=y)).symbol()
+      )
+    res++S.nl()
+    )
   //since we define 'toS()' explicitly, Data will leave it alone :)
   }
+CCode
+Wcode(Land) has a Wcode(mut Math.Random rand) field and a 
+Wcode(mut Cell.List cells) field; a list of cells of size 80*80.
+While we expect the user to provide the random object, we wish to provide a way to initialize the 
+Wcode(cells).
+In 42, as for most languages, we could provide a default value for a field by writing
+Wcode(mut Cell.List cells = Cell.List[](..)), but in this case we need to use the provided random object
+to complete the initialization, thus we use a Wcode(mut Cell.List #default#cells(mut Math.Random rand))
+instead.
+As with Wcode(Cache.Now),
+we take in input parameters with the same name of the fields we wish to use.
+Wcode(Data) is going to rely on this method to initialize the Wcode(cells) field.
+This is actually a general pattern of Wcode(Data), allowing default values for any method.
+WBR
+The method Wcode(randomDig()) is straightforward.
+WBR
+Note how we override Wcode(toS()) instead of accepting the implementation provided by Wcode(Data).
+
+To use the Wcode(Land) class we can use the code below.
+OBCode
+MainMole = (
+  land = Land(rand=\.#$random())
+  land.randomDig()
+  Debug(land)
+  )
 CCode
 
 
@@ -185,26 +231,10 @@ WTitle((5/5) Examples summary)
 Always think about what can go wrong upfront
 </li><li>
 Many methods can be completed by first checking for 
-errors/issues and then using a Wcode(with)
+errors/issues and then using a Wcode(for), possibly inside a Wcode(reduce()) or a Wcode(Match).
 </li><li>
 Before heading into a problem,
 spend some time to define your problem domain.
 We dodged a lot of headaches by defining
 points with invariants.
 </li></ul>
-
-Some may argue that in a real object oriented implementation,
-directions and cells should be interfaces with subtypes;
-so that we can use single dispatch to
-avoid the cascades of ifs.
-We have mixed feelings about this: 
-shorter code is better and more maintainable then longer code, and the version with subtyping would have been much longer.
-
-The crucial point is that the 'random mole' code is not designed to be used by other programmers as a library.
-Libraries should have well modularize code,
-and provide convenient hooks for adaptation.
-Metaprogramming and interfaces are the right tool for this task.
-
-We should not confound adaptability (without touching the original source, make it takle a new problem), with maintenability
- (it is easy to change the original source to keep it up to date
-with the ever-changing set of requirements).
