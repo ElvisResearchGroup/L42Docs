@@ -49,7 +49,7 @@ Where the method Wcode(reduce())  will already throw a meaningful error in case 
 Defining your own error may still produce more readable errors, so feel free to mix and match the two approaches as show in the next exercise:
 
 
-WTitle((2/5) Merge two lists of strings)
+WTitle((2/5) Merging and filtering)
 Write a static method Wcode(MapText) producing a string from to lists of strings of the same length.
  For example
 Wcode(`MapText(keys=S.List[S"a";S"b";S"c"] vals=S.List[S"z";S"y";S"z"])')
@@ -75,7 +75,7 @@ Note how we write Wcode(`\add(\acc++S", %s")')
 instead of Wcode(`\add(S"%\acc, %s")') since 
  string interpolation does not currently support the Wcode(`\').
 
-WTitle((3/5) Filtering)
+WBR
 Write a static method Wcode(`FilterUpTo{ class method S.List(S.List that, I size)}') filtering out from a list of strings the ones longer
 than \Q@size@.
 For example 
@@ -95,6 +95,26 @@ FilterUpTo = {
 CCode
 Again we see yet another way to handle errors; preconditions are appropriate when it is an observed  bug if the user calls it with wrong parameters.
 
+WTitle((3/5) Read/Write files)
+
+Write a static method Wcode(ReadSelf) returning the content of the file where the current source code is located.
+WBR
+To read and write files we need to load a Wcode(FileSystem) library
+{}:Test""(expected=ReadSelf(FileSystem.Real.#$of())
+    actual=S"reuse [AdamTowel]%S.nl()MaxOfList = [###]")
+OBCode
+FileSystem = Load:{reuse[FileSystem]}
+
+ReadSelf = {
+  class method
+  S (mut FileSystem that) = (
+    S s=that.read(fileName=S"This.L42")
+    Debug(S"[[%s]]")
+    s
+    //_=f.write(fileName=S"Example1.txt",content=S"SomeContent")
+    )
+  }
+CCode
 WTitle((4/5) Random mole)
 For a longer example, represent a piece of land as a 80*80 bi-dimensional map,
 where every cell can be full of dirt (90%) or rock (10%).

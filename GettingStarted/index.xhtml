@@ -85,15 +85,15 @@ where every value is an object. This means that:
 <ul>
 <li>
 Numbers are objects, 
-so thay can have methods like '<span class="code"><![CDATA[.sqrt()]]></span>' or '<span class="code"><![CDATA[.abs()]]></span>'. 
+so thay can have methods like <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[.sqrt()]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[.abs()]]></span><it style="font-style: bold; color:green;">&#187;</it>. 
 </li><li>
-All operators are just method calls, thus '<span class="code"><![CDATA[a + b]]></span>' can be sugar for '<span class="code"><![CDATA[a.#plus0(b)]]></span>', 
-and so on. Note how '<span class="code"><![CDATA[#plus0]]></span>' is just an ordinary method name.
+All operators are just method calls, thus <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a + b]]></span><it style="font-style: bold; color:green;">&#187;</it> can be sugar for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.#plus0(b)]]></span><it style="font-style: bold; color:green;">&#187;</it>, 
+and so on. Note how <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#plus0]]></span><it style="font-style: bold; color:green;">&#187;</it> is just an ordinary method name.
 Any class that offers the method supports the operator.
 
 </li><li>
-Classes are objects, so when you write '<span class="code"><![CDATA[Foo.bar()]]></span>' you refer to the method '<span class="code"><![CDATA[.bar()]]></span>' offered by the object denoted by '<span class="code"><![CDATA[Foo]]></span>'.
-class objects are just objects, and you can also store them in local bindings if you wish, as in '<span class="code"><![CDATA[x = Foo]]></span>'
+Classes are objects, so when you write <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Foo.bar()]]></span><it style="font-style: bold; color:green;">&#187;</it> you refer to the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[.bar()]]></span><it style="font-style: bold; color:green;">&#187;</it> offered by the object denoted by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Foo]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+class objects are just objects, and you can also store them in local bindings if you wish, as in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[x = Foo]]></span><it style="font-style: bold; color:green;">&#187;</it>
 </li><li>
 The code is an object, but only at the granularity of 
 Libraries; that is, balanced pairs of curly brackets representing classes (or interfaces) with methods and nested libraries.
@@ -102,24 +102,24 @@ This is useful for meta-programming, which we will see later.
 </li><li>
 Differently from other pure object oriented languages, in 42
 all objects have the same treatment, both syntactically and semantically.
-For example '<span class="code"><![CDATA[x =  S"Hello " ++ S"World"]]></span>'
-This is a declaration for a local binding '<span class="code"><![CDATA[x]]></span>', using the string class '<span class="code"><![CDATA[S]]></span>' and the method operator '<span class="code"><![CDATA[++]]></span>',
+For example <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[x =  S"Hello " ++ S"World"]]></span><it style="font-style: bold; color:green;">&#187;</it>
+This is a declaration for a local binding <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[x]]></span><it style="font-style: bold; color:green;">&#187;</it>, using the string class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S]]></span><it style="font-style: bold; color:green;">&#187;</it> and the method operator <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[++]]></span><it style="font-style: bold; color:green;">&#187;</it>,
 used as string (or in general sequence/collection) concatenation.
 
-Coming from another programming language, you may be surprised that we have to write '<span class="code"><![CDATA[S]]></span>' before '<span class="code"><![CDATA["Hello "]]></span>' and '<span class="code"><![CDATA["World"]]></span>'.
+Coming from another programming language, you may be surprised that we have to write <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S]]></span><it style="font-style: bold; color:green;">&#187;</it> before <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["Hello "]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["World"]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 This extra verbosity is needed to provide fair treatment to all classes. (<a href="http://l42.is/tutorial.xhtml#BasicClasses.xhtml">see more in Basic classes</a>)
 In 42 we do not give preferential treatment
 to special objects/classes. In this sense, we consider
 most other languages to be discriminatory.
 They give priority to their "preferred" version of numbers and strings, and this puts into a position of unfair disadvantage library code trying to define its own kinds of numbers/strings.
-Instead in 42 you may encounter strings like '<span class="code"><![CDATA[Url"www.google.com"]]></span>' or
- '<span class="code"><![CDATA[Email"Arthur.Dent@gmail.com"]]></span>'.
+Instead in 42 you may encounter strings like <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Url"www.google.com"]]></span><it style="font-style: bold; color:green;">&#187;</it> or
+ <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Email"Arthur.Dent@gmail.com"]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 The same for numeric classes: to talk about a street, 20 meters long, you would write
-'<span class="code"><![CDATA[streetLength= 20Meter]]></span>'.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[streetLength= 20Meter]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 Note that we write the class name after the number,
 while usually the class name is before.
-42 is a little incoherent in this point, both for better readability and because '<span class="code"><![CDATA[Meter20]]></span>' would be considered an identifier by the parser.
-You may encounter '<span class="code"><![CDATA[I]]></span>', '<span class="code"><![CDATA[Num]]></span>', '<span class="code"><![CDATA[Double]]></span>', '<span class="code"><![CDATA[Meter]]></span>', '<span class="code"><![CDATA[Kg]]></span>', '<span class="code"><![CDATA[Second]]></span>', '<span class="code"><![CDATA[Year]]></span>', '<span class="code"><![CDATA[PhoneNumber]]></span>' and many other numeric classes.
+42 is a little incoherent in this point, both for better readability and because <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Meter20]]></span><it style="font-style: bold; color:green;">&#187;</it> would be considered an identifier by the parser.
+You may encounter <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[I]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Double]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Meter]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Kg]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Second]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Year]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[PhoneNumber]]></span><it style="font-style: bold; color:green;">&#187;</it> and many other numeric classes.
 </li></ul>
 
 </p><h2> A simple language </h2> <p>
