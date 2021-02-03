@@ -81,46 +81,69 @@ Mock = Data:{[Fs]
     this.log(\log++S"read")
     S"oldContent"
     )
-  read method Void :1(Library that) = that:Test"ReadWriteOk"(
-    actual=this.log() expected=S"readwrite")
   }
 Test1= (
   m=Mock()
   ReadWrite(f=m)
-  {}:m
+  {}:Test"ReadWriteOk"(actual=m.log() expected=S"readwrite")
   )
 CCode
-TODO: the above does not work that good if ReadWrite throws an error. But is the same for all tests?
 
+WTitle((3/5) Object capabilities programming patterns)
 
-{}:Test""(expected=ReadSelf(FileSystem.Real.#$of())
-    actual=S"reuse [AdamTowel]%S.nl()MaxOfList = [###]")
+The advantage of the division of the file system in an interface and a Wcode(Real) implementation are not limited to testing.
+For example, the user could embed some security and on some restrictions in an alternative implementation of a file system.
+Consider the following code:
 
-FileSystem = Load:{reuse[FileSystem]}
+OBCode
+OnlyTxt = Data:{[Fs]
+  capsule Fs inner
   class method
-  S (mut FileSystem that) = (
-    S s=that.read(fileName=S"This.L42")
-    Debug(S"[[%s]]")
-    s
-    //_=f.write(fileName=S"Example1.txt",content=S"SomeContent")
+  Void checkTxt(S that)= X.Checked[
+    that.endsWith(S".txt")
+    ]
+  method makeDirs(fileName) = error X""
+  @Cache.Clear class method Void delete(mut Fs inner, S fileName) = (
+    this.checkTxt(fileName)
+    inner.delete(fileName)
     )
-
-
-
-LATER
+  @Cache.Clear class method Void write(mut Fs inner, S fileName, S content) = ( 
+    this.checkTxt(fileName)
+    inner.write(fileName=fileName, content=content)
+    )
+  @Cache.Clear class method Void read(mut Fs inner, S fileName) = ( 
+    this.checkTxt(fileName)
+    inner.read(fileName=fileName)
+    )
+  class method          //example user declared #$ method, that can
+  mut This #$of() =     //use $# methods inside its body
+    This(inner=Fs.Real.#$of())
+  }
+SaferMain = (
+  fs=OnlyTxt.#$of()
+  ReadWrite(f=fs)
+  )
+CCode
+Any code that would take in input a Wcode(mut OnlyTxt) would have a limited access to the file system; only able to read and write onWcode(`*.txt') files.
+Note that the field Wcode(inner) is not private but it is well encapsulated, thus a user of 
+a Wcode(mut OnlyTxt) could only extract the Wcode(read) version of Wcode(inner).
+We will see later how to set some members private, but in this case just encapsulation is sufficient.
+WBR
+Instances of Wcode(mut OnlyTxt) are capability objects; note how Wcode(OnlyTxt) can even declare a Wcode(#$of) method. In this way for the user there is no syntactical difference between using Wcode(Fs.Real) or using Wcode(OnlyTxt).
 Capability objects are a useful abstraction and can be designed and implemented by normal 42 programs; they are not just a way for the language implementation to expose native code.
-New object capabilities can easy be defined by simple wrapping over existing capability objects
+We have just shown that new object capabilities can easy be defined by simple wrapping over existing capability objects.
+
+WBR
+Since inner is of type Wcode(Fs), this programming patterns allows to layer many levels of security / restrictions on top of a capability object, as shown below:
+OBCode
+fs=OnlyTxt(inner=OnlySmallFiles(inner=Fs.Real.#$of()))
+CCode
 
 
-Intrinsic and pervasive non deterministic errors
-
-A very large class of practically useful programs can be obtained
-just by declaring
-basic classes, collections
-and simple Data classes.
-
-Let's see some exercises and solutions 
-to understand better how 42 code looks like
+WTitle((4/5) Connection with other languages)
+In general, all the  non determinism in 42 is obtained by comunicating with other languages.
+42 allows to connect with Java, and Java allows to connect with C/assembly.
+The best way to connect with java is to ha
 
 WTitle((1/5) Max method)
 Write a static method Wcode(MaxOfList) returning the max from a list of numbers
