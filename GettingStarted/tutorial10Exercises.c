@@ -99,22 +99,23 @@ WTitle((3/5) Read/Write files)
 
 Write a static method Wcode(ReadSelf) returning the content of the file where the current source code is located.
 WBR
-To read and write files we need to load a Wcode(FileSystem) library
-{}:Test""(expected=ReadSelf(FileSystem.Real.#$of())
-    actual=S"reuse [AdamTowel]%S.nl()MaxOfList = [###]")
 OBCode
 FileSystem = Load:{reuse[FileSystem]}
 
 ReadSelf = {
   class method
-  S (mut FileSystem that) = (
-    S s=that.read(fileName=S"This.L42")
-    Debug(S"[[%s]]")
-    s
-    //_=f.write(fileName=S"Example1.txt",content=S"SomeContent")
-    )
+  S (mut FileSystem that) = 
+    that.read(fileName=S"This.L42")
   }
+Test = {}:Test""(expected=ReadSelf(FileSystem.Real.#$of())
+    actual=S"reuse [AdamTowel]%S.nl()MaxOfList = [###]end")
+//end
 CCode
+
+As you can see, In the Wcode(actual) parameter of Wcode(Test) we can use the symbol
+Wcode("[###]") to specify holes in the expected string.
+This is very useful to make more resilient tests.
+
 WTitle((4/5) Random mole)
 For a longer example, represent a piece of land as a 80*80 bi-dimensional map,
 where every cell can be full of dirt (90%) or rock (10%).

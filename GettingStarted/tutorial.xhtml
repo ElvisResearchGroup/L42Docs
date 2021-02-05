@@ -2388,7 +2388,7 @@ or by using a <it style="font-style: italic;">capability method</it>: a method w
 
 To read and write files we need to load a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FileSystem]]></span><it style="font-style: bold; color:green;">&#187;</it> library as shown below:
 <pre class="l42Big"><![CDATA[
-FS = Load:{reuse[L42.is/FileSystem]}
+FS = Load:{reuse [L42.is/FileSystem]}
 ]]></pre>
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FS]]></span><it style="font-style: bold; color:green;">&#187;</it> is the local name for the library located at <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[L42.is/FileSystem]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Load]]></span><it style="font-style: bold; color:green;">&#187;</it> decorator embeds the librady in the current environment.
@@ -2446,165 +2446,185 @@ Mock = Data:{[Fs]
     this.log(\log++S"read")
     S"oldContent"
     )
-  read method Void :1(Library that) = that:Test"ReadWriteOk"(
-    actual=this.log() expected=S"readwrite")
   }
 Test1= (
   m=Mock()
   ReadWrite(f=m)
-  {}:m
+  {}:Test"ReadWriteOk"(actual=m.log() expected=S"readwrite")
   )
 ]]></pre>
-TODO: the above does not work that good if ReadWrite throws an error. But is the same for all tests?
 
+</p><h2> (3/5) Object capabilities programming patterns </h2> <p>
 
-{}:Test""(expected=ReadSelf(FileSystem.Real.#$of())
-    actual=S"reuse [AdamTowel]%S.nl()MaxOfList = [###]")
+The advantage of the division of the file system in an interface and a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Real]]></span><it style="font-style: bold; color:green;">&#187;</it> implementation are not limited to testing.
+For example, the user could embed some security and on some restrictions in an alternative implementation of a file system.
+Consider the following code:
 
-FileSystem = Load:{reuse[FileSystem]}
+<pre class="l42Big"><![CDATA[
+OnlyTxt = Data:{[Fs]
+  capsule Fs inner
   class method
-  S (mut FileSystem that) = (
-    S s=that.read(fileName=S"This.L42")
-    Debug(S"[[%s]]")
-    s
-    //_=f.write(fileName=S"Example1.txt",content=S"SomeContent")
+  Void checkTxt(S that)= X.Checked[
+    that.endsWith(S".txt")
+    ]
+  method makeDirs(fileName) = error X""
+  @Cache.Clear class method Void delete(mut Fs inner, S fileName) = (
+    this.checkTxt(fileName)
+    inner.delete(fileName)
     )
-
-
-
-LATER
+  @Cache.Clear class method Void write(mut Fs inner, S fileName, S content) = ( 
+    this.checkTxt(fileName)
+    inner.write(fileName=fileName, content=content)
+    )
+  @Cache.Clear class method Void read(mut Fs inner, S fileName) = ( 
+    this.checkTxt(fileName)
+    inner.read(fileName=fileName)
+    )
+  class method          //example user declared #$ method, that can
+  mut This #$of() =     //use $# methods inside its body
+    This(inner=Fs.Real.#$of())
+  }
+SaferMain = (
+  fs = OnlyTxt.#$of()
+  ReadWrite(f=fs)
+  )
+]]></pre>
+Any code that would take in input a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut OnlyTxt]]></span><it style="font-style: bold; color:green;">&#187;</it> would have a limited access to the file system; only able to read and write onWcode(*.txt) files.
+Note that the field <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[inner]]></span><it style="font-style: bold; color:green;">&#187;</it> is not private but it is well encapsulated, thus a user of 
+a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut OnlyTxt]]></span><it style="font-style: bold; color:green;">&#187;</it> could only extract the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> version of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[inner]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+We will see later how to set some members private, but in this case just encapsulation is sufficient.
+<br/>
+Instances of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut OnlyTxt]]></span><it style="font-style: bold; color:green;">&#187;</it> are capability objects; note how <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[OnlyTxt]]></span><it style="font-style: bold; color:green;">&#187;</it> can even declare a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#$of]]></span><it style="font-style: bold; color:green;">&#187;</it> method. In this way for the user there is no syntactical difference between using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Fs.Real]]></span><it style="font-style: bold; color:green;">&#187;</it> or using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[OnlyTxt]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 Capability objects are a useful abstraction and can be designed and implemented by normal 42 programs; they are not just a way for the language implementation to expose native code.
-New object capabilities can easy be defined by simple wrapping over existing capability objects
-
-
-Intrinsic and pervasive non deterministic errors
-
-A very large class of practically useful programs can be obtained
-just by declaring
-basic classes, collections
-and simple Data classes.
-
-Let's see some exercises and solutions 
-to understand better how 42 code looks like
-
-</p><h2> (1/5) Max method </h2> <p>
-Write a static method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MaxOfList]]></span><it style="font-style: bold; color:green;">&#187;</it> returning the max from a list of numbers
-</p><p>
-Basic Solution: 
-<pre class="l42Big"><![CDATA[
-MaxOfList = {//static method pattern
-  UndefinedOnEmpty = Message:{[Message.Guard]}
-  //Max is undefined on empty lists.
-  //Since there was no mention of preconditions, we should explicitly handle all the error cases as Guards
-  class method
-  Num (Num.List that) = {
-    if that.isEmpty() ( error UndefinedOnEmpty"Max is undefined on empty lists" )
-    //now that we know we can proceed: 
-    var Num maxCandidate= that.left()
-    //there is no such thing like a minimum Num, we need to select one element from the list.
-    for n in that (
-      //we could write 'that.withoutLeft()' to avoid checking on the first again
-      if maxCandidate<n (maxCandidate:= n)
-      //update the variable to keep track of the max so far.
-      )
-    return maxCandidate
-    }
-  }
-]]></pre>
-
-Solution using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[.reduce()]]></span><it style="font-style: bold; color:green;">&#187;</it>:
-<pre class="l42Big"><![CDATA[
-MaxOfList = {
-  class method
-  Num (Num.List that) =
-    that.reduce()(
-      for e in \vals() (
-        if \acc < e \add(e) 
-        )
-      )
-  }
-]]></pre>
-Where the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[reduce()]]></span><it style="font-style: bold; color:green;">&#187;</it>  will already throw a meaningful error in case of an empty list: <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Collection.OperationUndefinedOnEmpty]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-Defining your own error may still produce more readable errors, so feel free to mix and match the two approaches as show in the next exercise:
-
-
-</p><h2> (2/5) Merging and filtering </h2> <p>
-Write a static method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MapText]]></span><it style="font-style: bold; color:green;">&#187;</it> producing a string from to lists of strings of the same length.
- For example
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MapText(keys=S.List[S"a";S"b";S"c"] vals=S.List[S"z";S"y";S"z"])]]></span><it style="font-style: bold; color:green;">&#187;</it>
-should produce <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S"[a->z, b->y, c->z]"]]></span><it style="font-style: bold; color:green;">&#187;</it>
-</p><p>
-Solution: 
-<pre class="l42Big"><![CDATA[
-MapText = {
-  UnequalSize = Message:{[Message.Guard]}
-  class method
-  S (S.List keys, S.List vals) = {
-    if keys.size() !=  vals.size() error UnequalSize
-      "keys= %keys.size(), values= %vals.size()" 
-    //the former formatting allows us to keep a whole line for the error message
-    res = S.List()(for k in keys, v in vals \add(S"%k->%v"))
-    if res.isEmpty() return S"[]"
-    text = res.reduce()(for s in \vals \add(\acc++S", %s"))
-    return S"[%text]"
-    }
-  }
-]]></pre>
-Note how we write <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[\add(\acc++S", %s")]]></span><it style="font-style: bold; color:green;">&#187;</it>
-instead of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[\add(S"%\acc, %s")]]></span><it style="font-style: bold; color:green;">&#187;</it> since 
- string interpolation does not currently support the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[\]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+We have just shown that new object capabilities can easy be defined by simple wrapping over existing capability objects.
 
 <br/>
-Write a static method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FilterUpTo{ class method S.List(S.List that, I size)}]]></span><it style="font-style: bold; color:green;">&#187;</it> filtering out from a list of strings the ones longer
-than \Q@size@.
-For example 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FilterUpTo(S.List[S"a";S"ab";S"abc"] size=2I)==S.List[S"a";S"ab"]]]></span><it style="font-style: bold; color:green;">&#187;</it>
-</p><p>
-Precondition: <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[size]]></span><it style="font-style: bold; color:green;">&#187;</it> is not negative
-</p><p>
-Solution: 
+Since inner is of type <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Fs]]></span><it style="font-style: bold; color:green;">&#187;</it>, this programming patterns allows to layer many levels of security / restrictions on top of a capability object, as shown below:
 <pre class="l42Big"><![CDATA[
-FilterUpTo = {
-  class method
-  S.List (S.List that, I size) = (
-    X.Pre[size >= 0I]
-    S.List()(for s in that if s.size()<= size \add(s))
+fs = OnlyTxt(inner=OnlySmallFiles(inner=Fs.Real.#$of()))
+]]></pre>
+
+
+</p><h2> (4/5) Connection with other languages </h2> <p>
+In general, all the  non determinism in 42 is obtained by comunicating with other languages.
+42 allows to connect with Java, and Java allows to connect with C/assembly.
+The best way to connect with java is to use the library <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[JavaServer]]></span><it style="font-style: bold; color:green;">&#187;</it> as shown below:
+<pre class="l42Big"><![CDATA[
+reuse [L42.is/AdamTowel]
+J0 = Load:{reuse [L42.is/JavaServer]}
+J = J0(slaveName=S"mySlave{}")
+]]></pre>
+The code above loads the library <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[JavaServer]]></span><it style="font-style: bold; color:green;">&#187;</it>. It is a generic library: before being used we need to provide a name for the Java slave.
+A 42 program is not a single process but a cluster of intercommunicating Java processes.
+There is one master process where the 42 computation is actually running and many other slave processes allowing safe input output and safe interaction with arbitrary code.
+Such slave processes have their own name: in this case <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mySlave]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Slaves also have a set of options, that can be specified between the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[{}]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+We do not describe the details of those options here.
+The class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[J]]></span><it style="font-style: bold; color:green;">&#187;</it> can now be used to comunicate with the Java slave as shown below:
+<pre class="l42Big"><![CDATA[
+MainAsk = (
+  j = J.#$of()
+  j.loadCode(fullName=S"foo.Bar1",code=S"""
+    |package foo;
+    |import is.L42.platformSpecific.javaEvents.Event;
+    |public record Bar1(Event event){//class Bar1 will be instanstiated by 42
+    |  public Bar1{                  //and the Event parameter is provided
+    |    event.registerAskEvent("BarAsk",(k,id,msg)->
+    |      "any string computed in Java using "+id+" and "+msg);
+    |    }
+    |  }
+    """)
+  S.Opt text = j.askEvent(key=S"BarAsk", id=S"anId",msg=S"aMsg")
+  {}:Test"OptOk"(actual=text, expected=S"""
+    |["any string computed in Java using anId and aMsg"]
+    """.trim())
+  )
+]]></pre>
+This code asks the event <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["anId"]]></span><it style="font-style: bold; color:green;">&#187;</it> on the channel <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarAsk"]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+The Java code registers the capacity of answering to the channel <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarAsk"]]></span><it style="font-style: bold; color:green;">&#187;</it> and
+computes an answer parametrized over <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[id]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[msg]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+The method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[askEvent]]></span><it style="font-style: bold; color:green;">&#187;</it> is syncronus: it will wait for java to provide an answer as an optional string; optional since Java can return <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[null]]></span><it style="font-style: bold; color:green;">&#187;</it> as a result.
+
+As you can see, you can embed arbitrary Java code in 42 and communicate back and forth serializing data and instructions as strings.
+
+Syncronus comunication is sometimes undesirable. 
+For example, to use Java to open a GUI it would be better to have asyncronus comunication and a queue of events.
+You can do this with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[J.Handler]]></span><it style="font-style: bold; color:green;">&#187;</it>, as shown below:
+<pre class="l42Big"><![CDATA[
+Model = Data:J.Handler:{
+  var I count, mut J j
+  @J.Handler mut method Void fromJavaToL42(S msg)=(
+    this.count(\count+1\)
+    Debug(S"pong received %msg with count=%this.count()")
+    if this.count()<40I (
+      this.#j().submitEvent(key=S"BarIn", id=S"ping", msg=S"the message %this.count()")
+      whoops J.Fail
+      )
+    else this.#j().kill()
     )
   }
+MainPingPong = (
+  j=J.#$of()
+  j.loadCode(fullName=S"foo.Bar2",code=S"""
+    |package foo;
+    |import is.L42.platformSpecific.javaEvents.Event;
+    |public record Bar2(Event event){
+    | public Bar2{
+    |    event.registerEvent("BarIn",(k,id,msg)->{
+    |      System.out.println("Ping Event received "+id+" "+msg);
+    |      event.submitEvent("BarOut","fromJavaToL42","pong");
+    |      });
+    |    event.registerEvent("Kill",(k,id,msg)->{
+    |      System.out.println("Doing cleanup before slave JVM is killed");
+    |      System.exit(0);
+    |      });
+    |    }
+    |  }
+    """)
+  model=Model(count=0I, j=j)
+  model.fromJavaToL42(msg=S"Initial message")
+  keys=S.List[S"BarOut"]
+  models=J.Handler.Map[key=S"BarOut" mutVal=model]
+  for e in j(keys) ( e>>models )
+  Debug(S"Completed")
+  )
 ]]></pre>
-Again we see yet another way to handle errors; preconditions are appropriate when it is an observed  bug if the user calls it with wrong parameters.
+The class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Model]]></span><it style="font-style: bold; color:green;">&#187;</it> handles the events inside of 42:
+if Java send an event with id <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["fromJavaToL42"]]></span><it style="font-style: bold; color:green;">&#187;</it> then the method
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Model.fromJavaToL42(msg)]]></span><it style="font-style: bold; color:green;">&#187;</it> will be called.
+In turn, such method
+sends to java the message 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["ping"]]></span><it style="font-style: bold; color:green;">&#187;</it> on channel <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarIn"]]></span><it style="font-style: bold; color:green;">&#187;</it> using
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut method J.submitEvent(key,id,msg)]]></span><it style="font-style: bold; color:green;">&#187;</it>
+up to 40 times, and kills the slave JVM after that.
 
-</p><h2> (3/5) Read/Write files </h2> <p>
+In <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MainPingPong]]></span><it style="font-style: bold; color:green;">&#187;</it> we initialize the slave JVM to respond to two channels:
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarIn"]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["Kill"]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+In our example Java will submit an asyncronus event to 42 as a response to
+any <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarIn"]]></span><it style="font-style: bold; color:green;">&#187;</it> event and will terminate the slave on the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["Kill"]]></span><it style="font-style: bold; color:green;">&#187;</it> event.
+The slave should always terminate its JVM when receiving a kill, but can do any kind of clean-up before that.
+After a JVM is terminated, it can be restarted by simply calling <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[J.loadCode(fullName,code)]]></span><it style="font-style: bold; color:green;">&#187;</it> again.
 
-Write a static method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ReadSelf]]></span><it style="font-style: bold; color:green;">&#187;</it> returning the content of the file where the current source code is located.
+Finally, we set up the event loop:
+An event loop will collect events from a list of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[keys]]></span><it style="font-style: bold; color:green;">&#187;</it> and dispatch them
+to a map of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[models]]></span><it style="font-style: bold; color:green;">&#187;</it>, mapping every key to a specific <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[model]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Note that both <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[keys]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[models]]></span><it style="font-style: bold; color:green;">&#187;</it> are mutable objects. In this way we can dynamically
+register and unregistered keys/models by mutating <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[keys]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[models]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+If the JVM is killed or the list of keys becomes empty, the event loop <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[for e in j(keys)]]></span><it style="font-style: bold; color:green;">&#187;</it> will terminate.
+The operation <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[e>>models]]></span><it style="font-style: bold; color:green;">&#187;</it> dispatches the event to the model.
 <br/>
-To read and write files we need to load a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FileSystem]]></span><it style="font-style: bold; color:green;">&#187;</it> library
-{}:Test""(expected=ReadSelf(FileSystem.Real.#$of())
-    actual=S"reuse [AdamTowel]%S.nl()MaxOfList = [###]")
-<pre class="l42Big"><![CDATA[
-FileSystem = Load:{reuse[FileSystem]}
+We need to use two different channels (<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarIn"]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarOut"]]></span><it style="font-style: bold; color:green;">&#187;</it>) to distinguish if an event is should be handled by 42 or by Java.
 
-ReadSelf = {
-  class method
-  S (mut FileSystem that) = (
-    S s=that.read(fileName=S"This.L42")
-    Debug(S"[[%s]]")
-    s
-    //_=f.write(fileName=S"Example1.txt",content=S"SomeContent")
-    )
-  }
-]]></pre>
-</p><h2> (5/5) Examples summary </h2> <p>
+
+</p><h2> (5/5) Object capabilities summuary </h2> <p>
 <ul><li>
-Always think about what can go wrong upfront
+While most languages run in a single process, 42 runs in a cluster of processes; this is needed so that the master process is procted from any slave process going into undefined behaviour.
+This is the final piece of the puzzle allowing the correctness properties of 42 to be ensured in any circumstance.
 </li><li>
-Many methods can be completed by first checking for 
-errors/issues and then using a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[for]]></span><it style="font-style: bold; color:green;">&#187;</it>, possibly inside a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[reduce()]]></span><it style="font-style: bold; color:green;">&#187;</it> or a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Match]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+To enable non deterministic behaviour we need to call those specially named <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#$]]></span><it style="font-style: bold; color:green;">&#187;</it> methods.
+Since they can only be called in a few controlled places, we can control what parts of the code can perform non determinism by explicitly passing capability objects.
 </li><li>
-Before heading into a problem,
-spend some time to define your problem domain.
-We dodged a lot of headaches by defining
-points with invariants.
+Capability objects are a very convenient centralized point of control to inject security or other kinds of restrictions.
 </li></ul>
  </p><p id="Exercises"> </p><h1> Exercises </h1> <p>
 
@@ -2707,22 +2727,23 @@ Again we see yet another way to handle errors; preconditions are appropriate whe
 
 Write a static method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ReadSelf]]></span><it style="font-style: bold; color:green;">&#187;</it> returning the content of the file where the current source code is located.
 <br/>
-To read and write files we need to load a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FileSystem]]></span><it style="font-style: bold; color:green;">&#187;</it> library
-{}:Test""(expected=ReadSelf(FileSystem.Real.#$of())
-    actual=S"reuse [AdamTowel]%S.nl()MaxOfList = [###]")
 <pre class="l42Big"><![CDATA[
 FileSystem = Load:{reuse[FileSystem]}
 
 ReadSelf = {
   class method
-  S (mut FileSystem that) = (
-    S s=that.read(fileName=S"This.L42")
-    Debug(S"[[%s]]")
-    s
-    //_=f.write(fileName=S"Example1.txt",content=S"SomeContent")
-    )
+  S (mut FileSystem that) = 
+    that.read(fileName=S"This.L42")
   }
+Test = {}:Test""(expected=ReadSelf(FileSystem.Real.#$of())
+    actual=S"reuse [AdamTowel]%S.nl()MaxOfList = [###]end")
+//end
 ]]></pre>
+
+As you can see, In the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[actual]]></span><it style="font-style: bold; color:green;">&#187;</it> parameter of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Test]]></span><it style="font-style: bold; color:green;">&#187;</it> we can use the symbol
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["[###]"]]></span><it style="font-style: bold; color:green;">&#187;</it> to specify holes in the expected string.
+This is very useful to make more resilient tests.
+
 </p><h2> (4/5) Random mole </h2> <p>
 For a longer example, represent a piece of land as a 80*80 bi-dimensional map,
 where every cell can be full of dirt (90%) or rock (10%).
@@ -2866,272 +2887,6 @@ spend some time to define your problem domain.
 We dodged a lot of headaches by defining
 points with invariants.
 </li></ul>
- </p><p id="ExamplesOfLibraries"> </p><h1> Example of Libraries </h1> <p>
-
-42 stands for the primate of libraries, so let see some libraries in action.
-We have already see how to chose a towel, and many classes that are likely to be present in such towel, like
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-<br/>
-Let's see how to load a library from its url: 
-<pre class="l42Big"><![CDATA[
-{reuse L42.is/AdamsTowel
-Gui: Load <>< {reuse L42.is/Gui}
-Main: {
-  Gui.alert(S"hi!")
-  return ExitCode.success()
-  }
-}
-]]></pre>
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Load]]></span><it style="font-style: bold; color:green;">&#187;</it> is another decorator, here it modifies the library found in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[L42.is/Gui]]></span><it style="font-style: bold; color:green;">&#187;</it>
- so that it can be used easily from AdamsTowel.
-
-
-</p><h2> (1/5)Gui </h2> <p>
-
-Gui allows to create graphical user interfaces using html.
-
-<pre class="l42Big"><![CDATA[
-{reuse L42.is/AdamsTowel
-Gui: Load <>< {reuse L42.is/Gui}
-MyGui: Gui(
-  title: S"My Gui"
-  basePath: S"base/path/for/my/files" // use / on all operating systems
-  x: 600Gui.Pixel
-  y: 400Gui.Pixel
-  //loads index.html from your basePath
-  ) <>< {
-  mut method
-  Void event_quit(mut Gui gui, S msg)
-    gui.close()
-
-  mut method
-  Void event_sayHi(mut Gui gui, S msg)
-    Gui.alert(S"hi")
-
-  mut method
-  Void event_say(mut Gui gui, S msg) (
-    //msg is going to be a multiline string coming from the html message/event.
-    //First line == "say", other lines give more info
-    Strings ss= msg.split(S.nl())
-    Gui.alert(S"hi dear "+ss.val(1\))
-    )
-  }
-
-Main: MyGui()
-}
-]]></pre>
-And the file <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[index.html]]></span><it style="font-style: bold; color:green;">&#187;</it>
-would look like: 
-<pre class="html"><![CDATA[
-<html>
-  <head> </head>
-  <body>
-    Hi, buttons here
-    <button onclick= 'event42("quit");'> Quit</button>
-    <button onclick= 'event42("sayHi");'> Say Hi</button>
-    <button onclick= 'event42("say\ncaterpillar");'> Say Hi Caterpillar</button>
-  </body>
-</html>
-]]></pre>
-Notice the two layers of quotes: you need to quote both the call to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[event42]]></span><it style="font-style: bold; color:green;">&#187;</it>
-and the string codifying the event itself.
-
-To make something happen in the gui, you can use 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[gui.executeJs(cmd)]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-<br/>
-For example, an event could call the following method: 
-<pre class="l42Big"><![CDATA[
-mut method
-Void useJSToWriteOnTextArea(mut Gui gui) (
-  js= Gui.JavaScript"document.getElementById('myTextAreaId').value =  'Hi! event happened';"
-  gui.executeJS(js)
-  )
-]]></pre>
-
-Gui provides help to display datastructures of various kind, 
-for example vectors of Data classes can be shown as tables in the following way: 
-<pre class="l42Big"><![CDATA[
-Person: Data <>< { Size id, Name name, Name surname, Year age }
-Persons: Collections.vector(of: Person)
-ShowPersons: Gui.widget(table: Persons) //each person as a row in the table
-InputPerson: Gui.input(dialogForm: Person) //relies on 'JQuery UI'
-MyGui: Gui(/*..*/) <>< { mut Persons persons //field
-  /*..*/
-  mut method
-  Void eventLoad(mut Gui gui) ( //no underscore for system events
-    gui.add(ShowPersons(this.#persons(), into: Gui.Id"divLeft"))
-    //the element with that id will contain the table
-    )
-  mut method
-  Void event_addPerson(mut Gui gui,S msg) (
-    Person p= InputPerson(gui,title: S"New Person details")
-    catch exception InputPerson.Cancelled exc ( void) //do nothing
-    this.persons().add(left: p)
-    gui.refresh()
-    )
-  }
-Main: MyGui(persons: Persons[])
-]]></pre>
-
-</p><h2> (2/5) Files </h2> <p>
-In 42 you can import <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FileSystem]]></span><it style="font-style: bold; color:green;">&#187;</it> to read and write files.
-
-
-<pre class="l42Big"><![CDATA[
-{reuse L42.is/AdamsTowel
-FileSystem: Load <>< {reuse L42.is/FileSystem}
-
-Main: {
-  files= FileSystem()
-  files.write(S"foo.txt",S"foo foo foo!") //the file 'foo.txt' in the current directory
-  S foos= files.read(S"foo.txt") //most likely, it contains 'foo foo foo!'
-  return ExitCode.normal()
-  }
-}
-]]></pre>
-
-Each instance of the FileSystem class owns its own stream of
-operations, which are not coordinated with the other instances.  If
-you create multiple instances, then you may find that events attached
-to other instances happen much earlier than you expect.
-This happens since 42 can execute every closed expression early,
-even at compile time, if it could give a performance boost.
-To avoid unexpected early effects
-you should
-pass a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FileSystem]]></span><it style="font-style: bold; color:green;">&#187;</it> object to functions that do I/O: 
-
-<pre class="l42Big"><![CDATA[
-
-method S readFoo()
- FileSystem().read(S"foo.txt") //may read foo once and for all at compile time,
-//and then return the same value every time. It can be useful
-//for loading resources, like image files in a simple game.
-
-method S readFoo(mut FileSystem that)
- that.read(S"foo.txt") //need the parameter to act, thus
-//will wait until a parameter is provided
-]]></pre>
-
-In general, all the system interaction that happens over the same system object are
-chronologically sorted with respect to each other, but there is no guarantee 
-of ordering between different system objects.
-
-</p><h2> (3/5) Db </h2> <p>
-In AdamsTowel, databases can be accessed in two ways: 
-Raw access (similar to what is supported by
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[DBC]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[JDBC]]></span><it style="font-style: bold; color:green;">&#187;</it> libraries) 
-and structured access.
-<pre class="l42Big"><![CDATA[
-{reuse L42.is/AdamsTowel
-Db: Load <>< {reuse L42.is/Db} //Db can do Raw access
-UnivDb: Db.importStructure(Db.ConnectionS"...")
-QueryCountry: UnivDb.query(\"select * from student where country= @country")
-Main: {
-  connection= UnivDb.connect()
-  UnivDb.Student.Table ss= QueryCountry(connection, country: S"Italy")
-  /*..*/
-  }
-}
-]]></pre>
-Here
-we use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Db]]></span><it style="font-style: bold; color:green;">&#187;</it> to 
-import the structure of the database. This means that 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[UnivDb]]></span><it style="font-style: bold; color:green;">&#187;</it> will contain a class for each table of the database, and
-each of those classes will have a nested class representing 
-multiple rows (that is, a table).
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[UnivDb.query(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> allows prepared queries.
-In the case in the example, we can use
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[QueryCountry(that,country)]]></span><it style="font-style: bold; color:green;">&#187;</it>
-to get the Italian students.
-Note how <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[country]]></span><it style="font-style: bold; color:green;">&#187;</it> is a parameter of the method: in this way the  query users are informed of the queries requirements.
-Our query used <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[*]]></span><it style="font-style: bold; color:green;">&#187;</it> (all columns), so the type <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[UnivDb.Student.Table]]></span><it style="font-style: bold; color:green;">&#187;</it>
-could be reused.
-In other cases a new type would be generated, eg. <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[QueryCountry.Table]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-
-</p><h2> (4/5) Example Gui and Db together </h2> <p>
-
-In the following code we show an example where a Gui display the Italian students.
-
-We could directly display elements of 
-type <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[UnivDb.Student]]></span><it style="font-style: bold; color:green;">&#187;</it>, but we chose 
-to write more flexible and maintainable code
-(code maintenance requires localized changes),
-where we define our basic classes (<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Name]]></span><it style="font-style: bold; color:green;">&#187;</it> and
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Year]]></span><it style="font-style: bold; color:green;">&#187;</it>)
-and we define an injection from
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[UnivDb.Student]]></span><it style="font-style: bold; color:green;">&#187;</it>
-to
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-Then we use the 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[eventLoad]]></span><it style="font-style: bold; color:green;">&#187;</it> method
-to load the information from the DB and
-to display it.
-
-<pre class="l42Big"><![CDATA[
-{reuse L42.is/AdamsTowel
-
-Name: Alphanumeric: <>< {This parse(S that) (
-  if that.contains(S.nl()) (error Alphanumeric.ParseError
-    "new lines not allowed in method names")
-  This(that) 
-  )} //check for more restrictions
-
-Year: Unit.of(Num)
-
-Db: Load <>< {reuse L42.is/Db}
-
-UnivDb: Db.importStructure(Db.ConnectionS"...") //will not use Name and Year
-
-QueryCountry: UnivDb.query(\"select * from students where country= @country")
-
-Person: Data <>< { Name name, Name surname, Year age 
-  class method
-  This from(UnivDb.Student db) //injection/conversion method: UnivDb.Student -> Person
-    Person(
-      name: Name.from(base: db.name())
-      surname: Name.from(base: db.surname())
-      age: Year.from(base: db.age())
-      )
-  }
-
-Persons: Collections.vector(of: Person)
-
-ShowPersons: Gui.widget(table: Persons)
-
-MyGui: Gui(/*..*/) <>< {
-  mut method
-  Void eventLoad(mut Gui gui, S msg) (
-    connection= UnivDb.connect()
-    UnivDb.Student.Table ss= QueryCountry(connection, country: S"Italy")
-    ps= Persons[with s in ss.vals() (use[Person.from(db: s)])]
-    gui.add(ShowPersons(ps, into: Gui.Id"divLeft"))
-    )
-  }
-
-Main: MyGui()
-}
-]]></pre>
-
-It is interesting to notice that if we wish to change the
-content of the students displayed representation, we just need to change the class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person]]></span><it style="font-style: bold; color:green;">&#187;</it> and add/remove/swap fields.
-</p><p>
-
-It is also interesting to consider what happens if the database schema changes.
-
-If there are no more students, or the students do not have countries any more,
-then we will get an error while generating the class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[QueryCountry]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-
-If the students will not have names, surnames or ages
-any more, then we will get an error while generating the
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person]]></span><it style="font-style: bold; color:green;">&#187;</it> class.
-In some sense we are turning into understandable compile time errors events that would have caused a runtime exception in most other languages.
-
-</p><h2> (5/5) Libraries </h2> <p>
-
-42 is designed to support libraries and cooperation of multiple libraries at the same time.
-
-Since 42 is still in its infancy, there are not many libraries around yet.
-Stay tuned for more!
         </p>
         </div>
       </div>
