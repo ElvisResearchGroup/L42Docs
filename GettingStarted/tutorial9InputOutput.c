@@ -205,7 +205,7 @@ MainPingPong = (
     |import is.L42.platformSpecific.javaEvents.Event;
     |public record Bar2(Event event){
     | public Bar2{
-    |    event.registerEvent("BarIn",(k,id,msg)->{
+    |    event.registerEvent("BarIn","ping"(k,id,msg)->{
     |      System.out.println("Ping Event received "+id+" "+msg);
     |      event.submitEvent("BarOut","fromJavaToL42","pong");
     |      });
@@ -236,7 +236,7 @@ up to 40 times, and kills the slave JVM after that.
 In Wcode(MainPingPong) we initialize the slave JVM to respond to two channels:
 Wcode("BarIn") and Wcode("Kill").
 In our example Java will submit an asyncronus event to 42 as a response to
-any Wcode("BarIn") event and will terminate the slave on the Wcode("Kill") event.
+the Wcode("BarIn":"ping") event and will terminate the slave on any Wcode("Kill") event.
 The slave should always terminate its JVM when receiving a kill, but can do any kind of clean-up before that.
 After a JVM is terminated, it can be restarted by simply calling Wcode(J.loadCode(fullName,code)) again.
 
