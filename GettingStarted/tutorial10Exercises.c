@@ -77,7 +77,7 @@ instead of Wcode(`\add(S"%\acc, %s")') since
 
 WBR
 Write a static method Wcode(`FilterUpTo{ class method S.List(S.List that, I size)}') filtering out from a list of strings the ones longer
-than \Q@size@.
+than Wcode(size).
 For example 
 Wcode(`FilterUpTo(S.List[S"a";S"ab";S"abc"] size=2I)==S.List[S"a";S"ab"]')
 WP
