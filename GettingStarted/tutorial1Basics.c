@@ -242,7 +242,7 @@ Use Wcode(class method) for methods that can be called on the class object direc
 </li><li>
 To introduce the concept of list for a certain type, use 
 Wcode(Collection.list(_))
-as in the class declaration
+WBR as in the class declaration
 Wcode(Points = Collection.list(Point))
 </li></ul>
 
@@ -259,5 +259,5 @@ Point(x=_,y=_):  from the parameter values
 Points[_;_;_]:  from a variable length sequence of values.
 </li></ul>
 
-Note that in 42 those are all just expressions, and represent methods in the named class.
-Sometimes it is convenient to reuse this kind of syntax to get better syntactic support for certain operations;
+Note that in 42 these are all just expressions, and represent one or more methods in the named class.
+This means that even concepts quite different from numbers, strings and collections may benefit from this syntactic support.

@@ -1,13 +1,20 @@
-WBigTitle(`Keep control:  Modifiers, kinds of references/objects')
+WBigTitle(`Keep control:  Modifiers, kinds of references and objects')
 
 WTitle(`(1/5)Kinds of objects')
-All instance of Wcode(Point) are WEmph(immutable): 
- none of their fields can be WEmph(updated)
-or WEmph(mutated.)
-Immutable objects are very easy to use but may be inadequate when representing entities whose state can change across time.
-A mutable object is an object where some of the fields in their Reachable Object Graph (ROG) can be updated.
+In object oriented languages, objects can form complex networks of dependencies by referring to each other using their fields.
+The Reachable Object Graph (ROG) of a given object is the set of all objects reachable from it. This also includes the given object.
+WP
+An object is mutated if a field in an object in its ROG is updated.
+A WTerm(mutable object) is an object that can be mutated.
+The 42 type system is able to ensure that some objects can not be mutated. We call those WTerm(immutable objects).
 
-Let's now define a mutable Wcode(Animal), whose location can be updated.
+All instance of Wcode(Point) are immutable: 
+ none of their fields can be updated
+or mutated.
+
+Immutable objects are very easy to use but may be inadequate when representing entities whose state can change across time.
+WP
+Let's now define a mutable Wcode(Animal), whose location can be updated:
 OBCode
 Animal = Data:{
   var Point location
@@ -20,17 +27,23 @@ Animal = Data:{
 CCode
 There are two new keywords used here: 
 <ul><li>
-the Wcode(location) field is Wcode(var).
-  This is called a variable field, and can be WEmph(updated) by calling a setter.
-  Non variable fields can not be updated
+The Wcode(location) field is Wcode(var).
+  This is called a WTerm(variable field): a field that can be WEmph(updated) by calling a setter.
+  Non-variable fields can not be updated.
 </li><li>
-  the modifier Wcode(mut) in front of the method. 
-  We have seen Wcode(class) already, and we have seen methods with the default modifier Wcode(imm) ( 
-Wcode(add(x)) and
-Wcode(add(y)) ); when a modifiers is not specified it is equivalent to specify the Wcode(imm) modifier.
-  Wcode(mut) methods can mutate the "this" object. If you have experience with C++
-  you can see the relationship with Wcode(const) methods.
-  immutable (default) methods works only on immutable "this" objects. We will see later much more about modifiers
+Wcode(run()) is a Wcode(mut method).
+WBR
+  We have seen Wcode(class method)s already, and we have seen methods 
+such as Wcode(add(x)) and Wcode(add(y))
+showing no modifier;
+they implicitly have the default modifier Wcode(imm).
+Similarly, whenever a typed does not specify a modifier,
+it has the default modifier Wcode(imm).
+WBR
+  Wcode(mut) methods can mutate the Wcode(this) object. If you have experience with C++
+  you can see the contrast with const methods.
+  Immutable (default) methods works only on immutable Wcode(this) objects.
+  Later, we will see much more about modifiers.
 </li></ul>
 
 WP

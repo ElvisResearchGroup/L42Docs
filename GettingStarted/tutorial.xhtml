@@ -287,7 +287,7 @@ Use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![
 </li><li>
 To introduce the concept of list for a certain type, use 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Collection.list(_)]]></span><it style="font-style: bold; color:green;">&#187;</it>
-as in the class declaration
+<br/> as in the class declaration
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Points = Collection.list(Point)]]></span><it style="font-style: bold; color:green;">&#187;</it>
 </li></ul>
 
@@ -304,19 +304,25 @@ Point(x=_,y=_):  from the parameter values
 Points[_;_;_]:  from a variable length sequence of values.
 </li></ul>
 
-Note that in 42 those are all just expressions, and represent methods in the named class.
-Sometimes it is convenient to reuse this kind of syntax to get better syntactic support for certain operations;
-
- </p><p id="ModifiersIntro"> </p><h1> Keep control:  Modifiers, kinds of references/objects </h1> <p>
+Note that in 42 these are all just expressions, and represent one or more methods in the named class.
+This means that even concepts quite different from numbers, strings and collections may benefit from this syntactic support.
+ </p><p id="ModifiersIntro"> </p><h1> Keep control:  Modifiers, kinds of references and objects </h1> <p>
 
 </p><h2> (1/5)Kinds of objects </h2> <p>
-All instance of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> are <span style="color:#ff1111; font-weight: bold;"> immutable </span>: 
- none of their fields can be <span style="color:#ff1111; font-weight: bold;"> updated </span>
-or <span style="color:#ff1111; font-weight: bold;"> mutated. </span>
-Immutable objects are very easy to use but may be inadequate when representing entities whose state can change across time.
-A mutable object is an object where some of the fields in their Reachable Object Graph (ROG) can be updated.
+In object oriented languages, objects can form complex networks of dependencies by referring to each other using their fields.
+The Reachable Object Graph (ROG) of a given object is the set of all objects reachable from it. This also includes the given object.
+</p><p>
+An object is mutated if a field in an object in its ROG is updated.
+A <it style="font-style: italic;">mutable object</it> is an object that can be mutated.
+The 42 type system is able to ensure that some objects can not be mutated. We call those <it style="font-style: italic;">immutable objects</it>.
 
-Let's now define a mutable <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it>, whose location can be updated.
+All instance of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> are immutable: 
+ none of their fields can be updated
+or mutated.
+
+Immutable objects are very easy to use but may be inadequate when representing entities whose state can change across time.
+</p><p>
+Let's now define a mutable <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it>, whose location can be updated:
 <pre class="l42Big"><![CDATA[
 Animal = Data:{
   var Point location
@@ -329,17 +335,23 @@ Animal = Data:{
 ]]></pre>
 There are two new keywords used here: 
 <ul><li>
-the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location]]></span><it style="font-style: bold; color:green;">&#187;</it> field is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-  This is called a variable field, and can be <span style="color:#ff1111; font-weight: bold;"> updated </span> by calling a setter.
-  Non variable fields can not be updated
+The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location]]></span><it style="font-style: bold; color:green;">&#187;</it> field is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+  This is called a <it style="font-style: italic;">variable field</it>: a field that can be <span style="color:#ff1111; font-weight: bold;"> updated </span> by calling a setter.
+  Non-variable fields can not be updated.
 </li><li>
-  the modifier <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> in front of the method. 
-  We have seen <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it> already, and we have seen methods with the default modifier <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> ( 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(x)]]></span><it style="font-style: bold; color:green;">&#187;</it> and
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(y)]]></span><it style="font-style: bold; color:green;">&#187;</it> ); when a modifiers is not specified it is equivalent to specify the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> modifier.
-  <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> methods can mutate the "this" object. If you have experience with C++
-  you can see the relationship with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[const]]></span><it style="font-style: bold; color:green;">&#187;</it> methods.
-  immutable (default) methods works only on immutable "this" objects. We will see later much more about modifiers
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[run()]]></span><it style="font-style: bold; color:green;">&#187;</it> is a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut method]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<br/>
+  We have seen <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class method]]></span><it style="font-style: bold; color:green;">&#187;</it>s already, and we have seen methods 
+such as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(x)]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(y)]]></span><it style="font-style: bold; color:green;">&#187;</it>
+showing no modifier;
+they implicitly have the default modifier <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Similarly, whenever a typed does not specify a modifier,
+it has the default modifier <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<br/>
+  <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> methods can mutate the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this]]></span><it style="font-style: bold; color:green;">&#187;</it> object. If you have experience with C++
+  you can see the contrast with const methods.
+  Immutable (default) methods works only on immutable <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this]]></span><it style="font-style: bold; color:green;">&#187;</it> objects.
+  Later, we will see much more about modifiers.
 </li></ul>
 
 </p><p>
@@ -2570,7 +2582,7 @@ MainPingPong = (
     |import is.L42.platformSpecific.javaEvents.Event;
     |public record Bar2(Event event){
     | public Bar2{
-    |    event.registerEvent("BarIn",(k,id,msg)->{
+    |    event.registerEvent("BarIn","ping"(k,id,msg)->{
     |      System.out.println("Ping Event received "+id+" "+msg);
     |      event.submitEvent("BarOut","fromJavaToL42","pong");
     |      });
@@ -2601,7 +2613,7 @@ up to 40 times, and kills the slave JVM after that.
 In <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MainPingPong]]></span><it style="font-style: bold; color:green;">&#187;</it> we initialize the slave JVM to respond to two channels:
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarIn"]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["Kill"]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 In our example Java will submit an asyncronus event to 42 as a response to
-any <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarIn"]]></span><it style="font-style: bold; color:green;">&#187;</it> event and will terminate the slave on the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["Kill"]]></span><it style="font-style: bold; color:green;">&#187;</it> event.
+the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarIn":"ping"]]></span><it style="font-style: bold; color:green;">&#187;</it> event and will terminate the slave on any <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["Kill"]]></span><it style="font-style: bold; color:green;">&#187;</it> event.
 The slave should always terminate its JVM when receiving a kill, but can do any kind of clean-up before that.
 After a JVM is terminated, it can be restarted by simply calling <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[J.loadCode(fullName,code)]]></span><it style="font-style: bold; color:green;">&#187;</it> again.
 
@@ -2705,7 +2717,7 @@ instead of <it style="font-style: bold; color:green;">&#171;</it><span class="co
 
 <br/>
 Write a static method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FilterUpTo{ class method S.List(S.List that, I size)}]]></span><it style="font-style: bold; color:green;">&#187;</it> filtering out from a list of strings the ones longer
-than \Q@size@.
+than <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[size]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 For example 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FilterUpTo(S.List[S"a";S"ab";S"abc"] size=2I)==S.List[S"a";S"ab"]]]></span><it style="font-style: bold; color:green;">&#187;</it>
 </p><p>
