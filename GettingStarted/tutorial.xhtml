@@ -102,7 +102,7 @@ Let's now define a method and call it.
 reuse [L42.is/AdamsTowel]
 MyCode = {
   class method
-  S hello(S nickName){ //we can use usual if/while
+  S hello(S nickName) = { //we can use usual if/while
     if nickName.isEmpty() (return S"Hello!")
     return S"Hello %nickName!"
     } 
@@ -270,7 +270,12 @@ for x in xs, y in ys (
 Debug(points) //prints
 //[Point(x=10, y="-1"); Point(x=20, y="2/3"); Point(x=30, y=3)]
 ]]></pre>
-as you can see, we can use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[for]]></span><it style="font-style: bold; color:green;">&#187;</it> to iterate on multiple collections at once.
+As you can see, we can use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[for]]></span><it style="font-style: bold; color:green;">&#187;</it> to iterate on multiple collections at once.
+<br/>
+In 42 as in most other languages you can have blocks of code where multiple
+<it style="font-style: italic;">local bindings</it> are introduced by associating a lowercase name with an initialization expression.
+Similarly, the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[for]]></span><it style="font-style: bold; color:green;">&#187;</it> introduces local bindings whose values will range over collection elements by associating them with initialization expressions for iterators.
+
 
 </p><h2> (5/5)First summary </h2> <p>
 
@@ -312,7 +317,7 @@ This means that even concepts quite different from numbers, strings and collecti
 In object oriented languages, objects can form complex networks of dependencies by referring to each other using their fields.
 The Reachable Object Graph (ROG) of a given object is the set of all objects reachable from it. This also includes the given object.
 </p><p>
-An object is mutated if a field in an object in its ROG is updated.
+An object is <span style="color:#ff1111; font-weight: bold;"> mutated </span> if a field in an object in its ROG is <span style="color:#ff1111; font-weight: bold;"> updated </span>.
 A <it style="font-style: italic;">mutable object</it> is an object that can be mutated.
 The 42 type system is able to ensure that some objects can not be mutated. We call those <it style="font-style: italic;">immutable objects</it>.
 
@@ -358,19 +363,18 @@ it has the default modifier <it style="font-style: bold; color:green;">&#171;</i
 As you see, we are using the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add]]></span><it style="font-style: bold; color:green;">&#187;</it> method from before.
 Also notice that we are using a setter here, where we are providing the first parameter without the argument name.
 While this is usual in other languages, in 42 parameters are selected by name.
-However, for some methods with a single parameter, writing down the parameter name would not improve the readability and just add noise.
-In those cases, the first parameter is conventionally called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[that]]></span><it style="font-style: bold; color:green;">&#187;</it>, 
-and writing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.b(that=c)]]></span><it style="font-style: bold; color:green;">&#187;</it>
-is equivalent to writing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.b(c)]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Sometimes writing down all the parameter names can get tedious.
+
+If the first parameter is called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[that]]></span><it style="font-style: bold; color:green;">&#187;</it>, we can omit it:
+Writing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.b(that=c)]]></span><it style="font-style: bold; color:green;">&#187;</it> is equivalent to writing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.b(c)]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 This works also for methods with multiple parameters, if the first one is called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[that]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-For example writing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.b(that=c, x=d)]]></span><it style="font-style: bold; color:green;">&#187;</it>
-is equivalent to writing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.b(c, x=d)]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Writing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.b(that=c, x=d)]]></span><it style="font-style: bold; color:green;">&#187;</it> is equivalent to writing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.b(c, x=d)]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 </p><p>
-We can use WCode(Animal) by writing, for example: 
+We can use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it> by writing, for example: 
 
 <pre class="l42Big"><![CDATA[
-mut Animal dog1= Animal(location=\(x=0\, y=0\))
-dog2= Animal(location=\(x=0\, y=0\)) //type 'mut Animal' inferred
+mut Animal dog1 = Animal(location=\(x=0\, y=0\))
+dog2 = Animal(location=\(x=0\, y=0\)) //type 'mut Animal' inferred for dog2
 dog1.run()
 ]]></pre>
 
@@ -393,10 +397,16 @@ Animal = Data:{
 Here we use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Points path]]></span><it style="font-style: bold; color:green;">&#187;</it> to denote a mutable list of points. Note the absence of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it>; this is conceptually similar to a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Points * const path;]]></span><it style="font-style: bold; color:green;">&#187;</it> in C++  or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[final Points path;]]></span><it style="font-style: bold; color:green;">&#187;</it> in Java.
 To contrast, the declaration <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var Point location]]></span><it style="font-style: bold; color:green;">&#187;</it> is similar to
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point const * location;]]></span><it style="font-style: bold; color:green;">&#187;</it> in C++  or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ImmPoint location;]]></span><it style="font-style: bold; color:green;">&#187;</it> in Java, for an opportune <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ImmPoint]]></span><it style="font-style: bold; color:green;">&#187;</it> class.
-That is, 
-mutable objects can be referred using mutable references,
-Immutable objects can be referred using immutable references.
-Fields can optionally be <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it> independently from their reference kind.
+
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> references always refer to mutable objects.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> references always refer to immutable objects.
+
+Fields can be declared <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it> independently from their modifier:
+In the code above, you can see that <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var Point location]]></span><it style="font-style: bold; color:green;">&#187;</it> is a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it> field of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> type.
+On the other hand, 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Points path]]></span><it style="font-style: bold; color:green;">&#187;</it>
+is a non-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it> field of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> type.
+
 </p><p>
 The method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[move]]></span><it style="font-style: bold; color:green;">&#187;</it>
 first use the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> setter method to update the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location]]></span><it style="font-style: bold; color:green;">&#187;</it> field,

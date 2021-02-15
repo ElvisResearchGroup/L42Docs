@@ -4,7 +4,7 @@ WTitle(`(1/5)Kinds of objects')
 In object oriented languages, objects can form complex networks of dependencies by referring to each other using their fields.
 The Reachable Object Graph (ROG) of a given object is the set of all objects reachable from it. This also includes the given object.
 WP
-An object is mutated if a field in an object in its ROG is updated.
+An object is WEmph(mutated) if a field in an object in its ROG is WEmph(updated).
 A WTerm(mutable object) is an object that can be mutated.
 The 42 type system is able to ensure that some objects can not be mutated. We call those WTerm(immutable objects).
 
@@ -50,19 +50,18 @@ WP
 As you see, we are using the Wcode(add) method from before.
 Also notice that we are using a setter here, where we are providing the first parameter without the argument name.
 While this is usual in other languages, in 42 parameters are selected by name.
-However, for some methods with a single parameter, writing down the parameter name would not improve the readability and just add noise.
-In those cases, the first parameter is conventionally called Wcode(that), 
-and writing Wcode(a.b(that=c))
-is equivalent to writing Wcode(a.b(c)).
+Sometimes writing down all the parameter names can get tedious.
+
+If the first parameter is called Wcode(that), we can omit it:
+Writing Wcode(a.b(that=c)) is equivalent to writing Wcode(a.b(c)).
 This works also for methods with multiple parameters, if the first one is called Wcode(that).
-For example writing Wcode(a.b(that=c, x=d))
-is equivalent to writing Wcode(a.b(c, x=d)).
+Writing Wcode(a.b(that=c, x=d)) is equivalent to writing Wcode(a.b(c, x=d)).
 WP
-We can use WCode(Animal) by writing, for example: 
+We can use Wcode(Animal) by writing, for example: 
 
 OBCode
-mut Animal dog1= Animal(location=\(x=0\, y=0\))
-dog2= Animal(location=\(x=0\, y=0\)) //type 'mut Animal' inferred
+mut Animal dog1 = Animal(location=\(x=0\, y=0\))
+dog2 = Animal(location=\(x=0\, y=0\)) //type 'mut Animal' inferred for dog2
 dog1.run()
 CCode
 
@@ -85,13 +84,19 @@ CCode
 Here we use Wcode(mut Points path) to denote a mutable list of points. Note the absence of Wcode(var); this is conceptually similar to a Wcode(Points * const path;) in C++  or Wcode(final Points path;) in Java.
 To contrast, the declaration Wcode(var Point location) is similar to
 Wcode(Point const * location;) in C++  or Wcode(ImmPoint location;) in Java, for an opportune Wcode(ImmPoint) class.
-That is, 
-mutable objects can be referred using mutable references,
-Immutable objects can be referred using immutable references.
-Fields can optionally be Wcode(var) independently from their reference kind.
+
+Wcode(mut) references always refer to mutable objects.
+Wcode(imm) references always refer to immutable objects.
+
+Fields can be declared Wcode(var) independently from their modifier:
+In the code above, you can see that Wcode(var Point location) is a Wcode(var) field of Wcode(imm) type.
+On the other hand, 
+Wcode(mut Points path)
+is a non-Wcode(var) field of Wcode(mut) type.
+
 WP
-The method Wcode(move)
-first use the Wcode(location(that)) setter method to update the Wcode(location) field,
+The method Wcode(move())
+first uses the Wcode(location(that)) setter method to update the Wcode(location) field,
 then uses the Wcode(`#path()')
  WEmph(exposer) method and 
 the Wcode(removeLeft()) method to mutate the list of points.

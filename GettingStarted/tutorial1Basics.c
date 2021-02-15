@@ -57,7 +57,7 @@ OBCode
 reuse [L42.is/AdamsTowel]
 MyCode = {
   class method
-  S hello(S nickName){ //we can use usual if/while
+  S hello(S nickName) = { //we can use usual if/while
     if nickName.isEmpty() (return S"Hello!")
     return S"Hello %nickName!"
     } 
@@ -225,7 +225,12 @@ for x in xs, y in ys (
 Debug(points) //prints
 //[Point(x=10, y="-1"); Point(x=20, y="2/3"); Point(x=30, y=3)]
 CCode
-as you can see, we can use Wcode(for) to iterate on multiple collections at once.
+As you can see, we can use Wcode(for) to iterate on multiple collections at once.
+WBR
+In 42 as in most other languages you can have blocks of code where multiple
+WTerm(local bindings) are introduced by associating a lowercase name with an initialization expression.
+Similarly, the Wcode(for) introduces local bindings whose values will range over collection elements by associating them with initialization expressions for iterators.
+
 
 WTitle(`(5/5)First summary')
 
