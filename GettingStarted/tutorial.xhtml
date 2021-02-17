@@ -315,15 +315,15 @@ This means that even concepts quite different from numbers, strings and collecti
 
 </p><h2> (1/5)Kinds of objects </h2> <p>
 In object oriented languages, objects can form complex networks of dependencies by referring to each other using their fields.
-The Reachable Object Graph (ROG) of a given object is the set of all objects reachable from it. This also includes the given object.
+The Reachable Object Graph (ROG) of a given object is the set of all objects reachable from it, including itself.
 </p><p>
-An object is <span style="color:#ff1111; font-weight: bold;"> mutated </span> if a field in an object in its ROG is <span style="color:#ff1111; font-weight: bold;"> updated </span>.
+An object is <span style="color:#ff1111; font-weight: bold;"> mutated </span> if a field of an object in its ROG is <span style="color:#ff1111; font-weight: bold;"> updated </span>.
 A <it style="font-style: italic;">mutable object</it> is an object that can be mutated.
 The 42 type system is able to ensure that some objects can not be mutated. We call those <it style="font-style: italic;">immutable objects</it>.
 
-All instance of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> are immutable: 
- none of their fields can be updated
-or mutated.
+All instances of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> are immutable.
+The ROG of a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> object contains the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> itself and the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> coordinates.
+Fields <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[x]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[y]]></span><it style="font-style: bold; color:green;">&#187;</it> can not be updated and the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> objects are immutable.
 
 Immutable objects are very easy to use but may be inadequate when representing entities whose state can change across time.
 </p><p>
@@ -333,9 +333,9 @@ Animal = Data:{
   var Point location
 
   mut method
-  Void run() 
+  Void run() =
     this.location(\.add(x=20Num))
-  //here \ == this.location()
+    //here \ == this.location()
   }
 ]]></pre>
 There are two new keywords used here: 
@@ -360,8 +360,8 @@ it has the default modifier <it style="font-style: bold; color:green;">&#171;</i
 </li></ul>
 
 </p><p>
-As you see, we are using the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add]]></span><it style="font-style: bold; color:green;">&#187;</it> method from before.
-Also notice that we are using a setter here, where we are providing the first parameter without the argument name.
+As you see, we are using the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(x)]]></span><it style="font-style: bold; color:green;">&#187;</it> method from before.
+Also notice that we are calling the setter <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> without providing the parameter name.
 While this is usual in other languages, in 42 parameters are selected by name.
 Sometimes writing down all the parameter names can get tedious.
 
@@ -408,8 +408,8 @@ On the other hand,
 is a non-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it> field of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> type.
 
 </p><p>
-The method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[move]]></span><it style="font-style: bold; color:green;">&#187;</it>
-first use the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> setter method to update the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location]]></span><it style="font-style: bold; color:green;">&#187;</it> field,
+The method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[move()]]></span><it style="font-style: bold; color:green;">&#187;</it>
+first uses the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> setter method to update the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location]]></span><it style="font-style: bold; color:green;">&#187;</it> field,
 then uses the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#path()]]></span><it style="font-style: bold; color:green;">&#187;</it>
  <span style="color:#ff1111; font-weight: bold;"> exposer </span> method and 
 the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[removeLeft()]]></span><it style="font-style: bold; color:green;">&#187;</it> method to mutate the list of points.

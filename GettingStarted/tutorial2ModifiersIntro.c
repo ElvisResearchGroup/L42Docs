@@ -2,15 +2,15 @@ WBigTitle(`Keep control:  Modifiers, kinds of references and objects')
 
 WTitle(`(1/5)Kinds of objects')
 In object oriented languages, objects can form complex networks of dependencies by referring to each other using their fields.
-The Reachable Object Graph (ROG) of a given object is the set of all objects reachable from it. This also includes the given object.
+The Reachable Object Graph (ROG) of a given object is the set of all objects reachable from it, including itself.
 WP
-An object is WEmph(mutated) if a field in an object in its ROG is WEmph(updated).
+An object is WEmph(mutated) if a field of an object in its ROG is WEmph(updated).
 A WTerm(mutable object) is an object that can be mutated.
 The 42 type system is able to ensure that some objects can not be mutated. We call those WTerm(immutable objects).
 
-All instance of Wcode(Point) are immutable: 
- none of their fields can be updated
-or mutated.
+All instances of Wcode(Point) are immutable.
+The ROG of a Wcode(Point) object contains the Wcode(Point) itself and the Wcode(Num) coordinates.
+Fields Wcode(x) and Wcode(y) can not be updated and the Wcode(Num) objects are immutable.
 
 Immutable objects are very easy to use but may be inadequate when representing entities whose state can change across time.
 WP
@@ -20,9 +20,9 @@ Animal = Data:{
   var Point location
 
   mut method
-  Void run() 
+  Void run() =
     this.location(\.add(x=20Num))
-  //here \ == this.location()
+    //here \ == this.location()
   }
 CCode
 There are two new keywords used here: 
@@ -47,8 +47,8 @@ WBR
 </li></ul>
 
 WP
-As you see, we are using the Wcode(add) method from before.
-Also notice that we are using a setter here, where we are providing the first parameter without the argument name.
+As you see, we are using the Wcode(add(x)) method from before.
+Also notice that we are calling the setter Wcode(location(that)) without providing the parameter name.
 While this is usual in other languages, in 42 parameters are selected by name.
 Sometimes writing down all the parameter names can get tedious.
 
