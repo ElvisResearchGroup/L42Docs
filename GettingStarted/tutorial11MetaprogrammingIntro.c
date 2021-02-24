@@ -25,13 +25,14 @@ TraitPrint = Trait:{
   class method S msg()
   }
 TraitPrintMsg = TraitPrint:TraitMsg //TraitPrintMsg is another trait
-ClassPrintMsg = Class:TraitPrintMsg
+ClassPrintMsg = Class:TraitPrintMsg //produces usable code
 ClassPrintMsg = Class:TraitPrint:TraitMsg //equivalent
 ClassPrintMsg = {//also equivalent
   class method Void printMsg() = Debug(this.msg())
   class method S msg() = S"Hello world" 
   }
 Main0 = ClassPrintMsg.printMsg() //prints Hello world
+//Main0 = TraitPrintMsg.printMsg() //does not compile
 CCode
 
 In this code we show that Wcode(ClassPrintMsg) contains all the code of both
@@ -127,7 +128,7 @@ any non class method may be abstract, as shown below:
 OBCode
 Foo = {
   class method Void bar()=Debug(S"coherent!") 
-  method I answer()//abstract no problem!
+  method I answer(Time long)//abstract no problem!
   }
 Main = Foo.bar()
 CCode
@@ -145,7 +146,8 @@ C1 = Class:T1
 CCode
 would fail with the following message: Wcode("The class is not coherent. Method bar() is not part of the abstract state").
 We can use Wcode(Class.Relax) and Wcode(Data.Relax) to suppress this check when needed.
-
+Indeed Wcode(myTrait.code()) behaves exactly as Wcode(Class.Relax:myTrait).
+WP
 Earlier in this tutorial we have shown code like
 OBCode
 Person = Data:{S name, var I age, mut S.List friends}
@@ -315,20 +317,78 @@ TestAlice = (
   {}:Test"rockAndWall"(
     actual=MockAlice.load(files=files,fileName=S"rockAndWall.txt")
         expected=S"""
-      |Rock: Point(5,6) -> 35
-      |Wall: Point(1,2) -> 10
+      |Rock: Point(x=5, y=6) -> 35
+      |Wall: Point(x=1, y=2) -> 10
       """)
   ..//more tests here
   )
 CCore
-//TODO: check the toString would make sense
 
 WTitle((4/5)Typing considerations)
 
-Talk about the impact of non declaring used abstract methods
+Object oriented programms often contains entagled and circular type definitions.
+For example, strings Wcode(S) have methods Wcode(I size()) and Wcode(Bool isEmpty()), while
+both Wcode(I) and Wcode(Bool) offer a Wcode(S toS()) method.
+That is, while circular values are a double edge sword (useful but dangerous), circular/recursive types are unavoiable even in moderatly simple programs.
+So, how does recursive types interact with metaprogramming?
+Path names can only be used when the path is fully typed,
+thus the following example code would not work:
+OBCode
+Foo = { class method Bar bar(Bar that)=that }
+Foos = Collection.list(Foo)
+Bar = { class method Foos foos(Foos that)=that }
+CCode
+We can not start computing Wcode(Foos) since Wcode(Foo) depends from Wcode(Bar), that is defined later.
+Swapping lines would not help, since Wcode(Bar), in turn, depends from Wcode(Foos).
+Later we will learn how to overcome this issues and still generate code with the intended structure.
+As shown below, library literals can instead be manipulated even if
+they are not fully typed.
+OBCode
+Person = Data:{S name, I age, Dog dog}
+Dog = Data:{S name, Person owner}
+CCode
+Here Wcode(Person) can be computed even if Wcode(Dog) is still unavailable.
+However, such a manipulation must happen in place: we can not use traits to reuse untyped code; that is, the following would not work:
+OBCode
+TraitPerson = Trait:Data:{S name, I age, Dog dog}
+Person = Class:TraitPerson //fails
+Dog = Data:{S name, Person owner}
+CCode
+Wcode(TraitPerson) can not be used before Wcode(Dog) is defined.
+WP
+This also allows to avoid defining many redundant abstract methods.
+Consider the following working code:
+OBCode
+TraitPrintName = Trait:{
+  class method S name()//abstract
+  class method Void printName() = Debug(this.name())
+  }
+Bob = TraitPrintName:{
+  class method S name() = S"Bob"
+  class method Void printTwice() = (
+    this.printName()
+    this.printName()
+    )
+  }
+Main = Bob.printTwice() //prints "Bob" twice
+CCode
+This code is allowed even if Wcode(Bob) does not contains an abstract definition for Wcode(printName()).
+This feature is often used by 42 programmers without even recognizing it, but it is brittle:
+when method calls are chained (as in Wcode(a.b().c())) or when binary operators or type inference are involved, the system needs to be able to guess the return type of those missing methods.
+
+WTitle((5/5)Metaprogramming summary)
+Here we introduced the way 42 handle metaprogramming and code reuse.
+We focused on Wcode(Class) and Wcode(Trait).
+Composing code with Wcode(:) or Wcode(+) we can partition our codebase in any way we need,
+enabling simple and natural testing and code reuse patterns.
+WBR
+When reusing code, we have to be mindful of missing types and missing methods. Structuring the codebase to avoid those issues will require some experience, and is indeed one of the hardest parts about writing complex 42 programs.
 
 
-WTitle((4/5)Traits and rename)
+WBigTitle(`Traits and rename')
+
+WTitle((1/5)Programmatic refactoring)
+
 
 Operator Wcode(:) merges multiple units of code together; but sometime code needs some kind of adaptation before it can be merged
 
