@@ -570,7 +570,7 @@ We will soon show a way to avoid redeclaring them, but our experience programmin
 
 
 WTitle(Redirect)
-Finally, programmatic refactory allows us to rename a nested class into an externally declared class.
+Finally, programmatic refactory allows us to rename a nested class into an externally declared class. We call this kind of rename Wterm(redirect).
 This also provideds a simple encoding for generics.
 Consider the following code:
 OBCode
@@ -591,15 +591,146 @@ We are using Wcode(Num) as the numeric class defined outside, we are not referri
 class nested inside Wcode(BoxTrait) and called Wcode(Num).
 Generics classes are straightforward to implement with redirect, and indeed
 Wcode(Collection) uses the redirect operator internally.
+WP
+We can redirect multiple nested classes at the same time, and we 
+can put arbitrary constraints on the structural type of the destination types simply by specifying abstract methods and implemented interfaces.
+Consider the following example:
 
+OBcode
+Operation = Trait:{
+  Elem = {Index myIndex}
+  Index = {[HasToS]
+    method Num eval(Elem that)
+    }
+  class method Elem best(Elem e1,Elem e2) = {
+    res=e1.myIndex().eval(e2)>e2.myIndex().eval(e1)
+    if res return e1
+    return e2
+    }
+  }
+Adventurer = Data:{S name, Num attack, Level level}
+Level = Data:{
+  Num exp
+  S profession
+  method Num eval(Adventurer that) = {..}
+  }
+
+DuelOperation = Class:Operation
+  ['Elem.myIndex()=>'Elem.level()]
+  ['Elem=>Adventurer;'Index=>Level]
+
+Main= .. DuelOperation.best(e1=luke e2=gandalf) ..
+CCode
+
+Here we can define a generic Wcode(Operation) working on Wcode(Elem) and Wcode(Index).
+Elements must have an Wcode(Index myIndex()) method and indexes must
+implement Wcode(HasToS) and offer a Wcode(method Num eval(Elem that)).
+In a language like Java with F-Bound polimorphism, we would have been required to rely on a Wcode(HasEval<Elem>) interface, while in 42 we can simply list the required operations.
+
+Note how  before specifing the actual types for Wcode(Elem) and Wcode(Index) we can 
+tweak the Wcode(Operation), so that we can accept the Wcode(level()) method instead of the
+Wcode(myIndex()) one.
+
+Redirect is very powefull; checking also subtype relationships between redirected members, as shown below:
+OBCode
+GeometryOperation = Trait:{
+  Shape = {interface}
+  Triangle = {[Shape]
+    class method This (Point p1,Point p2,Point p3)
+    }
+  Line = {[Shape]
+    Point p1, Point p2
+    class method This (Point p1,Point p2)
+    }
+  class method Triangle reorganize(Line base,line extra) = 
+    Triangle(p1=base.p1(), p2=base.p2(), p3=extra.p1())
+  }
+CCode
+Note how we can also require class methods on the redirect nested classes.
+Overall, the whole philosophy of generic programming is different in 42:
+instead of raising the level of abstraction and designing classes with type parameters,
+we just design normal classes with nested classes, that just so happen to be fully abstract.
+Those classes will represent external dependencies.
+Then we can redirect those nested classes onto others.
 
 WTitle((3/5) Different ways to supply missing dependencies)
+As we have seen, in 42 it is convenient to write self contained code, where the dependencies 
+can be specified as nested classes with abstract methods.
+In 42 there are three different ways to satify those dependencies:
+<ol>
+<li>
+Sum:
+We can compose two traits with the operators Wcode(:) or Wcode(+) to provide some of the missing method implementations.
+OBCode
+Trait({
+  A = { method I a() }
+  B = { method I b(A a)=a.a() }
+  })
++Trait({
+  A = Data:{ I a }
+  })
+CCode
+</li>
+Redirect:
+We can rename a class to an external one 
+OBCode
+Foo = Data:{ I a }
+Trait({
+  A = { method I a() }
+  B = { method I b(A a)=a.a() }
+  })['A=>Foo]
+CCode
+</li>
 
+<li>
+Rename:
+We can rename a member to another member in the same unit of code:
+OBCode
+Trait({
+  A = { method I a() }
+  B = { method I b(A a)=a.a() }
+  C = Data:{ I a }
+  })['C=>'A]
+CCode
+</li>
+</ol>
 
--talk about sum-rename
+This last solution works like the sum, but is happening inside of the a single unit of code.
+If this inner sum is successfull, it behaves as trait composition would.
+There are a fiew corner cases where this inner sum will fail; they involve details of composing classes with interfaces and adding methods to interfaces.
+
 
 WTitle((4/5) Introspection and Info)
--talk about info
+It is also possible to programmatically query the code structure and take decisions about it.
+For example
+OBCode
+Larger = {class method Trait (Trait t1, Trait t2)={
+  if t1.nested().methods().size()>t2.nested().methods().size() return t1
+  return t2
+  }}
+MyClass = Class:Larger(t1=ATrait, t2=AnotherTrait)
+CCode
+
+The method Wcode(Trait.nested()) returns an instance of class
+Wcode(Introspection.Nested), offering methods to query all the visible information about
+the trait code.
+The class Wcode(Introspection) is just a box containing 
+4 different nested classes, each representing a code element:
+Nested, Method, Type and Doc
+An instance of Wcode(Nested) represents a nested class and contains a lot of useful methods.
+Some of those methods queries informations about the class and how it is used in its code unit: for example the method ....
+
+Trait({..}).nested() == Introspection.Nested(library={..})
+Introspection.Nested(classAny=Foo)
+
+Proposal:
+Trait({..}).info() == Introspection.Nested(library={..})
+Trait.info(Foo)
+and then Introspection =>Info
+
+
+
+-quali metodi abbiamo per info? quali da aggiungere?
 
 
 We can use two level of renames to avoid having to redeclare them:

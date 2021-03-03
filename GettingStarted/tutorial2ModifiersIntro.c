@@ -79,9 +79,8 @@ Animal = Data:{
     )
   }
 CCode
-
-
-Here we use Wcode(mut Points path) to denote a mutable list of points. Note the absence of Wcode(var); this is conceptually similar to a Wcode(Points * const path;) in C++  or Wcode(final Points path;) in Java.
+Here we use Wcode(mut Points path) to denote a mutable list of points.
+Note the absence of Wcode(var); this is conceptually similar to a Wcode(Points * const path;) in C++  or Wcode(final Points path;) in Java.
 To contrast, the declaration Wcode(var Point location) is similar to
 Wcode(Point const * location;) in C++  or Wcode(ImmPoint location;) in Java, for an opportune Wcode(ImmPoint) class.
 
@@ -96,19 +95,24 @@ is a non-Wcode(var) field of Wcode(mut) type.
 
 WP
 The method Wcode(move())
-first uses the Wcode(location(that)) setter method to update the Wcode(location) field,
-then uses the Wcode(`#path()')
+first uses the Wcode(location(that)) setter method to update the Wcode(location) field
+with the Wcode(imm Point) leftmost element of the field Wcode(mut Points path).
+By the way, collections in Wcode(AdamTowel) are primarly designed to store and retrive
+immutable objects; later we will show also how to manipulate mutable ones.
+WBR
+The method then uses the Wcode(`#path()')
  WEmph(exposer) method and 
 the Wcode(removeLeft()) method to mutate the list of points.
 Both exposers and getters provide access to the value of a field;
-Exposer are used to access the value of mutable fields.
-Exposers should be used with care: taking access to parts of a mutable 
-state of an object could cause 
-spooky action at a distance effects by aliasing.
-
-In general, a programming convention in 42 is that methods starting with `#' should be used with care.
+exposers are used to access the values of mutable fields.
+Exposers should be used with care: 
+long term handling of references 
+to (parts of) a mutable object could cause 
+spooky action at a distance.
+WBR
+In general, methods starting with `#' should be used with care.
 WP
-This code models an animal following a path. It can be used like this.
+This code models an animal following a path. It can be used like this:
 OBCode
 zero= Point(x=0\, y=0\)
 ps1= Points[ \(x=12\, y=20\);\(x=1\, y=2\)]
@@ -136,11 +140,11 @@ The first dog moves and consumes the path for the second one as well.
 That is, the first goes to 12: 20 and the second goes to 1: 2.
 
 This is because Wcode(Animal) is WEmph(deeply mutable): a mutable object with mutable fields. 
-An amazing amount of bugs are caused by the usage of deep mutability.
+An amazing amount of bugs is caused by deep mutability.
 
-Note how we are using the exposer Wcode(`#path()')
-in a safe pattern: only called over the Wcode(this) receiver, and the reference does not leak out of the method.
-The problem here arise since the object was shared to begin with. 
+Note that we are using the exposer method Wcode(`#path()')
+in a safe pattern: it is only called over Wcode(this), and the returned reference does not leak out of the method.
+The problem here arises since the object was shared to begin with. 
 
 WTitle(`(3/5)Capsules:  Keep aliasing graphs untangled')
 
@@ -159,15 +163,19 @@ Animal = Data:{
     path.removeLeft()
   }
 CCode
-Now we use the modifier Wcode(capsule), this requires the field to be encapsulated with respect to aliasing.
+Now we use the modifier Wcode(capsule); this requires the field to be encapsulated.
 Immutable objects do not influence aliasing, so they are free from aliasing limitations.
 The Wcode(capsule)
  modifier WEmph(forces) the users to provide well encapsulated values,
  and WEmph(ensure) 
  the Wcode(Animal) data is well encapsulated.
+WBR
+TODO: HERE, possibly remove the next two lines?
+The mutable ROG of a capsule field is only accessible in a controlled way:
+through read references or under the control of a WEmph(capsule mutator) as discussed below.
 WP
-To ensure that the mutable path is not exposed, we must use
-the Wcode(@Cache.Clear) annotation to define a Wemph(capsule mutator): a class method taking in input the value of the capsule field as Wcode(mut).
+To ensure that the mutable Wcode(path) is not exposed, we must use
+the Wcode(@Cache.Clear) annotation to define a WEmph(capsule mutator): a class method taking in input the value of the capsule field as Wcode(mut).
 This method can then be safely accessed as an instance method with the same name.
 The annotation is called Wcode(@Cache.Clear) because
 capsule mutators also clear all the object based caches. Automatic caching is one of the coolest features of 42 and we will explore it in the next chapter.

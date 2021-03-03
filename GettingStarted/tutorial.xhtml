@@ -392,9 +392,8 @@ Animal = Data:{
     )
   }
 ]]></pre>
-
-
-Here we use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Points path]]></span><it style="font-style: bold; color:green;">&#187;</it> to denote a mutable list of points. Note the absence of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it>; this is conceptually similar to a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Points * const path;]]></span><it style="font-style: bold; color:green;">&#187;</it> in C++  or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[final Points path;]]></span><it style="font-style: bold; color:green;">&#187;</it> in Java.
+Here we use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Points path]]></span><it style="font-style: bold; color:green;">&#187;</it> to denote a mutable list of points.
+Note the absence of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it>; this is conceptually similar to a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Points * const path;]]></span><it style="font-style: bold; color:green;">&#187;</it> in C++  or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[final Points path;]]></span><it style="font-style: bold; color:green;">&#187;</it> in Java.
 To contrast, the declaration <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var Point location]]></span><it style="font-style: bold; color:green;">&#187;</it> is similar to
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point const * location;]]></span><it style="font-style: bold; color:green;">&#187;</it> in C++  or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ImmPoint location;]]></span><it style="font-style: bold; color:green;">&#187;</it> in Java, for an opportune <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ImmPoint]]></span><it style="font-style: bold; color:green;">&#187;</it> class.
 
@@ -409,19 +408,24 @@ is a non-<it style="font-style: bold; color:green;">&#171;</it><span class="code
 
 </p><p>
 The method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[move()]]></span><it style="font-style: bold; color:green;">&#187;</it>
-first uses the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> setter method to update the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location]]></span><it style="font-style: bold; color:green;">&#187;</it> field,
-then uses the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#path()]]></span><it style="font-style: bold; color:green;">&#187;</it>
+first uses the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> setter method to update the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location]]></span><it style="font-style: bold; color:green;">&#187;</it> field
+with the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm Point]]></span><it style="font-style: bold; color:green;">&#187;</it> leftmost element of the field <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Points path]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+By the way, collections in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> are primarly designed to store and retrive
+immutable objects; later we will show also how to manipulate mutable ones.
+<br/>
+The method then uses the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#path()]]></span><it style="font-style: bold; color:green;">&#187;</it>
  <span style="color:#ff1111; font-weight: bold;"> exposer </span> method and 
 the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[removeLeft()]]></span><it style="font-style: bold; color:green;">&#187;</it> method to mutate the list of points.
 Both exposers and getters provide access to the value of a field;
-Exposer are used to access the value of mutable fields.
-Exposers should be used with care: taking access to parts of a mutable 
-state of an object could cause 
-spooky action at a distance effects by aliasing.
-
-In general, a programming convention in 42 is that methods starting with # should be used with care.
+exposers are used to access the values of mutable fields.
+Exposers should be used with care: 
+long term handling of references 
+to (parts of) a mutable object could cause 
+spooky action at a distance.
+<br/>
+In general, methods starting with # should be used with care.
 </p><p>
-This code models an animal following a path. It can be used like this.
+This code models an animal following a path. It can be used like this:
 <pre class="l42Big"><![CDATA[
 zero= Point(x=0\, y=0\)
 ps1= Points[ \(x=12\, y=20\);\(x=1\, y=2\)]
@@ -449,11 +453,11 @@ The first dog moves and consumes the path for the second one as well.
 That is, the first goes to 12: 20 and the second goes to 1: 2.
 
 This is because <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it> is <span style="color:#ff1111; font-weight: bold;"> deeply mutable </span>: a mutable object with mutable fields. 
-An amazing amount of bugs are caused by the usage of deep mutability.
+An amazing amount of bugs is caused by deep mutability.
 
-Note how we are using the exposer <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#path()]]></span><it style="font-style: bold; color:green;">&#187;</it>
-in a safe pattern: only called over the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this]]></span><it style="font-style: bold; color:green;">&#187;</it> receiver, and the reference does not leak out of the method.
-The problem here arise since the object was shared to begin with. 
+Note that we are using the exposer method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#path()]]></span><it style="font-style: bold; color:green;">&#187;</it>
+in a safe pattern: it is only called over <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this]]></span><it style="font-style: bold; color:green;">&#187;</it>, and the returned reference does not leak out of the method.
+The problem here arises since the object was shared to begin with. 
 
 </p><h2> (3/5)Capsules:  Keep aliasing graphs untangled </h2> <p>
 
@@ -472,15 +476,18 @@ Animal = Data:{
     path.removeLeft()
   }
 ]]></pre>
-Now we use the modifier <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it>, this requires the field to be encapsulated with respect to aliasing.
+Now we use the modifier <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it>; this requires the field to be encapsulated.
 Immutable objects do not influence aliasing, so they are free from aliasing limitations.
 The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it>
  modifier <span style="color:#ff1111; font-weight: bold;"> forces </span> the users to provide well encapsulated values,
  and <span style="color:#ff1111; font-weight: bold;"> ensure </span> 
  the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it> data is well encapsulated.
+<br/>
+The mutable ROG of a capsule field is only accessible in a controlled way:
+through read references or under the control of a <span style="color:#ff1111; font-weight: bold;"> capsule mutator </span> as discussed below .
 </p><p>
-To ensure that the mutable path is not exposed, we must use
-the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> annotation to define a Wemph(capsule mutator): a class method taking in input the value of the capsule field as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+To ensure that the mutable <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[path]]></span><it style="font-style: bold; color:green;">&#187;</it> is not exposed, we must use
+the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> annotation to define a <span style="color:#ff1111; font-weight: bold;"> capsule mutator </span>: a class method taking in input the value of the capsule field as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 This method can then be safely accessed as an instance method with the same name.
 The annotation is called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> because
 capsule mutators also clear all the object based caches. Automatic caching is one of the coolest features of 42 and we will explore it in the next chapter.
