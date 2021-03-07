@@ -163,23 +163,29 @@ Animal = Data:{
     path.removeLeft()
   }
 CCode
-Now we use the modifier Wcode(capsule); this requires the field to be encapsulated.
-Immutable objects do not influence aliasing, so they are free from aliasing limitations.
+Now we use the modifier Wcode(capsule); this requires the value of the field to be encapsulated.
+Immutable objects are also encapsulated since
+they do not influence aliasing, so they are free from aliasing limitations.
 The Wcode(capsule)
- modifier WEmph(forces) the users to provide well encapsulated values,
- and WEmph(ensure) 
- the Wcode(Animal) data is well encapsulated.
+ modifier WEmph(forces) the users to provide Wcode(capsule) values.
+ and WEmph(ensures)
+ that instances of Wcode(Animal) have encapsulated state; that is, the value of all fields in an Wcode(Animal) is encapsulated.
 WBR
-TODO: HERE, possibly remove the next two lines?
-The mutable ROG of a capsule field is only accessible in a controlled way:
-through read references or under the control of a WEmph(capsule mutator) as discussed below.
+A mutable object with encapsulated state can only be mutated by calling one of its methods.
+This allows for the same kind of local reasoning as if all of the fields were immutable.
 WP
-To ensure that the mutable Wcode(path) is not exposed, we must use
-the Wcode(@Cache.Clear) annotation to define a WEmph(capsule mutator): a class method taking in input the value of the capsule field as Wcode(mut).
-This method can then be safely accessed as an instance method with the same name.
+A WEmph(capsule mutator) is a class method taking in input the value of a capsule field as Wcode(mut). It is a way to mutate the value of a capsule field without exposing it.
+Wcode(Data) recognizes only the methods annotated with Wcode(@Cache.Clear) as capsule mutators.
+Those methods can then be safely accessed as instance methods with the same name.
+WBR
 The annotation is called Wcode(@Cache.Clear) because
-capsule mutators also clear all the object based caches. Automatic caching is one of the coolest features of 42 and we will explore it in the next chapter.
+capsule mutators also clear all the object based caches. Automatic caching is one of the coolest features of 42 and we will explore it later in this tutorial.
 WP
+Note that we cannot have Wcode(mut) exposers (Wcode(#path())) for capsule fields:
+other code could keep those references and then 
+mutate the ROG of the field,
+breaking local reasoning about Animals.
+
 With Wcode(capsule Points path), we are forced to initialize two animals using different paths:
 OBCode
 zero= Point(x: 0Num, y: 0Num)
@@ -190,7 +196,7 @@ dog2= Animal(location=zero, path=\[ \(x=12\, y=20\);\(x= 1\, y=2\)])
 dog1.move()
 dog2.move()
 CCode
-Where the Wcode(ps) local binding is Wcode(capsule); 
+where the Wcode(ps) local binding is Wcode(capsule); 
 it can satisfy the Animal.path requirement, but it can be used only once.
 Wcode(dog2)
 has to use another capsule. It is okay to just write the object creation in place as is done.

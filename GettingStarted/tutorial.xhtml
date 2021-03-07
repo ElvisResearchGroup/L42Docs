@@ -476,22 +476,29 @@ Animal = Data:{
     path.removeLeft()
   }
 ]]></pre>
-Now we use the modifier <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it>; this requires the field to be encapsulated.
-Immutable objects do not influence aliasing, so they are free from aliasing limitations.
+Now we use the modifier <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it>; this requires the value of the field to be encapsulated.
+Immutable objects are also encapsulated since
+they do not influence aliasing, so they are free from aliasing limitations.
 The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it>
- modifier <span style="color:#ff1111; font-weight: bold;"> forces </span> the users to provide well encapsulated values,
- and <span style="color:#ff1111; font-weight: bold;"> ensure </span> 
- the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it> data is well encapsulated.
+ modifier <span style="color:#ff1111; font-weight: bold;"> forces </span> the users to provide <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> values.
+ and <span style="color:#ff1111; font-weight: bold;"> ensures </span>
+ that instances of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it> have encapsulated state; that is, the value of all fields in an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it> is encapsulated.
 <br/>
-The mutable ROG of a capsule field is only accessible in a controlled way:
-through read references or under the control of a <span style="color:#ff1111; font-weight: bold;"> capsule mutator </span> as discussed below .
+A mutable object with encapsulated state can only be mutated by calling one of its methods.
+This allows for the same kind of local reasoning as if all of the fields were immutable.
 </p><p>
-To ensure that the mutable <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[path]]></span><it style="font-style: bold; color:green;">&#187;</it> is not exposed, we must use
-the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> annotation to define a <span style="color:#ff1111; font-weight: bold;"> capsule mutator </span>: a class method taking in input the value of the capsule field as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-This method can then be safely accessed as an instance method with the same name.
+A <span style="color:#ff1111; font-weight: bold;"> capsule mutator </span> is a class method taking in input the value of a capsule field as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>. It is a way to mutate the value of a capsule field without exposing it.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> recognizes only the methods annotated with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> as capsule mutators.
+Those methods can then be safely accessed as instance methods with the same name.
+<br/>
 The annotation is called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> because
 capsule mutators also clear all the object based caches. Automatic caching is one of the coolest features of 42 and we will explore it in the next chapter.
 </p><p>
+Note that we cannot have <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> exposers (<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#path()]]></span><it style="font-style: bold; color:green;">&#187;</it>) for capsule fields:
+other code could keep those references and then 
+mutate the ROG of the field,
+breaking local reasoning about Animals.
+
 With <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule Points path]]></span><it style="font-style: bold; color:green;">&#187;</it>, we are forced to initialize two animals using different paths:
 <pre class="l42Big"><![CDATA[
 zero= Point(x: 0Num, y: 0Num)
