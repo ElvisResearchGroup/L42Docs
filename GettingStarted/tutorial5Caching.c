@@ -1,7 +1,7 @@
 WBigTitle(Caching)
 WTitle((1/5) Normalization)
-One of the big advantages of deeply immutable objects is that two structurally identical objects are referentially transparent, that is, you can not distinguish if they are represented in memory by a single object or two.
-This means that it is possible to reuse the same objects to save memory. While in other languages the programmer would have to implement some ad. hoc. support to reuse objects, in L42 this is supported directly by the language, in a process called WEmph(normalization).
+One of the big advantages of deeply immutable objects is that two structurally identical objects are referentially transparent, that is, you can not distinguish whether they are represented in memory by one object or two.
+This means that it is possible to reuse the same objects to save memory. While in other languages the programmer would have to implement some specific support to reuse objects, in L42 this is supported directly in the language, by a process called WEmph(normalization).
 An immutable object can be turned into its normalized version using Wcode(.norm()).
 OBCode
 Person = Data:{S name}
@@ -11,9 +11,9 @@ var bob2 = Person(S"Bob")//two bobs in memory
 bob1:=bob1.norm()
 bob2:=bob2.norm()//most likely now bob2 referes to
 //the same object of bob1.
-//The object originally pointed by bob2 can now be
-//garbage collected.
-bob2:=bob2.norm()//repeating normalization has no effect.
+//The object originally pointed to by bob2 is now inaccessible and
+//can be garbage collected.
+bob2:=bob2.norm()//repeating normalization has no effect; normalization is idempotent.
 //The second calls to norm is as fast as a field access.
 CCode
 As you can see, objects are born not normalized and can be normalized manually by the programmer.
@@ -23,32 +23,45 @@ OBCode
 Person = Data('This,autoNorm=\.true()):{S name}
 ..
 var bob1 = Person(S"Bob")//one bob in memory
-var bob2 = Person(S"Bob")//two bobs in memory
+var bob2 = Person(S"Bob")//still only one bob in memory
 bob2:=bob2.norm()//no-op, bob2 was already normalized
 CCode
-Normalizing requires to check if another structurally equivalent object has ever been normalized. This also support circular objects and normalizes all the sub objects.
+Normalization starts by checking if another structurally equivalent object has ever been normalized.
+Normalization normalizes all the sub objects
+and also supports circular objects.
+WBR
 Consider the following richer example:
 OBCode
-Person = Data:{S name}
+Person = Data:{S name}//no more autoNorm!
 Dog = Data:{S name, Person owner}
 ..
 bob1 = Person(S"Bob")//one bob in memory
 bob2 = Person(S"Bob")//two bobs in memory
 dog1 = Dog(S"Grunthos", bob1)
-dog2 = Dog(S"Agrajag", bob2)
-//dog1.owner() is a different object of dog2.owner()
-//abait there are structurally identical and we can
-//not tell them apart using L42.
-dog1.norm()//note: we do not reassign dog1
+dog2 = Dog(S"Agrajag", bob2)//two Dogs in memory
+//dog1.owner() is a different object from dog2.owner()
+//albeit they are structurally identical and we
+//can not tell them apart using 42.
+dog1.norm()//note: we do not reassign dog1 or dog2
 dog2.norm()
-//dog1 and dog 2 are different objects, but
-//dog1.owner() is now the same object of dog2.owner()
-//bob1 and bob2 are still two different objects.
+//dog1 and dog2 are different objects, but
+//dog1.owner() is now the same object as dog2.owner()
 CCode
+Normalizing an object normalizes the whole ROG.
+In the example, normalizing the two dogs also normalizes their owners, to the same normalized object.
+All of the dogs' fields are then replaced with the normalized versions, so the two dogs now share an owner object.
+Note that bob1 and bob2 are still two different objects.
+WP
+
 The logic needed for normalization is the same needed to check if two arbitrary objects are structurally equal, to print an object to a readable string and to clone objects.
 Thus data allows for all of those operations indirectly relying on normalization.
 Those are all operations requiring to scan the whole ROG of the object, so the cost of normalization is acceptable in context.
+------
+breaking a list
+Point = Data.AddList:Data:{Num x, Num y, var Point.List extras}
 
+
+----
 WTitle((2/5) Lazy Caching)
 
 Some methods may take a long time to compute, but the are deterministic, and thus we could cache the result and reuse it many times.
