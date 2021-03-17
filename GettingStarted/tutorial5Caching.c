@@ -56,15 +56,18 @@ WP
 The logic needed for normalization is the same needed to check if two arbitrary objects are structurally equal, to print an object to a readable string and to clone objects.
 Thus data allows for all of those operations indirectly relying on normalization.
 Those are all operations requiring to scan the whole ROG of the object, so the cost of normalization is acceptable in context.
-------
-breaking a list
-Point = Data.AddList:Data:{Num x, Num y, var Point.List extras}
+//now data generates
+//clone() read->imm
+//mutClone() mut->capsule
+//TODO: data will generates, in guide fix first mention of clone for list
+//immClone() read->imm
+//capsuleClone() mut->capsule
+//and if a user wants to define 'clone()' they still can
+//the big issue is that an imm object may be coherent even with abstract mut methods 
 
-
-----
 WTitle((2/5) Lazy Caching)
 
-Some methods may take a long time to compute, but the are deterministic, and thus we could cache the result and reuse it many times.
+Some methods may take a long time to compute, but they are deterministic, and thus we could cache the result and reuse it many times.
 A typical example is fibonacci:
 OBCode
 class method Num slowFibo(Num n) = {
@@ -90,7 +93,7 @@ ComputeFibo=Data:{
 //usage example
 ComputeFibo(42\)() == 267914296Num
 CCode
-As you can see, instead of a method with parameters we can declare a class with fields and an unnamed method doing the actual computation.
+As you can see, instead of a method with parameters we can declare a class with fields and an empty named method doing the actual computation.
 Wcode(Cache.Lazy) is an annotation recognized by Wcode(Data) that works only on Wcode(imm) or Wcode(class) methods with no arguments and with an Wcode(imm) result.
 Wcode(ComputeFibo fibo1) is a WEmph(computation object): an imm object whose only goal is to support one (or more) computationally intense methods.
 Thanks to normalization, the cache of computation objects is centrally stored, and thus recursive calls computing fibonacci will be able to reuse the cache from other objects.
@@ -101,9 +104,9 @@ WP
 As you can see, the caching is is completely handled by the language and is not connected with the specific algorithm. This pattern is general enough to support any method from immutable data to an immutable result.
 
 WTitle((3/5) Automatic parallelism)
-Wcode(Cache.Lazy) allows to cache the result of methods after they have been called the first time.
-However, why wait for the method to be called?
-once the receiver object is created, the method could be computed WEmph(eagerly) in a separed worker, so that when we call the method, we get the result without any wait at all.
+When decorated by Wcode(Data), Wcode(Cache.Lazy) caches the results of methods after they have been called the first time.
+However, why wait for the methods to be called?
+Once the receiver object is created, the method could be computed WEmph(eagerly) in a separed worker, so that when we call the method, we may get the result without waiting at all.
 That is, if we use Wcode(Cache.Eager) we can get automatic parallelism: the language will handle a set of parallel workers to execute such method bodies.
 
 WP
@@ -136,7 +139,7 @@ When we need the results, we can just iterate on those task objects and call the
 Objects with eager methods are automatically normed during creation, as if we used 
 Wcode(Data('This,autoNorm=\.true())) instead of Wcode(Data).
 
-As you can see, parallelism and caching are just two sides of the same coin.
+As you can see, in 42, parallelism and caching are just two sides of the same coin.
 
 WTitle((4/5) Invariants and derived fields)
 We have seen that cached behaviour can be computed lazily or eagerly on immutable objects.

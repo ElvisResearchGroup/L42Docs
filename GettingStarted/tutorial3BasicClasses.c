@@ -34,7 +34,7 @@ WTitle(Conversions)
 Conversions between various numeric classes must be performed explicitly.
 
 AdamsTowel offers a simple way to convert between numeric classes; all numeric  classes implements Wcode(Math.Numeric)
-so that they can be converted in to each other using the the unnamed method. For example we can convert indexes into doubles by writing Wcode(Double(12I)).
+so that they can be converted in to each other using the empty named method. For example we can convert indexes into doubles by writing Wcode(Double(12I)).
 This will avoid precision loss as much as possible.
 
 WTitle((2/5) Units: An example library)

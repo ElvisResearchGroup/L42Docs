@@ -680,7 +680,7 @@ AdamTowel offers two other numeric types:
 Conversions between various numeric classes must be performed explicitly.
 
 AdamsTowel offers a simple way to convert between numeric classes; all numeric  classes implements <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Math.Numeric]]></span><it style="font-style: bold; color:green;">&#187;</it>
-so that they can be converted in to each other using the the unnamed method. For example we can convert indexes into doubles by writing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Double(12I)]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+so that they can be converted in to each other using the empty named method. For example we can convert indexes into doubles by writing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Double(12I)]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 This will avoid precision loss as much as possible.
 
 </p><h2> (2/5) Units: An example library </h2> <p>
@@ -1242,10 +1242,18 @@ Note that bob1 and bob2 are still two different objects.
 The logic needed for normalization is the same needed to check if two arbitrary objects are structurally equal, to print an object to a readable string and to clone objects.
 Thus data allows for all of those operations indirectly relying on normalization.
 Those are all operations requiring to scan the whole ROG of the object, so the cost of normalization is acceptable in context.
+//now data generates
+//clone() read->imm
+//mutClone() mut->capsule
+//TODO: data will generates, in guide fix first mention of clone for list
+//immClone() read->imm
+//capsuleClone() mut->capsule
+//and if a user wants to define 'clone()' they still can
+//the big issue is that an imm object may be coherent even with abstract mut methods 
 
 </p><h2> (2/5) Lazy Caching </h2> <p>
 
-Some methods may take a long time to compute, but the are deterministic, and thus we could cache the result and reuse it many times.
+Some methods may take a long time to compute, but they are deterministic, and thus we could cache the result and reuse it many times.
 A typical example is fibonacci:
 <pre class="l42Big"><![CDATA[
 class method Num slowFibo(Num n) = {
@@ -1271,7 +1279,7 @@ ComputeFibo=Data:{
 //usage example
 ComputeFibo(42\)() == 267914296Num
 ]]></pre>
-As you can see, instead of a method with parameters we can declare a class with fields and an unnamed method doing the actual computation.
+As you can see, instead of a method with parameters we can declare a class with fields and an empty named method doing the actual computation.
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> is an annotation recognized by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> that works only on <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it> methods with no arguments and with an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> result.
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ComputeFibo fibo1]]></span><it style="font-style: bold; color:green;">&#187;</it> is a <span style="color:#ff1111; font-weight: bold;"> computation object </span>: an imm object whose only goal is to support one (or more) computationally intense methods.
 Thanks to normalization, the cache of computation objects is centrally stored, and thus recursive calls computing fibonacci will be able to reuse the cache from other objects.
@@ -1282,9 +1290,9 @@ all the redundant fibonacci calls are avoided.
 As you can see, the caching is is completely handled by the language and is not connected with the specific algorithm. This pattern is general enough to support any method from immutable data to an immutable result.
 
 </p><h2> (3/5) Automatic parallelism </h2> <p>
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> allows to cache the result of methods after they have been called the first time.
-However, why wait for the method to be called?
-once the receiver object is created, the method could be computed <span style="color:#ff1111; font-weight: bold;"> eagerly </span> in a separed worker, so that when we call the method, we get the result without any wait at all.
+When decorated by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> caches the results of methods after they have been called the first time.
+However, why wait for the methods to be called?
+Once the receiver object is created, the method could be computed <span style="color:#ff1111; font-weight: bold;"> eagerly </span> in a separed worker, so that when we call the method, we get the result without any wait at all.
 That is, if we use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Eager]]></span><it style="font-style: bold; color:green;">&#187;</it> we can get automatic parallelism: the language will handle a set of parallel workers to execute such method bodies.
 
 </p><p>
