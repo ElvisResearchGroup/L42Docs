@@ -135,7 +135,7 @@ However, this kind of solution does not scales in the general case; next we will
 
 Every method annotated as Wcode(Cache.Now) can instead be annotated as 
 Wcode(Cache.LazyRead).
-Wcode(Cache.LazyRead) allows to encode conventional caching on mutable datastructures and automatic cache invalidation:
+Wcode(Cache.LazyRead) allows to encode conventional caching on mutable data-structures and automatic cache invalidation:
 The operations are computed when they are first asked, and the cache is automatically invalidated when a Wcode(Cache.Clear) method terminates.
 Again, we think that at all times Wcode(Cache.LazyRead) has the same semantic as recomputing the value, but with a different performance.
 This annotation is called Wcode(Cache.LazyRead) because it produces a 
@@ -148,8 +148,8 @@ However, there is a cost: you have to encode the algorithm so that the type syst
 WTitle((3/5) Box patten)
 
 As we have seen, in order to write well encapsulated mutable objects we need to designed them well, using Wcode(capsule) to initialize the mutable data, using Wcode(Cache.Clear) to mutate such state and Wcode(Cache.Now) for the invariant.
-However, we can also program a naive deeply mutable object and boxit up as a second step.
-This can require a little more code, but it is more intuitive, and works very well for arbitrarly complex cases.
+However, we can also program a naive deeply mutable object and box it up as a second step.
+This can require a little more code, but it is more intuitive, and works very well for arbitrary complex cases.
 Consider the following code:
 
 OBCode
@@ -173,7 +173,7 @@ correctness: if the programmer is not carefully, the same Wcode(Weel)
 may end up used for multiple bikes at the same time.
 Also, the method called Wcode(invariant) only represents a programmer intention, but it is not enforced in any way and thus it could be silently broken.
 
-We can easly create a Wcode(BikeBox) class containing and encapsulating, such a Wcode(Bike):
+We can easy create a Wcode(BikeBox) class containing and encapsulating, such a Wcode(Bike):
 OBCode
 BikeBox = Data:{
   capsule Bike box
@@ -247,12 +247,12 @@ on classes created using Wcode(Data) is likely to check for structural equality 
 AdamTowel offers Wcode(`System.mutReferenceEquality(a and=b)') to check for reference equality, but 
 this method only works for Wcode(mut) objects.
 The wheels are mut objects indeed, but the invariant method takes a Wcode(read) receiver, thus we can only see the wheels as Wcode(read).
-In this case, the inability of using pointer equality is actully a good thing, since it does not correspond to what we really wanted to express: What if the two weels are different objects but they share the same Wcode(mut Tire) object?
-What we want is to check that the mutable objects are not aliased in phisically unreasonable ways.
+In this case, the inability of using pointer equality is actually a good thing, since it does not correspond to what we really wanted to express: What if the two wheels are different objects but they share the same Wcode(mut Tire) object?
+What we want is to check that the mutable objects are not aliased in physically unreasonable ways.
 More in general, we want to ensure a tree shape of the mutable part of the object graph.
 
 In 42 we can create classes where all the instances are guaranteed to follow this property, by making all fields either Wcode(imm) or
-Wcode(capsule) of a class recursvelly respecting this property.
+Wcode(capsule) of a class recursively respecting this property.
 However, according to what we have seen up to now, Wcode(capsule) fields can only be mutated by defining Wcode(Cache.Clear) methods, and those methods will be unable to mutate any other 
 Wcode(capsule) field.
 Consider the following code:
@@ -291,7 +291,7 @@ Bike = Data:{
   }
 BikeBox = Data:{..}//as before
 CCode
-That is, by declaring lent exposers manually we gain the possibility of writing methos mutating the capsule fields without using the Wcode(Cache.Clear) pattern.
+That is, by declaring lent exposers manually we gain the possibility of writing methods mutating the capsule fields without using the Wcode(Cache.Clear) pattern.
 In exchange for this extra flexibility, the class can not use 
 Wcode(Cache.Clear), Wcode(Cache.Now) or Wcode(Cache.LazyRead) directly.
 However, we can still use through the box pattern, as show before.
@@ -299,13 +299,13 @@ However, we can still use through the box pattern, as show before.
 WTitle((5/5) Summary)
 
 Caching and representation invariants can be applied also to mutable objects.
-Proving properties on mutable objects requieres to know and apply varius patterns.
-Historically, in softwere verification, representation invariants where small 
-units of code, mostly focusing on the direct content of the fields and mostly relying on either pointer equality or the binary value of primitive datatypes, where the invariants could be purposly broken while still being able to observe the broken object.
+Proving properties on mutable objects requires to know and apply various patterns.
+Historically, in software verification, representation invariants where small 
+units of code, mostly focusing on the direct content of the fields and mostly relying on either pointer equality or the binary value of primitive datatypes, where the invariants could be purposely broken while still being able to observe the broken object.
 Nothing of this is possible in 42; in particular, 42 guarantees that broken object can not be observed.
-The box patterns allows to divide the value in two types: the one with an enforced invariant and the raw object state, recovering the flexibility of temporarelly open invariants wihtout any of the drawbacks.
+The box patterns allows to divide the value in two types: the one with an enforced invariant and the raw object state, recovering the flexibility of temporarily open invariants without any of the drawbacks.
 
 Note how avoiding pointer equality tests is required when normalization is took into account.
 Consider the example of a list whose invariant requires all object to  pointer unique.
 A valid list of such type may contain two structurally equal but not pointer equal objects.
-If such a list becomed immutable and was normalized, those two objects would become point equals, and the invariant would be broken by normalization.
+If such a list becomes immutable and was normalized, those two objects would become point equals, and the invariant would be broken by normalization.

@@ -5,7 +5,7 @@ WTitle((1/5)An introduction to Programmatic Refactoring)
 Traits allows to programmatically rename methods and nested classes to other names.
 Consider the following example code, defining trait Wcode(Code1), containing many nested classes:
 the interface Wcode(A), the class Wcode(B) implementing Wcode(A),
-the class Wcode(C), that is similar to Wcode(B) but does not impliements Wcode(A)
+the class Wcode(C), that is similar to Wcode(B) but does not implements Wcode(A)
 and finally the class Wcode(D) that uses both Wcode(B) and Wcode(C):
 
 OBCode
@@ -23,7 +23,7 @@ Wcode("Hi World").
 We show below how we can use the operator Wcode([_]) to programmatically rename elements of Wcode(Code1) while preserving the semantic:
 OBCode
 Concrete2 = Class:Code1['A.m()=>'A.k()]
-Concrete2 = {//eqivalent to just writing the following directly:
+Concrete2 = {//equivalent to just writing the following directly:
   A = {interface,  method S k()}
   B = {[A],        method S k()=S"Hi"                    class method This()}
   C = {            method   m()=S" world"                class method This()}
@@ -32,7 +32,7 @@ Concrete2 = {//eqivalent to just writing the following directly:
 Main2 = Debug(Concrete2.D().callBoth()) //still prints "Hi World"
 CCode
 As you can see above, the mapping Wcode('A.m()=>'A.k()) renamed all
-the occurences of Wcode(A.m()) into Wcode(A.k()). This includs all the
+the occurrences of Wcode(A.m()) into Wcode(A.k()). This includes all the
 declarations refining such method and all the usages of such method, either from the
 static type Wcode(A) or from any nested class implementing Wcode(A).
 On the other side, you can see how Wcode(C().m()) was not renamed; the rename is type driven.
@@ -45,7 +45,7 @@ Concrete2 = Class:Code1[
   'C=>'D;
   'D=>'C;
   ]
-Concrete3 = {//eqivalent to just writing the following directly:
+Concrete3 = {//equivalent to just writing the following directly:
   A = {interface,  method S k()}
   B = {[A],        method S k()=S"Hi"                    class method This of()}
   C = {            method S callBoth()=B.of().k()++D().m()  class method This()}
@@ -56,7 +56,7 @@ CCode
 Note how the call Wcode(B()) is now replaced with Wcode(B.of()).
 Wcode(#apply()) is the extended name for the method with the empty name.
 Also binary operators methods can be renamed by using their extended name;
-The complete list of extended names for binary operators is discusssed later, but you can also just use the overview feature to see them in any compiled class.
+The complete list of extended names for binary operators is discussed later, but you can also just use the overview feature to see them in any compiled class.
 The Wcode(') sign is a syntactic sugar similar to the Wcode(\);
 indeed Wcode('Foo.bar(x)) is equivalent to
 Wcode(\"Foo.bar(x)"); where the text after the Wcode(') have strict syntactic restrictions, requiring it to be either a valid path (as Wcode(Beer.Foo) or Wcode(This), for example), a valid method selector, or 
@@ -81,7 +81,7 @@ MultiLevel = Trait:{
     }
   }
 MultiConcrete = Class:MultiLevel[ single='C=>'K; 'A=>'D.H ]
-MultiConcrete = {//eqivalent to just writing the following directly:
+MultiConcrete = {//equivalent to just writing the following directly:
   D = {
     H = {
       class method S hi() = S"hi"
@@ -118,7 +118,7 @@ WTitle(Hide)
 The code below shows how to  hide a method or a class:
 OBCode
 MultiConcrete2 = Class:MultiLevel[ hide='A; hide='D.space() ]
-MultiConcrete2 = {//eqivalent to just writing the following directly:
+MultiConcrete2 = {//equivalent to just writing the following directly:
   A::3 = {
     class method S hi::4() = S"hi"
     B::5 = {class method S world::6() = S"world"}
@@ -132,12 +132,12 @@ Main5 = MultiConcrete2.C.print() //still prints "hi world"
 CCode
 
 Private members in 42 are obtained by relying on unique unguessable numbers:
-Those names does not show up in the outline and can not be invoked by user code; moreover those numbers are automatically renamed to avoid clashing during code composition; overall, those numbers are completelly invisible for the user of the code.
+Those names does not show up in the outline and can not be invoked by user code; moreover those numbers are automatically renamed to avoid clashing during code composition; overall, those numbers are completely invisible for the user of the code.
 While it is possible to manually use unique numbers, it is so much more convenient to write open code and then seal it later.
 
 WTitle(Clear)
 Hidden code is still part of the result, but it is no more accessible.
-Simmetrically, cleared code is not part of the result, but its entry point is still accessible, but abstract; clearing code allows to override already defined behaviour, as shown below:
+Symmetrically, cleared code is not part of the result, but its entry point is still accessible, but abstract; clearing code allows to override already defined behaviour, as shown below:
 
 OBCode
 MultiConcrete3 = Class:MultiLevel[ clear='A ]:{
@@ -183,8 +183,8 @@ We will soon show a way to avoid redeclaring them, but our experience programmin
 
 
 WTitle(Redirect)
-Finally, programmatic refactory allows us to rename a nested class into an externally declared class. We call this kind of rename Wterm(redirect).
-This also provideds a simple encoding for generics.
+Finally, programmatic refractory allows us to rename a nested class into an externally declared class. We call this kind of rename Wterm(redirect).
+This also provides a simple encoding for generics.
 Consider the following code:
 OBCode
 BoxTrait = Trait:Data:{
@@ -209,7 +209,7 @@ We can redirect multiple nested classes at the same time, and we
 can put arbitrary constraints on the structural type of the destination types simply by specifying abstract methods and implemented interfaces.
 Consider the following example:
 
-OBcode
+OBCode
 Operation = Trait:{
   Elem = {Index myIndex}
   Index = {[HasToS]
@@ -232,19 +232,19 @@ DuelOperation = Class:Operation
   ['Elem.myIndex()=>'Elem.level()]
   ['Elem=>Adventurer;'Index=>Level]
 
-Main= .. DuelOperation.best(e1=luke e2=gandalf) ..
+Main= /*..*/ DuelOperation.best(e1=luke e2=gandalf) /*..*/
 CCode
 
 Here we can define a generic Wcode(Operation) working on Wcode(Elem) and Wcode(Index).
 Elements must have an Wcode(Index myIndex()) method and indexes must
 implement Wcode(HasToS) and offer a Wcode(method Num eval(Elem that)).
-In a language like Java with F-Bound polimorphism, we would have been required to rely on a Wcode(HasEval<Elem>) interface, while in 42 we can simply list the required operations.
+In a language like Java with F-Bound polymorphism, we would have been required to rely on a Wcode(HasEval<Elem>) interface, while in 42 we can simply list the required operations.
 
 Note how  before specifing the actual types for Wcode(Elem) and Wcode(Index) we can 
 tweak the Wcode(Operation), so that we can accept the Wcode(level()) method instead of the
 Wcode(myIndex()) one.
 
-Redirect is very powefull; checking also subtype relationships between redirected members, as shown below:
+Redirect is very powerful; checking also subtype relationships between redirected members, as shown below:
 OBCode
 GeometryOperation = Trait:{
   Shape = {interface}
@@ -269,11 +269,13 @@ Then we can redirect those nested classes onto others.
 WTitle((3/5) Different ways to supply missing dependencies)
 As we have seen, in 42 it is convenient to write self contained code, where the dependencies 
 can be specified as nested classes with abstract methods.
-In 42 there are three different ways to satify those dependencies:
-<ol>
+In 42 there are three different ways to satisfy those dependencies:
+<ul>
 <li>
 Sum:
 We can compose two traits with the operators Wcode(:) or Wcode(+) to provide some of the missing method implementations.
+</li>
+</ul>
 OBCode
 Trait({
   A = { method I a() }
@@ -283,9 +285,12 @@ Trait({
   A = Data:{ I a }
   })
 CCode
-</li>
+<ul>
+<li>
 Redirect:
 We can rename a class to an external one 
+</li>
+</ul>
 OBCode
 Foo = Data:{ I a }
 Trait({
@@ -293,11 +298,12 @@ Trait({
   B = { method I b(A a)=a.a() }
   })['A=>Foo]
 CCode
-</li>
-
+<ul>
 <li>
 Rename:
 We can rename a member to another member in the same unit of code:
+</li>
+</ul>
 OBCode
 Trait({
   A = { method I a() }
@@ -305,12 +311,10 @@ Trait({
   C = Data:{ I a }
   })['C=>'A]
 CCode
-</li>
-</ol>
 
 This last solution works like the sum, but is happening inside of the a single unit of code.
-If this inner sum is successfull, it behaves as trait composition would.
-There are a fiew corner cases where this inner sum will fail; they involve details of composing classes with interfaces and adding methods to interfaces.
+If this inner sum is successful, it behaves as trait composition would.
+There are a few corner cases where this inner sum will fail; they involve details of composing classes with interfaces and adding methods to interfaces.
 
 
 WTitle((4/5) Introspection and Info)
@@ -336,7 +340,7 @@ Some of those methods queries informations about the class and how it is used in
 WBR
 A class that is watched can not be cleared. Indeed, all the possible errors of programmatic refactoring can be predicted by relying on method of Wcode(Info).
 WBR
-While Wcode(Trait({..}).info()) provides an Wcode(Info) for a library litera and
+While Wcode(Trait({..}).info()) provides an Wcode(Info) for a library literal and
 Wcode(Info(..)) provides an Wcode(Info) for a Wcode(class Any);
 thus, for example, while Wcode(Trait({ method S foo()}).info()) can be used to know about this Wcode(foo()) method, 
 Wcode(Info(S)) can be used to get information about the Wcode(S.size()) method.
@@ -344,10 +348,10 @@ Wcode(Info(S)) can be used to get information about the Wcode(S.size()) method.
 
 WTitle((5/5)Programmatic refactory summary)
 <ul><li>
-Many kinds of operations can be perfomed on code
+Many kinds of operations can be performed on code
 </li><li>
 Rename, as for Wcode('A=>'B) or Wcode('A.foo()=>'A.bar()),
-is used to rename all the occurences of a member into another name.
+is used to rename all the occurrences of a member into another name.
 form, for the sake of the final user.
 </li><li>
 Soft Rename, as for Wcode('A->'B) or Wcode('A.foo()->'A.bar()),
@@ -357,19 +361,12 @@ Clear, as for Wcode(clear='A) or Wcode(clear='A.foo()),
 removes the implementation and all the private details of a member. It leaves in places all the usages and an abstract version of the original signature.
 </li><li>
 Hide, as for Wcode(hide='A) or Wcode(hide='A.foo()),
-renames all the occurences of a member into an uniquely named one.
+renames all the occurrences of a member into an uniquely named one.
 This new name is now completely invisible from outside the code unit.
 </li><li>
 Redirect, as for Wcode('A=>Num),
-redirects all the usages of a nested class into an extrnally declared one.
+redirects all the usages of a nested class into an externally declared one.
 The internal declaration is simply trashed.
 </li></ul>
 Finally, Wcode(Info) allows to explore the shape of code as metadata.
 
-
-TODO:Proposal:
-Trait({..}).info() == Introspection.Nested(library={..})
-Info(Foo)
-and then Introspection =>Info
-Add watched()
--quali metodi abbiamo per info? quali da aggiungere?

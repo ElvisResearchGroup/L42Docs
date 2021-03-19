@@ -1,14 +1,13 @@
 WBigTitle(`Finally, Metaprogramming')
 
-WTitle((1/5)Traits and Metaprogramming)
-
 Metaprogramming is the most important feature of 42.
 All the decorators that you have seen up to now are implemented with metaprogramming, 
 which shows that 42 offers a good balance of freedom and safety.
 WP
+
 The main idea of 42 metaprogramming is that only library literals can
 be manipulated.
-Metaprogramming is evaluated top down nested/inner-most first.
+Metaprogramming is evaluated top down nested-most first.
 Once a library literal has a name, it can not be independently metaprogrammed; but only influenced
 by metaprogramming over the library that contains it.
 
@@ -35,34 +34,39 @@ Main0 = ClassPrintMsg.printMsg() //prints Hello world
 //Main0 = TraitPrintMsg.printMsg() //does not compile
 CCode
 
-In this code we show that Wcode(ClassPrintMsg) contains all the code of both
-Wcode(TraitPrint) and Wcode(TraitMsg).
+In this code we show that Wcode(ClassPrintMsg) contains all the code of both Wcode(TraitPrint) and Wcode(TraitMsg).
 Note how the abstract Wcode(class method S msg()) in Wcode(TraitPrint) is merged with the corresponding implemented method in Wcode(TraitMsg).
 
 Traits allows to merge code from different sources, as it happens with multiple inheritance.
 However, traits are flattened: The code is actually copied in the result.
 
 Traits are boxes containing the code and offering methods to manipulate such code.
-A trait can be created by doing either Wcode(Trait(theCode))
-or Wcode(Trait:theCode).
-The trait object has a method Wcode(.code()) returining the contained code.
-Trait content can be composed using the operator Wcode(:) (as shown above) or Wcode(+).
-For traits there is no diference in behaviour between Wcode(:) and Wcode(+), but the operator precedence and associativity is different.
+A trait can be created by doing either Wcode(Trait(theCode)) or Wcode(Trait:theCode).
+The trait object has a method Wcode(`.code()') returning the contained code.
+Trait content can be composed using the operator Wcode(`:') (as shown above) or Wcode(`+').
+For traits there is no difference in behaviour between Wcode(`:') and Wcode(`+'), but the operator precedence and associativity is different.
+
+WP
 
 Simply composing traits allows to emulate a large chunk of the expressive power of conventional inheritance.
 For example, in Java we may have an abstract class offering some implemented and some abstract methods.
 Then multiple heir classes can extend such abstract class implementing those abstract methods.
 The same scenario can be replicated with traits: a trait can offer some implemented and some abstract methods. Then multiple classes can be obtained composing that trait with some other code implementing those abstract methods.
 
-OBcode
-A = Trait:{/*implemented and abstract methods here*/}
-B = Class:A:{ /*more code here*/}//reuse the code of A
-C = Data:Class:A:{ /*more code here*/}//reuse the code of A, also with Data
+OBCode
+A = Trait:{/*implemented and abstract methods here*/
+  method S exampleMethod1()
+  method S exampleMethod2() = this.exampleMethod1()
+  }
+B = Data:Class:A:{/*more code here, reusing the code of A*/
+  method S exampleMethod1() = S"Hi"
+  method S exampleMethod3() = this.exampleMethod2()
+  }
 CCode
 
 WTitle((2/5)Trait composition: methods, nested classes and state.)
 Trait composition merges members with the same name. As shown above, this allows method composition.
-Also nested classes can be merged in the same way: nested classes with the same name are recursivelly composed, as shown below:
+Also nested classes can be merged in the same way: nested classes with the same name are recursively composed, as shown below:
 OBCode
 T1 = 
   Trait({
@@ -74,19 +78,20 @@ T1 =
   +
   Trait({
     Foo = {
-      method S hello()=S"Hi" 
+      method S hello() = S"Hi" 
       }
     })
 //it is equivalent to
 T1 = 
   Trait({
     Foo = {
-      method S hello()=S"Hi" 
+      method S hello() = S"Hi" 
       method S helloWorld() = this.hello()++S" World"
       }
     })
 CCode
 
+WTitle(`Fields?')
 But what about fields? how are fields and constructors composed by traits?
 The answer to this question is quite interesting:
 In 42 there are no true fields or constructors; they are just abstract methods serving a specific role.
@@ -99,23 +104,26 @@ TraitGeometryPoint = Trait:{
     mut method Void x(Num that)
     read method Num y()
     mut method Void y(Num that)
-    class method mut This (Num x,Num y)
-    method This double() = \(x=this.x()*2\,y=this.y()*2\)
+    class method mut This (Num x, Num y)
+    method This double() = \(x=this.x()*2\, y=this.y()*2\)
     }
   }
-Geometry1=Class:TraitGeometryPoint //declaring class Geometry1
+Geometry1 = Class:TraitGeometryPoint //declaring class Geometry1
 ..
-  imm p=Geometry1.Point(x=3\,y=4\)
+  imm p = Geometry1.Point(x=3\, y=4\)
   p2 = p.double()//example usage
 CCode
-That is, any Wcode(read), Wcode(imm) or Wcode(mut) no-args abstract method can play the role of a getter for a corrispondly named field, and any abstract Wcode(class) method can play the role of a factory, where the parameters are used to initialize the fields.
+That is, any Wcode(read), Wcode(imm) or Wcode(mut) no-args abstract method can play the role of a getter for a correspondly named field, and any abstract Wcode(class) method can play the role of a factory, where the parameters are used to initialize the fields.
 Finally, Wcode(mut) methods with one argument called Wcode(that) can play the role of a setter.
 Candidate getters and setters are connected with the parameters of candidate factories by name.
 To allow for more then one getter/setter for each parameter, getters/setters names can also start with any number of Wcode(#).
+WBR
 We call those abstract methods WEmph(Abstract State Operations).
 In Java and many other languages a class is abstract if it has any abstract methods.
 In 42, a class is coherent if its set of abstract state operations ensure 
-that all the callable methods have a defined behaviour; this includes the initialization of all the usable getters. More in the detail, a class is coherent if:
+that all the callable methods have a defined behaviour; this includes the initialization of all the usable getters. 
+WBR
+More in the detail, a class is coherent if:
 <ul><li>
 All candidate factories provide a value for all candidate getters, and the all types of those values
 agrees with the return type of the corresponding getters.
@@ -144,7 +152,7 @@ OBCode
 T1 = Trait:{class method Void bar()}
 C1 = Class:T1
 CCode
-would fail with the following message: Wcode("The class is not coherent. Method bar() is not part of the abstract state").
+would fail with the following message: WEmph(The class is not coherent. Method bar() is not part of the abstract state).
 We can use Wcode(Class.Relax) and Wcode(Data.Relax) to suppress this check when needed.
 Indeed Wcode(myTrait.code()) behaves exactly as Wcode(Class.Relax:myTrait).
 WP
@@ -173,13 +181,13 @@ and a lot of other utility methods.
 
 WTitle((3/5)Nested Trait composition: a great expressive power.)
 
-Composing traits with nested classes allows to merge arbitrarly complex units of code, and solve in a natural way problems that in other languages requires complex patterns like dependency injection, as shown below:
+Composing traits with nested classes allows to merge arbitrarily complex units of code, and solve in a natural way problems that in other languages requires complex patterns like dependency injection, as shown below:
 
 OBCode
 TraitGeometryPoint = Trait:{/*Same as before*/}
 
 TraitGeometryRectangle = Trait:{
-  Point = {method Point double();} // Declare only the necessary methods
+  Point = {method Point double()} // Declare only the necessary methods
   Rectangle = {
     method Point upLeft()
     method Point downRight()
@@ -191,11 +199,11 @@ TraitGeometryRectangle = Trait:{
     }
   }
 ...
-Geometry2=Class:TraitGeometryPoint:TraitGeometryRectangle
+Geometry2 = Class:TraitGeometryPoint:TraitGeometryRectangle
 CCode
 As you can see, we can define more code using Wcode(Point) while only repeating the needed dependencies.
 We will use this idea in the following, more elaborated scenario:
-Bob and Alice are doing a videogame. In particular, Alice is doing the code related to loading the game map from a file.
+Bob and Alice are doing a video game. In particular, Alice is doing the code related to loading the game map from a file.
 
 OBCode
 Game = { //example game code, NOT MODULARISED
@@ -206,19 +214,19 @@ Game = { //example game code, NOT MODULARISED
   Rock = {[Item]
     Num weight
     class method This(Point point, Num weight)
-    method Item hit() = \(point=this.point(),weight=this.weight()/2\)
+    method Item hit() = \(point=this.point(), weight=this.weight()/2\)
     }
   Wall = {[Item]
     Num height
     class method This(Point point, Num height)
-    method Item hit() = Rock(point=this.point(),weight=..)
+    method Item hit() = Rock(point=this.point(), weight=..)
     }
   Map = {..//map implementation by Bob
     class method mut This empty() = ..
     read method Item val(Point that) = ..
     mut method Void set(Item that) = ..
     }
-  class method Void #$run() = ..this.load(..).. //implemented by Bob
+  class method Void #$run() = /*..*/this.load(..)/*..*/ //implemented by Bob
 //------------------------------------//Anything under this line is implemented by Alice
   class method Map load(mut FS files, S fileName) = (//Alice writes load(_)
     map = Map.empty()
@@ -237,7 +245,7 @@ Main = (.. Game.#$run() ..)
 CCode
 
 As you can see from the non modularized code above, Alice code is tightly connected with Bob code:
-She have to instanstiate Wcode(Map) and all the kinds of Wcode(Item)s. In a language like Java, Alice would need to write her code after Bob have finished writing his, or they would have to agree to use dependency injection and all the related indirections.
+She have to instantiate Wcode(Map) and all the kinds of Wcode(Item)s. In a language like Java, Alice would need to write her code after Bob have finished writing his, or they would have to agree to use dependency injection and all the related indirections.
 
 Instead, in 42 they could simply factorize their code into two independent traits:
 
@@ -250,19 +258,19 @@ TraitBob = Trait:{ //all code is as before, but load is abstract
   Rock = {[Item]
     Num weight
     class method This(Point point, Num weight)
-    method Item hit() = \(point=this.point(),weight=this.weight()/2\)
+    method Item hit() = \(point=this.point(), weight=this.weight()/2\)
     }
   Wall = {[Item]
     Num height
     class method This(Point point, Num height)
-    method Item hit() = Rock(point=this.point(),weight=..)
+    method Item hit() = Rock(point=this.point(), weight=..)
     }
   Map = {..
     class method mut This empty() = ..
     read method Item val(Point that) = ..
     mut method Void set(Item that) = ..
     }
-  class method Void #$run() = ..this.load(..)..
+  class method Void #$run() = /*..*/this.load(..)/*..*/
   class method Map load(mut FS files, S fileName)
   }
 
@@ -289,7 +297,7 @@ Game=Class:TraitBob:TraitAlice
 Main = (.. Game.#$run() ..)
 CCode
 
-Now that the code of alice and bob are separated, they can test their code in isolation:
+Now that the code of Alice and Bob are separated, they can test their code in isolation:
 
 OBCode
 MockAlice = Class:TraitAlice:{
@@ -299,7 +307,7 @@ MockAlice = Class:TraitAlice:{
     class method This(Point point, Num weight) = 
       \(info=S"Rock: %point -> %weight")
     }
-  Wall = ..
+  Wall = /*..*/
   Map = {
     var S info
     class method mut This (S info)
@@ -310,28 +318,28 @@ MockAlice = Class:TraitAlice:{
 TestAlice = (
   files=FS.#$()
   {}:Test"justARock"(
-    actual=MockAlice.load(files=files,fileName=S"justARock.txt")
+    actual=MockAlice.load(files=files, fileName=S"justARock.txt")
     expected=S"""
       |Rock: Point(5,6) -> 35
       """)
   {}:Test"rockAndWall"(
-    actual=MockAlice.load(files=files,fileName=S"rockAndWall.txt")
+    actual=MockAlice.load(files=files, fileName=S"rockAndWall.txt")
         expected=S"""
       |Rock: Point(x=5, y=6) -> 35
       |Wall: Point(x=1, y=2) -> 10
       """)
   ..//more tests here
   )
-CCore
+CCode
 
 WTitle((4/5)Typing considerations)
 
-Object oriented programms often contains entagled and circular type definitions.
+Object oriented programs often contains entangled and circular type definitions.
 For example, strings Wcode(S) have methods Wcode(I size()) and Wcode(Bool isEmpty()), while
 both Wcode(I) and Wcode(Bool) offer a Wcode(S toS()) method.
-That is, while circular values are a double edge sword (useful but dangerous), circular/recursive types are unavoiable even in moderatly simple programs.
+That is, while circular values are a double edge sword (useful but dangerous), circular/recursive types are unavoidable even in simple programs.
 So, how does recursive types interact with metaprogramming?
-Path names can only be used when the path is fully typed,
+Path names can only be used in execution when the corresponding nested class is fully typed,
 thus the following example code would not work:
 OBCode
 Foo = { class method Bar bar(Bar that)=that }
@@ -379,7 +387,7 @@ when method calls are chained (as in Wcode(a.b().c())) or when binary operators 
 WTitle((5/5)Metaprogramming summary)
 Here we introduced the way 42 handle metaprogramming and code reuse.
 We focused on Wcode(Class) and Wcode(Trait).
-Composing code with Wcode(:) or Wcode(+) we can partition our codebase in any way we need,
+Composing code with Wcode(:) or Wcode(+) we can partition our code-base in any way we need,
 enabling simple and natural testing and code reuse patterns.
 WBR
-When reusing code, we have to be mindful of missing types and missing methods. Structuring the codebase to avoid those issues will require some experience, and is indeed one of the hardest parts about writing complex 42 programs.
+When reusing code, we have to be mindful of missing types and missing methods. Structuring the code-base to avoid those issues will require some experience, and is indeed one of the hardest parts about writing complex 42 programs.

@@ -200,7 +200,7 @@ where the Wcode(ps) local binding is Wcode(capsule);
 it can satisfy the Animal.path requirement, but it can be used only once.
 Wcode(dog2)
 has to use another capsule. It is okay to just write the object creation in place as is done.
-Alternatively, most classes offer a Wcode(clone()) method,
+Alternatively, lists offer a Wcode(clone()) method,
 so in this case we could write
 
 Wcode(dog2= Animal(location: zero, path: dog1.path().clone()))
@@ -215,7 +215,7 @@ When an Wcode(Animal) is created using Wcode(Animal(location=_,path=_)) we creat
 
 In most cases you can promote such reference to immutable/capsule; just make the type of the local binding explicit.
  The type system will take care of the rest.
-If a reference can not be safely promoted to immutable/capsule, you may have to use the Wcode(.clone()) method or to refactor your code.
+If a reference can not be safely promoted to immutable/capsule, you may have to clone some data or to refactor your code.
 OBCode
 mut Animal dog1= Animal(__) //no promotion here
 Animal dog2= Animal(__) //promotion mutable->immutable

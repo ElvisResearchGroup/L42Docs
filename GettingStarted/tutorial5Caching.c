@@ -9,7 +9,7 @@ Person = Data:{S name}
 var bob1 = Person(S"Bob")//one bob in memory
 var bob2 = Person(S"Bob")//two bobs in memory
 bob1:=bob1.norm()
-bob2:=bob2.norm()//most likely now bob2 referes to
+bob2:=bob2.norm()//most likely now bob2 refers to
 //the same object of bob1.
 //The object originally pointed to by bob2 is now inaccessible and
 //can be garbage collected.
@@ -56,14 +56,6 @@ WP
 The logic needed for normalization is the same needed to check if two arbitrary objects are structurally equal, to print an object to a readable string and to clone objects.
 Thus data allows for all of those operations indirectly relying on normalization.
 Those are all operations requiring to scan the whole ROG of the object, so the cost of normalization is acceptable in context.
-//now data generates
-//clone() read->imm
-//mutClone() mut->capsule
-//TODO: data will generates, in guide fix first mention of clone for list
-//immClone() read->imm
-//capsuleClone() mut->capsule
-//and if a user wants to define 'clone()' they still can
-//the big issue is that an imm object may be coherent even with abstract mut methods 
 
 WTitle((2/5) Lazy Caching)
 
@@ -80,7 +72,7 @@ results an exponential amount of times.
 
 This tweaked implementation relying on caching is much faster.
 OBCode
-ComputeFibo=Data:{
+ComputeFibo = Data:{
   Num that
   @Cache.Lazy method Num () = {
     n=this.that()
@@ -147,7 +139,7 @@ But we can bring caching even earlier and compute some behaviour WEmph(at the sa
 This allows to encode derived fields: fields whose value must depend from the other object fields.
 Consider the following example:
 OBCode
-Point = Data:{//not ok, the tree arg factory still exists
+Point = Data:{//not ok, the three-args factory still exists
   Double x
   Double y
   Double distanceFromOrigin
@@ -213,7 +205,7 @@ This works also on circular object graphs and relies on a variation of DFA norma
 As a special case, objects without fields (immutable or not) are always represented in memory as a single object.
 Cached informations are attached to the normalized version of objects, thus making it possible to recover the cache simply by rebuilding a structurally identical object.
 
-There are tree kinds of caching, depending on the time the caching behaviour activates:
+There are three kinds of caching, depending on the time the caching behaviour activates:
 
 <ul><li>
 Wcode(Cache.Lazy) computes the cached value when the annotated method is first called.

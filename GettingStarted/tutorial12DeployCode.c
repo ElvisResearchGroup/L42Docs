@@ -467,7 +467,9 @@ CCode
 
 
     
-OBCode Library myCode= { method Int foo()} CCode
+OBCode
+Library myCode= { method Int foo()}
+CCode
 A local binding of type Library initialized with a class with a single Wcode(foo()) method. Since there is no body, it is an abstract method.
  -->	 
 
@@ -475,7 +477,9 @@ A local binding of type Library initialized with a class with a single Wcode(foo
 
 Let now starts showing the simplest 42 program: an empty library.
 
-OBCode {} CCode
+OBCode
+{}
+CCode
 
 If we save this valid program in a file Wcode(Test.L42) and we run Wcode(L42 Test), we get an error.
 WP
