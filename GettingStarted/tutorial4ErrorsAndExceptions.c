@@ -14,7 +14,8 @@ Wcode(Guard) and Wcode(Assert).
 While Assertions are useful to observe bugs, the application
 logic should not depend on them, since they may change
 in unpredictable ways during library evolutions, and can be enabled or disabled.
-A guard is guaranteed to be consistent across library evolution thus program logic can depend on them being thrown.
+Since program logic can depend on guards being thrown,
+guards need to be consistent across library evolution.
 
 Assertions are the right tool to prevent the code from proceding
 out of our designed space. The assertion class called Wcode(X) 

@@ -135,15 +135,18 @@ As you can see, in 42, parallelism and caching are just two sides of the same co
 
 WTitle((4/5) Invariants and derived fields)
 We have seen that cached behaviour can be computed lazily or eagerly on immutable objects.
-But we can bring caching even earlier and compute some behaviour WEmph(at the same time) of the object creation.
-This allows to encode derived fields: fields whose value must depend from the other object fields.
+But we can bring caching even earlier and compute some behaviour WEmph(at the same time) 
+as object instantiation.
+This allows us to encode derived fields: 
+fields whose values are completely determined
+by other values in the same object.
 Consider the following example:
 OBCode
-Point = Data:{//not ok, the three-args factory still exists
+Point = Data:{//not ok, the three-arg factory still exists
   Double x
   Double y
   Double distanceFromOrigin
-  //should always be (x^2+y^2)^0.5
+  //should always be the square root of x^2+y^2
   class method This (Double x, Double y) = \(
     x=x
     y=y
@@ -151,12 +154,12 @@ Point = Data:{//not ok, the three-args factory still exists
     )
   }
 CCode
-Where the class Wcode(Point) has 3 fields, but the value of the third one should depend from the other two.
-In 42 the code above would simply define a class with three unrelated fields, and while we are offering a factory that conveniently takes x and y and initialize the third field with 
+where the class Wcode(Point) has 3 fields, but the value of the third one should depend only on the other two.
+In 42, the code above would simply define a class with three unrelated fields, and while we are offering a factory that conveniently takes Wcode(x) and Wcode(y) and initialize the third field with 
 the computed value, the user could easy create invalid instances by calling the factory method with three arguments.
-As we will see later, in 42 we can prevent this from happening by making such method private.
+As we will see later, in 42 we can prevent this from happening by making such a method private.
 However, we would still be able to create an invalid Wcode(Point) inside of other Wcode(Point) methods.
-Ideally, we would like to truly have only two fields, and have the third one as a precomputed derived data.
+Ideally, we would like to truly have only two fields, and have the third one as a precomputed derived value.
 
 In 42, we can encode such concept using Wcode(Cache.Now):
 OBCode
@@ -170,14 +173,15 @@ CCode
 The Wcode(Point) class defined above has a single factory method taking just Wcode(x) and Wcode(y). In this way there is no need to have multiple ways to build the object and then hide the dangerous ones after the fact.
 
 The method Wcode(distanceFromOrigin(x,y)) is computed when a Wcode(Point) object is created.
-Moreover, Wcode(Data) adds a method Wcode(read method Double distanceFromOrigin()), allowing to read the computed/cached value as if it were a field. Note how the 
-Wcode(class)
-method is turned into a Wcode(read) method.
+Moreover, Wcode(Data) adds a method Wcode(read method Double distanceFromOrigin()), allowing us to read the computed/cached value as we would if it were a field.
+Note that Wcode(Data) makes a
+Wcode(read) method calling the Wcode(class) one.
 
-If the method Wcode(distanceFromOrigin(x,y)) where to leak an error, such error would be propagated out as it would happen if the method were manually called during object construction.
+If the method Wcode(distanceFromOrigin(x,y)) leaks an error, it will be propagated out as if the method were manually called during object construction.
 
 This means that any time you receive a Wcode(Point), it has a valid distance.
-We can leverage on this behaviour to encode class invariants:
+WP
+We can build on this behaviour to encode class invariants:
 Wcode(Cache.Now) methods with Wcode(Void) return type
 designed to simply throw error if the state is incorrect.
 For example, consider this updated version of Wcode(Point):
@@ -189,7 +193,7 @@ Point = Data:{
   @Cache.Now class method Double distanceFromOrigin(Double x, Double y) = 
     ((x*x)+(y*y)).pow(exp=\"0.5")
   @Cache.Now class method Void invariant(Double x, Double y) = 
-    if x<0Double || y<0Double error X"""%
+    if !(x>=0Double && y>=0Double) error X"""%
       | Invalid state:
       | x = %x
       | y = %y
@@ -197,26 +201,35 @@ Point = Data:{
   }
 CCode
 
-Now, every time user code receives a Wcode(Point), they can rely on the fact that Wcode(x) and Wcode(y) are positive.
+Now, every time user code receives a Wcode(Point), they can rely on the fact that Wcode(x) and Wcode(y) are
+non-negative and not NaN.
 
 WTitle((5/5) Summary)
-In 42 immutable objects can be normalized in order to save memory space.
-This works also on circular object graphs and relies on a variation of DFA normalization.
+In 42 immutable objects, can be normalized in order to save memory.
+This works also on circular object graphs. In case you are interested in the details, it relies on a variation of DFA normalization.
 As a special case, objects without fields (immutable or not) are always represented in memory as a single object.
-Cached informations are attached to the normalized version of objects, thus making it possible to recover the cache simply by rebuilding a structurally identical object.
-
+Results of Wcode(Cache.Lazy) and Wcode(Cache.Eager)
+ are attached to the normalized version of an object, thus making it possible to recover them simply by building a structurally identical object.
+WP
 There are three kinds of caching, depending on the time the caching behaviour activates:
 
 <ul><li>
 Wcode(Cache.Lazy) computes the cached value when the annotated method is first called.
 It works on Wcode(imm) and Wcode(class) no-args methods.
-An obvious workaround for the no-args limitation is to define computation objects; this also works well with normalization: computation objects will remember the cache of any structurally equivalent object.
+An obvious workaround for the no-args limitation is to define computation objects; this also works well with normalization: computation objects will 
+retrieve the cached results of any structurally equivalent object.
 </li><li>
 Wcode(Cache.Eager) computes the cached value in a separate parallel worker, starting when the object is created. It only works on Wcode(imm) no-args methods of classes whose objects are all deeply immutable.
 Those classes will automatically normalize their instances upon creation.
 </li><li>
 Wcode(Cache.Now) computes the cached value during object construction.
-Since the object does not exists yet, the annotation is not placed on an instance method, but on a Wcode(class) method whose parameters represent the needed object fields.
-This annotation does influence the observable behaviour: if an error is raised computing the cache, the error is leaked during object construction and not while trying to observe the cached value.
-This, in turn, allows to encode class invariants and to provide a static guarantee that users of a class can rely upon.
+Since the object does not exist yet, the annotation can only be placed on a Wcode(class) method whose parameters represent the needed object fields.
+This annotation does influence the observable behaviour.
+If there is no error computing the Wcode(Cache.Now) methods,
+then the fully initialized object is returned.
+But, if an error is raised computing the cache,
+instead of returning the broken object, the error is leaked during object construction.
+WBR
+This, in turn, allows us to encode class invariants and to provide a static guarantee that users of a class can rely upon.
+
 </li></ul>

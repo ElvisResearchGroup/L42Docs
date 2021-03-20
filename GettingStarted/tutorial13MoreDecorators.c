@@ -1,4 +1,8 @@
 WBigTitle(`More decorators')
+Using the expressive power of programmatic refactoring many different decorators can be designed. Here we list some of the most important
+
+WTitle(`Public')
+The Wcode(Public) decorator 
 
 Organize //todo: split $ rename and public closure
 //mention self()? show the Person with friends, show the worst example:

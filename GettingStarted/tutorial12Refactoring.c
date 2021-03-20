@@ -47,9 +47,9 @@ Concrete2 = Class:Code1[
   ]
 Concrete3 = {//equivalent to just writing the following directly:
   A = {interface,  method S k()}
-  B = {[A],        method S k()=S"Hi"                    class method This of()}
+  B = {[A],        method S k()=S"Hi"                       class method This of()}
   C = {            method S callBoth()=B.of().k()++D().m()  class method This()}
-  D = {            method   m()=S" world"                class method This()}
+  D = {            method   m()=S" world"                   class method This()}
   }
 Main3 = Debug(Concrete3.C().callBoth()) //still prints "Hi World"
 CCode
