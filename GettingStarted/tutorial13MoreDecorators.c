@@ -201,301 +201,216 @@ CCode
 WBR
 Also method Wcode(stepAll()) requires upcasting; however we do not need to repeat the Wcode(Late) annotation since type dependencies are class-wide: a single Wcode(Late) annotation anywhere in any method covers all the methods of the same class (but not the methods in nested classes).
 
+Note that this approach does not rely on any dynamic checks; the 42 upcast operator Wcode(<:) is only guiding the type system, and even if the typing happens later, it will happen before the code is ready for execution.
 
 WTitle(`Data.**')
 The Wcode(Data) decorator contains many useful nested classes, that can be used as independent decorators.
-Wcode(Data.AddConstructors) applies an heuristic to decide what are the field of a class and add appropriate constructors. (autoNorm forces the imm state? no? I'm testing it right now.)
-Wcode(Data.Close) 
- Close also close have Name and autoNorm
- Wither
-Defaults
+WP
+Decorators Wcode(Data.AddList), allows to add a
+nested class Wcode(List) working as a list of Wcode(This).
+ Wcode(Data.AddOpt) and Wcode(Data.AddSet) work similarly, but for Wcode(Opt) and Wcode(Set).
+That is, to define a Wcode(Point) supporting both lists of points and sets of points we can simply write:
+OBCode
+Point = Data:Data.AddList:Data.AddSet:{
+  I x, I y
+  }
+..
+ps = Point.List[\(x=3I,y=4I);\(x=5I,y=6I);]
+CCode
+Note that the order of application of the above decorators is not important.
+WP
+Wcode(Data.AddConstructors) applies an heuristic to decide what are the field of a class and add two constructors:
+Wcode(#apply(..)) and Wcode(#immK).
+Wcode(#immK) simply takes all fields as immutable and produces an immutable result.
+Wcode(#apply(..)) takes the most general type for the fields and produces a Wcode(mut) result if class instances are mutable, and Wcode(imm) otherwise.
+The most general type for fields may be Wcode(fwd imm) or Wcode(fwd mut).
+We have not seen Wcode(fwd) types yet in this guide; they are useful for circular initialization. For example 
+OBCode
+Person = Data:{S name, Person bestFriend}
+..
+fred = Person(name='Fred, bestFriend=barney)
+barney = Person(name='Barney, bestFriend=fred)
+CCode
+This code works in 42 and creates two circularly connected deeply immutable objects.
+Forward types can also be used as parameters in regular methods, and the type system will check they they their values can not be directly accessed but only passed around until they reach an abstract factory method.
+Wcode(Data.AddConstructors) takes two parameters:
+Wcode(Name that) and Wcode(Bool noFwd).
+Wcode(Name that) choses the nested class to influence, and it is Wcode(Name"This") by default.
+Wcode(Bool noFwd) is false by default, and 
+prevents Wcode(fwd imm) and Wcode(fwd mut) constructors when true.
+WP
 
- Relax
+Wcode(Data.Close) also takes two parameters:
+Wcode(Name that) and Wcode(Bool autoNorm).
+Wcode(Name that) choses the nested class to influence, and it is Wcode(Name"This") by default.
+Wcode(Bool autoNorm) is false by default, and if it is true attempts to use an already existent Wcode(norm()) method to only expose normalized values out.
+It only works if class instances are immutable
+and fails if any constructor parameter is forward.
+@Wcode(Data.Close) is the part of Wcode(Data) processing and activating of all the Wcode(Cache.**) annotations.
+WP
+@Wcode(Data.Close) implements all of the abstract state operations by delegating to an equivalent private method.
+The class is the Wterm(closed). 
+Wcode(Data.Close.all(..)) is a convenient stati method that applies Wcode(Data.Close) on all the nested classes of .. .
+Wcode(Public) is using Wcode(Data.Close.all(..)) internally.
+As discussed for Wcode(Public), code composition of closed classes is less flexible since the state is now set in stone.
 
- AddList
- AddOpt
- AddSet
+WP
 
+Wcode(Data.Wither) takes an open class and adds 
+Wcode(with(..)) methods; one for each field.
+Those methods creates a new object calling Wcode(#immK), where all the fields are the same, except for the one provided as a parameter.
+For example, in the usual iconic Wcode(Point) example, we could write 
+Wcode(Point(x=3I,y=4I).with(x=5I))
+to get Wcode(Point(x=5I,y=4I))
+Note that this generates only the withers to update a single parameter at a time.
+
+In 42, methods are distinguised by their full selector, not their name; this is particularly conveneint to encode default arguments, so that calling a method without mentioning a parameter will be equivalent to passing a default value to it.
+This can be done by hand; as shown in the example below:
+OBCode
+Point = Data:{
+  I x, I y
+  class method This () = \(x=0I,y=0I)
+  method This moveUp(I that) = this.with(x=\x+that)
+  method This moveUp() = this.moveUp(1I)
+  }
+CCode
+The decorator Wcode(Data.Defaults)
+allows to generate those delegator methods more easely.
+The code above could equivalently be rewritten as follows
+OBCode
+Point = Data:{
+  I x=0I, I y=0I
+  method This moveUp(I that) = this.with(x=\x+that)
+  method I #default#moveUp#that() = 1I
+  }
+CCode
+Methods starting with Wcode(#default#) are recognized by Wcode(Data.Defaults) and used to create delegators. Moreover, in the same way fields are expanded into methods, the expression associated with the field is expanded in a no-arg Wcode(#default#) method.
+Manually defined Wcode(#default#) methods can also take parameters; they must have the same name and type of parameters specified before the current parameter in the original method.
+WBR
+More in the detail: for every method where at least one Wcode(#default#) method is recognized, another method will be generated. This second method will not have any of the parameter with a recognized Wcode(#default#). This second method will call those Wcode(#default#) methods to produce the needed values and finally delegates to the original method.
+WP
+Wcode(Data.Relax)
+works exactly like Wcode(Data), 
+but does not call Wcode(This.checkCoherent(..))
+on the result.
+WP
+Finally, the following methods return traits
+with one operation each, as obvius from their name:
+Wcode(addHasToS()),
+Wcode(addEqOp()),
+Wcode(addReadEqOp(),
+Wcode(addNEqOp(),
+Wcode(addCapsuleClone(),
+Wcode(addImmClone(),
+Wcode(addImmNorm()).
+
+In the end, Wcode(Data) just composes all of those decorators and traits togeter as follows:
+OBCode
+method Trait :(Trait that)[Data$Fail]=(
+  name=this.that()
+  autoNorm=this.autoNorm()
+  var Trait acc=that
+  acc:=this.optionallyApply(This.addHasToS(), acc=acc)
+  acc:=this.optionallyApply(This.addEqOp(), acc=acc)
+  acc:=this.optionallyApply(This.addReadEqOp(), acc=acc)
+  acc:=this.optionallyApply(This.addNEqOp(), acc=acc)
+  acc:=this.optionallyApply(This.addCapsuleClone(), acc=acc)
+  acc:=this.optionallyApply(This.addImmClone(), acc=acc)
+  acc:=this.optionallyApply(This.addImmNorm(), acc=acc)  
+  acc:=AddConstructors(name,noFwd=autoNorm):acc
+  acc:=Wither(name):acc
+  acc:=Defaults(name):acc
+  acc:=Close(name,autoNorm=autoNorm):acc
+  if this.check() (This.checkCoherent(acc.code()))
+  acc
+  )  
+CCode 
+Where Wcode(optionallyApply(..)) applies the trait in the Wcode(name) position only if this causes no error. In this way if a method with the same name was already defined, the operation is simply skipped.
 
 WTitle(`Decorator')
-The Wcode(Decorator) decorator 
+The Wcode(Decorator) decorator simplifies  creating new decorators.
+for example, for a variant of data that always normalize, we could do as follow, where we simply specify a method from Wcode(Trait) into Wcode(Trait) that can throw any kind of Wcode(Message.Guard).
+OBCode
+Value = Decorator:{
+  method Trait(Trait trait)[Message.Guard] =
+    Data('This,autoNorm=Bool.true()):trait
+  }
+CCode
+The Wcode(Decorator) decorator will then use our code to create a decorator:
+It will provide the following:
+OBCode
+class method This #apply() //no-arg factory
+method Library #colon0(Library lib)[This.Fail] //decorator for Library
+method This1.Trait #colon0(This1.Trait trait)[This.Fail]//decorator for Trait
+ClassOperators={..}//support for 'Value:..'
+//instead of requiring 'Value():..'
+Fail={[Message.Guard]..}//dedicated exception type
+CCode
+We can also define parameters in our decorator, but we need to ensure the object could be created with the unnamed no-arg factory.
+For example, we could write
+OBCode
+Value = Decorator:Data:{
+  Name that=Name"This"
+  method Trait(Trait trait)[Message.Guard] =
+    Data(this.that(),autoNorm=Bool.true()):trait
+  }
+CCode
+To add to value the option of acting in an arbitrary nested class of the input.
+WP
+We can produce very liberal variations of Wcode(Data) by simply re-implementing the method that composes all the individual decorators and traits.
+For example, if we wanted a variation of data that does not generate the withers, we could just write:
+OBCode
+DataNoWither = Decorator:Data:{
+  Name that=Name"This"
+  Bool autoNorm=Bool.false()
+  Bool relax=Bool.false()
 
-the decorator decorator
+  method Trait(Trait trait)[Message.Guard] = (
+    name=this.that()
+    autoNorm=this.autoNorm()
+    data = Data(name,autoNorm=autoNorm)
+    var Trait acc=trait
+    acc:=data.optionallyApply(Data.addHasToS(), acc=acc)
+    acc:=data.optionallyApply(Data.addEqOp(), acc=acc)
+    acc:=data.optionallyApply(Data.addReadEqOp(), acc=acc)
+    acc:=data.optionallyApply(Data.addNEqOp(), acc=acc)
+    acc:=data.optionallyApply(Data.addCapsuleClone(), acc=acc)
+    acc:=data.optionallyApply(Data.addImmClone(), acc=acc)
+    acc:=data.optionallyApply(Data.addImmNorm(), acc=acc)  
+    acc:=Data.AddConstructors(name,noFwd=autoNorm):acc
+    //acc:=Data.Wither(name):acc//for example, we can just skip this line
+    acc:=Data.Defaults(name):acc
+    acc:=Data.Close(name,autoNorm=autoNorm):acc
+    if !this.relax() (Data.checkCoherent(acc.code()))
+    acc
+    )
+  }
+CCode
+As you can see, with Wcode(Decorator) we can easy tweak any existing decorator and compose them into new ones.
+
+Another intersting example is Wcode(S.Alphanumeric);
+it is present in AdamTowel, but it is quite easy to redefine:
+OBCode
+Alphanumeric = Decorator:{
+  AlphanumericTrait = Trait:{[HasToS]
+    S that
+    method toS()=this.that()
+    @Cache.Call class method This #from(S.StringBuilder stringLiteral) = 
+      this(string=stringLiteral.toS())
+    class method This (S string)
+    }
+  method Trait(Trait trait)[Message.Guard] = 
+    Data('This,autoNorm=Bool.true()):AlphanumericTrait():trait
+  }
+CCode
 //mention example Alphanumeric/Enum as Decorator:
 
 Make your own decorators: when is it good?
 
+decorator Resource/lift string?
+
 summary
 
-
-
-MultiConcrete5 = Class:Trait({
-  $ = Class.Relax:MultiLevel[ 'A->'SuperA; 'C.D.space()->'C.D.superSpace() ]
-  A = {
-    class method S hi() = S"[%$.SuperA.hi()]"
-    B = {class method S world() = S"[%$.SuperA.B.world()]"}
-    }
-  C={ D={ class method S space()=S"[%$.C.D.superSpace()]" } }
-  })['$=>'This]
-  
-Main8 = MultiConcrete5.C.print() //now prints "[hi][ ][world]"
-  
-Concrete3 = Class:Code1['C.m()->'C.superM()]
-  : {C={method S superM() method S m()=this.superM()++S"!" } }
-Main3 = (
-  Debug(Concrete3.D().callBoth())
-  )
-
-
-Operator Wcode(:) merges multiple units of code together; but sometime code needs some kind of adaptation before it can be merged
-
-Note that Wcode(traitEnsureTransaction()) is just a normal 
-class method that directly returns a library literal.
-Traits in 42 are nothing fancier than that.
-
-Now Wcode(MyAction) will execute the operation inside of a transaction.
-
-However, as you can see declaring Wcode(MyAction) using 
-Wcode(Refactor.compose) is verbose,
-and we need to know the code of Wcode(traitEnsureTransaction())
-to use it;
-we now show how to improve.
-WP
-
-Manually declaring a class just to define a single trait method
-returning a library literal is verbose.
-In AdamsTowel we can use the class Wcode(Resource)
-which automate this process.
-WBR
-For example: 
-OBCode
-TraitEnsureTransaction: Resource <>< {
-  class method
-  Void (mut Db.Connection connection) //method selector here is '(connection)'
-  exception Db.Query.Failure 
-
-  class method
-  Void (mut Db.Connection that) //method selector here is '(that)'
-  exception Db.Query.Failure (/*..as before..*/)
-  }
-
-MyAction: Refactor.compose(
-  left: TraitEnsureTransaction()
-  right: { /*..as before..*/})
-CCode
-
-This let us save just a couple of lines. 
-We can improve further and make a Wcode(Transaction)
-class decorator: 
-
-OBCode
-Transaction: {
-  InvalidAction: Message.$ <>< {implements MetaGuard}
-  //meta guard is the root of all the metaprogramming guards
-  class method //using <>< to define the babelfish operator
-  Library <>< (Library that) 
-  exception InvalidAction {
-    i= Introspection(lib: that)
-    if !i.hasMethod(\"(connection)") (exception InvalidAction
-      "Action method '(connection)' missing")
-    composed= Refactor.compose(  left: TraitEnsureTransaction(), right: that  )
-    exception on MetaGuard ( InvalidAction
-      "Action invalid: type of '(connection)' does not fit or already defined '(that)'")
-    return Refactor.HideSelector(\"(connection)") <>< composed
-    error on Metaguard
-      X"'(connection)' is there, ready to be hidden"
-    }  
-  }
-//So, MyAction becomes shorter and better checked: 
-MyAction: Transaction <>< {
-  class method
-  Void(mut Db.Connection connection)
-  exception Db.Query.Failure {
-    /*..my operation..*/
-    }
-  }
-CCode
-
-Note how we check some well formedness of the parameter
-in an Wcode(if), then we catch and wrap the exceptions of Wcode(compose(left,right)),
-and finally we state our assumption that Wcode(HideSelector) can not fail in
-that context.
-
-Now we can use Wcode(Transaction) as a decorator.
-
-
-WTitle((3/5)Extend)
-
-Wcode(Extend)
- is a decorator implemented using 
-Wcode(Refactor) and
-Wcode(Introspection)
-which provides a flexible model of multiple inheritance with super calls in AdamsTowel.
-WBR
-As an example, in a game we can have a chest which contains objects in certain positions,
-a boat which host humanoids, and
-a cargo boat, which host humanoids and contains objects like a chest.
-We want to reuse the code of chest and boat to obtain the cargo boat.
-WBR 
-For example: 
-OBCode
-ChestTrait: Resource <>< {
-  mut Objects objects
-  /*.. methods to validate access to objects..*/
-  read method
-  Kg weight() {
-    var Kg res= 0Kg
-    with o in this.objects().vals() (res+= o.weight() )
-    return res
-    }
-  }
-
-BoatTrait: Resource <>< {
-  mut Humanoids crew
-  Kg maxCapacity
-  /*.. methods to validate access to crew..*/
-  read method
-  Kg weight() {/*..with-loop on the crew..*/}
-  
-  read method
-  Kg capacityLeft()
-    this.maxCapacity()-this.weight()    
-  }
-
-Chest: Data <>< ChestTrait()
-Boat: Data <>< BoatTrait()
-CargoBoat: Data <>< Extend[ChestTrait();BoatTrait()] <>< {
-  read method @override //explained below
-  Kg weight() this.#1weight()+this.#2weight()
-  }
-CCode
-
-As you see, we annotate with Wcode(@override) to 
-override the Wcode(weight()) method, and we use 
-Wcode(`#'1weight()) and 
-Wcode(`#'2weight()) to refer to the super implementations.
-As an alternative to Wcode(@override),
-we could use Wcode(@hide) to just hide the old methods and put our new
-version on top. There are two main difference between Wcode(@override) and 
-Wcode(@hide).
-With override internal references will refer to the new implementation,
-while with hide they will refer to the old one.
-With override the method type must be identical,
-while with hide they can be completely different.
-
-
-WTitle((4/5)An intolerant type system)
-
-As an exercise, lets try to use what we learned to add a Wcode(sum()) method to
-a vector.
-
-OBCode
-Nums: Extends[Collections.vector(of: Num)] <>< {
-  read method
-  Num sum(){
-    var Num res= 0Num
-    with n in this.vals() (res+= n )
-    return res
-    }
-  }
-CCode
-
-Easy.
-However, note that we are calling Wcode(this.vals()) to
-do the iteration, and we are not declaring a Wcode(vals())
-method.
-The idea is that while computing Wcode(Nums), the type system is temporary allowing for incomplete/untypable code at the right of the Wcode(:).
-The typesystem will check that all is ok when the declaration of Wcode(Nums) is complete.
-WP
-However, we have done an extension only on our specific Wcode(Nums) vector, we would have to repeat
-such code for each vector.
-Can we directly produce vectors that will have a Wcode(sum()) method?
-Well, this can only work for vectors of elements with a Wcode(+) operator, and a zero concept. Luckily, all 
-numeric classes offer a Wcode(zero()) 
-and Wcode(one()) method.
-WBR
-Building on that, we could attempt the following, invalid solution: 
-OBCode
-MyCollection: {
-  class method
-  Library traitSum()
-    { //my sum feature
-    T: {
-      class method T zero()
-      method T +(T that)
-      }
-    read method
-    Num sum(){
-      var T res= T.zero()
-      with n in this.vals() (res+= n ) //error here, vals() undefined
-      return res
-      }
-    }
-  class method
-  Library vector(class Any of) {
-    oldPart= Collections.vector(of: of)
-    newPart= Refactor.Redirect(Path"T" to: of) <>< this.traitSum()
-    return Refactor.compose(left: oldPart, right: newPart)
-    }
-CCode
-
-Conceptually, we define a new trait for the sum method,
-and we make it general introducing Wcode(T) and our
-needed requirements.
-Sadly, this is not going to compile, since 
-in the method Wcode(sum()) we call Wcode(this.vals()),
-and there is no definition for such method.
-Similar code worked in the former example, but here
-the definition of Wcode(MyCollection) gets completed,
-and the code in the method Wcode(traitSum()) is still 
-incomplete.
-We could just repeat there the definition of Wcode(vals()),
-but that would be duplicating code; moreover, Wcode(vals()) returns an iterator, which has methods too...
-WP
-
-Wcode(Collection) offers a solution: a trait containing
-the minimal code skeleton to make Wcode(vals()) over path 
-Wcode(T).
-WBR
-The idea is that
-the composition of Wcode(traitSum()) and
-Wcode(Collections.traitValsT()) is complete code.
-However, even declaring Wcode(traitSum()) as
-OBCode
-class method
-Library traitSum() 
-  Extend[Collections.traitValsT()] <>< {/*my sum feature as before*/}
-CCode
-
-whould not work: the Wcode(<><) method would
-be called when Wcode(traitSum()) runs, leaving incomplete code in the resulting library literal.
-We need to force the computation to happen before
-Wcode(MyColleciton) is completed.
-A solution is to use Wcode(Resource).
-
-OBCode
-TraitSum: Resource <>< Extend[Collections.traitValsT()] <>< {/*my sum feature as before*/}
-MyCollection: {
-  class method
-  Library vector(class Any of) (
-    oldPart= Collections.vector(of: of) //surely works
-    {newPart= Refactor.Redirect(Path"T" to: of) <>< TraitSum()
-    return Extend[oldPart] <>< newPart
-    catch exception MetaGuard g return oldPart
-    })
-CCode
-
-By the way, earlier we also forgot to handle exceptions!
-If our parameter does not support zero and plus,
-we will just return a normal collection. We need to insert additional brackets otherwise the 
-binding Wcode(oldPart) would not be visible in the catch body.
-
-As you may notice there is some incoherence in our programming style: 
-should traits be methods in a class or Resources?
-should we use 
-the more primitive
-Wcode(Refactor.compose(left,right))
-or the more flexible Wcode(Extend[] <><)?
 In the current state of the art we do not have an answer for what is the best in 42.
 WBR
 Indeed, we still do not understand the question.
@@ -504,77 +419,6 @@ Indeed, we still do not understand the question.
 
 
 
-
-
-WTitle((1/5)Refactor and Introspection)
-
-WTitle(Refactor)
-Wcode(Refactor) is a class supporting modification of
-library literals.
-For example, you may want to rename the method Wcode(importStructure(that)) into just Wcode(import(that)).
-You can do the following: 
-OBCode
-{reuse L42.is/AdamsTowel
-Db: Refactor.RenameSelector(
-  Selector"importStructure(that)" to: Selector"import(that)"
-  ) <>< Load <>< {reuse L42.is/Db}
-UnivDb: Db.import(Db.ConnectionS"...")
-/*..*/
-}
-CCode
-The type Wcode(Selector) represent method selectors;
-in the same way the type Wcode(Path) represent 
-paths inside library literals, as in Wcode(Path"MyNested.MyNestedNested") or
-Wcode(Path"This").
-
-There are a lot of refactoring operations nested under Wcode(Refactor): 
-<ul><li>
-Wcode(RenameSelector)
-and 
-Wcode(RenamePath)
-rename methods either at top level (as we just did) or
-in an arbitrary nested library;
-or rename paths into other paths
-</li><li>
-
-Wcode(Redirect)
-removes a nested library and redirects all its references to
-an external one. This emulates generics, as we will see later.
-</li><li>
-Wcode(UpdateDocumentationSelector)
-and Wcode(UpdateDocumentationPath)
-add to, alter or delete the documentation of methods/paths.
-</li><li>
-Wcode(MakeAbstractSelector)
-and Wcode(MakeAbstractPath)
-remove all the implementation out of a method or path,
-leaving only the public skeleton
-</li><li>
-Wcode(HideSelector)
-and Wcode(HidePath)
-mark methods or paths as private.
-We have not seen details on private members, the main idea is that
-they are renamed into invisible names that you can never guess, and automatically renamed to avoid collisions 
-by refactoring operations.
-</li></ul>
-WP
-In addition to all those nested classes,
-Wcode(Refactor) offers Wcode(`Refactor.compose(left,right)')
-allowing a simmetric sum of two library literals.
-The main idea is that members with the same name are recursively composed
-
-WTitle(Introspection)
-Wcode(Introspection) is
-a class for exploring libraries, to discover what methods they have and so on.
-
-The main classes inside of Introspection are
-Wcode(Introspection.NestedLibrary),
- Wcode(Introspection.Method) and
-Wcode(Introspection.Type).
-You can obtain a nested library by calling the factory methods 
-Wcode(Introspection(lib)) and Wcode(Introspection(classObj)),
-respectively for library literals or class objects.
-We will see some example later of use of Wcode(Introspection).
 
 
 
@@ -594,5 +438,3 @@ refer to the painful metaprogramming guide (link);
 otherwise just use existing metaprogramming libraries 
 and use Wcode(Refactor) only when all the other options feel more painful.
 </li></ul>
-
-
