@@ -403,12 +403,130 @@ Alphanumeric = Decorator:{
     Data('This,autoNorm=Bool.true()):AlphanumericTrait():trait
   }
 CCode
-//mention example Alphanumeric/Enum as Decorator:
+WP
+Wcode(Enum) is a much more challenging decorator
+to define, but we have finally explored all the needed features. 
+As a reminder, Wcode(Collection.Enum)
+generates one enumeration element for any nested class. Thus, for example
+OBCode
+Directions = Collections.Enum:{
+  Left={}, Top={}, Right={}, Bottom={}}
+CCode
+would turn the top level nested class into an interface and would enrich those 4 nested classes so that they implements Wcode(This1) and support equality.
+Moreover, a nested class Wcode(Vals) is added allowing to list all the elements of the enumeration, and to map them from string.
 
-Make your own decorators: when is it good?
+We will now see how to encode such a complex behaviour.
+OBCode
+Enum = Decorator:{
+  //we start with 3 composable units of code
+  TraitEnumBase = Trait:{...}//the starting point
+
+  TraitEnumStep = Trait:{...}//the inductive step.
+
+  TraitCacheVals = Organize:Trait:{...}//the final touch
+
+  method Trait(Trait trait)[Message.Guard] = (
+    var res = TraitEnumBase()
+    //we start from the TraitEnumBase code
+    for (nameFromRoot) in trait.info().nesteds() (
+      //for all the names of all the nesteds:
+      base = res['Vals.next()=>'Vals.prev()]
+      //res.Vals.next is renamed into .prev
+      step = TraitEnumStep['E=>nameFromRoot]
+      //set the current TraitEnumStep name
+      res := (step+base)[hide='Vals.prev()]
+      //the new candidate result composes step and base
+      //res.Vals.prev is hidden, so that the next
+      //iteration we can rename next onto prev
+      )
+    res := (res+TraitCacheVals)[hide='Vals.next()]
+    //res.Vals.next connects the inductive step
+    //with the result, and can then be hidden
+    (res+trait)[hide='sealed()]
+    //finally, we compose what we created with any
+    //extra code that the user provided, and we
+    //seal the top level interface
+    )
+  }
+CCode
+The genera pattern shown above is quite common when building complex decorators:
+Start from some base code.
+Iterate on a number of steps depending on the input trait; for each step combine the base code with core representing this extra step.
+At the end of each step apply some renaming and hiding so that the resulting code have the same structural shape of the base code.
+Finally, compose the result with the original user input and some more code providing a better user API.
+WBR
+For Wcode(Enum), the base code is as follow:
+OBCode
+TraitEnumBase = Trait:{
+  List = {class method mut This()}
+  Vals = { class method List next() = List() }
+  }
+CCode
+We have a Wcode(List) nested, that will be the list type returned by Wcode(Vals()).
+In Wcode(List) we only declare the abstract methods used in Wcode(Vals.next()).
+
+The inductive code is much more interesting:
+we declare the top level as an interface, with a Wcode(sealed()) method. This is device to finally seal the hierarky, so that the enumeration only has a fixed set of options.
+The enumeration offers the three methods that are usually provided by classes supporting equality: Wcode(readEquality), Wcode(==) and Wcode(!=).
+Nested class Wcode(E) represent an arbitrary element of our enumeration, and provide a standard implementation for those methods.
+It is a class with closed state and no fields, thus 42 will implicitly use the normalized value for its single instance.
+This means that the method Wcode(System.immClone(this)) will simply convert the Wcode(read) reference to Wcode(imm) without the need of any expensive computation.
+OBCode
+TraitEnumStep = Trait:{interface
+  class method Void sealed()
+  read method Bool readEquality(read This that)
+  method Bool ==(This that)
+  method Bool !=(This that)
+  E = {[This1,HasToS]
+    class method This of::0()
+    class method This() = this.of::0
+    class method Void sealed() = void
+    method readEquality(that) = 
+      System.immEquality(System.immClone(this) and=System.immClone(that))
+    method ==(that) = this.readEquality(that)
+    method !=(that) = !this.readEquality(that)
+    method toS() = Info(This).outerName().toS()
+    }
+  List = { method This withAlsoRight(This1 that) }
+  Vals = {
+    class method List prev()
+    class method List next() = this.prev().withAlsoRight(E())
+    }
+  }
+CCode
+Wcode(List) and Wcode(Vals) are now playing the inductive game of growing a list.
+The base code Wcode(next()) starts with an empty list, and any base case will append to the right the instance of the current Wcode(E).
+WBR
+Finally, to provide a good and efficient API,
+we cache Wcode(Vals()) and Wcode(Vals.map()).
+This is also the place where we provide an actual implementation for Wcode(List) and Wcode(Map).
+OBCode
+TraitCacheVals = Organize:Trait:{
+  $ = {interface[HasToS],    read method Bool readEquality(read This that) }
+  List = Collection.list($)
+  Map = Collection.map(key=S val=$)
+  Vals = Data.Relax:{
+    class method List next()
+    @Cache.Lazy class method List () = this.next()
+    @Cache.Lazy class method Map map() = \()( for e in this() \put(key=e.toS() val=e) )
+    class method $ (S that) = {
+      return this.map().val(key=that).val()
+      catch error Any _ error S.ParseError(S"""
+        |Invalid enumeration name: %(that).
+        |Valid enumeration names are %this()
+        """)
+      }
+    }
+  }
+CCode
+We have to carefully capture and regenerate errros, since Wcode(MyEnum.Vals('MisspelledName)) should provide a Wcode(S.ParseError).
+WP
+As you can see, with a little experience it is possible to define decorators that behave like language extensions.
+Developement on a large 42 program should start defining some appropriate decorators to make the rest of the code more fluent and compact.
 
 decorator Resource/lift string?
-
+Trait.LiftS(p)['#apply()=>n] 
+produces a class with a class method S () returning the string.
 summary
 
 In the current state of the art we do not have an answer for what is the best in 42.
