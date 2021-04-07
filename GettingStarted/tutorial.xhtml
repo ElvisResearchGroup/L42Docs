@@ -45,6 +45,7 @@
  <li><a href="#Refactoring"> Programmatic Refactoring </a></li> 
  <li><a href="#MoreDecorators"> More Decorators </a></li>
 
+ <li><a href="#ExamplesOfLibraries"> Examples of libraries </a></li>
 </ol>
 </div></div><div class="finishFloat"></div></div>
 
@@ -196,7 +197,7 @@ In 42, we can use the <it style="font-style: bold; color:green;">&#171;</it><spa
 There are two different ways to use the backslash:
 as a keyword or immediately followed by a lowercase identifier.
 </p><p>
-As a keyword, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[\]]></span><it style="font-style: bold; color:green;">&#187;</it> represents the expected type of the surrunded expression.
+As a keyword, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[\]]></span><it style="font-style: bold; color:green;">&#187;</it> represents the expected type of the surrounding expression.
 The slash search outwards on super expressions until it finds a place with an easily guessable type:
 the return type of the method, a method parameter or a local binding with an explicit type.
 For example:
@@ -334,12 +335,12 @@ Immutable objects are very easy to use but may be inadequate when representing e
 Let's now define a mutable <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it>, whose location can be updated:
 <pre class="l42Big"><![CDATA[
 Animal = Data:{
-  var Point location
-
+  var Point location //getter: this.location()
+                     //setter: this.location(newVal)
   mut method
   Void run() =
-    this.location(\.add(x=20Num))
-    //here \ == this.location()
+    this.location(\location.add(x=20Num))//update the field with a new point
+    //here \location == this.location()
   }
 ]]></pre>
 There are two new keywords used here: 
@@ -677,7 +678,7 @@ but triky modulo arithmetic.
 </p><h2> Other numeric types </h2> <p>
 
 AdamTowel offers two other numeric types:
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Double]]></span><it style="font-style: bold; color:green;">&#187;</it> (64 bits floating point) and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Math.Long]]></span><it style="font-style: bold; color:green;">&#187;</it> (64 bits integers, rarelly used).
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Double]]></span><it style="font-style: bold; color:green;">&#187;</it> (64 bits floating point) and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Math.Long]]></span><it style="font-style: bold; color:green;">&#187;</it> (64 bits integers, rarely used).
 
 
 </p><h2> Conversions </h2> <p>
@@ -689,9 +690,9 @@ This will avoid precision loss as much as possible.
 
 </p><h2> (2/5) Units: An example library </h2> <p>
 
-We now see how to load and use an interesting 42 Library:<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Unit]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+We will now see how to load and use an interesting 42 Library:<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Unit]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 
-Consider the following code, where the class decorator <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Load]]></span><it style="font-style: bold; color:green;">&#187;</it> allows to load libraries and embed them in the 
+Consider the following code, where the class decorator <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Load]]></span><it style="font-style: bold; color:green;">&#187;</it> allows us to load libraries and embed them in the 
 current context, while the
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[reuse]]></span><it style="font-style: bold; color:green;">&#187;</it> keyword imports the code from the web. 
 <pre class="l42Big"><![CDATA[
@@ -706,28 +707,38 @@ The library
 offers methods to create units out of numeric supports, like <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[I]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 The code above shows how to create a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Year]]></span><it style="font-style: bold; color:green;">&#187;</it> unit and use it to represent a person age.
 
-Units can be sum with themselves and multiplied by constants; for example
+Units can be added to themselves and multiplied by constants; for example
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[3Year+2Year == 5Year]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[3Year *2I == 6Year]]></span><it style="font-style: bold; color:green;">&#187;</it> would hold, but <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[3Year * 2Year]]></span><it style="font-style: bold; color:green;">&#187;</it> would not compile.
 
-Unit could be used to manually define all the units of SI; and a pre-build unit of such reusable code is already provided in the library; we simply need to specify the desired support:
+Units could be used to manually define 
+all of the units of the SI system.
+Prebuild reusable code for the SI system is already provided in the library; we simply need to specify the desired support, as shown in the code below:
 
 <pre class="l42Big"><![CDATA[
 SI = Class:Unit.TraitSI['Support=>Num]
 ..
-res= (6SI.Meter +4SI.Meter)*2Num //20Meter
-//wrong1= 6Meter+2Second
-//wrong2= 6Meter/2Second
+res = (6SI.Meter + 4SI.Meter) * 2Num //20Meter
+//wrong = 6SI.Meter + 2SI.Second
 ]]></pre>
+
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Unit.TraitSI]]></span><it style="font-style: bold; color:green;">&#187;</it> is a <it style="font-style: italic;">trait</it>; traits contains reusable code and operations to adapt it to the current needs.
+We will see more on traits (much) later in this guide.
+<br/>
+In the case of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Unit.TraitSI]]></span><it style="font-style: bold; color:green;">&#187;</it>, we can adapt it to many kinds of numeric support and extract the code using 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Class:Unit.TraitSI['Support=>Num]]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+</p><p>
 As you can see, we can sum meters together, and we can use the support for multiplication, but we can not mix different units of measure.
 
 Mathematically you can obtain the support out of the unit by
 division; that is, 42 meters divided by 2 meters is  21.
 Units also provide method  <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#inner()]]></span><it style="font-style: bold; color:green;">&#187;</it>,
-this is just extracting the value of the support from the unit.
+which is just extracting the value of the support from the unit.
 This can be convenient during programming but 
-does not make a lot of sense mathematically.
-Methods like that are required to be used with care, so they start with
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#]]></span><it style="font-style: bold; color:green;">&#187;</it> to underline that.
+does not make a lot of sense mathematically and thus 
+it should be used with care.
+</p><p>
+In 42, methods names starting with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#]]></span><it style="font-style: bold; color:green;">&#187;</it> should be
+used only in special circumstances.
 
 The syntax <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[['Support=>Num]]]></span><it style="font-style: bold; color:green;">&#187;</it> maps the class called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Support]]></span><it style="font-style: bold; color:green;">&#187;</it> inside of the library onto the class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> defined outse of the library. We will explain later the precise use of such mappings.
 
@@ -3719,7 +3730,7 @@ Finally, <it style="font-style: bold; color:green;">&#171;</it><span class="code
  </p><p id="MoreDecorators"> </p><h1> More decorators </h1> <p>
 Using the expressive power of programmatic refactoring many different decorators can be designed. Here we list and explain some of the most useful.
 
-</p><h2> Public </h2> <p>
+</p><h2> (1/5)Public </h2> <p>
 The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it> decorator allows to 
 select certain members as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it>, and to hide all the others: for any nested class containing at least one <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it> annotation, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it> hides all the non <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it> annoted members.
 <br/>
@@ -3744,10 +3755,10 @@ but we expose only the <it style="font-style: bold; color:green;">&#171;</it><sp
 We also expose the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[birthDay]]></span><it style="font-style: bold; color:green;">&#187;</it>, that can update the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[age]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 <br/>
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> is generating a bunch of other methods, but we are not exposing them.
-In order to make our <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person]]></span><it style="font-style: bold; color:green;">&#187;</it> class usable, we need to at least export a factory, as we do in line 5.
+In order to make our <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person]]></span><it style="font-style: bold; color:green;">&#187;</it> class usable, we need to at least expose a factory, as we do in line 5.
 <br/>
 On the other side, consider <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Car]]></span><it style="font-style: bold; color:green;">&#187;</it>: since there is no <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it> annotation in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Car]]></span><it style="font-style: bold; color:green;">&#187;</it>, no members are hidden.
-Also, note how the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Car]]></span><it style="font-style: bold; color:green;">&#187;</it> invariant can normally refer to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person.age()]]></span><it style="font-style: bold; color:green;">&#187;</it>. This works because the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it> decorator is applied outside of both <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Car]]></span><it style="font-style: bold; color:green;">&#187;</it>. This is indeed a very common pattern: <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it> is often used high up in the nested tree, to allow for tightly connected classes to see each other privates when needed.
+Also, note how the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Car]]></span><it style="font-style: bold; color:green;">&#187;</it> invariant can refer to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person.age()]]></span><it style="font-style: bold; color:green;">&#187;</it> normally. This works because the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it> decorator is applied outside of both <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Car]]></span><it style="font-style: bold; color:green;">&#187;</it>. This is indeed a very common pattern: <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it> is often used high up in the nested tree, to allow for tightly connected classes to see each other privates when needed.
 Using the outline IDE feature, we could see the following:
 <pre class="l42Big"><![CDATA[
   MyProgram={
@@ -3793,13 +3804,13 @@ MyProgram = Public(private=\(X)):{
     }
   }
 ]]></pre>
-The code above hides the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Car]]></span><it style="font-style: bold; color:green;">&#187;</it> invariant; this of course means that the invariant is still enforced, but methods <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[drivingAge()]]></span><it style="font-style: bold; color:green;">&#187;</it> nor <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[drivingAge(driver)]]></span><it style="font-style: bold; color:green;">&#187;</it> are not polluting the interface of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Car]]></span><it style="font-style: bold; color:green;">&#187;</it> any more.
+The code above hides the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Car]]></span><it style="font-style: bold; color:green;">&#187;</it> invariant; this of course means that the invariant is still enforced, but methods <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[drivingAge()]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[drivingAge(driver)]]></span><it style="font-style: bold; color:green;">&#187;</it> are not polluting the interface of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Car]]></span><it style="font-style: bold; color:green;">&#187;</it> any more.
 </p><p>
 Finally, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it> is closing all the nested classes;
 this means that the fields and constructors are not any more abstract methods but implemented methods delegating  to hidden ones.
 A close class encapsulate its state, but can be reused in less flexible ways: the code of two closed classes can not be merged with trait operators <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[+]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[:]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 
-</p><h2> Organize </h2> <p>
+</p><h2> (2/5)Organize </h2> <p>
 
 With metaprogramming, often we have to create code in a certain order,
 and this order may be in contrast with the final structure we want to create.
@@ -3859,14 +3870,14 @@ MyCode = Organize:{
 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Organize]]></span><it style="font-style: bold; color:green;">&#187;</it> is also very useful to avoid redeclaring 
 abstract methods when extending code.
-This sometimes requires to use Wterm(late typing), usually by introducing an extra nested class that will only be used
+This sometimes requires to use <it style="font-style: italic;">late typing</it>, usually by introducing an extra nested class that will only be used
 as a dependency.
 
 One such case happend while designing a little 42 videogame; where we encountered the setting below:
 We have <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[NPC]]></span><it style="font-style: bold; color:green;">&#187;</it> following each others in a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Map]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-As for the example above, the map is going to have specialized location aware operations.
-The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[NPC]]></span><it style="font-style: bold; color:green;">&#187;</it> knows about the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Map]]></span><it style="font-style: bold; color:green;">&#187;</it>, the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Map]]></span><it style="font-style: bold; color:green;">&#187;</it> values are <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[NPCs]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-Moreover, we do not just reuse a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Collection.map]]></span><it style="font-style: bold; color:green;">&#187;</it> but we add new operations to it.
+The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[NPC]]></span><it style="font-style: bold; color:green;">&#187;</it> knows about the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Map]]></span><it style="font-style: bold; color:green;">&#187;</it>, the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Map]]></span><it style="font-style: bold; color:green;">&#187;</it> values are <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[NPC]]></span><it style="font-style: bold; color:green;">&#187;</it> objects.
+Moreover, we do not just reuse a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Collection.map]]></span><it style="font-style: bold; color:green;">&#187;</it> but we add new operations to it: the map is going to have specialized location aware operations.
+
 
 <pre class="l42Big"><![CDATA[
 Point = Data:{I x, I y}
@@ -3919,402 +3930,625 @@ mut method mut NPC get(Point that) = (
 <br/>
 Also method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[stepAll()]]></span><it style="font-style: bold; color:green;">&#187;</it> requires upcasting; however we do not need to repeat the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Late]]></span><it style="font-style: bold; color:green;">&#187;</it> annotation since type dependencies are class-wide: a single <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Late]]></span><it style="font-style: bold; color:green;">&#187;</it> annotation anywhere in any method covers all the methods of the same class (but not the methods in nested classes).
 
+Note that this approach does not rely on any dynamic checks; the 42 upcast operator <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[<:]]></span><it style="font-style: bold; color:green;">&#187;</it> is only guiding the type system, and even if the typing happens later, it will happen before the code is ready for execution.
 
-</p><h2> Data.** </h2> <p>
+</p><h2> (3/5)Data.** </h2> <p>
 The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> decorator contains many useful nested classes, that can be used as independent decorators.
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.AddConstructors]]></span><it style="font-style: bold; color:green;">&#187;</it> applies an heuristic to decide what are the field of a class and add appropriate constructors. (autoNorm forces the imm state? no? I'm testing it right now.)
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.Close]]></span><it style="font-style: bold; color:green;">&#187;</it> 
- Close also close have Name and autoNorm
- Wither
-Defaults
 
- Relax
+</p><h2> Data.AddList, Data.AddOpt, Data.AddSet </h2> <p>
+Decorators <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.AddList]]></span><it style="font-style: bold; color:green;">&#187;</it>, allows to add a
+nested class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[List]]></span><it style="font-style: bold; color:green;">&#187;</it> working as a list of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[This]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+ <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.AddOpt]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.AddSet]]></span><it style="font-style: bold; color:green;">&#187;</it> work similarly, but for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Opt]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Set]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+That is, to define a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> supporting both lists of points and sets of points we can simply write:
+<pre class="l42Big"><![CDATA[
+Point = Data:Data.AddList:Data.AddSet:{
+  I x, I y
+  }
+..
+ps = Point.List[\(x=3I,y=4I);\(x=5I,y=6I);]
+]]></pre>
+Note that the order of application of the above decorators is not important.
 
- AddList
- AddOpt
- AddSet
+</p><h2> Data.AddConstructors </h2> <p>
 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.AddConstructors]]></span><it style="font-style: bold; color:green;">&#187;</it> applies an heuristic to decide what are the field of a class and add two constructors:
+The first is called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#immK]]></span><it style="font-style: bold; color:green;">&#187;</it> and the second has the empty name; also known as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#apply]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#immK]]></span><it style="font-style: bold; color:green;">&#187;</it> simply takes all fields as immutable and produces an immutable result.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#apply]]></span><it style="font-style: bold; color:green;">&#187;</it> takes the most general type for the fields and produces a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> result if class instances are mutable, and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> otherwise.
+The most general type for fields may be <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[fwd imm]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[fwd mut]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+We have not seen <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[fwd]]></span><it style="font-style: bold; color:green;">&#187;</it> types yet in this guide; they are useful for circular initialization. For example 
+<pre class="l42Big"><![CDATA[
+Person = Data:{S name, Person bestFriend}
+..
+fred = Person(name='Fred, bestFriend=barney)
+barney = Person(name='Barney, bestFriend=fred)
+]]></pre>
+This code works in 42 and creates two circularly connected deeply immutable objects.
+Forward types can also be used as parameters in regular methods, and the type system will check they they their values can not be directly accessed but only passed around until they reach an abstract factory method.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.AddConstructors]]></span><it style="font-style: bold; color:green;">&#187;</it> takes two parameters:
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Name that]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bool noFwd]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Name that]]></span><it style="font-style: bold; color:green;">&#187;</it> choses the nested class to influence, and it is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Name"This"]]></span><it style="font-style: bold; color:green;">&#187;</it> by default.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bool noFwd]]></span><it style="font-style: bold; color:green;">&#187;</it> is false by default, and 
+prevents <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[fwd imm]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[fwd mut]]></span><it style="font-style: bold; color:green;">&#187;</it> constructors when true.
 
-</p><h2> Decorator </h2> <p>
-The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Decorator]]></span><it style="font-style: bold; color:green;">&#187;</it> decorator 
+</p><h2> Data.Close </h2> <p>
 
-the decorator decorator
-//mention example Alphanumeric/Enum as Decorator:
-
-Make your own decorators: when is it good?
-
-summary
-
-
-
-MultiConcrete5 = Class:Trait({
-  $ = Class.Relax:MultiLevel[ 'A->'SuperA; 'C.D.space()->'C.D.superSpace() ]
-  A = {
-    class method S hi() = S"[%$.SuperA.hi()]"
-    B = {class method S world() = S"[%$.SuperA.B.world()]"}
-    }
-  C={ D={ class method S space()=S"[%$.C.D.superSpace()]" } }
-  })['$=>'This]
-  
-Main8 = MultiConcrete5.C.print() //now prints "[hi][ ][world]"
-  
-Concrete3 = Class:Code1['C.m()->'C.superM()]
-  : {C={method S superM() method S m()=this.superM()++S"!" } }
-Main3 = (
-  Debug(Concrete3.D().callBoth())
-  )
-
-
-Operator <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[:]]></span><it style="font-style: bold; color:green;">&#187;</it> merges multiple units of code together; but sometime code needs some kind of adaptation before it can be merged
-
-Note that <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[traitEnsureTransaction()]]></span><it style="font-style: bold; color:green;">&#187;</it> is just a normal 
-class method that directly returns a library literal.
-Traits in 42 are nothing fancier than that.
-
-Now <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MyAction]]></span><it style="font-style: bold; color:green;">&#187;</it> will execute the operation inside of a transaction.
-
-However, as you can see declaring <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MyAction]]></span><it style="font-style: bold; color:green;">&#187;</it> using 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Refactor.compose]]></span><it style="font-style: bold; color:green;">&#187;</it> is verbose,
-and we need to know the code of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[traitEnsureTransaction()]]></span><it style="font-style: bold; color:green;">&#187;</it>
-to use it;
-we now show how to improve.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.Close]]></span><it style="font-style: bold; color:green;">&#187;</it> also takes two parameters:
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Name that]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bool autoNorm]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Name that]]></span><it style="font-style: bold; color:green;">&#187;</it> choses the nested class to influence, and it is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Name"This"]]></span><it style="font-style: bold; color:green;">&#187;</it> by default.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bool autoNorm]]></span><it style="font-style: bold; color:green;">&#187;</it> is false by default, and if it is true attempts to use an already existent <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[norm()]]></span><it style="font-style: bold; color:green;">&#187;</it> method to only expose normalized values out.
+It only works if class instances are immutable
+and fails if any constructor parameter is forward.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.Close]]></span><it style="font-style: bold; color:green;">&#187;</it> is the part of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> processing and activating of all the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.**]]></span><it style="font-style: bold; color:green;">&#187;</it> annotations.
 </p><p>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.Close]]></span><it style="font-style: bold; color:green;">&#187;</it> implements all of the abstract state operations by delegating to an equivalent private method.
+The class is the <it style="font-style: italic;">closed</it>. 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.Close.all(..)]]></span><it style="font-style: bold; color:green;">&#187;</it> is a convenient class method that applies <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.Close]]></span><it style="font-style: bold; color:green;">&#187;</it> on all the nested classes in a library literal.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it> uses <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.Close.all(..)]]></span><it style="font-style: bold; color:green;">&#187;</it> internally.
+As discussed for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it>, code composition of closed classes is less flexible since the state is now set in stone.
 
-Manually declaring a class just to define a single trait method
-returning a library literal is verbose.
-In AdamsTowel we can use the class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Resource]]></span><it style="font-style: bold; color:green;">&#187;</it>
-which automate this process.
+</p><h2> Data.Wither </h2> <p>
+
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.Wither]]></span><it style="font-style: bold; color:green;">&#187;</it> takes an open class and adds 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[with(..)]]></span><it style="font-style: bold; color:green;">&#187;</it> methods; one for each field.
+Those methods creates a new object calling <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#immK]]></span><it style="font-style: bold; color:green;">&#187;</it>, where all the fields are the same, except for the one provided as a parameter.
+For example, in the usual iconic <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> example, we could write 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point(x=3I,y=4I).with(x=5I)]]></span><it style="font-style: bold; color:green;">&#187;</it>
+to get <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point(x=5I,y=4I)]]></span><it style="font-style: bold; color:green;">&#187;</it>
+Note that this generates only the withers to update a single parameter at a time.
+
+</p><h2> Data.Defaults </h2> <p>
+
+In 42, methods are distinguised by their full selector, not their name; this is particularly conveneint to encode default arguments, so that calling a method without mentioning a parameter will be equivalent to passing a default value to it.
+This can be done by hand; as shown in the example below:
+<pre class="l42Big"><![CDATA[
+Point = Data:{
+  I x, I y
+  class method This () = \(x=0I,y=0I)
+  method This moveUp(I that) = this.with(x=\x+that)
+  method This moveUp() = this.moveUp(1I)
+  }
+]]></pre>
+The decorator <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.Defaults]]></span><it style="font-style: bold; color:green;">&#187;</it>
+allows to generate those delegator methods more easely.
+The code above could equivalently be rewritten as follows
+<pre class="l42Big"><![CDATA[
+Point = Data:{
+  I x=0I, I y=0I
+  method This moveUp(I that) = this.with(x=\x+that)
+  method I #default#moveUp#that() = 1I
+  }
+]]></pre>
+Methods starting with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#default#]]></span><it style="font-style: bold; color:green;">&#187;</it> are recognized by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.Defaults]]></span><it style="font-style: bold; color:green;">&#187;</it> and used to create delegators. Moreover, in the same way fields are expanded into methods, the expression associated with the field is expanded in a no-arg <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#default#]]></span><it style="font-style: bold; color:green;">&#187;</it> method.
+Manually defined <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#default#]]></span><it style="font-style: bold; color:green;">&#187;</it> methods can also take parameters; they must have the same name and type of parameters specified before the current parameter in the original method.
 <br/>
-For example: 
-<pre class="l42Big"><![CDATA[
-TraitEnsureTransaction: Resource <>< {
-  class method
-  Void (mut Db.Connection connection) //method selector here is '(connection)'
-  exception Db.Query.Failure 
-
-  class method
-  Void (mut Db.Connection that) //method selector here is '(that)'
-  exception Db.Query.Failure (/*..as before..*/)
-  }
-
-MyAction: Refactor.compose(
-  left: TraitEnsureTransaction()
-  right: { /*..as before..*/})
-]]></pre>
-
-This let us save just a couple of lines. 
-We can improve further and make a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Transaction]]></span><it style="font-style: bold; color:green;">&#187;</it>
-class decorator: 
-
-<pre class="l42Big"><![CDATA[
-Transaction: {
-  InvalidAction: Message.$ <>< {implements MetaGuard}
-  //meta guard is the root of all the metaprogramming guards
-  class method //using <>< to define the babelfish operator
-  Library <>< (Library that) 
-  exception InvalidAction {
-    i= Introspection(lib: that)
-    if !i.hasMethod(\"(connection)") (exception InvalidAction
-      "Action method '(connection)' missing")
-    composed= Refactor.compose(  left: TraitEnsureTransaction(), right: that  )
-    exception on MetaGuard ( InvalidAction
-      "Action invalid: type of '(connection)' does not fit or already defined '(that)'")
-    return Refactor.HideSelector(\"(connection)") <>< composed
-    error on Metaguard
-      X"'(connection)' is there, ready to be hidden"
-    }  
-  }
-//So, MyAction becomes shorter and better checked: 
-MyAction: Transaction <>< {
-  class method
-  Void(mut Db.Connection connection)
-  exception Db.Query.Failure {
-    /*..my operation..*/
-    }
-  }
-]]></pre>
-
-Note how we check some well formedness of the parameter
-in an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[if]]></span><it style="font-style: bold; color:green;">&#187;</it>, then we catch and wrap the exceptions of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[compose(left,right)]]></span><it style="font-style: bold; color:green;">&#187;</it>,
-and finally we state our assumption that <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[HideSelector]]></span><it style="font-style: bold; color:green;">&#187;</it> can not fail in
-that context.
-
-Now we can use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Transaction]]></span><it style="font-style: bold; color:green;">&#187;</it> as a decorator.
-
-
-</p><h2> (3/5)Extend </h2> <p>
-
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Extend]]></span><it style="font-style: bold; color:green;">&#187;</it>
- is a decorator implemented using 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Refactor]]></span><it style="font-style: bold; color:green;">&#187;</it> and
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Introspection]]></span><it style="font-style: bold; color:green;">&#187;</it>
-which provides a flexible model of multiple inheritance with super calls in AdamsTowel.
-<br/>
-As an example, in a game we can have a chest which contains objects in certain positions,
-a boat which host humanoids, and
-a cargo boat, which host humanoids and contains objects like a chest.
-We want to reuse the code of chest and boat to obtain the cargo boat.
-<br/> 
-For example: 
-<pre class="l42Big"><![CDATA[
-ChestTrait: Resource <>< {
-  mut Objects objects
-  /*.. methods to validate access to objects..*/
-  read method
-  Kg weight() {
-    var Kg res= 0Kg
-    with o in this.objects().vals() (res+= o.weight() )
-    return res
-    }
-  }
-
-BoatTrait: Resource <>< {
-  mut Humanoids crew
-  Kg maxCapacity
-  /*.. methods to validate access to crew..*/
-  read method
-  Kg weight() {/*..with-loop on the crew..*/}
-  
-  read method
-  Kg capacityLeft()
-    this.maxCapacity()-this.weight()    
-  }
-
-Chest: Data <>< ChestTrait()
-Boat: Data <>< BoatTrait()
-CargoBoat: Data <>< Extend[ChestTrait();BoatTrait()] <>< {
-  read method @override //explained below
-  Kg weight() this.#1weight()+this.#2weight()
-  }
-]]></pre>
-
-As you see, we annotate with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@override]]></span><it style="font-style: bold; color:green;">&#187;</it> to 
-override the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[weight()]]></span><it style="font-style: bold; color:green;">&#187;</it> method, and we use 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#1weight()]]></span><it style="font-style: bold; color:green;">&#187;</it> and 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#2weight()]]></span><it style="font-style: bold; color:green;">&#187;</it> to refer to the super implementations.
-As an alternative to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@override]]></span><it style="font-style: bold; color:green;">&#187;</it>,
-we could use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@hide]]></span><it style="font-style: bold; color:green;">&#187;</it> to just hide the old methods and put our new
-version on top. There are two main difference between <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@override]]></span><it style="font-style: bold; color:green;">&#187;</it> and 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@hide]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-With override internal references will refer to the new implementation,
-while with hide they will refer to the old one.
-With override the method type must be identical,
-while with hide they can be completely different.
-
-
-</p><h2> (4/5)An intolerant type system </h2> <p>
-
-As an exercise, lets try to use what we learned to add a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[sum()]]></span><it style="font-style: bold; color:green;">&#187;</it> method to
-a vector.
-
-<pre class="l42Big"><![CDATA[
-Nums: Extends[Collections.vector(of: Num)] <>< {
-  read method
-  Num sum(){
-    var Num res= 0Num
-    with n in this.vals() (res+= n )
-    return res
-    }
-  }
-]]></pre>
-
-Easy.
-However, note that we are calling <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this.vals()]]></span><it style="font-style: bold; color:green;">&#187;</it> to
-do the iteration, and we are not declaring a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[vals()]]></span><it style="font-style: bold; color:green;">&#187;</it>
-method.
-The idea is that while computing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Nums]]></span><it style="font-style: bold; color:green;">&#187;</it>, the type system is temporary allowing for incomplete/untypable code at the right of the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[:]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-The typesystem will check that all is ok when the declaration of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Nums]]></span><it style="font-style: bold; color:green;">&#187;</it> is complete.
+More in the detail: for every method where at least one <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#default#]]></span><it style="font-style: bold; color:green;">&#187;</it> method is recognized, another method will be generated. 
 </p><p>
-However, we have done an extension only on our specific <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Nums]]></span><it style="font-style: bold; color:green;">&#187;</it> vector, we would have to repeat
-such code for each vector.
-Can we directly produce vectors that will have a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[sum()]]></span><it style="font-style: bold; color:green;">&#187;</it> method?
-Well, this can only work for vectors of elements with a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[+]]></span><it style="font-style: bold; color:green;">&#187;</it> operator, and a zero concept. Luckily, all 
-numeric classes offer a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[zero()]]></span><it style="font-style: bold; color:green;">&#187;</it> 
-and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[one()]]></span><it style="font-style: bold; color:green;">&#187;</it> method.
-<br/>
-Building on that, we could attempt the following, invalid solution: 
+This generate method will not have any of the parameter with a recognized <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#default#]]></span><it style="font-style: bold; color:green;">&#187;</it>; it will call those <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#default#]]></span><it style="font-style: bold; color:green;">&#187;</it> methods to produce the needed values and delegates to the original method.
+
+</p><h2> Data.Relax </h2> <p>
+
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.Relax]]></span><it style="font-style: bold; color:green;">&#187;</it>
+works exactly like <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it>, 
+but does not call <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[This.checkCoherent(..)]]></span><it style="font-style: bold; color:green;">&#187;</it>
+on the result.
+
+</p><h2> Data traits </h2> <p>
+
+Finally, the following methods return traits
+with one operation each, as obvius from their name:
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[addHasToS()]]></span><it style="font-style: bold; color:green;">&#187;</it>,
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[addEqOp()]]></span><it style="font-style: bold; color:green;">&#187;</it>,
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[addReadEqOp()]]></span><it style="font-style: bold; color:green;">&#187;</it>,
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[addNEqOp()]]></span><it style="font-style: bold; color:green;">&#187;</it>,
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[addCapsuleClone()]]></span><it style="font-style: bold; color:green;">&#187;</it>,
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[addImmClone()]]></span><it style="font-style: bold; color:green;">&#187;</it>,
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[addImmNorm()]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+
+
+</p><h2> Data as a combination of decorators </h2> <p>
+
+In the end, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> just composes all of those decorators and traits togeter as follows:
 <pre class="l42Big"><![CDATA[
-MyCollection: {
-  class method
-  Library traitSum()
-    { //my sum feature
-    T: {
-      class method T zero()
-      method T +(T that)
+method Trait :(Trait that)[Data$Fail]=(
+  name=this.that()
+  autoNorm=this.autoNorm()
+  var Trait acc=that
+  acc:=this.optionallyApply(This.addHasToS(), acc=acc)
+  acc:=this.optionallyApply(This.addEqOp(), acc=acc)
+  acc:=this.optionallyApply(This.addReadEqOp(), acc=acc)
+  acc:=this.optionallyApply(This.addNEqOp(), acc=acc)
+  acc:=this.optionallyApply(This.addCapsuleClone(), acc=acc)
+  acc:=this.optionallyApply(This.addImmClone(), acc=acc)
+  acc:=this.optionallyApply(This.addImmNorm(), acc=acc)  
+  acc:=AddConstructors(name,noFwd=autoNorm):acc
+  acc:=Wither(name):acc
+  acc:=Defaults(name):acc
+  acc:=Close(name,autoNorm=autoNorm):acc
+  if this.check() (This.checkCoherent(acc.code()))
+  acc
+  )  
+]]></pre> 
+Where <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[optionallyApply(..)]]></span><it style="font-style: bold; color:green;">&#187;</it> applies the trait in the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[name]]></span><it style="font-style: bold; color:green;">&#187;</it> position only if this causes no error. In this way if a method with the same name was already defined, the operation is simply skipped.
+
+</p><h2> (4/5)Decorator </h2> <p>
+The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Decorator]]></span><it style="font-style: bold; color:green;">&#187;</it> decorator simplifies  creating new decorators.
+for example, for a variant of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> that always normalize, we could do as follow, where we simply specify a method from <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Trait]]></span><it style="font-style: bold; color:green;">&#187;</it> into <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Trait]]></span><it style="font-style: bold; color:green;">&#187;</it> that can throw any kind of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Message.Guard]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<pre class="l42Big"><![CDATA[
+Value = Decorator:{
+  method Trait(Trait trait)[Message.Guard] =
+    Data('This,autoNorm=Bool.true()):trait
+  }
+]]></pre>
+The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Decorator]]></span><it style="font-style: bold; color:green;">&#187;</it> decorator will then use our code to create a decorator.
+It will provide the following:
+<pre class="l42Big"><![CDATA[
+class method This #apply() //no-arg factory
+method Library #colon0(Library lib)[This.Fail] //decorator for Library
+method This1.Trait #colon0(This1.Trait trait)[This.Fail]//decorator for Trait
+ClassOperators={..}//support for 'Value:..'
+//instead of requiring 'Value():..'
+Fail={[Message.Guard]..}//dedicated exception type
+]]></pre>
+We can also define parameters in our decorator, but we need to ensure the object could be created with the unnamed no-arg factory.
+
+For example,
+to add to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Value]]></span><it style="font-style: bold; color:green;">&#187;</it> the option of acting in an arbitrary nested class of the input,
+ we could write:
+<pre class="l42Big"><![CDATA[
+Value = Decorator:Data:{
+  Name that=Name"This"
+  method Trait(Trait trait)[Message.Guard] =
+    Data(this.that(),autoNorm=Bool.true()):trait
+  }
+]]></pre>
+</p><p>
+We can produce very liberal variations of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> by simply re-implementing the method that composes all the individual decorators and traits.
+For example, if we wanted a variation of data that does not generate the withers, we could just write:
+<pre class="l42Big"><![CDATA[
+DataNoWither = Decorator:Data:{
+  Name that=Name"This"
+  Bool autoNorm=Bool.false()
+  Bool relax=Bool.false()
+
+  method Trait(Trait trait)[Message.Guard] = (
+    name=this.that()
+    autoNorm=this.autoNorm()
+    data = Data(name,autoNorm=autoNorm)
+    var Trait acc=trait
+    acc:=data.optionallyApply(Data.addHasToS(), acc=acc)
+    acc:=data.optionallyApply(Data.addEqOp(), acc=acc)
+    acc:=data.optionallyApply(Data.addReadEqOp(), acc=acc)
+    acc:=data.optionallyApply(Data.addNEqOp(), acc=acc)
+    acc:=data.optionallyApply(Data.addCapsuleClone(), acc=acc)
+    acc:=data.optionallyApply(Data.addImmClone(), acc=acc)
+    acc:=data.optionallyApply(Data.addImmNorm(), acc=acc)  
+    acc:=Data.AddConstructors(name,noFwd=autoNorm):acc
+    //acc:=Data.Wither(name):acc//for example, we can just skip this line
+    acc:=Data.Defaults(name):acc
+    acc:=Data.Close(name,autoNorm=autoNorm):acc
+    if !this.relax() (Data.checkCoherent(acc.code()))
+    acc
+    )
+  }
+]]></pre>
+As you can see, with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Decorator]]></span><it style="font-style: bold; color:green;">&#187;</it> we can easy tweak any existing decorator and compose them into new ones.
+
+Another intersting example is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S.Alphanumeric]]></span><it style="font-style: bold; color:green;">&#187;</it>;
+it is present in AdamTowel, but it is quite easy to redefine:
+<pre class="l42Big"><![CDATA[
+Alphanumeric = Decorator:{
+  AlphanumericTrait = Trait:{[HasToS]
+    S that
+    method toS()=this.that()
+    @Cache.Call class method This #from(S.StringBuilder stringLiteral) = 
+      this(string=stringLiteral.toS())
+    class method This (S string)
+    }
+  method Trait(Trait trait)[Message.Guard] = 
+    Data('This,autoNorm=Bool.true()):AlphanumericTrait():trait
+  }
+]]></pre>
+</p><p>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Enum]]></span><it style="font-style: bold; color:green;">&#187;</it> is a much more challenging decorator
+to define, but we have finally explored all the needed features. 
+As a reminder, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Collection.Enum]]></span><it style="font-style: bold; color:green;">&#187;</it>
+generates one enumeration element for any nested class. Thus, for example
+<pre class="l42Big"><![CDATA[
+Directions = Collections.Enum:{
+  Left={}, Top={}, Right={}, Bottom={}}
+]]></pre>
+would turn the top level nested class into an interface and would enrich those 4 nested classes so that they implements <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[This1]]></span><it style="font-style: bold; color:green;">&#187;</it> and support equality.
+Moreover, a nested class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Vals]]></span><it style="font-style: bold; color:green;">&#187;</it> is added allowing to list all the elements of the enumeration, and to map them from string.
+
+We will now see how to encode such a complex behaviour.
+<pre class="l42Big"><![CDATA[
+Enum = Decorator:{
+  //we start with 3 composable units of code
+  TraitEnumBase = Trait:{...}//the starting point
+
+  TraitEnumStep = Trait:{...}//the inductive step.
+
+  TraitCacheVals = Organize:Trait:{...}//the final touch
+
+  method Trait(Trait trait)[Message.Guard] = (
+    var res = TraitEnumBase()  //we start from the TraitEnumBase code
+    for (nameFromRoot) in trait.info().nesteds() (  //for all the names of all the nesteds:
+      base = res['Vals.next()=>'Vals.prev()]  //res.Vals.next is renamed into .prev
+      step = TraitEnumStep['E=>nameFromRoot]  //set the current TraitEnumStep name
+      res := (step+base)[hide='Vals.prev()]  //the new candidate result composes step and base
+      //res.Vals.prev is hidden, so that the next iteration we can rename next onto prev
+      )
+    res := (res+TraitCacheVals)[hide='Vals.next()]  //res.Vals.next connects the
+    //inductive step with the result, and can then be hidden
+    (res+trait)[hide='sealed()]  //finally, we compose what we created with
+    //any extra code that the user provided, and we seal the top level interface
+    )
+  }
+]]></pre>
+The general pattern shown above is quite common when building complex decorators:
+Start from some base code.
+Iterate on a number of steps depending on the input trait; for each step combine the base code with code representing this extra step.
+At the end of each step apply some renaming and hiding so that the resulting code have the same structural shape of the base code.
+Finally, compose the result with the original user input and some more code providing a better user API.
+<br/>
+For <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Enum]]></span><it style="font-style: bold; color:green;">&#187;</it>, the base code is as follow:
+<pre class="l42Big"><![CDATA[
+TraitEnumBase = Trait:{
+  List = {class method mut This()}
+  Vals = { class method List next() = List() }
+  }
+]]></pre>
+We have a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[List]]></span><it style="font-style: bold; color:green;">&#187;</it> nested, that will be the list type returned by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Vals()]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+In <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[List]]></span><it style="font-style: bold; color:green;">&#187;</it> we only declare the abstract methods used in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Vals.next()]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+
+The inductive code is much more interesting:
+we declare the top level as an interface, with a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[sealed()]]></span><it style="font-style: bold; color:green;">&#187;</it> method. This is the device to finally seal the hierarchy, so that the enumeration only has a fixed set of options.
+The enumeration offers the three methods that are usually provided by classes supporting equality: <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[readEquality]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[==]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[!=]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Nested class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[E]]></span><it style="font-style: bold; color:green;">&#187;</it> represent an arbitrary element of our enumeration, and provide a standard implementation for those methods.
+It is a class with closed state and no fields, thus 42 will implicitly use the normalized value for its single instance.
+This means that the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[System.immClone(this)]]></span><it style="font-style: bold; color:green;">&#187;</it> will simply convert the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> reference to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> without the need of any expensive computation.
+<pre class="l42Big"><![CDATA[
+TraitEnumStep = Trait:{interface
+  class method Void sealed()
+  read method Bool readEquality(read This that)
+  method Bool ==(This that)
+  method Bool !=(This that)
+  E = {[This1,HasToS]
+    class method This of::0()
+    class method This() = this.of::0()
+    class method Void sealed() = void
+    method readEquality(that) = 
+      System.immEquality(System.immClone(this) and=System.immClone(that))
+    method ==(that) = this.readEquality(that)
+    method !=(that) = !this.readEquality(that)
+    method toS() = Info(This).outerName().toS()
+    }
+  List = { method This withAlsoRight(This1 that) }
+  Vals = {
+    class method List prev()
+    class method List next() = this.prev().withAlsoRight(E())
+    }
+  }
+]]></pre>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[List]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Vals]]></span><it style="font-style: bold; color:green;">&#187;</it> are now playing the inductive game of growing a list.
+The base code <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[next()]]></span><it style="font-style: bold; color:green;">&#187;</it> starts with an empty list, and any base case will append to the right the instance of the current <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[E]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<br/>
+Finally, to provide a good and efficient API,
+we cache <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Vals()]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Vals.map()]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+This is also the place where we provide an actual implementation for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[List]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Map]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<pre class="l42Big"><![CDATA[
+TraitCacheVals = Organize:Trait:{
+  $ = {interface[HasToS],    read method Bool readEquality(read This that) }
+  List = Collection.list($)
+  Map = Collection.map(key=S val=$)
+  Vals = Data.Relax:{
+    class method List next()
+    @Cache.Lazy class method List () = this.next()
+    @Cache.Lazy class method Map map() = \()( for e in this() \put(key=e.toS() val=e) )
+    class method $ (S that) = {
+      return this.map().val(key=that).val()
+      catch error Any _ error S.ParseError(S"""
+        |Invalid enumeration name: %(that).
+        |Valid enumeration names are %this()
+        """)
       }
-    read method
-    Num sum(){
-      var T res= T.zero()
-      with n in this.vals() (res+= n ) //error here, vals() undefined
-      return res
-      }
     }
-  class method
-  Library vector(class Any of) {
-    oldPart= Collections.vector(of: of)
-    newPart= Refactor.Redirect(Path"T" to: of) <>< this.traitSum()
-    return Refactor.compose(left: oldPart, right: newPart)
-    }
+  }
 ]]></pre>
-
-Conceptually, we define a new trait for the sum method,
-and we make it general introducing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[T]]></span><it style="font-style: bold; color:green;">&#187;</it> and our
-needed requirements.
-Sadly, this is not going to compile, since 
-in the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[sum()]]></span><it style="font-style: bold; color:green;">&#187;</it> we call <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this.vals()]]></span><it style="font-style: bold; color:green;">&#187;</it>,
-and there is no definition for such method.
-Similar code worked in the former example, but here
-the definition of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MyCollection]]></span><it style="font-style: bold; color:green;">&#187;</it> gets completed,
-and the code in the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[traitSum()]]></span><it style="font-style: bold; color:green;">&#187;</it> is still 
-incomplete.
-We could just repeat there the definition of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[vals()]]></span><it style="font-style: bold; color:green;">&#187;</it>,
-but that would be duplicating code; moreover, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[vals()]]></span><it style="font-style: bold; color:green;">&#187;</it> returns an iterator, which has methods too...
+We carefully capture and regenerate errors: <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MyEnum.Vals('MisspelledName)]]></span><it style="font-style: bold; color:green;">&#187;</it> should provide a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S.ParseError]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 </p><p>
+As you can see, with a little experience it is possible to define decorators that behave like language extensions.
+Developement on a large 42 program should start defining some appropriate decorators to make the rest of the code more fluent and compact.
 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Collection]]></span><it style="font-style: bold; color:green;">&#187;</it> offers a solution: a trait containing
-the minimal code skeleton to make <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[vals()]]></span><it style="font-style: bold; color:green;">&#187;</it> over path 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[T]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-<br/>
-The idea is that
-the composition of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[traitSum()]]></span><it style="font-style: bold; color:green;">&#187;</it> and
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Collections.traitValsT()]]></span><it style="font-style: bold; color:green;">&#187;</it> is complete code.
-However, even declaring <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[traitSum()]]></span><it style="font-style: bold; color:green;">&#187;</it> as
-<pre class="l42Big"><![CDATA[
-class method
-Library traitSum() 
-  Extend[Collections.traitValsT()] <>< {/*my sum feature as before*/}
-]]></pre>
-
-whould not work: the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[<><]]></span><it style="font-style: bold; color:green;">&#187;</it> method would
-be called when <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[traitSum()]]></span><it style="font-style: bold; color:green;">&#187;</it> runs, leaving incomplete code in the resulting library literal.
-We need to force the computation to happen before
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MyColleciton]]></span><it style="font-style: bold; color:green;">&#187;</it> is completed.
-A solution is to use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Resource]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-
-<pre class="l42Big"><![CDATA[
-TraitSum: Resource <>< Extend[Collections.traitValsT()] <>< {/*my sum feature as before*/}
-MyCollection: {
-  class method
-  Library vector(class Any of) (
-    oldPart= Collections.vector(of: of) //surely works
-    {newPart= Refactor.Redirect(Path"T" to: of) <>< TraitSum()
-    return Extend[oldPart] <>< newPart
-    catch exception MetaGuard g return oldPart
-    })
-]]></pre>
-
-By the way, earlier we also forgot to handle exceptions!
-If our parameter does not support zero and plus,
-we will just return a normal collection. We need to insert additional brackets otherwise the 
-binding <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[oldPart]]></span><it style="font-style: bold; color:green;">&#187;</it> would not be visible in the catch body.
-
-As you may notice there is some incoherence in our programming style: 
-should traits be methods in a class or Resources?
-should we use 
-the more primitive
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Refactor.compose(left,right)]]></span><it style="font-style: bold; color:green;">&#187;</it>
-or the more flexible <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Extend[] <><]]></span><it style="font-style: bold; color:green;">&#187;</it>?
-In the current state of the art we do not have an answer for what is the best in 42.
-<br/>
-Indeed, we still do not understand the question.
-
-
-
-
-
-
-
-</p><h2> (1/5)Refactor and Introspection </h2> <p>
-
-</p><h2> Refactor </h2> <p>
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Refactor]]></span><it style="font-style: bold; color:green;">&#187;</it> is a class supporting modification of
-library literals.
-For example, you may want to rename the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[importStructure(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> into just <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[import(that)]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-You can do the following: 
-<pre class="l42Big"><![CDATA[
-{reuse L42.is/AdamsTowel
-Db: Refactor.RenameSelector(
-  Selector"importStructure(that)" to: Selector"import(that)"
-  ) <>< Load <>< {reuse L42.is/Db}
-UnivDb: Db.import(Db.ConnectionS"...")
-/*..*/
-}
-]]></pre>
-The type <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Selector]]></span><it style="font-style: bold; color:green;">&#187;</it> represent method selectors;
-in the same way the type <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Path]]></span><it style="font-style: bold; color:green;">&#187;</it> represent 
-paths inside library literals, as in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Path"MyNested.MyNestedNested"]]></span><it style="font-style: bold; color:green;">&#187;</it> or
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Path"This"]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-
-There are a lot of refactoring operations nested under <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Refactor]]></span><it style="font-style: bold; color:green;">&#187;</it>: 
-<ul><li>
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[RenameSelector]]></span><it style="font-style: bold; color:green;">&#187;</it>
-and 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[RenamePath]]></span><it style="font-style: bold; color:green;">&#187;</it>
-rename methods either at top level (as we just did) or
-in an arbitrary nested library;
-or rename paths into other paths
-</li><li>
-
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Redirect]]></span><it style="font-style: bold; color:green;">&#187;</it>
-removes a nested library and redirects all its references to
-an external one. This emulates generics, as we will see later.
-</li><li>
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[UpdateDocumentationSelector]]></span><it style="font-style: bold; color:green;">&#187;</it>
-and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[UpdateDocumentationPath]]></span><it style="font-style: bold; color:green;">&#187;</it>
-add to, alter or delete the documentation of methods/paths.
-</li><li>
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MakeAbstractSelector]]></span><it style="font-style: bold; color:green;">&#187;</it>
-and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MakeAbstractPath]]></span><it style="font-style: bold; color:green;">&#187;</it>
-remove all the implementation out of a method or path,
-leaving only the public skeleton
-</li><li>
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[HideSelector]]></span><it style="font-style: bold; color:green;">&#187;</it>
-and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[HidePath]]></span><it style="font-style: bold; color:green;">&#187;</it>
-mark methods or paths as private.
-We have not seen details on private members, the main idea is that
-they are renamed into invisible names that you can never guess, and automatically renamed to avoid collisions 
-by refactoring operations.
-</li></ul>
-</p><p>
-In addition to all those nested classes,
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Refactor]]></span><it style="font-style: bold; color:green;">&#187;</it> offers <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Refactor.compose(left,right)]]></span><it style="font-style: bold; color:green;">&#187;</it>
-allowing a simmetric sum of two library literals.
-The main idea is that members with the same name are recursively composed
-
-</p><h2> Introspection </h2> <p>
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Introspection]]></span><it style="font-style: bold; color:green;">&#187;</it> is
-a class for exploring libraries, to discover what methods they have and so on.
-
-The main classes inside of Introspection are
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Introspection.NestedLibrary]]></span><it style="font-style: bold; color:green;">&#187;</it>,
- <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Introspection.Method]]></span><it style="font-style: bold; color:green;">&#187;</it> and
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Introspection.Type]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-You can obtain a nested library by calling the factory methods 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Introspection(lib)]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Introspection(classObj)]]></span><it style="font-style: bold; color:green;">&#187;</it>,
-respectively for library literals or class objects.
-We will see some example later of use of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Introspection]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 
 
 
 </p><h2> (5/5)Metaprogramming summary </h2> <p>
 <ul><li>
-Metaprogramming is hard; 42 tries to make it simpler, but not trivial.
+Metaprogramming is hard; 42 tries to make it simpler, but it is still not trivial.
+</li><li>
+Making your own decorators it is easy when your decorators are just a simple composition of other decorators.
 </li><li>
 Error handling is important while writing decorators.
-More then half of decorators code should be dedicated
+A large part of decorators code should be dedicated
 to handling errors and lifting them into a more understandable
 form, for the sake of the final user.
 </li><li>
 We are just scratching the surface of what we
 can do with metaprogramming.
 If you are interested in becoming a Magrathean, then
-refer to the painful metaprogramming guide (link);
-otherwise just use existing metaprogramming libraries 
-and use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Refactor]]></span><it style="font-style: bold; color:green;">&#187;</it> only when all the other options feel more painful.
+join our effort to design the painful metaprogramming guide.
+</li><li>
+In the current state of the art we do not have an answer for what is the best 42 (meta-)programming style.
+Indeed, we still do not understand the question.
 </li></ul>
+ </p><p id="ExamplesOfLibraries"> </p><h1> Example of Libraries </h1> <p>
+
+42 stands for the primate of libraries, so let see some libraries in action.
+We have already see how to chose a towel, and many classes that are likely to be present in such towel, like
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<br/>
+Let's see how to load a library from its url: 
+<pre class="l42Big"><![CDATA[
+{reuse L42.is/AdamsTowel
+Gui: Load <>< {reuse L42.is/Gui}
+Main: {
+  Gui.alert(S"hi!")
+  return ExitCode.success()
+  }
+}
+]]></pre>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Load]]></span><it style="font-style: bold; color:green;">&#187;</it> is another decorator, here it modifies the library found in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[L42.is/Gui]]></span><it style="font-style: bold; color:green;">&#187;</it>
+ so that it can be used easily from AdamsTowel.
 
 
+</p><h2> (1/5)Gui </h2> <p>
 
+Gui allows to create graphical user interfaces using html.
+
+<pre class="l42Big"><![CDATA[
+{reuse L42.is/AdamsTowel
+Gui: Load <>< {reuse L42.is/Gui}
+MyGui: Gui(
+  title: S"My Gui"
+  basePath: S"base/path/for/my/files" // use / on all operating systems
+  x: 600Gui.Pixel
+  y: 400Gui.Pixel
+  //loads index.html from your basePath
+  ) <>< {
+  mut method
+  Void event_quit(mut Gui gui, S msg)
+    gui.close()
+
+  mut method
+  Void event_sayHi(mut Gui gui, S msg)
+    Gui.alert(S"hi")
+
+  mut method
+  Void event_say(mut Gui gui, S msg) (
+    //msg is going to be a multiline string coming from the html message/event.
+    //First line == "say", other lines give more info
+    Strings ss= msg.split(S.nl())
+    Gui.alert(S"hi dear "+ss.val(1\))
+    )
+  }
+
+Main: MyGui()
+}
+]]></pre>
+And the file <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[index.html]]></span><it style="font-style: bold; color:green;">&#187;</it>
+would look like: 
+<pre class="html"><![CDATA[
+<html>
+  <head> </head>
+  <body>
+    Hi, buttons here
+    <button onclick= 'event42("quit");'> Quit</button>
+    <button onclick= 'event42("sayHi");'> Say Hi</button>
+    <button onclick= 'event42("say\ncaterpillar");'> Say Hi Caterpillar</button>
+  </body>
+</html>
+]]></pre>
+Notice the two layers of quotes: you need to quote both the call to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[event42]]></span><it style="font-style: bold; color:green;">&#187;</it>
+and the string codifying the event itself.
+
+To make something happen in the gui, you can use 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[gui.executeJs(cmd)]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<br/>
+For example, an event could call the following method: 
+<pre class="l42Big"><![CDATA[
+mut method
+Void useJSToWriteOnTextArea(mut Gui gui) (
+  js= Gui.JavaScript"document.getElementById('myTextAreaId').value =  'Hi! event happened';"
+  gui.executeJS(js)
+  )
+]]></pre>
+
+Gui provides help to display datastructures of various kind, 
+for example vectors of Data classes can be shown as tables in the following way: 
+<pre class="l42Big"><![CDATA[
+Person: Data <>< { Size id, Name name, Name surname, Year age }
+Persons: Collections.vector(of: Person)
+ShowPersons: Gui.widget(table: Persons) //each person as a row in the table
+InputPerson: Gui.input(dialogForm: Person) //relies on 'JQuery UI'
+MyGui: Gui(/*..*/) <>< { mut Persons persons //field
+  /*..*/
+  mut method
+  Void eventLoad(mut Gui gui) ( //no underscore for system events
+    gui.add(ShowPersons(this.#persons(), into: Gui.Id"divLeft"))
+    //the element with that id will contain the table
+    )
+  mut method
+  Void event_addPerson(mut Gui gui,S msg) (
+    Person p= InputPerson(gui,title: S"New Person details")
+    catch exception InputPerson.Cancelled exc ( void) //do nothing
+    this.persons().add(left: p)
+    gui.refresh()
+    )
+  }
+Main: MyGui(persons: Persons[])
+]]></pre>
+
+</p><h2> (2/5) Files </h2> <p>
+In 42 you can import <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FileSystem]]></span><it style="font-style: bold; color:green;">&#187;</it> to read and write files.
+
+
+<pre class="l42Big"><![CDATA[
+{reuse L42.is/AdamsTowel
+FileSystem: Load <>< {reuse L42.is/FileSystem}
+
+Main: {
+  files= FileSystem()
+  files.write(S"foo.txt",S"foo foo foo!") //the file 'foo.txt' in the current directory
+  S foos= files.read(S"foo.txt") //most likely, it contains 'foo foo foo!'
+  return ExitCode.normal()
+  }
+}
+]]></pre>
+
+Each instance of the FileSystem class owns its own stream of
+operations, which are not coordinated with the other instances.  If
+you create multiple instances, then you may find that events attached
+to other instances happen much earlier than you expect.
+This happens since 42 can execute every closed expression early,
+even at compile time, if it could give a performance boost.
+To avoid unexpected early effects
+you should
+pass a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FileSystem]]></span><it style="font-style: bold; color:green;">&#187;</it> object to functions that do I/O: 
+
+<pre class="l42Big"><![CDATA[
+
+method S readFoo()
+ FileSystem().read(S"foo.txt") //may read foo once and for all at compile time,
+//and then return the same value every time. It can be useful
+//for loading resources, like image files in a simple game.
+
+method S readFoo(mut FileSystem that)
+ that.read(S"foo.txt") //need the parameter to act, thus
+//will wait until a parameter is provided
+]]></pre>
+
+In general, all the system interaction that happens over the same system object are
+chronologically sorted with respect to each other, but there is no guarantee 
+of ordering between different system objects.
+
+</p><h2> (3/5) Db </h2> <p>
+In AdamsTowel, databases can be accessed in two ways: 
+Raw access (similar to what is supported by
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[DBC]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[JDBC]]></span><it style="font-style: bold; color:green;">&#187;</it> libraries) 
+and structured access.
+<pre class="l42Big"><![CDATA[
+{reuse L42.is/AdamsTowel
+Db: Load <>< {reuse L42.is/Db} //Db can do Raw access
+UnivDb: Db.importStructure(Db.ConnectionS"...")
+QueryCountry: UnivDb.query(\"select * from student where country= @country")
+Main: {
+  connection= UnivDb.connect()
+  UnivDb.Student.Table ss= QueryCountry(connection, country: S"Italy")
+  /*..*/
+  }
+}
+]]></pre>
+Here
+we use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Db]]></span><it style="font-style: bold; color:green;">&#187;</it> to 
+import the structure of the database. This means that 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[UnivDb]]></span><it style="font-style: bold; color:green;">&#187;</it> will contain a class for each table of the database, and
+each of those classes will have a nested class representing 
+multiple rows (that is, a table).
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[UnivDb.query(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> allows prepared queries.
+In the case in the example, we can use
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[QueryCountry(that,country)]]></span><it style="font-style: bold; color:green;">&#187;</it>
+to get the Italian students.
+Note how <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[country]]></span><it style="font-style: bold; color:green;">&#187;</it> is a parameter of the method: in this way the  query users are informed of the queries requirements.
+Our query used <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[*]]></span><it style="font-style: bold; color:green;">&#187;</it> (all columns), so the type <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[UnivDb.Student.Table]]></span><it style="font-style: bold; color:green;">&#187;</it>
+could be reused.
+In other cases a new type would be generated, eg. <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[QueryCountry.Table]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+
+</p><h2> (4/5) Example Gui and Db together </h2> <p>
+
+In the following code we show an example where a Gui display the Italian students.
+
+We could directly display elements of 
+type <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[UnivDb.Student]]></span><it style="font-style: bold; color:green;">&#187;</it>, but we chose 
+to write more flexible and maintainable code
+(code maintenance requires localized changes),
+where we define our basic classes (<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Name]]></span><it style="font-style: bold; color:green;">&#187;</it> and
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Year]]></span><it style="font-style: bold; color:green;">&#187;</it>)
+and we define an injection from
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[UnivDb.Student]]></span><it style="font-style: bold; color:green;">&#187;</it>
+to
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Then we use the 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[eventLoad]]></span><it style="font-style: bold; color:green;">&#187;</it> method
+to load the information from the DB and
+to display it.
+
+<pre class="l42Big"><![CDATA[
+{reuse L42.is/AdamsTowel
+
+Name: Alphanumeric: <>< {This parse(S that) (
+  if that.contains(S.nl()) (error Alphanumeric.ParseError
+    "new lines not allowed in method names")
+  This(that) 
+  )} //check for more restrictions
+
+Year: Unit.of(Num)
+
+Db: Load <>< {reuse L42.is/Db}
+
+UnivDb: Db.importStructure(Db.ConnectionS"...") //will not use Name and Year
+
+QueryCountry: UnivDb.query(\"select * from students where country= @country")
+
+Person: Data <>< { Name name, Name surname, Year age 
+  class method
+  This from(UnivDb.Student db) //injection/conversion method: UnivDb.Student -> Person
+    Person(
+      name: Name.from(base: db.name())
+      surname: Name.from(base: db.surname())
+      age: Year.from(base: db.age())
+      )
+  }
+
+Persons: Collections.vector(of: Person)
+
+ShowPersons: Gui.widget(table: Persons)
+
+MyGui: Gui(/*..*/) <>< {
+  mut method
+  Void eventLoad(mut Gui gui, S msg) (
+    connection= UnivDb.connect()
+    UnivDb.Student.Table ss= QueryCountry(connection, country: S"Italy")
+    ps= Persons[with s in ss.vals() (use[Person.from(db: s)])]
+    gui.add(ShowPersons(ps, into: Gui.Id"divLeft"))
+    )
+  }
+
+Main: MyGui()
+}
+]]></pre>
+
+It is interesting to notice that if we wish to change the
+content of the students displayed representation, we just need to change the class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person]]></span><it style="font-style: bold; color:green;">&#187;</it> and add/remove/swap fields.
+</p><p>
+
+It is also interesting to consider what happens if the database schema changes.
+
+If there are no more students, or the students do not have countries any more,
+then we will get an error while generating the class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[QueryCountry]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+
+If the students will not have names, surnames or ages
+any more, then we will get an error while generating the
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person]]></span><it style="font-style: bold; color:green;">&#187;</it> class.
+In some sense we are turning into understandable compile time errors events that would have caused a runtime exception in most other languages.
+
+</p><h2> (5/5) Libraries </h2> <p>
+
+42 is designed to support libraries and cooperation of multiple libraries at the same time.
+
+Since 42 is still in its infancy, there are not many libraries around yet.
+Stay tuned for more!
         </p>
         </div>
       </div>

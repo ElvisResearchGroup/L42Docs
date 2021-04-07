@@ -1,7 +1,7 @@
 WBigTitle(`More decorators')
 Using the expressive power of programmatic refactoring many different decorators can be designed. Here we list and explain some of the most useful.
 
-WTitle(`Public')
+WTitle((1/5)`Public')
 The Wcode(Public) decorator allows to 
 select certain members as Wcode(Public), and to hide all the others: for any nested class containing at least one Wcode(Public) annotation, Wcode(Public) hides all the non Wcode(Public) annoted members.
 WBR
@@ -26,10 +26,10 @@ but we expose only the Wcode(name).
 We also expose the method Wcode(birthDay), that can update the Wcode(age).
 WBR
 Wcode(Data) is generating a bunch of other methods, but we are not exposing them.
-In order to make our Wcode(Person) class usable, we need to at least export a factory, as we do in line 5.
+In order to make our Wcode(Person) class usable, we need to at least expose a factory, as we do in line 5.
 WBR
 On the other side, consider Wcode(Car): since there is no Wcode(Public) annotation in Wcode(Car), no members are hidden.
-Also, note how the Wcode(Car) invariant can normally refer to Wcode(Person.age()). This works because the Wcode(Public) decorator is applied outside of both Wcode(Person) and Wcode(Car). This is indeed a very common pattern: Wcode(Public) is often used high up in the nested tree, to allow for tightly connected classes to see each other privates when needed.
+Also, note how the Wcode(Car) invariant can refer to Wcode(Person.age()) normally. This works because the Wcode(Public) decorator is applied outside of both Wcode(Person) and Wcode(Car). This is indeed a very common pattern: Wcode(Public) is often used high up in the nested tree, to allow for tightly connected classes to see each other privates when needed.
 Using the outline IDE feature, we could see the following:
 OBCode
   MyProgram={
@@ -75,13 +75,13 @@ MyProgram = Public(private=\(X)):{
     }
   }
 CCode
-The code above hides the Wcode(Car) invariant; this of course means that the invariant is still enforced, but methods Wcode(drivingAge()) nor Wcode(drivingAge(driver)) are not polluting the interface of Wcode(Car) any more.
+The code above hides the Wcode(Car) invariant; this of course means that the invariant is still enforced, but methods Wcode(drivingAge()) and Wcode(drivingAge(driver)) are not polluting the interface of Wcode(Car) any more.
 WP
 Finally, Wcode(Public) is closing all the nested classes;
 this means that the fields and constructors are not any more abstract methods but implemented methods delegating  to hidden ones.
 A close class encapsulate its state, but can be reused in less flexible ways: the code of two closed classes can not be merged with trait operators Wcode(+) and Wcode(:).
 
-WTitle(`Organize')
+WTitle((2/5)`Organize')
 
 With metaprogramming, often we have to create code in a certain order,
 and this order may be in contrast with the final structure we want to create.
@@ -141,14 +141,14 @@ CCode
 
 Wcode(Organize) is also very useful to avoid redeclaring 
 abstract methods when extending code.
-This sometimes requires to use Wterm(late typing), usually by introducing an extra nested class that will only be used
+This sometimes requires to use WTerm(late typing), usually by introducing an extra nested class that will only be used
 as a dependency.
 
 One such case happend while designing a little 42 videogame; where we encountered the setting below:
 We have Wcode(NPC) following each others in a Wcode(Map).
-As for the example above, the map is going to have specialized location aware operations.
-The Wcode(NPC) knows about the Wcode(Map), the Wcode(Map) values are Wcode(NPCs).
-Moreover, we do not just reuse a Wcode(Collection.map) but we add new operations to it.
+The Wcode(NPC) knows about the Wcode(Map), the Wcode(Map) values are Wcode(NPC) objects.
+Moreover, we do not just reuse a Wcode(Collection.map) but we add new operations to it: the map is going to have specialized location aware operations.
+
 
 OBCode
 Point = Data:{I x, I y}
@@ -203,9 +203,10 @@ Also method Wcode(stepAll()) requires upcasting; however we do not need to repea
 
 Note that this approach does not rely on any dynamic checks; the 42 upcast operator Wcode(<:) is only guiding the type system, and even if the typing happens later, it will happen before the code is ready for execution.
 
-WTitle(`Data.**')
+WTitle((3/5)`Data.**')
 The Wcode(Data) decorator contains many useful nested classes, that can be used as independent decorators.
-WP
+
+WTitle(`Data.AddList, Data.AddOpt, Data.AddSet')
 Decorators Wcode(Data.AddList), allows to add a
 nested class Wcode(List) working as a list of Wcode(This).
  Wcode(Data.AddOpt) and Wcode(Data.AddSet) work similarly, but for Wcode(Opt) and Wcode(Set).
@@ -218,11 +219,13 @@ Point = Data:Data.AddList:Data.AddSet:{
 ps = Point.List[\(x=3I,y=4I);\(x=5I,y=6I);]
 CCode
 Note that the order of application of the above decorators is not important.
-WP
+
+WTitle(`Data.AddConstructors')
+
 Wcode(Data.AddConstructors) applies an heuristic to decide what are the field of a class and add two constructors:
-Wcode(#apply(..)) and Wcode(#immK).
+The first is called Wcode(#immK) and the second has the empty name; also known as Wcode(#apply).
 Wcode(#immK) simply takes all fields as immutable and produces an immutable result.
-Wcode(#apply(..)) takes the most general type for the fields and produces a Wcode(mut) result if class instances are mutable, and Wcode(imm) otherwise.
+Wcode(#apply) takes the most general type for the fields and produces a Wcode(mut) result if class instances are mutable, and Wcode(imm) otherwise.
 The most general type for fields may be Wcode(fwd imm) or Wcode(fwd mut).
 We have not seen Wcode(fwd) types yet in this guide; they are useful for circular initialization. For example 
 OBCode
@@ -238,7 +241,8 @@ Wcode(Name that) and Wcode(Bool noFwd).
 Wcode(Name that) choses the nested class to influence, and it is Wcode(Name"This") by default.
 Wcode(Bool noFwd) is false by default, and 
 prevents Wcode(fwd imm) and Wcode(fwd mut) constructors when true.
-WP
+
+WTitle(`Data.Close')
 
 Wcode(Data.Close) also takes two parameters:
 Wcode(Name that) and Wcode(Bool autoNorm).
@@ -246,15 +250,15 @@ Wcode(Name that) choses the nested class to influence, and it is Wcode(Name"This
 Wcode(Bool autoNorm) is false by default, and if it is true attempts to use an already existent Wcode(norm()) method to only expose normalized values out.
 It only works if class instances are immutable
 and fails if any constructor parameter is forward.
-@Wcode(Data.Close) is the part of Wcode(Data) processing and activating of all the Wcode(Cache.**) annotations.
+Wcode(Data.Close) is the part of Wcode(Data) processing and activating of all the Wcode(Cache.**) annotations.
 WP
-@Wcode(Data.Close) implements all of the abstract state operations by delegating to an equivalent private method.
-The class is the Wterm(closed). 
-Wcode(Data.Close.all(..)) is a convenient stati method that applies Wcode(Data.Close) on all the nested classes of .. .
-Wcode(Public) is using Wcode(Data.Close.all(..)) internally.
+Wcode(Data.Close) implements all of the abstract state operations by delegating to an equivalent private method.
+The class is the WTerm(closed). 
+Wcode(Data.Close.all(..)) is a convenient class method that applies Wcode(Data.Close) on all the nested classes in a library literal.
+Wcode(Public) uses Wcode(Data.Close.all(..)) internally.
 As discussed for Wcode(Public), code composition of closed classes is less flexible since the state is now set in stone.
 
-WP
+WTitle(`Data.Wither')
 
 Wcode(Data.Wither) takes an open class and adds 
 Wcode(with(..)) methods; one for each field.
@@ -263,6 +267,8 @@ For example, in the usual iconic Wcode(Point) example, we could write
 Wcode(Point(x=3I,y=4I).with(x=5I))
 to get Wcode(Point(x=5I,y=4I))
 Note that this generates only the withers to update a single parameter at a time.
+
+WTitle(`Data.Defaults')
 
 In 42, methods are distinguised by their full selector, not their name; this is particularly conveneint to encode default arguments, so that calling a method without mentioning a parameter will be equivalent to passing a default value to it.
 This can be done by hand; as shown in the example below:
@@ -287,22 +293,31 @@ CCode
 Methods starting with Wcode(#default#) are recognized by Wcode(Data.Defaults) and used to create delegators. Moreover, in the same way fields are expanded into methods, the expression associated with the field is expanded in a no-arg Wcode(#default#) method.
 Manually defined Wcode(#default#) methods can also take parameters; they must have the same name and type of parameters specified before the current parameter in the original method.
 WBR
-More in the detail: for every method where at least one Wcode(#default#) method is recognized, another method will be generated. This second method will not have any of the parameter with a recognized Wcode(#default#). This second method will call those Wcode(#default#) methods to produce the needed values and finally delegates to the original method.
+More in the detail: for every method where at least one Wcode(#default#) method is recognized, another method will be generated. 
 WP
+This generate method will not have any of the parameter with a recognized Wcode(#default#); it will call those Wcode(#default#) methods to produce the needed values and delegates to the original method.
+
+WTitle(`Data.Relax')
+
 Wcode(Data.Relax)
 works exactly like Wcode(Data), 
-but does not call Wcode(This.checkCoherent(..))
+but does not call Wcode(`This.checkCoherent(..)')
 on the result.
-WP
+
+WTitle(`Data traits')
+
 Finally, the following methods return traits
 with one operation each, as obvius from their name:
 Wcode(addHasToS()),
 Wcode(addEqOp()),
-Wcode(addReadEqOp(),
-Wcode(addNEqOp(),
-Wcode(addCapsuleClone(),
-Wcode(addImmClone(),
+Wcode(addReadEqOp()),
+Wcode(addNEqOp()),
+Wcode(addCapsuleClone()),
+Wcode(addImmClone()),
 Wcode(addImmNorm()).
+
+
+WTitle(`Data as a combination of decorators')
 
 In the end, Wcode(Data) just composes all of those decorators and traits togeter as follows:
 OBCode
@@ -327,16 +342,16 @@ method Trait :(Trait that)[Data$Fail]=(
 CCode 
 Where Wcode(optionallyApply(..)) applies the trait in the Wcode(name) position only if this causes no error. In this way if a method with the same name was already defined, the operation is simply skipped.
 
-WTitle(`Decorator')
+WTitle((4/5)`Decorator')
 The Wcode(Decorator) decorator simplifies  creating new decorators.
-for example, for a variant of data that always normalize, we could do as follow, where we simply specify a method from Wcode(Trait) into Wcode(Trait) that can throw any kind of Wcode(Message.Guard).
+for example, for a variant of Wcode(Data) that always normalize, we could do as follow, where we simply specify a method from Wcode(Trait) into Wcode(Trait) that can throw any kind of Wcode(Message.Guard).
 OBCode
 Value = Decorator:{
   method Trait(Trait trait)[Message.Guard] =
     Data('This,autoNorm=Bool.true()):trait
   }
 CCode
-The Wcode(Decorator) decorator will then use our code to create a decorator:
+The Wcode(Decorator) decorator will then use our code to create a decorator.
 It will provide the following:
 OBCode
 class method This #apply() //no-arg factory
@@ -347,7 +362,10 @@ ClassOperators={..}//support for 'Value:..'
 Fail={[Message.Guard]..}//dedicated exception type
 CCode
 We can also define parameters in our decorator, but we need to ensure the object could be created with the unnamed no-arg factory.
-For example, we could write
+
+For example,
+to add to Wcode(Value) the option of acting in an arbitrary nested class of the input,
+ we could write:
 OBCode
 Value = Decorator:Data:{
   Name that=Name"This"
@@ -355,7 +373,6 @@ Value = Decorator:Data:{
     Data(this.that(),autoNorm=Bool.true()):trait
   }
 CCode
-To add to value the option of acting in an arbitrary nested class of the input.
 WP
 We can produce very liberal variations of Wcode(Data) by simply re-implementing the method that composes all the individual decorators and traits.
 For example, if we wanted a variation of data that does not generate the withers, we could just write:
@@ -426,32 +443,23 @@ Enum = Decorator:{
   TraitCacheVals = Organize:Trait:{...}//the final touch
 
   method Trait(Trait trait)[Message.Guard] = (
-    var res = TraitEnumBase()
-    //we start from the TraitEnumBase code
-    for (nameFromRoot) in trait.info().nesteds() (
-      //for all the names of all the nesteds:
-      base = res['Vals.next()=>'Vals.prev()]
-      //res.Vals.next is renamed into .prev
-      step = TraitEnumStep['E=>nameFromRoot]
-      //set the current TraitEnumStep name
-      res := (step+base)[hide='Vals.prev()]
-      //the new candidate result composes step and base
-      //res.Vals.prev is hidden, so that the next
-      //iteration we can rename next onto prev
+    var res = TraitEnumBase()  //we start from the TraitEnumBase code
+    for (nameFromRoot) in trait.info().nesteds() (  //for all the names of all the nesteds:
+      base = res['Vals.next()=>'Vals.prev()]  //res.Vals.next is renamed into .prev
+      step = TraitEnumStep['E=>nameFromRoot]  //set the current TraitEnumStep name
+      res := (step+base)[hide='Vals.prev()]  //the new candidate result composes step and base
+      //res.Vals.prev is hidden, so that the next iteration we can rename next onto prev
       )
-    res := (res+TraitCacheVals)[hide='Vals.next()]
-    //res.Vals.next connects the inductive step
-    //with the result, and can then be hidden
-    (res+trait)[hide='sealed()]
-    //finally, we compose what we created with any
-    //extra code that the user provided, and we
-    //seal the top level interface
+    res := (res+TraitCacheVals)[hide='Vals.next()]  //res.Vals.next connects the
+    //inductive step with the result, and can then be hidden
+    (res+trait)[hide='sealed()]  //finally, we compose what we created with
+    //any extra code that the user provided, and we seal the top level interface
     )
   }
 CCode
-The genera pattern shown above is quite common when building complex decorators:
+The general pattern shown above is quite common when building complex decorators:
 Start from some base code.
-Iterate on a number of steps depending on the input trait; for each step combine the base code with core representing this extra step.
+Iterate on a number of steps depending on the input trait; for each step combine the base code with code representing this extra step.
 At the end of each step apply some renaming and hiding so that the resulting code have the same structural shape of the base code.
 Finally, compose the result with the original user input and some more code providing a better user API.
 WBR
@@ -466,7 +474,7 @@ We have a Wcode(List) nested, that will be the list type returned by Wcode(Vals(
 In Wcode(List) we only declare the abstract methods used in Wcode(Vals.next()).
 
 The inductive code is much more interesting:
-we declare the top level as an interface, with a Wcode(sealed()) method. This is device to finally seal the hierarky, so that the enumeration only has a fixed set of options.
+we declare the top level as an interface, with a Wcode(sealed()) method. This is the device to finally seal the hierarchy, so that the enumeration only has a fixed set of options.
 The enumeration offers the three methods that are usually provided by classes supporting equality: Wcode(readEquality), Wcode(==) and Wcode(!=).
 Nested class Wcode(E) represent an arbitrary element of our enumeration, and provide a standard implementation for those methods.
 It is a class with closed state and no fields, thus 42 will implicitly use the normalized value for its single instance.
@@ -479,7 +487,7 @@ TraitEnumStep = Trait:{interface
   method Bool !=(This that)
   E = {[This1,HasToS]
     class method This of::0()
-    class method This() = this.of::0
+    class method This() = this.of::0()
     class method Void sealed() = void
     method readEquality(that) = 
       System.immEquality(System.immClone(this) and=System.immClone(that))
@@ -519,40 +527,33 @@ TraitCacheVals = Organize:Trait:{
     }
   }
 CCode
-We have to carefully capture and regenerate errros, since Wcode(MyEnum.Vals('MisspelledName)) should provide a Wcode(S.ParseError).
+We carefully capture and regenerate errors: Wcode(MyEnum.Vals('MisspelledName)) should provide a Wcode(S.ParseError).
 WP
 As you can see, with a little experience it is possible to define decorators that behave like language extensions.
 Developement on a large 42 program should start defining some appropriate decorators to make the rest of the code more fluent and compact.
 
-decorator Resource/lift string?
-Trait.LiftS(p)['#apply()=>n] 
-produces a class with a class method S () returning the string.
-summary
-
-In the current state of the art we do not have an answer for what is the best in 42.
-WBR
-Indeed, we still do not understand the question.
-
-
-
-
-
+WComm decorator Resource/lift string?
+WComm Trait.LiftS(p)['#apply()=>n] 
+WComm produces a class with a class method S () returning the string.
 
 
 
 WTitle((5/5)Metaprogramming summary)
 <ul><li>
-Metaprogramming is hard; 42 tries to make it simpler, but not trivial.
+Metaprogramming is hard; 42 tries to make it simpler, but it is still not trivial.
+</li><li>
+Making your own decorators it is easy when your decorators are just a simple composition of other decorators.
 </li><li>
 Error handling is important while writing decorators.
-More then half of decorators code should be dedicated
+A large part of decorators code should be dedicated
 to handling errors and lifting them into a more understandable
 form, for the sake of the final user.
 </li><li>
 We are just scratching the surface of what we
 can do with metaprogramming.
 If you are interested in becoming a Magrathean, then
-refer to the painful metaprogramming guide (link);
-otherwise just use existing metaprogramming libraries 
-and use Wcode(Refactor) only when all the other options feel more painful.
+join our effort to design the painful metaprogramming guide.
+</li><li>
+In the current state of the art we do not have an answer for what is the best 42 (meta-)programming style.
+Indeed, we still do not understand the question.
 </li></ul>

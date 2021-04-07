@@ -17,12 +17,12 @@ WP
 Let's now define a mutable Wcode(Animal), whose location can be updated:
 OBCode
 Animal = Data:{
-  var Point location
-
+  var Point location //getter: this.location()
+                     //setter: this.location(newVal)
   mut method
   Void run() =
-    this.location(\.add(x=20Num))
-    //here \ == this.location()
+    this.location(\location.add(x=20Num))//update the field with a new point
+    //here \location == this.location()
   }
 CCode
 There are two new keywords used here: 

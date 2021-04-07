@@ -1,4 +1,187 @@
-WBigTitle(Example of Libraries)
+WBigTitle(Example a 42 program)
+
+In this chapter, we will see how to develop a GUI connected with a Data Base.
+For simplicity we consider to have a database with a single tabel Wcode(Person) that contains a fiew fields.
+We want to make a GUI that displays the data and allows to edit it.
+
+OBCode
+reuse [AdamTowel]
+Unit = Load:{reuse[Unit]}
+LoadJ = Load:{reuse[JavaServer]}
+LoadGui = Load:{reuse[GuiBuilder]}
+Query = Load:{reuse[Query]}
+CCode
+First we load the libraries we need:
+Unit, JavaServer, GuiBuilder and Query.
+WP
+We then declare some useful units. Persons have ages expressed in years,
+heights expressed in meters and weights expressed in Kgs.
+OBCode
+Year = Unit(I)
+Meter = Unit(Num)
+Kg = Unit(Num)
+CCode
+WP
+We then ask Wcode(Query.sql) to generate a class to support SQL queries using a java slave and a connection string.
+As an example, we are using a derby DB.
+For now, we consider the DB to be altready populated. In the end we discuss how to initialize the DB itself.
+OBCode
+//SQL part
+DBJ = LoadJ(slaveName=S"dbServer{}") //slave for the DB connection
+DB = Query.sql(//instantiate Query for SQL queries
+  connectionString=S"jdbc:derby:PersonsGui;create=true",
+  javaServer=DBJ)
+CCode
+
+
+The class Wcode(DB) can now reify the DB tables; here it is just Wcode(Table.Person).
+OBCode
+Table = DB.#$of().tables() //
+CCode
+
+
+Finally, we can make a query box with all the queries that are relevant for this application.
+A query box is a capability class, whose methods are able to do queries on a give database.
+It is obtained with the decorartor Wcode(DB.QueryBox),
+that can recognize nested classes created with the
+Wcode(DB.query) method.
+TODO: why public??
+Eventually, also show Deploy as Jar.
+OBCode
+Queries = DB.QueryBox:{//A box with all the queries we want to support
+  @Public All = DB.query[Table.Person.List]"SELECT * FROM Person"
+  
+  @Public Insert = DB.query[Void;S;Year;Meter;Kg]"""
+    |INSERT INTO Person (name,age,height,weight)
+    |Values (@name,@age,@height,@weight)
+    """
+  @Public DeleteId = DB.query[Void;I]"DELETE FROM Person WHERE id=@id"
+  @Public DeleteName = DB.query[Void;S]"DELETE FROM Person WHERE name=@name"
+  }
+
+//IQL part
+GuiJ = LoadJ(slaveName=S"miniGuiSlave{}") //slave for IQL and Gui
+IQL = Query.iql(javaServer=GuiJ)//instantiate Query for IQL queries
+
+Key = Data:Data.AddList:{I id} //types expected by the IQL queries
+PName = Data:Data.AddList:{S name}
+Person = Data:Data.AddList:{S name, Year age, Meter height, Kg weight}
+Dialogs = IQL.QueryBox:{//A box with all the queries we want to support
+  @Public AddPersons = IQL.query[Person.List]"""
+    | 'Add persons' Pages('Add data for more persons')
+    | name 'name' String
+    | age  'age'  Integer
+    | height 'height' Decimal{regex='[0-9]*\\.[0-9][0-9]'}
+    | weight 'weight' Decimal{regex='[0-9]*\\.[0-9]'}
+    """
+  @Public RemoveById=IQL.query[Key.List]"""
+    | 'Deleting an entry' Single('Entry to delete?')
+    | id 'index' String
+    """
+  @Public RemoveByName = IQL.query[PName.List]"""
+    | 'Deleting entries' Tabular('Entries to delete?')
+    | name 'name' String
+    """
+  }
+
+//GUI part
+Gui = LoadGui(javaServer=GuiJ)  
+Model = Data:GuiJ.Handler:{ //the model answering to Java events
+  mut GuiJ j
+  mut Queries sql
+  mut Dialogs iql
+  mut method Void submitEvent(S that, S msg)[_] =
+    this.#j().submitEvent(key='Example.Display, id=that, msg=msg)
+  @GuiJ.Handler mut method Void printAll(S msg)=(
+    this.submitEvent(S"tableClear", msg=S"")
+    for (id,name,age,height,weight) in this.#sql().all()() (
+      this.submitEvent(S"tableAdd", msg=S"%id,%name,%age,%Double(height),%Double(weight),")
+      )
+    whoops DB.Fail, GuiJ.Fail
+    )
+  @GuiJ.Handler mut method Void addPerson(S msg)=(
+    for (name,age,height,weight) in this.#iql().addPersons()() (
+      this.#sql().insert()(name=name, age=age, height=height, weight=weight)
+      )
+    this.printAll(msg=msg)
+    whoops DB.Fail, IQL.Fail
+    )
+  @GuiJ.Handler mut method Void removeById(S msg)=(
+    for (id) in this.#iql().removeById()() (//zero or one time
+      this.#sql().deleteId()(id=id)
+      )
+    this.printAll(msg=msg)
+    whoops DB.Fail, IQL.Fail
+    )
+  @GuiJ.Handler mut method Void removeByName(S msg)=(
+    for (name) in this.#iql().removeByName()() (//zero or many times
+      this.#sql().deleteName()(name=name)
+      )
+    this.printAll(msg=msg)
+    whoops DB.Fail, IQL.Fail
+    )
+  }
+OpenGui = {class method Void (mut GuiJ j)[_] = (
+  gui=Gui(j=j,package=S"miniGui",imports=S"""%
+    | %Gui.defaultImports()
+    | import javax.swing.table.DefaultTableModel;
+    """,
+    name='Example,x=800\,y=600\
+    )
+  gui"""%
+    |JPanel screen1=new JPanel();
+    |{add(screen1);}
+    |JPanel buttons=new JPanel();
+    |{addNorth(screen1,buttons);}
+    |%gui.button(id=S"addPerson",msg='PressedAdd,text=S"add")
+    |{addFlow(buttons,addPerson);}
+    |%gui.button(id=S"removeById",msg='PressedRemove,text=S"remove by id")
+    |{addFlow(buttons,removeById);}
+    |%gui.button(id=S"removeByName",msg='PressedRemove,text=S"remove by name")
+    |{addFlow(buttons,removeByName);}
+    |%gui.button(id=S"printAll" msg='PressedPrint text=S"printAll")
+    |{addFlow(buttons,printAll);}
+    |Object[] tLabels={"id","name","age","height","weight"};
+    |DefaultTableModel tModel=new DefaultTableModel(new Object[][]{},tLabels);
+    |JTable table = new JTable(tModel);
+    |{addCenter(screen1,new JScrollPane(table));}
+    |{event.registerEvent("Example.Display","tableAdd",
+    |  (k,id,msg)->SwingUtilities.invokeLater(()->tModel.addRow(msg.split(","))));}
+    |{event.registerEvent("Example.Display","tableClear",
+    |  (k,id,msg)->SwingUtilities.invokeLater(()->tModel.setRowCount(0)));}
+    """
+  )}
+//Finally, the Main puts all together
+Main=(
+  j=GuiJ.#$of()//the Java GUI slave
+  sql=Queries(DB.#$of())//sql queries and the Java DB slave
+  iql=Dialogs(IQL(j))//iql queries supported by the GUI slave
+  model=Model(j=j,sql=sql,iql=iql)
+  OpenGui(j=j)
+  for e in j(\['Example]) ( e>>model )//event loop
+  )
+//Drop=DB.query[Void]"DROP TABLE Person"//optionally clean up
+//AfterMain= ( Drop(DB.#$of())(),  db.kill() )
+
+
+
+Create = DB.query[Void]"""
+  |CREATE TABLE Person (
+  |  id int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY
+  |    (Start with 1, Increment by 1),
+  |  name varchar(255),
+  |  age int,
+  |  height decimal(5,2),
+  |  weight decimal(5,1)
+  |  )
+  """
+PopulateIfEmpty = {//set up the DB tables in case this is the first run
+  return Create(DB.#$of())() 
+  catch Message _ return void
+  }
+
+CCode
+
 
 42 stands for the primate of libraries, so let see some libraries in action.
 We have already see how to chose a towel, and many classes that are likely to be present in such towel, like

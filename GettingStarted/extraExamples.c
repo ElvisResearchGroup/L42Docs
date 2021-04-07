@@ -1,28 +1,39 @@
+Possible to add a FAQ / exercises to all the chapters?
 
-WTitle(`Data.**')
-The Wcode(Data) decorator contains many useful nested classes, that can be used as independent decorators.
-Wcode(Data.AddConstructors) applies an heuristic to decide what are the field of a class and add appropriate constructors. (autoNorm forces the imm state? no? I'm testing it right now.)
-Wcode(Data.Close) 
- Close also close have Name and autoNorm
- Wither
-Defaults
+- Can you show a class with a field foo that can be updated but not mutated and a field bar that can be mutated but not updated?
+A = Data:{ var S.List foo, mut S.List bar}
 
- Relax
+- Is it true that:
+* All the imm references refer to immutable objects
+  Yes
 
- AddList
- AddOpt
- AddSet
+* All the read references refer to read objects
+  No, there is no such thing as a read object, objects are only imm, mut and class.
+
+* All the mut references refer to mutable objects
+  Yes
+
+* All the mut fields store mutable objects
+  No, mut fields of immutable objects store immutable objects.
+  This is implied from the concept of deep immutability.
+
+* All the capsule fields store capsule objects
+  No, therere are no capsule objects. Capsule fields are just a sugar
+  for fields that can only be initialized and updated with capsule references and that can not leak the value as mut.
+
+- Can you explain the difference between: object, reference, local binding and field?
+* An object is 
+* A reference is a key to access an object, and can have a modifier that works as an access permission. Many different references can access the same object, and they may have different modifiers.
+ However, if one of those modifiers is 'imm', then all no other reference will be 'mut', 'lent' or 'capsule'.
+* A local binding stores a reference. A variable local binding can
+be updated to change the stored reference.
+Local bindings are scoped, and they live for the duration of their scope.
+* A field stores a reference. A variable field can
+be updated to change the stored reference.
+Fields are contained in objects, and they live until the object containing them lives.
 
 
-WTitle(`Decorator')
-The Wcode(Decorator) decorator 
 
-the decorator decorator
-//mention example Alphanumeric/Enum as Decorator:
-
-Make your own decorators: when is it good?
-
-summary
 
 
 

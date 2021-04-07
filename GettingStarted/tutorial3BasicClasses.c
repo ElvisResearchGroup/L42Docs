@@ -27,7 +27,7 @@ but triky modulo arithmetic.
 WTitle(Other numeric types)
 
 AdamTowel offers two other numeric types:
-Wcode(Double) (64 bits floating point) and Wcode(Math.Long) (64 bits integers, rarelly used).
+Wcode(Double) (64 bits floating point) and Wcode(Math.Long) (64 bits integers, rarely used).
 
 
 WTitle(Conversions)
@@ -39,9 +39,9 @@ This will avoid precision loss as much as possible.
 
 WTitle((2/5) Units: An example library)
 
-We now see how to load and use an interesting 42 Library:Wcode(Unit).
+We will now see how to load and use an interesting 42 Library:Wcode(Unit).
 
-Consider the following code, where the class decorator Wcode(Load) allows to load libraries and embed them in the 
+Consider the following code, where the class decorator Wcode(Load) allows us to load libraries and embed them in the 
 current context, while the
 Wcode(reuse) keyword imports the code from the web. 
 OBCode
@@ -56,28 +56,38 @@ Wcode(Unit)
 offers methods to create units out of numeric supports, like Wcode(Num) and Wcode(I).
 The code above shows how to create a Wcode(Year) unit and use it to represent a person age.
 
-Units can be sum with themselves and multiplied by constants; for example
+Units can be added to themselves and multiplied by constants; for example
 Wcode(3Year+2Year == 5Year) and Wcode(3Year *2I == 6Year) would hold, but Wcode(3Year * 2Year) would not compile.
 
-Unit could be used to manually define all the units of SI; and a pre-build unit of such reusable code is already provided in the library; we simply need to specify the desired support:
+Units could be used to manually define 
+all of the units of the SI system.
+Prebuild reusable code for the SI system is already provided in the library; we simply need to specify the desired support, as shown in the code below:
 
 OBCode
 SI = Class:Unit.TraitSI['Support=>Num]
 ..
-res= (6SI.Meter +4SI.Meter)*2Num //20Meter
-//wrong1= 6Meter+2Second
-//wrong2= 6Meter/2Second
+res = (6SI.Meter + 4SI.Meter) * 2Num //20Meter
+//wrong = 6SI.Meter + 2SI.Second
 CCode
+
+Wcode(Unit.TraitSI) is a WTerm(trait); traits contains reusable code and operations to adapt it to the current needs.
+We will see more on traits (much) later in this guide.
+WBR
+In the case of Wcode(Unit.TraitSI), we can adapt it to many kinds of numeric support and extract the code using 
+Wcode(Class:Unit.TraitSI['Support=>Num]).
+WP
 As you can see, we can sum meters together, and we can use the support for multiplication, but we can not mix different units of measure.
 
 Mathematically you can obtain the support out of the unit by
 division; that is, 42 meters divided by 2 meters is  21.
 Units also provide method  Wcode(`#'inner()),
-this is just extracting the value of the support from the unit.
+which is just extracting the value of the support from the unit.
 This can be convenient during programming but 
-does not make a lot of sense mathematically.
-Methods like that are required to be used with care, so they start with
-Wcode(`#') to underline that.
+does not make a lot of sense mathematically and thus 
+it should be used with care.
+WP
+In 42, methods names starting with Wcode(`#') should be
+used only in special circumstances.
 
 The syntax Wcode(['Support=>Num]) maps the class called Wcode(Support) inside of the library onto the class Wcode(Num) defined outse of the library. We will explain later the precise use of such mappings.
 
