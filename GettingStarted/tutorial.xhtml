@@ -726,6 +726,8 @@ We will see more on traits (much) later in this guide.
 <br/>
 In the case of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Unit.TraitSI]]></span><it style="font-style: bold; color:green;">&#187;</it>, we can adapt it to many kinds of numeric support and extract the code using 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Class:Unit.TraitSI['Support=>Num]]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+The syntax <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[['Support=>Num]]]></span><it style="font-style: bold; color:green;">&#187;</it> maps the class called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Support]]></span><it style="font-style: bold; color:green;">&#187;</it> inside of the library onto the class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> defined outside of the library. We will explain the precise use of such mappings later.
+
 </p><p>
 As you can see, we can sum meters together, and we can use the support for multiplication, but we can not mix different units of measure.
 
@@ -735,19 +737,15 @@ Units also provide method  <it style="font-style: bold; color:green;">&#171;</it
 which is just extracting the value of the support from the unit.
 This can be convenient during programming but 
 does not make a lot of sense mathematically and thus 
-it should be used with care.
-</p><p>
-In 42, methods names starting with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#]]></span><it style="font-style: bold; color:green;">&#187;</it> should be
-used only in special circumstances.
-
-The syntax <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[['Support=>Num]]]></span><it style="font-style: bold; color:green;">&#187;</it> maps the class called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Support]]></span><it style="font-style: bold; color:green;">&#187;</it> inside of the library onto the class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> defined outse of the library. We will explain later the precise use of such mappings.
-
+it should be used with care, similarly to other methods starting with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 <pre class="l42Big"><![CDATA[
-Num n1= 42SI.Meter / 2SI.Meter //= 21Num
-Num n2= 42SI.Meter.#inner() //= 42Num
+Num n1 = 42SI.Meter / 2SI.Meter //= 21Num
+Num n2 = 42SI.Meter.#inner() //= 42Num
 ]]></pre>
+</p><p>
 
-Below you can find some code using units in interesting ways
+
+Some code which uses units in interesting ways:
 
 <pre class="l42Big"><![CDATA[
 SI.Meter res1 = (6SI.Meter+4SI.Meter)*2Num //20M
@@ -773,12 +771,14 @@ t = 10SI.Second
 distance2 = (g*t*t)/2Num//490 m after 10s free fall
 
 //Newton=Kg*m/s2 = Kg*Acceleration
-myRoket = 900SI.Newton
-gForceOnMe = 80SI.Kg*g //little less than 800
-myLift = myRoket-gForceOnMe
+rocketForce = 900SI.Newton
+stackWeight = 60SI.Kg+20SI.Kg //my weight+rocket weight
+gForceOnMe = stackWeight*g //little less than 800
+myLift = rocketForce-gForceOnMe
 if myLift>0SI.Newton (Debug(S"I can fly"))
-myAcc = myLift / 80SI.Kg
-reachedHeight = (myAcc*t*t) / 2Num //after 10 sec
+myAcc = myLift/stackWeight
+reachedHeight = (myAcc*t*t)/2Num //after 10 sec
+//works assuming the rocket fuel burnt in 10 sec is negligible
 ]]></pre>
 
 
@@ -4283,7 +4283,215 @@ join our effort to design the painful metaprogramming guide.
 In the current state of the art we do not have an answer for what is the best 42 (meta-)programming style.
 Indeed, we still do not understand the question.
 </li></ul>
- </p><p id="ExamplesOfLibraries"> </p><h1> Example of Libraries </h1> <p>
+ </p><p id="ExamplesOfLibraries"> </p><h1> Example a 42 program </h1> <p>
+
+In this chapter, we will see how to develop a GUI connected with a Data Base.
+For simplicity we consider to have a database with a single tabel <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person]]></span><it style="font-style: bold; color:green;">&#187;</it> that contains a fiew fields.
+We want to make a GUI that displays the data and allows to edit it.
+
+<pre class="l42Big"><![CDATA[
+reuse [AdamTowel]
+Unit = Load:{reuse[Unit]}
+LoadJ = Load:{reuse[JavaServer]}
+LoadGui = Load:{reuse[GuiBuilder]}
+Query = Load:{reuse[Query]}
+]]></pre>
+First we load the libraries we need:
+Unit, JavaServer, GuiBuilder and Query.
+</p><p>
+We then declare some useful units. Persons have ages expressed in years,
+heights expressed in meters and weights expressed in Kgs.
+<pre class="l42Big"><![CDATA[
+Year = Unit(I)
+Meter = Unit(Num)
+Kg = Unit(Num)
+]]></pre>
+</p><p>
+We then ask <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Query.sql]]></span><it style="font-style: bold; color:green;">&#187;</it> to generate a class to support SQL queries using a java slave and a connection string.
+As an example, we are using a derby DB.
+For now, we consider the DB to be altready populated. In the end we discuss how to initialize the DB itself.
+<pre class="l42Big"><![CDATA[
+//SQL part
+DBJ = LoadJ(slaveName=S"dbServer{}") //slave for the DB connection
+DB = Query.sql(//instantiate Query for SQL queries
+  connectionString=S"jdbc:derby:PersonsGui;create=true",
+  javaServer=DBJ)
+]]></pre>
+
+
+The class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[DB]]></span><it style="font-style: bold; color:green;">&#187;</it> can now reify the DB tables; here it is just <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Table.Person]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<pre class="l42Big"><![CDATA[
+Table = DB.#$of().tables() //
+]]></pre>
+
+
+Finally, we can make a query box with all the queries that are relevant for this application.
+A query box is a capability class, whose methods are able to do queries on a give database.
+It is obtained with the decorartor <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[DB.QueryBox]]></span><it style="font-style: bold; color:green;">&#187;</it>,
+that can recognize nested classes created with the
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[DB.query]]></span><it style="font-style: bold; color:green;">&#187;</it> method.
+Since <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[DB]]></span><it style="font-style: bold; color:green;">&#187;</it> was created by providing the connection string, queries are aware of their database.
+
+<pre class="l42Big"><![CDATA[
+Queries = DB.QueryBox:{
+  All = DB.query[Table.Person.List]"SELECT * FROM Person"
+  
+  Insert = DB.query[Void;S;Year;Meter;Kg]"""
+    |INSERT INTO Person (name,age,height,weight)
+    |Values (@name,@age,@height,@weight)
+    """
+  DeleteId = DB.query[Void;I]"DELETE FROM Person WHERE id=@id"
+  DeleteName = DB.query[Void;S]"DELETE FROM Person WHERE name=@name"
+  }
+]]></pre>
+The symbol <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@]]></span><it style="font-style: bold; color:green;">&#187;</it> identifies parameter in the queries, while the types
+in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[[..]]]></span><it style="font-style: bold; color:green;">&#187;</it> are the query result type followed by any parameters.
+Queries return lists of objects. Those objects are constructed by calling a (factory) method whose arguments have the same name as the query fields.
+</p><p>
+
+Right now the class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Query]]></span><it style="font-style: bold; color:green;">&#187;</it> supports both <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[SQL]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[IQL]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+We expect to add more query languages in the future.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[IQL]]></span><it style="font-style: bold; color:green;">&#187;</it> is a query language to query the user by asking them to complete a form.
+Using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[IQL]]></span><it style="font-style: bold; color:green;">&#187;</it> in 42 is very similar to using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[SQL]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+In particular, the result is always in the form of lists of a type that can be instantiate using a unique #immK(..) method.
+While this is a consistent and flexible way to process tabular data,
+it means  that for queries returning a single column we must have a 
+type with such a single field.
+In 42, declaring those types and their corresponding list type takes just a single line.
+Note how for Person we can use our specialized units <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Year]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Meter]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Kg]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<pre class="l42Big"><![CDATA[
+Key = Data:Data.AddList:{I id}
+PName = Data:Data.AddList:{S name}
+Person = Data:Data.AddList:{S name, Year age, Meter height, Kg weight}
+]]></pre>
+In the same way, if a query returns a signle row, we will have it served as the only element of a lenght 1 list.
+</p><p>
+We can now make the set of all user queries with another <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[QueryBox]]></span><it style="font-style: bold; color:green;">&#187;</it>:
+
+<pre class="l42Big"><![CDATA[
+GuiJ = LoadJ(slaveName=S"miniGuiSlave{}") //slave for IQL and Gui
+IQL = Query.iql(javaServer=GuiJ)//instantiate Query for IQL queries
+Dialogs = IQL.QueryBox:{//A box with all the queries we want to support
+  AddPersons = IQL.query[Person.List]"""
+    | 'Add persons' Pages('Add data for more persons')
+    | name 'name' String
+    | age  'age'  Integer
+    | height 'height' Decimal{regex='[0-9]*\\.[0-9][0-9]'}
+    | weight 'weight' Decimal{regex='[0-9]*\\.[0-9]'}
+    """
+  RemoveById=IQL.query[Key.List]"""
+    | 'Deleting an entry' Single('Entry to delete?')
+    | id 'index' String
+    """
+  RemoveByName = IQL.query[PName.List]"""
+    | 'Deleting entries' Tabular('Entries to delete?')
+    | name 'name' String
+    """
+  }
+]]></pre>
+
+</p><p>
+
+A model for this simple application will have the two boxes and the java slave to control the Gui.
+<pre class="l42Big"><![CDATA[
+//GUI part
+Gui = LoadGui(javaServer=GuiJ)  
+Model = Data:GuiJ.Handler:{ //the model answering to Java events
+  mut GuiJ j
+  mut Queries sql
+  mut Dialogs iql
+  mut method Void submitEvent(S that, S msg)[_] =
+    this.#j().submitEvent(key='Example.Display, id=that, msg=msg)
+  @GuiJ.Handler mut method Void printAll(S msg)=(
+    this.submitEvent(S"tableClear", msg=S"")
+    for (id,name,age,height,weight) in this.#sql().all()() (
+      this.submitEvent(S"tableAdd", msg=S"%id,%name,%age,%Double(height),%Double(weight),")
+      )
+    whoops DB.Fail, GuiJ.Fail
+    )
+  @GuiJ.Handler mut method Void addPerson(S msg)=(
+    for (name,age,height,weight) in this.#iql().addPersons()() (
+      this.#sql().insert()(name=name, age=age, height=height, weight=weight)
+      )
+    this.printAll(msg=msg)
+    whoops DB.Fail, IQL.Fail
+    )
+  @GuiJ.Handler mut method Void removeById(S msg)=(
+    for (id) in this.#iql().removeById()() (//zero or one time
+      this.#sql().deleteId()(id=id)
+      )
+    this.printAll(msg=msg)
+    whoops DB.Fail, IQL.Fail
+    )
+  @GuiJ.Handler mut method Void removeByName(S msg)=(
+    for (name) in this.#iql().removeByName()() (//zero or many times
+      this.#sql().deleteName()(name=name)
+      )
+    this.printAll(msg=msg)
+    whoops DB.Fail, IQL.Fail
+    )
+  }
+OpenGui = {class method Void (mut GuiJ j)[_] = (
+  gui=Gui(j=j,package=S"miniGui",imports=S"""%
+    | %Gui.defaultImports()
+    | import javax.swing.table.DefaultTableModel;
+    """,
+    name='Example,x=800\,y=600\
+    )
+  gui"""%
+    |JPanel screen1=new JPanel();
+    |{add(screen1);}
+    |JPanel buttons=new JPanel();
+    |{addNorth(screen1,buttons);}
+    |%gui.button(id=S"addPerson",msg='PressedAdd,text=S"add")
+    |{addFlow(buttons,addPerson);}
+    |%gui.button(id=S"removeById",msg='PressedRemove,text=S"remove by id")
+    |{addFlow(buttons,removeById);}
+    |%gui.button(id=S"removeByName",msg='PressedRemove,text=S"remove by name")
+    |{addFlow(buttons,removeByName);}
+    |%gui.button(id=S"printAll" msg='PressedPrint text=S"printAll")
+    |{addFlow(buttons,printAll);}
+    |Object[] tLabels={"id","name","age","height","weight"};
+    |DefaultTableModel tModel=new DefaultTableModel(new Object[][]{},tLabels);
+    |JTable table = new JTable(tModel);
+    |{addCenter(screen1,new JScrollPane(table));}
+    |{event.registerEvent("Example.Display","tableAdd",
+    |  (k,id,msg)->SwingUtilities.invokeLater(()->tModel.addRow(msg.split(","))));}
+    |{event.registerEvent("Example.Display","tableClear",
+    |  (k,id,msg)->SwingUtilities.invokeLater(()->tModel.setRowCount(0)));}
+    """
+  )}
+//Finally, the Main puts all together
+Main=(
+  j=GuiJ.#$of()//the Java GUI slave
+  sql=Queries(DB.#$of())//sql queries and the Java DB slave
+  iql=Dialogs(IQL(j))//iql queries supported by the GUI slave
+  model=Model(j=j,sql=sql,iql=iql)
+  OpenGui(j=j)
+  for e in j(\['Example]) ( e>>model )//event loop
+  )
+//Drop=DB.query[Void]"DROP TABLE Person"//optionally clean up
+//AfterMain= ( Drop(DB.#$of())(),  db.kill() )
+
+
+
+Create = DB.query[Void]"""
+  |CREATE TABLE Person (
+  |  id int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY
+  |    (Start with 1, Increment by 1),
+  |  name varchar(255),
+  |  age int,
+  |  height decimal(5,2),
+  |  weight decimal(5,1)
+  |  )
+  """
+PopulateIfEmpty = {//set up the DB tables in case this is the first run
+  return Create(DB.#$of())() 
+  catch Message _ return void
+  }
+
+]]></pre>
+Eventually, also show Deploy as Jar.
 
 42 stands for the primate of libraries, so let see some libraries in action.
 We have already see how to chose a towel, and many classes that are likely to be present in such towel, like

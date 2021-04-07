@@ -45,45 +45,70 @@ A query box is a capability class, whose methods are able to do queries on a giv
 It is obtained with the decorartor Wcode(DB.QueryBox),
 that can recognize nested classes created with the
 Wcode(DB.query) method.
-TODO: why public??
-Eventually, also show Deploy as Jar.
+Since Wcode(DB) was created by providing the connection string, queries are aware of their database.
+
 OBCode
-Queries = DB.QueryBox:{//A box with all the queries we want to support
-  @Public All = DB.query[Table.Person.List]"SELECT * FROM Person"
+Queries = DB.QueryBox:{
+  All = DB.query[Table.Person.List]"SELECT * FROM Person"
   
-  @Public Insert = DB.query[Void;S;Year;Meter;Kg]"""
+  Insert = DB.query[Void;S;Year;Meter;Kg]"""
     |INSERT INTO Person (name,age,height,weight)
     |Values (@name,@age,@height,@weight)
     """
-  @Public DeleteId = DB.query[Void;I]"DELETE FROM Person WHERE id=@id"
-  @Public DeleteName = DB.query[Void;S]"DELETE FROM Person WHERE name=@name"
+  DeleteId = DB.query[Void;I]"DELETE FROM Person WHERE id=@id"
+  DeleteName = DB.query[Void;S]"DELETE FROM Person WHERE name=@name"
   }
+CCode
+The symbol Wcode(@) identifies parameter in the queries, while the types
+in Wcode([..]) are the query result type followed by any parameters.
+Queries return lists of objects. Those objects are constructed by calling a (factory) method whose arguments have the same name as the query fields.
+WP
 
-//IQL part
-GuiJ = LoadJ(slaveName=S"miniGuiSlave{}") //slave for IQL and Gui
-IQL = Query.iql(javaServer=GuiJ)//instantiate Query for IQL queries
-
-Key = Data:Data.AddList:{I id} //types expected by the IQL queries
+Right now the class Wcode(Query) supports both Wcode(SQL) and Wcode(IQL).
+We expect to add more query languages in the future.
+Wcode(IQL) is a query language to query the user by asking them to complete a form.
+Using Wcode(IQL) in 42 is very similar to using Wcode(SQL).
+In particular, the result is always in the form of lists of a type that can be instantiate using a unique #immK(..) method.
+While this is a consistent and flexible way to process tabular data,
+it means  that for queries returning a single column we must have a 
+type with such a single field.
+In 42, declaring those types and their corresponding list type takes just a single line.
+Note how for Person we can use our specialized units Wcode(Year), Wcode(Meter) and Wcode(Kg).
+OBCode
+Key = Data:Data.AddList:{I id}
 PName = Data:Data.AddList:{S name}
 Person = Data:Data.AddList:{S name, Year age, Meter height, Kg weight}
+CCode
+In the same way, if a query returns a signle row, we will have it served as the only element of a lenght 1 list.
+WP
+We can now make the set of all user queries with another Wcode(QueryBox):
+
+OBCode
+GuiJ = LoadJ(slaveName=S"miniGuiSlave{}") //slave for IQL and Gui
+IQL = Query.iql(javaServer=GuiJ)//instantiate Query for IQL queries
 Dialogs = IQL.QueryBox:{//A box with all the queries we want to support
-  @Public AddPersons = IQL.query[Person.List]"""
+  AddPersons = IQL.query[Person.List]"""
     | 'Add persons' Pages('Add data for more persons')
     | name 'name' String
     | age  'age'  Integer
     | height 'height' Decimal{regex='[0-9]*\\.[0-9][0-9]'}
     | weight 'weight' Decimal{regex='[0-9]*\\.[0-9]'}
     """
-  @Public RemoveById=IQL.query[Key.List]"""
+  RemoveById=IQL.query[Key.List]"""
     | 'Deleting an entry' Single('Entry to delete?')
     | id 'index' String
     """
-  @Public RemoveByName = IQL.query[PName.List]"""
+  RemoveByName = IQL.query[PName.List]"""
     | 'Deleting entries' Tabular('Entries to delete?')
     | name 'name' String
     """
   }
+CCode
 
+WP
+
+A model for this simple application will have the two boxes and the java slave to control the Gui.
+OBCode
 //GUI part
 Gui = LoadGui(javaServer=GuiJ)  
 Model = Data:GuiJ.Handler:{ //the model answering to Java events
@@ -181,6 +206,18 @@ PopulateIfEmpty = {//set up the DB tables in case this is the first run
   }
 
 CCode
+Eventually, also show Deploy as Jar.
+TODO:
+In 42 we have single and multiline strings, and string interpolation works on both.
+String interpolation 
+
+%x.foo()
+%varName/ClassName .foo()[].foo()[]()
+or
+%(...)
+Yes comments when reasonable
+string literals only in () and in multiline strings
+Bug: (un)balanced parenthesis in string literals, multi line str lit and comments are not ignored
 
 
 42 stands for the primate of libraries, so let see some libraries in action.

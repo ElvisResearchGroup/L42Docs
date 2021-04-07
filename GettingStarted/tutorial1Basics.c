@@ -69,7 +69,7 @@ WBR
 Here we define a class to host our Wcode(hello(nickName)) method.
 We write Wcode(class method) to define a method that can be called on the class object, as in Wcode(MyCode.hello(nickName=S"Marvin")).
 This is roughly equivalent to a static method in languages like Java or C++ , or class methods in Python.
-
+Note that Wcode(%) inserts a value into a string.
 WP
 Note how the method is called using the parameter name explicitly.
 We believe this increases readability.

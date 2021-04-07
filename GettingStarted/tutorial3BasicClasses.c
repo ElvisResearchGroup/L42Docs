@@ -75,6 +75,8 @@ We will see more on traits (much) later in this guide.
 WBR
 In the case of Wcode(Unit.TraitSI), we can adapt it to many kinds of numeric support and extract the code using 
 Wcode(Class:Unit.TraitSI['Support=>Num]).
+The syntax Wcode(['Support=>Num]) maps the class called Wcode(Support) inside of the library onto the class Wcode(Num) defined outside of the library. We will explain the precise use of such mappings later.
+
 WP
 As you can see, we can sum meters together, and we can use the support for multiplication, but we can not mix different units of measure.
 
@@ -84,19 +86,15 @@ Units also provide method  Wcode(`#'inner()),
 which is just extracting the value of the support from the unit.
 This can be convenient during programming but 
 does not make a lot of sense mathematically and thus 
-it should be used with care.
-WP
-In 42, methods names starting with Wcode(`#') should be
-used only in special circumstances.
-
-The syntax Wcode(['Support=>Num]) maps the class called Wcode(Support) inside of the library onto the class Wcode(Num) defined outse of the library. We will explain later the precise use of such mappings.
-
+it should be used with care, similarly to other methods starting with Wcode(`#').
 OBCode
-Num n1= 42SI.Meter / 2SI.Meter //= 21Num
-Num n2= 42SI.Meter.#inner() //= 42Num
+Num n1 = 42SI.Meter / 2SI.Meter //= 21Num
+Num n2 = 42SI.Meter.#inner() //= 42Num
 CCode
+WP
 
-Below you can find some code using units in interesting ways
+
+Some code which uses units in interesting ways:
 
 OBCode
 SI.Meter res1 = (6SI.Meter+4SI.Meter)*2Num //20M
@@ -119,15 +117,17 @@ speedAfter = 10SI.Second * g //98 m/s
 t = 10SI.Second
 
 //free fall distance d=(gt^2)/2
-distance2 = (g*t*t)/2Num//490 m after 10s free fall
+distance2 = (g*t*t)/2Num //490 m after 10s free fall
 
 //Newton=Kg*m/s2 = Kg*Acceleration
-myRoket = 900SI.Newton
-gForceOnMe = 80SI.Kg*g //little less than 800
-myLift = myRoket-gForceOnMe
+rocketForce = 900SI.Newton
+stackWeight = 60SI.Kg+20SI.Kg //my weight+rocket weight
+gForceOnMe = stackWeight*g //little less than 800
+myLift = rocketForce-gForceOnMe
 if myLift>0SI.Newton (Debug(S"I can fly"))
-myAcc = myLift / 80SI.Kg
-reachedHeight = (myAcc*t*t) / 2Num //after 10 sec
+myAcc = myLift/stackWeight
+reachedHeight = (myAcc*t*t)/2Num //after t (10 sec)
+//works assuming the rocket fuel burnt in 10 sec is negligible
 CCode
 
 
@@ -145,7 +145,7 @@ Email = S.Alphanumeric:{
   S domain
   
   class method
-  This from(S string)={
+  This (S string)={
     index= string.indexOf(S"@") //works only for simple emails
     if index==I"-1" (error S.ParseError"@ not found")
     local= string.subString(0I to=index) //string slicing
@@ -173,19 +173,20 @@ Email = S.Alphanumeric:{
   S domain
   
   class method
-  This from(S string)={ //google ignore dots anyway
+  This (S string)={
     /*..*/
     local = string.subString(0\ to=index)
       .replace(S"." with=S"")
+    domain = /*..*/
+    normedEmail = S"%local@%domain"
     /*..*/
-    return This(S"%local@%domain", local=local, domain=domain)
-    } 
+    return This(normedEmail, local=local, domain=domain)    } 
   }
 /*..*/
-myEmail= Email"arthur.dent@gmail.com"
+myEmail = Email"arthur.dent@gmail.com"
+myEmail.local()==S"arthurdent" //holds
 myEmail.toS()==S"arthurdent@gmail.com" //holds
 CCode
-
 
 WTitle((4/5) Enumerations)
 
