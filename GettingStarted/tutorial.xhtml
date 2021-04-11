@@ -812,11 +812,11 @@ myEmail.domain()==S"gmail.com" //holds
 myEmail.toS()==S"arthur.dent@gmail.com" //holds
 ]]></pre>
 
-Note how we can raise an error if the string does not have the shape we expected.
+Note: we raise an error if <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[string]]></span><it style="font-style: bold; color:green;">&#187;</it> does not have the shape we expected.
 We will see errors/exception in more detail soon.
 We can define fields, and compute their values by parsing the string.
-While it is suggested to propagate the original string in the factory,
-it is not mandatory, for example you could apply some form of normalization, as shown under: 
+It is common to propagate the original string from the factory into the object; but 
+it is not mandatory. For example you could apply some form of normalization, as shown below: 
 
 <pre class="l42Big"><![CDATA[
 Email = S.Alphanumeric:{
@@ -826,12 +826,12 @@ Email = S.Alphanumeric:{
   class method
   This (S string)={
     /*..*/
-    local = string.subString(0\ to=index)
-      .replace(S"." with=S"")
+    local = string.subString(0\ to=index).replace(S"." with=S"")
     domain = /*..*/
     normedEmail = S"%local@%domain"
     /*..*/
-    return This(normedEmail, local=local, domain=domain)    } 
+    return This(normedEmail, local=local, domain=domain)
+    } 
   }
 /*..*/
 myEmail = Email"arthur.dent@gmail.com"
@@ -841,17 +841,16 @@ myEmail.toS()==S"arthurdent@gmail.com" //holds
 
 </p><h2> (4/5) Enumerations </h2> <p>
 
-Enumerations can be obtained with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Enum]]></span><it style="font-style: bold; color:green;">&#187;</it>, as in the following code.
-
+Enumerations can be obtained with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Enum]]></span><it style="font-style: bold; color:green;">&#187;</it>, as in the following code:
 <pre class="l42Big"><![CDATA[
 Direction = Collection.Enum:{
-  North={} East={} South={} Weast={}
+  North={} East={} South={} West={}
   }
 /*..*/
-Debug(Direction.Vals()) // [North; East; South; Weast]
+Debug(Direction.Vals()) // [North; East; South; West]
 n = Direction.North()
 s = Direction.South()
-if n==s (/*..*/)
+if n==s (/* .. dead code .. */)
 Debug(n) //North
 for d in Direction.Vals() (
   Debug(d) //prints all the directions in order.
@@ -859,47 +858,57 @@ for d in Direction.Vals() (
 n==Direction.Vals(S"North") //holds
 ]]></pre>
 
+Enumerations allows us to add operations as methods on the cases, as shown below:
+<pre class="l42Big"><![CDATA[
+Direction = Collection.Enum:{
+  method This opposite()
+  North = {method This1 opposite() = South() }
+  East = {method This1 opposite() = West() }
+  South = {method This1 opposite() = North() }
+  West = {method This1 opposite() = East() }
+  }
+]]></pre>
+
 </p><h2> (5/5) Summary </h2> <p>
 
 <ul><li>
-We gave a look at the most basic features of 42.
-There is rich support to define your own specialized datastructures instead of having to rely on the ones provided by default.
+We had a look at
+the most basic features of AdamTowel.
+There is rich support for defining your own specialized data structures instead of having to rely on the ones provided by default.
 </li><li>
-Use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Units]]></span><it style="font-style: bold; color:green;">&#187;</it> 
-and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S.Alphanumeric]]></span><it style="font-style: bold; color:green;">&#187;</it> to give meaning to your constants.
-In this way, the type system will help you to use values with the semantics you decided.
-Be sure to define all the right base classes to establish a convenient vocabulary
+Use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Unit]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S.Alphanumeric]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Enum]]></span><it style="font-style: bold; color:green;">&#187;</it> to give meaning to your constants.
+In this way, the type system will help you to use values with the semantics that you decided.
+Be sure to define all of the right base classes to establish a convenient vocabulary
 to talk about your problem domain.
 </li></ul>
  </p><p id="ErrorsAndExceptions"> </p><h1> Errors and Exceptions: Messages in AdamsTowel </h1> <p>
 
-</p><h2> (1/5)Errors, Messages, Asserts, Guards, .. so much terminology </h2> <p> 
-In 42 when something takes an unexpected turn,
-you can throw an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[error]]></span><it style="font-style: bold; color:green;">&#187;</it>
+</p><h2> (1/5)Errors, Messages, Asserts, Guards, .... So much terminology </h2> <p> 
+In 42, when something takes an unexpected turn,
+you can throw an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[error]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 This is similar to Java unchecked exceptions.
 Every immutable object can be thrown as an error.
 While it is possible to thrown informative strings, they do no offer enough
 structure to fully take advantage of the error mechanism.
-AdamsTowel defines the interface <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Message]]></span><it style="font-style: bold; color:green;">&#187;</it>: 
+AdamTowel defines the interface <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Message]]></span><it style="font-style: bold; color:green;">&#187;</it>:
 a structured way to provide a certain kind of message to the user.
-There are two main kinds of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Message]]></span><it style="font-style: bold; color:green;">&#187;</it>s: 
+There are two main kinds of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Message]]></span><it style="font-style: bold; color:green;">&#187;</it>: 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Guard]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Assert]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-While Assertions are useful to observe bugs, the application
+While assertions are useful to observe bugs, the application
 logic should not depend on them, since they may change
 in unpredictable ways during library evolutions, and can be enabled or disabled.
 Since program logic can depend on guards being thrown,
 guards need to be consistent across library evolution.
 
-Assertions are the right tool to prevent the code from proceding
-out of our designed space. The assertion class called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[X]]></span><it style="font-style: bold; color:green;">&#187;</it> 
+Assertions are a convenient tool to prevent the code from proceding
+out of our designed state space. The assertion class called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[X]]></span><it style="font-style: bold; color:green;">&#187;</it> 
 looks like a road sign
-and represent this 
-"NO/PROHIBITED/FORBIDDEN" 
-feeling.
+and
+ represents a feeling of "NO/PROHIBITED/FORBIDDEN" or something similar.
 
-Assertions are also very convenient to check for pre/post conditions.
+Assertions are also very convenient for checking pre/post conditions.
 The following code show usages of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[X.Pre]]></span><it style="font-style: bold; color:green;">&#187;</it> (for preconditions and, in general, blaming the client of a function)
- and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[X]]></span><it style="font-style: bold; color:green;">&#187;</it> (for postconditions checks in the middle and, in general, blaming the function implementation).
+ and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[X]]></span><it style="font-style: bold; color:green;">&#187;</it> (for postcondition checks in the middle and, in general, blaming the function implementation).
 
 <pre class="l42Big"><![CDATA[
 method Nat confirmAnswer(Nat answer) (
@@ -918,12 +927,17 @@ method Nat confirmAnswer(Nat answer) (
     error X""
     )
 ]]></pre>
-
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[X]]></span><it style="font-style: bold; color:green;">&#187;</it> is often used as last case in a sequence of if-return:
-
+As you have seen, we have varius ways to check for condition:
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[answer>0Num;]]></span><it style="font-style: bold; color:green;">&#187;</it> checks a boolean condition,
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[answer<.. msg=S"..";]]></span><it style="font-style: bold; color:green;">&#187;</it> checks the condition and uses a custom error message,
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[actual=answer, expected=42Num;]]></span><it style="font-style: bold; color:green;">&#187;</it> takes two immutable values
+and checks that they are structurally equivalent.
+</p><p>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[X]]></span><it style="font-style: bold; color:green;">&#187;</it> is often used as last case in a sequence of if-return;
+for example, instead of defining <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[opposite]]></span><it style="font-style: bold; color:green;">&#187;</it> inside of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Direction]]></span><it style="font-style: bold; color:green;">&#187;</it>, we could compute it externally as shown below:
 <pre class="l42Big"><![CDATA[
 Direction = Collection.Enum:{
-  North={} East={} South={} Weast={}
+  North={} East={} South={} West={}
   }
 /*..*/
 Direction opposite={
@@ -957,7 +971,7 @@ if this.ohNoNoNOOO() (error AnswerNotUnderstood"Well, too bad")
 You may be surprised that we can use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Message]]></span><it style="font-style: bold; color:green;">&#187;</it> as a decorator, since it is an interface.
 When operators are called on class names directly, they are desugared as a method on one of the class nested classes. For example
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Message:{..}]]></span><it style="font-style: bold; color:green;">&#187;</it> becomes
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Message.ClassOperators.#colon0({..})]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Message.ClassOperators():{..}]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 It is very common for interfaces to be usable as decorator creating new code with a meaningful default implelemtation for such an interface.
 
 </p><h2> Capturing errors and exceptions </h2> <p>
@@ -3933,6 +3947,10 @@ Also method <it style="font-style: bold; color:green;">&#171;</it><span class="c
 
 Note that this approach does not rely on any dynamic checks; the 42 upcast operator <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[<:]]></span><it style="font-style: bold; color:green;">&#187;</it> is only guiding the type system, and even if the typing happens later, it will happen before the code is ready for execution.
 
+Instead of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Late]]></span><it style="font-style: bold; color:green;">&#187;</it> we could rely on the class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Game]]></span><it style="font-style: bold; color:green;">&#187;</it> itself, and
+write <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this<:mut @Game Map$]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+If we want to make more explicit what is happening, we could even get creative and write <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this<:mut @Deploy{after @Game} Map$]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+
 </p><h2> (3/5)Data.** </h2> <p>
 The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> decorator contains many useful nested classes, that can be used as independent decorators.
 
@@ -4690,7 +4708,7 @@ as a Jar, so that it can be run as a Java application.
 
 <pre class="l42Big"><![CDATA[
 reuse [AdamTowel]
-ToJar=Trait:{reuse [AdamTowel]
+ToJar = Trait:{reuse [AdamTowel]
   Unit = Load:{reuse[Unit]}
   /*..*/
   OpenGui = {...}

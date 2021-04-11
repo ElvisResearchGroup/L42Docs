@@ -161,11 +161,11 @@ myEmail.domain()==S"gmail.com" //holds
 myEmail.toS()==S"arthur.dent@gmail.com" //holds
 CCode
 
-Note how we can raise an error if the string does not have the shape we expected.
+Note: we raise an error if Wcode(string) does not have the shape we expected.
 We will see errors/exception in more detail soon.
 We can define fields, and compute their values by parsing the string.
-While it is suggested to propagate the original string in the factory,
-it is not mandatory, for example you could apply some form of normalization, as shown under: 
+It is common to propagate the original string from the factory into the object; but 
+it is not mandatory. For example you could apply some form of normalization, as shown below: 
 
 OBCode
 Email = S.Alphanumeric:{
@@ -175,12 +175,12 @@ Email = S.Alphanumeric:{
   class method
   This (S string)={
     /*..*/
-    local = string.subString(0\ to=index)
-      .replace(S"." with=S"")
+    local = string.subString(0\ to=index).replace(S"." with=S"")
     domain = /*..*/
     normedEmail = S"%local@%domain"
     /*..*/
-    return This(normedEmail, local=local, domain=domain)    } 
+    return This(normedEmail, local=local, domain=domain)
+    } 
   }
 /*..*/
 myEmail = Email"arthur.dent@gmail.com"
@@ -190,17 +190,16 @@ CCode
 
 WTitle((4/5) Enumerations)
 
-Enumerations can be obtained with Wcode(Enum), as in the following code.
-
+Enumerations can be obtained with Wcode(Enum), as in the following code:
 OBCode
 Direction = Collection.Enum:{
-  North={} East={} South={} Weast={}
+  North={} East={} South={} West={}
   }
 /*..*/
-Debug(Direction.Vals()) // [North; East; South; Weast]
+Debug(Direction.Vals()) // [North; East; South; West]
 n = Direction.North()
 s = Direction.South()
-if n==s (/*..*/)
+if n==s (/* .. dead code .. */)
 Debug(n) //North
 for d in Direction.Vals() (
   Debug(d) //prints all the directions in order.
@@ -208,15 +207,26 @@ for d in Direction.Vals() (
 n==Direction.Vals(S"North") //holds
 CCode
 
+Enumerations allows us to add operations as methods on the cases, as shown below:
+OBCode
+Direction = Collection.Enum:{
+  method This opposite()
+  North = {method This1 opposite() = South() }
+  East = {method This1 opposite() = West() }
+  South = {method This1 opposite() = North() }
+  West = {method This1 opposite() = East() }
+  }
+CCode
+
 WTitle((5/5) Summary)
 
 <ul><li>
-We gave a look at the most basic features of 42.
-There is rich support to define your own specialized datastructures instead of having to rely on the ones provided by default.
+We had a look at
+the most basic features of AdamTowel.
+There is rich support for defining your own specialized data structures instead of having to rely on the ones provided by default.
 </li><li>
-Use Wcode(Units) 
-and Wcode(S.Alphanumeric) to give meaning to your constants.
-In this way, the type system will help you to use values with the semantics you decided.
-Be sure to define all the right base classes to establish a convenient vocabulary
+Use Wcode(Unit), Wcode(S.Alphanumeric) and Wcode(Enum) to give meaning to your constants.
+In this way, the type system will help you to use values with the semantics that you decided.
+Be sure to define all of the right base classes to establish a convenient vocabulary
 to talk about your problem domain.
 </li></ul>

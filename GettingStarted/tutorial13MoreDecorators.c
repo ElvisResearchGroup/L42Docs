@@ -203,6 +203,10 @@ Also method Wcode(stepAll()) requires upcasting; however we do not need to repea
 
 Note that this approach does not rely on any dynamic checks; the 42 upcast operator Wcode(<:) is only guiding the type system, and even if the typing happens later, it will happen before the code is ready for execution.
 
+Instead of Wcode(Late) we could rely on the class Wcode(Game) itself, and
+write Wcode(this<:mut @Game Map$).
+If we want to make more explicit what is happening, we could even get creative and write Wcode(this<:mut @Deploy{after @Game} Map$).
+
 WTitle((3/5)`Data.**')
 The Wcode(Data) decorator contains many useful nested classes, that can be used as independent decorators.
 

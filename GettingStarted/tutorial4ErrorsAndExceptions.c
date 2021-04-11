@@ -1,32 +1,31 @@
 WBigTitle(Errors and Exceptions: Messages in AdamsTowel)
 
-WTitle((1/5)`Errors, Messages, Asserts, Guards, .. so much terminology') 
-In 42 when something takes an unexpected turn,
-you can throw an Wcode(error)
+WTitle((1/5)`Errors, Messages, Asserts, Guards, .... So much terminology') 
+In 42, when something takes an unexpected turn,
+you can throw an Wcode(error).
 This is similar to Java unchecked exceptions.
 Every immutable object can be thrown as an error.
 While it is possible to thrown informative strings, they do no offer enough
 structure to fully take advantage of the error mechanism.
-AdamsTowel defines the interface Wcode(Message): 
+AdamTowel defines the interface Wcode(Message):
 a structured way to provide a certain kind of message to the user.
-There are two main kinds of Wcode(Message)s: 
+There are two main kinds of Wcode(Message): 
 Wcode(Guard) and Wcode(Assert).
-While Assertions are useful to observe bugs, the application
+While assertions are useful to observe bugs, the application
 logic should not depend on them, since they may change
 in unpredictable ways during library evolutions, and can be enabled or disabled.
 Since program logic can depend on guards being thrown,
 guards need to be consistent across library evolution.
 
-Assertions are the right tool to prevent the code from proceding
-out of our designed space. The assertion class called Wcode(X) 
+Assertions are a convenient tool to prevent the code from proceding
+out of our designed state space. The assertion class called Wcode(X) 
 looks like a road sign
-and represent this 
-"NO/PROHIBITED/FORBIDDEN" 
-feeling.
+and
+ represents a feeling of "NO/PROHIBITED/FORBIDDEN" or something similar.
 
-Assertions are also very convenient to check for pre/post conditions.
+Assertions are also very convenient for checking pre/post conditions.
 The following code show usages of Wcode(X.Pre) (for preconditions and, in general, blaming the client of a function)
- and Wcode(X) (for postconditions checks in the middle and, in general, blaming the function implementation).
+ and Wcode(X) (for postcondition checks in the middle and, in general, blaming the function implementation).
 
 OBCode
 method Nat confirmAnswer(Nat answer) (
@@ -45,12 +44,17 @@ method Nat confirmAnswer(Nat answer) (
     error X""
     )
 CCode
-
-Wcode(X) is often used as last case in a sequence of if-return:
-
+As you have seen, we have varius ways to check for condition:
+Wcode(`answer>0Num;') checks a boolean condition,
+Wcode(`answer<.. msg=S"..";') checks the condition and uses a custom error message,
+Wcode(`actual=answer, expected=42Num;') takes two immutable values
+and checks that they are structurally equivalent.
+WP
+Wcode(X) is often used as last case in a sequence of if-return;
+for example, instead of defining Wcode(opposite) inside of Wcode(Direction), we could compute it externally as shown below:
 OBCode
 Direction = Collection.Enum:{
-  North={} East={} South={} Weast={}
+  North={} East={} South={} West={}
   }
 /*..*/
 Direction opposite={
@@ -81,11 +85,11 @@ AnswerNotUnderstood = Message:{[Message.Guard]}
 if this.ohNoNoNOOO() (error AnswerNotUnderstood"Well, too bad")
 CCode
 
-You may be surprised that we can use Wcode(Message) as a decorator, since it is an interface.
+In 42 interfaces can not have implemented methods, not even class ones, so you may be surprised that we can use Wcode(Message) as a decorator, since decorating is a method call.
 When operators are called on class names directly, they are desugared as a method on one of the class nested classes. For example
 Wcode(`Message:{..}') becomes
-Wcode(`Message.ClassOperators.#colon0({..})').
-It is very common for interfaces to be usable as decorator creating new code with a meaningful default implelemtation for such an interface.
+Wcode(`Message.ClassOperators():{..}').
+It is very common for an interface to be usable as a decorator, creating new code with a meaningful default implementation for the interface.
 
 WTitle(Capturing errors and exceptions)
 
