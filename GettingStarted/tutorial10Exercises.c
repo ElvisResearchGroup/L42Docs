@@ -100,7 +100,7 @@ WTitle((3/5) Read/Write files)
 Write a static method Wcode(ReadSelf) returning the content of the file where the current source code is located.
 WBR
 OBCode
-FileSystem = Load:{reuse[FileSystem]}
+FileSystem = Load:{reuse[L42.is/FileSystem]}
 
 ReadSelf = {
   class method
@@ -108,7 +108,7 @@ ReadSelf = {
     that.read(fileName=S"This.L42")
   }
 Test = {}:Test""(expected=ReadSelf(FileSystem.Real.#$of())
-    actual=S"reuse [AdamTowel]%S.nl()MaxOfList = [###]end")
+    actual=S"reuse [L42.is/AdamTowel]%S.nl()MaxOfList = [###]end")
 //end
 CCode
 
@@ -116,8 +116,37 @@ As you can see, In the Wcode(actual) parameter of Wcode(Test) we can use the sym
 Wcode("[###]") to specify holes in the expected string.
 This is very useful to make more resilient tests.
 
-WTitle((4/5) Random mole)
-For a longer example, represent a piece of land as a 80*80 bi-dimensional map,
+WTitle((4/5) Random mole (and how to divide you code in multiple files))
+
+Here we show a larger 42 example.
+When writing large programs it is convenient to divide the source in multiple files.
+In 42 this can be obtained with the Wcode({...}) symbol.
+That is, if in a given file we write
+OBCode
+A = /*..*/{...}/*..*/
+CCode
+42 will search for a file called either Wcode(A.L42) or Wcode(A/This.L42).
+Such file have to contain valid 42 code; such code is replaced for the Wcode(...).
+In this way code can be divided
+in multiple files spanning a hierarchy of folders.
+WP
+More precisely, 
+a 42 project must be a folder containing a file called Wcode(This.L42).
+Folders can contain other files Wcode(.L42) or folders containing other Wcode(This.L42) and other files.
+WBR
+The meaning of Wcode(...) depend 
+on both the location in the code and 
+of the position of the current file in the file system.
+To evaluate a Wcode(...) 42 locates the nearest enclosing nested
+library declaration, and we record its name (Wcode(A) in the example).
+This identifies either a file or a folder.
+If both or neither of these exist, there is an error.
+WBR
+Note that the found Wcode(*.L42) file can contain more Wcode(...), which will be
+resolved relative to the file before importing it into the current scope.
+
+WP
+We can now design a longer example, represent a piece of land as a 80*80 bi-dimensional map,
 where every cell can be full of dirt (90%) or rock (10%).
 Then a mole start from the left top corner and attempts to
 digs through dirt randomly.
@@ -127,29 +156,34 @@ method.
 WP
 To start, we define some auxiliary classes: 
 OBCode
-Point = Data:{I x, I y
-  @Cache.Now class method
-  Void invariant(I x, I y) = X.Guarded[
-    x>=0I; x<80I;
-    y>=0I; y<80I;
-    ]
+//file This.L42
+Point = Data:{...}
+CCode
 
-  method
-  This go(Direction that) = {
-    return that.go(this)
-    catch error X.Guarded _ return this
-    }
-    
-  method
-  I index() = 
-    (this.y()*80I)+this.x()
+OBCode
+//file Point.L42
+I x, I y
+
+@Cache.Now class method
+Void invariant(I x, I y) = X.Guarded[
+  x>=0I; x<80I;
+  y>=0I; y<80I;
+  ]
+
+method This go(Direction that) = {
+  return that.go(this)
+  catch error X.Guarded _ return this
   }
+  
+method I index() = 
+  (this.y()*80I)+this.x()
 CCode
 Wcode(Point) has an invariant ensuring that the coordinates are inside the 80*80 area.
 We use Wcode(X.Guarded) instead of Wcode(X) since Wcode(X.Guarded) implements Wcode(Guard), thus we can rely on such error to trigger predictably.
 We do this in method Wcode(go(that)), where we capture the invariant failure in case moving the point would push it outside of the boundary; in that case we keep the point in the original coordinates.
 
 OBCode
+//file This.L42
 Direction = Collection.Enum:{interface
   method Point go(Point that)
   Up={[This1] method go(that)=that.with(x=\x-1I)}
@@ -164,6 +198,7 @@ we implemented the outer level Wcode(This1) explicitly in all the cases.
 Then we could implemented the Wcode(go(that)) method without repeating the type signatore.
 
 OBCode
+//file This.L42
 Cell = Collection.Enum:{
   method S symbol()
   Dirt={method S symbol()=S"#"}
@@ -176,49 +211,56 @@ Instead, while declaring Wcode(Cell) we omit the Wcode(interface) keyword and th
 Then we had to repeat the type signature all the times while implementing the method Wcode(symbol()).
 Both ways to declare enumerations works and produce the same result.
 
-OBCode  
-Land = Data:{[HasToS]
-  mut Math.Random rand
-  mut Cell.List cells
-  
-  class method
-  mut Cell.List #default#cells(mut Math.Random rand) = Cell.List[](
-    for i in Range(80I*80I) (
-      if rand.nextInRange(0I to=10I)==0I \add(Cell.Rock())
-      else \add(Cell.Dirt())
-      )
-    )
+Should we used separate files for Wcode(Direction) and Wcode(Cell)?
+Their code is quite short, so we chose not to.
+If in the future we had many more kinds of Cells, we could move that code in its own file later.
+OBCode
+//file This.L42
+Land = Data:{...}
+CCode
 
-  mut method 
-  Void set(Point that, Cell val) =
-    this.#cells().set(that.index() val=val)
-    
-  read method 
-  Cell val(Point that) =
-    this.cells().val(that.index())    
-  
-  mut method
-  Void randomDig() = (
-    var current = Point(x=0I y=0I)
-    for i in Range(3000I) (
-      this.set(current,val=Cell.Empty())
-      d = Direction.Vals().val(this.#rand().nextInRange(0I to=4I))
-      newPoint = current.go(d) //no digging in rock
-      if this.val(newPoint)!=Cell.Rock() ( current:=newPoint )
-      )
-    this.set(current,val=Cell.Mole()) //finally, the mole is where we ends up
+OBCode
+//file Land.L42
+[HasToS]
+mut Math.Random rand
+mut Cell.List cells
+
+class method
+mut Cell.List #default#cells(mut Math.Random rand) = Cell.List[](
+  for i in Range(80I*80I) (
+    if rand.nextInRange(0I to=10I)==0I \add(Cell.Rock())
+    else \add(Cell.Dirt())
     )
+  )
+mut method 
+Void set(Point that, Cell val) =
+  this.#cells().set(that.index() val=val)
+
+read method 
+Cell val(Point that) =
+  this.cells().val(that.index())    
   
-  method toS() = (
-    var res=S""
-    for x in Range(80I) (
-      res++=S.nl()//newline
-      for y in Range(80I) res++=this.val(\(x=x,y=y)).symbol()
-      )
-    res++S.nl()
+mut method
+Void randomDig() = (
+  var current = Point(x=0I y=0I)
+  for i in Range(3000I) (
+    this.set(current,val=Cell.Empty())
+    d = Direction.Vals().val(this.#rand().nextInRange(0I to=4I))
+    newPoint = current.go(d) //no digging in rock
+    if this.val(newPoint)!=Cell.Rock() ( current:=newPoint )
     )
-  //since we define 'toS()' explicitly, Data will leave it alone :)
-  }
+  this.set(current,val=Cell.Mole()) //finally, the mole is where we ends up
+  )
+
+method toS() = (
+  var res=S""
+  for x in Range(80I) (
+    res++=S.nl()//newline
+    for y in Range(80I) res++=this.val(\(x=x,y=y)).symbol()
+    )
+  res++S.nl()
+  )
+//since we define 'toS()' explicitly, Data will leave it alone :)
 CCode
 Wcode(Land) has a Wcode(mut Math.Random rand) field and a 
 Wcode(mut Cell.List cells) field; a list of cells of size 80*80.
@@ -239,6 +281,7 @@ Note how we override Wcode(toS()) instead of accepting the implementation provid
 
 To use the Wcode(Land) class we can use the code below.
 OBCode
+//file This.L42
 MainMole = (
   land = Land(rand=\.#$random())
   land.randomDig()
@@ -258,4 +301,6 @@ Before heading into a problem,
 spend some time to define your problem domain.
 We dodged a lot of headaches by defining
 points with invariants.
+</li><li>
+Well organized code, properly divided in files and folders is much  easier to navigate and maintain.
 </li></ul>

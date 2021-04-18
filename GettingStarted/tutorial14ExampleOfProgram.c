@@ -9,11 +9,11 @@ First we load the libraries we need:
 Unit, JavaServer, GuiBuilder and Query.
 
 OBCode
-reuse [AdamTowel]
-Unit = Load:{reuse[Unit]}
-LoadJ = Load:{reuse[JavaServer]}
-LoadGui = Load:{reuse[GuiBuilder]}
-Query = Load:{reuse[Query]}
+reuse [L42.is/AdamTowel]
+Unit = Load:{reuse[L42.is/Unit]}
+LoadJ = Load:{reuse[L42.is/JavaServer]}
+LoadGui = Load:{reuse[L42.is/GuiBuilder]}
+Query = Load:{reuse[L42.is/Query]}
 CCode
 We then declare some useful units. Persons have ages expressed in years,
 heights expressed in meters and weights expressed in Kgs.
@@ -48,16 +48,18 @@ Wcode(DB.query) method.
 Since Wcode(DB) was created by providing the connection string, queries are aware of their database.
 
 OBCode
-Queries = DB.QueryBox:{
-  All = DB.query[Table.Person.List]"SELECT * FROM Person"
+Queries = DB.QueryBox:{...}
+CCode
+OBCode
+//file Queries.L42
+All = DB.query[Table.Person.List]"SELECT * FROM Person"
   
-  Insert = DB.query[Void;S;Year;Meter;Kg]"""
-    |INSERT INTO Person (name,age,height,weight)
-    |Values (@name,@age,@height,@weight)
-    """
-  DeleteId = DB.query[Void;I]"DELETE FROM Person WHERE id=@id"
-  DeleteName = DB.query[Void;S]"DELETE FROM Person WHERE name=@name"
-  }
+Insert = DB.query[Void;S;Year;Meter;Kg]"""
+  |INSERT INTO Person (name,age,height,weight)
+  |Values (@name,@age,@height,@weight)
+  """
+DeleteId = DB.query[Void;I]"DELETE FROM Person WHERE id=@id"
+DeleteName = DB.query[Void;S]"DELETE FROM Person WHERE name=@name"
 CCode
 The symbol Wcode(@) identifies parameter in the queries, while the types
 in Wcode([..]) are the query result type followed by any parameters.
@@ -86,23 +88,25 @@ We can now make the set of all user queries with another Wcode(QueryBox):
 OBCode
 GuiJ = LoadJ(slaveName=S"miniGuiSlave{}") //slave for IQL and Gui
 IQL = Query.iql(javaServer=GuiJ)//instantiate Query for IQL queries
-Dialogs = IQL.QueryBox:{//A box with all the queries we want to support
-  AddPersons = IQL.query[Person.List]"""
-    | 'Add persons' Pages('Add data for more persons')
-    | name 'person name:' String
-    | age  'person age:'  Integer
-    | height 'person height:' Decimal{regex='[0-9]*\\.[0-9][0-9]'}
-    | weight 'person weight:' Decimal{regex='[0-9]*\\.[0-9]'}
-    """
-  RemoveById=IQL.query[Key.List]"""
-    | 'Deleting an entry' Single('Entry to delete?')
-    | id 'index' String
-    """
-  RemoveByName = IQL.query[PName.List]"""
-    | 'Deleting entries' Tabular('Entries to delete?')
-    | name 'person name:' String
-    """
-  }
+Dialogs = IQL.QueryBox:{...}//A box with all the queries we want to support
+CCode
+OBCode
+//file Dialogs.L42
+AddPersons = IQL.query[Person.List]"""
+  | 'Add persons' Pages('Add data for more persons')
+  | name 'person name:' String
+  | age  'person age:'  Integer
+  | height 'person height:' Decimal{regex='[0-9]*\\.[0-9][0-9]'}
+  | weight 'person weight:' Decimal{regex='[0-9]*\\.[0-9]'}
+  """
+RemoveById=IQL.query[Key.List]"""
+  | 'Deleting an entry' Single('Entry to delete?')
+  | id 'index' String
+  """
+RemoveByName = IQL.query[PName.List]"""
+  | 'Deleting entries' Tabular('Entries to delete?')
+  | name 'person name:' String
+  """
 CCode
 For a complete guide to IQL, you can refer to the well designed
 IQL guide, located in the readme of the
@@ -115,15 +119,17 @@ Comparing this with the conventional MVC, here the model serves both the roles o
 In this example, the model will have the two boxes and the java slave to control the Gui.
 OBCode
 Gui = LoadGui(javaServer=GuiJ)  
-Model = Data:GuiJ.Handler:{ //the model answering to Java events
-  mut GuiJ j
-  mut Queries sql
-  mut Dialogs iql
-  @GuiJ.Handler mut method Void printAll(S msg)=(/*..*/)
-  @GuiJ.Handler mut method Void addPerson(S msg)=(/*..*/)
-  @GuiJ.Handler mut method Void removeById(S msg)=(/*..*/)
-  @GuiJ.Handler mut method Void removeByName(S msg)=(/*..*/)
-  }
+Model = Data:GuiJ.Handler:{...} //the model answering to Java events
+CCode
+OBCode
+//file Model.L42
+mut GuiJ j
+mut Queries sql
+mut Dialogs iql
+@GuiJ.Handler mut method Void printAll(S msg)=(/*..*/)
+@GuiJ.Handler mut method Void addPerson(S msg)=(/*..*/)
+@GuiJ.Handler mut method Void removeById(S msg)=(/*..*/)
+@GuiJ.Handler mut method Void removeByName(S msg)=(/*..*/)
 CCode
 Methods annotated with Wcode(GuiJ.Handler) will respond to the corresponding event from the view.
 Those methods must all take a single Wcode(S) parameter, used by the view to comunicate extra informations. This parameter is often unused.
@@ -241,7 +247,11 @@ using Java Swing.
 For safety reasons, Java code is compiled and executed on a separated JVM.
 We can easily generate a GUI for our example in the following way:
 OBCode
-OpenGui = {class method Void (mut GuiJ j)[_] = (
+OpenGui = {...}
+CCode
+OBCode
+//file OpenGui.L42
+class method Void (mut GuiJ j)[_] = (
   gui=Gui(j=j,package=S"miniGui",imports=S"""%
     | %Gui.defaultImports()
     | import javax.swing.table.DefaultTableModel;
@@ -270,13 +280,13 @@ OpenGui = {class method Void (mut GuiJ j)[_] = (
     |{event.registerEvent("Example.Display","tableClear",
     |  (k,id,msg)->SwingUtilities.invokeLater(()->tModel.setRowCount(0)));}
     """
-  )}
+  )
 CCode
 
 Where Wcode(gui.addButton(..)) is a covenient way to generate a button raising 42 events.
 When such 42 code will run, the following Java code will be generated:
 OJCode
-package miniGui;
+package miniGui; //generated and compiled code, it is not saved on any file
 import javax.swing.*;
 import l42Gui.*;//contained in GuiSupport.jar
 import is.L42.platformSpecific.javaEvents.Event; //standard 42 Event class
@@ -344,11 +354,11 @@ we are unsatistied by this brittle solution: it only works since names or number
 WTitle((4/5) Putting all together)
 Finally, a Wcode(Main) puts all together
 OBCode
-reuse [AdamTowel]
-Unit = Load:{reuse[Unit]}
-LoadJ = Load:{reuse[JavaServer]}
-LoadGui = Load:{reuse[GuiBuilder]}
-Query = Load:{reuse[Query]}
+reuse [L42.is/AdamTowel]
+Unit = Load:{reuse[L42.is/Unit]}
+LoadJ = Load:{reuse[L42.is/JavaServer]}
+LoadGui = Load:{reuse[L42.is/GuiBuilder]}
+Query = Load:{reuse[L42.is/Query]}
 Year = Unit(I)
 Meter = Unit(Num)
 Kg = Unit(Num)
@@ -398,29 +408,6 @@ OBCode
 Drop = DB.query[Void]"DROP TABLE Person"
 AfterMain = Drop(DB.#$of())()
 CCode
-WP
-We can run our  application as a 42 application, but we can also deploy it
-as a Jar, so that it can be run as a Java application.
-
-OBCode
-reuse [AdamTowel]
-ToJar = Trait:{reuse [AdamTowel]
-  Unit = Load:{reuse[Unit]}
-  /*..*/
-  OpenGui = {...}
-  class method Void #$main() = ( //method #$main instead of 'Main'
-    j=GuiJ.#$of() //the Java GUI slave
-    sql=Queries(DB.#$of()) //sql queries and the Java DB slave
-    iql=Dialogs(IQL(j)) //iql queries supported by the GUI slave
-    model=Model(j=j,sql=sql,iql=iql)
-    OpenGui(j=j)
-    for e in j(\['Example]) ( e>>model )//event loop
-    )
-  }
-Main = Deploy.jar(url=\"MyApplication" code=Class:ToJar)
-CCode
-As you can see, when 42 is used to deploy an application as Jar, you can see the whole 42 execution as a comprehensive compilation framework,
-encompassing all the tools and phases that could possibly be needed into a single cohesive abstraction.
 
 WTitle((5/5) Summary)
 42 metaprogramming allows for complex applications to be written in compact and secure ways:
@@ -436,18 +423,3 @@ to take queries written in another language (for now, just SQL and IQL, but the 
 and converts them into a simple 42 well typed API that can be used
 to build programs in an compact and elegant way.
 Concepts like the Wcode(QueryBox) can be used to control what part of an application is allowed to do important operations, adding a great deal of security.
-
-
-
-
-TODO:
-In 42 we have single and multiline strings, and string interpolation works on both.
-String interpolation 
-
-%x.foo()
-%varName/ClassName .foo()[].foo()[]()
-or
-%(...)
-Yes comments when reasonable
-string literals only in () and in multiline strings
-Bug: (un)balanced parenthesis in string literals, multi line str lit and comments are not ignored

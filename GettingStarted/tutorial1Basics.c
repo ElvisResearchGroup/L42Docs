@@ -16,7 +16,7 @@ reuse [L42.is/AdamsTowel]
 Main = Debug(S"Hello world")
 CCode
 WBR
-When we write Wcode(reuse L42.is/AdamsTowel) we are asking 42 to
+When we write Wcode(reuse [L42.is/AdamsTowel]) we are asking 42 to
 reuse the code of the library found in the internet address 
 Wcode(L42.is/AdamsTowel).
 AdamsTowel is our WTerm(towel), that is the set of classes and interfaces that we wish to start from.
