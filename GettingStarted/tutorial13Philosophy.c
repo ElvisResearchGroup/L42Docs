@@ -1,3 +1,50 @@
+ <!--
+
+
+ <!--WTitle(Simpler complete program)
+
+Let now starts showing the simplest 42 program: an empty library.
+
+OBCode
+{}
+CCode
+
+If we save this valid program in a file Wcode(Test.L42) and we run Wcode(L42 Test), we get an error.
+WP
+As you see 42 is very intuitive, as you would expect from your former life experiences, most simple things just does not work.
+Note how valid programs can produce errors.
+We will soon learn how to produce errors in controlled and elegant ways.
+-->
+<!--A 42 program execution WEmph(is) the generation of all its nested classes/interface.
+, code is simply executed from top to bottom as in 
+Python, Javascript or Php. However, the
+top level expression is a Library, and code can go in libraries 
+as an initializer for you need to put the code into an expression
+-->
+
+<!-- LATER?
+Wcode(MyCode.hello(..)) 
+use directly the Wcode(MyCode) class instance as
+receiver. We can also give it a name 
+e se vuoi puoi anche salvarlo su un binding locale, 
+tipo x= MyCode  x.hello(...)
+-->
+
+
+TODO:
+In 42 we have single and multiline strings, and string interpolation works on both.
+String interpolation 
+
+%x.foo()
+%varName/ClassName .foo()[].foo()[]()
+or
+%(...)
+Yes comments when reasonable
+string literals only in () and in multiline strings
+Bug: (un)balanced parenthesis in string literals, multi line str lit and comments are not ignored
+
+
+
 WBigTitle(Guarantees and Philosophy)
 
 WTitle((1/5)Language invariants)

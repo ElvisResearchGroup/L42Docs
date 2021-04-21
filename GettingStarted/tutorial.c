@@ -16,9 +16,8 @@ WMenuItem(`#Exercises',`Exercises')
 WMenuItem(`#MetaprogrammingIntro',`Metaprogramming Introduction')
 WMenuItem(`#Refactoring',`Programmatic Refactoring') 
 WMenuItem(`#MoreDecorators',`More Decorators')
-
 WMenuItem(`#ExampleOfProgram',`Example of a 42 Program')
-WComm WMenuItem(`#DeployCode',`Deploy code')
+WMenuItem(`#DeployCode',`Deploy code')
 WComm WMenuItem(`#Philosophy',`Guaranties and Philosophy')
 </ol>
 CFloat
@@ -37,6 +36,6 @@ WChapter(`MetaprogrammingIntro',`tutorial11MetaprogrammingIntro.c')
 WChapter(`Refactoring',`tutorial12Refactoring.c')
 WChapter(`MoreDecorators',`tutorial13MoreDecorators.c')
 WChapter(`ExampleOfProgram',`tutorial14ExampleOfProgram.c')
-WComm WChapter(`DeployCode',`tutorial12DeployCode.c')
+WChapter(`DeployCode',`tutorial15DeployCode.c')
 WComm WChapter(`Philosophy',`tutorial13Philosophy.c')
 m4_include(`footer.h')

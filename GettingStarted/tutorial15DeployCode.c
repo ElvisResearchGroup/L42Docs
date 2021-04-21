@@ -7,7 +7,7 @@ I'm assuming the following extra features still to implement:
 -writing to url
 -removing unused code
 -symplifying dependency for Load that does not use stuff
-
+TODO: all Deploy. methods should be #$
 
 WTitle((1/5)Deploy Towels)
 
@@ -57,10 +57,8 @@ CCode
 Different code parts reason about different set of classes;
 including those predefined in other languages.
 That is, by introducing multiple towels in nested scopes,
-the names of the other scopes are "masked".
-
-Useful for code that reasons on code; that is a very common task
-in 42. 
+the names of the other scopes are WTerm(masked).
+This is very useful for code that reasons on code; such task is pervasive in 42. 
 
 WTitle(Staining Towels)
 If you are writing a sizeable program, 
@@ -76,7 +74,7 @@ ToDeploy = Trait:{
   Kg = Units.of(Num)
   Meter = Units.of(Num)
   }
-Task = Deploy.towel(
+Task = Deploy.#$towel(
   url=\"https://github.com/MyProjectName/RichTowel.L42"
   permissions=\".." //???
   code=Class:ToDeploy
@@ -127,7 +125,7 @@ Module = Trait:{
   AirplaneUnitsUtilities = {...}
   AirplaneUnits = {...}
   }
-Task = Deploy.module(
+Task = Deploy.#$module(
   url=\"https://github.com/MyProjectName/AirplaneUnits.L42"
   permissions=\".." //???
   code=Class:Module
@@ -136,15 +134,17 @@ Task = Deploy.module(
 CCode
 
 This code deployes Wcode(Module.AirplaneUnits) to an URL as a module.
+and turns private Wcode(AirplaneUnitsUtilities) and any other 
+nested class stained on top of Wcode(AdamsTowel).
 WBR
-If there was any nested library unreachable from public classes
+If there was any nested class unreachable from public classes inside
 Wcode(AirplaneUnitsUtilities) it will be pruned away.
-Same for any nested library stained on top of Wcode(AdamsTowel) and for 
+Same for any nested class stained on top of Wcode(AdamsTowel) and for 
 any private unreachable one in Wcode(AirplaneUnits).
 WP
 The deployed library can be imported as usual.
 For example using
-Wcode(Imported = Load:{reuse ..})
+Wcode(Imported = Load:{reuse [github.com/MyProjectName/AirplaneUnits.L42]})
 we will see the content of Wcode(AirplaneUnits) inside of Wcode(Imported).
 
 WP
@@ -158,7 +158,7 @@ In particular all stained versions of the same towel are compatible.
 Every needed nested library
 that was not present in the original towel, will be made private.
 On the other side, all the classes in the original towel will 
-be made abstract by Wcode(Deploy.module(..))
+be made abstract by Wcode(Deploy.#$module(..))
 and will be rebound to the current towel by Wcode(Load).
 
 WP
@@ -184,10 +184,10 @@ For example, we could rework the code of the former chapter as follows:
 OBCode
 reuse [L42.is/AdamTowel]
 ToJar = Trait:{reuse [L42.is/AdamTowel]
-  Unit = Load:{reuse[L42.is/Unit]}
-  LoadJ = Load:{reuse[L42.is/JavaServer]}
-  LoadGui = Load:{reuse[L42.is/GuiBuilder]}
-  Query = Load:{reuse[L42.is/Query]}
+  Unit = Load:{reuse [L42.is/Unit]}
+  LoadJ = Load:{reuse [L42.is/JavaServer]}
+  LoadGui = Load:{reuse [L42.is/GuiBuilder]}
+  Query = Load:{reuse [L42.is/Query]}
   Year = Unit(I)
   Meter = Unit(Num)
   Kg = Unit(Num)
@@ -210,7 +210,7 @@ ToJar = Trait:{reuse [L42.is/AdamTowel]
     for e in j(\['Example]) ( e>>model )
     )
   }
-Main = Deploy.jar(
+Main = Deploy.#$jar(
   url=\"https://github.com/MyProjectName/MyApplication.jar"
   permissions=\".." //???
   code=Class:ToJar
@@ -220,8 +220,8 @@ As you can see,
 we are wrapping the application code into a trait, including
 a second reuse of Wcode(AdamTowel).
 In this way the code of Wcode(ToJar) is fully self contained, and 
-Wcode(Main) in the outer scope can still use all of the towel features by taking them from the outer Wcode(reuse[AdamTowel]).
-We then use Wcode(`Deploy.jar(..)') to deploy our application onto a jar in a specific location.
+Wcode(Main) in the outer scope can still use all of the towel features by taking them from the outer Wcode(reuse [AdamTowel]).
+We then use Wcode(`Deploy.#$jar(..)') to deploy our application onto a jar in a specific location.
 WP
 When 42 is used to deploy an application as Jar, you can see the whole 42 execution as a comprehensive compilation framework,
 encompassing all the tools and phases that could possibly be needed into a single cohesive abstraction.
@@ -250,7 +250,7 @@ Main = Trait:{
     TestSuite_n = {...}
     }
   }
-Task = Deploy.jar(url=\"MyApplication" code=Class:Main)
+Task = Deploy.#$jar(url=\"MyApplication" code=Class:Main)
 CCode
 
 In general, for medium size projects is a good idea to keep executing the tests before the deployment; for example
@@ -301,70 +301,45 @@ extend the set of classes that are shared between libraries.
 For example, one may want to develop a Towel for scientific use
 where the existence of some units of measure can be shared between all the libraries.
 We could do the following:
-
-import units
-import SI as $
-organize
-super Load.baseDeps() and add all the SI
-annotate all of the SI with corresponding wikipedia names by sum
-
-Can have a decorator lib * Name * string ->
-add nested Name to Load.baseDeps() and annotates @AbstractTowel{string}
-on Name.
-is it worth while? it may hide useful understanding
-
-Load.baseDeps()
-and annotate with @AbstractTowel{name}
-WP
-To extend/expand the Loading/deployment process in this way, we
-need to patch Wcode(ConceptMap)
-as in the following example: 
 OBCode
-{reuse L42.is/AdamsTowel
-ToDeploy: Resource <>< Extend.patch(Path"Fix") <>< {
-  reuse L42.is/AdamsTowel
-  Kg: Units.of(Num)
-  Metre: Units.of(Num)
-  Second: Units.of(Num)
-  Fix: {
-    ConceptMap: {interface 
-      method Kg en_wikipedia_org$wiki$Kilogram()
-      method Metre en_wikipedia_org$wiki$Metre()
-      method Second en_wikipedia_org$wiki$Second()
-      }
-    S: {
-      method
-      S reverse() {/*..*/}
-      }
-    //just to show we can add to the concept map and to string
-    //at the same time, no problem.
+RawCode = Trait:{reuse [L42.is/AdamTowel]
+  Unit = Class:Trait({@AbstractTowel{
+    en.wikipedia.org/wiki/Quantity}}):
+    Load:{reuse [L42.is/Unit]}
+  SI = Class:Unit.TraitSI['Support=>Num]:{@AbstractTowel{
+    en.wikipedia.org/wiki/International_System_of_Units}}
+  Load$={
+    class method Introspection.Nested.List _baseDeps()
+    class method Introspection.Nested.List baseDeps() = this._baseDeps().withAlso(\[
+      Info(Unit);
+      Info(SI);
+      ])      
     }
   }
-
-Task: Deploy.asTowel(
-  url: Url"https://github.com/SI/SITowel.L42"
-  permissions: S".."
-  ) <>< ToDeploy()
-}
+Task = Deploy.#$jar(
+  url=\"L42.is/SITowel"
+  code=Class:Organize:RawCode
+    ['Load.baseDeps()->'Load._baseDeps()]
+    [hide='Load._baseDeps()]
+  )
 CCode
+
+
 Now Wcode(SITowel) can be used  as a towel,
 and can be used to deploy libraries that can be loaded by 
 Wcode(SITowel).
-
-By using (standard transmogrification of) semantic URIs as
+WP
+By using semantic URIs as
 ontological nodes, we
 can create a basis for other libraries when trying to infer the meaning of our added types.
+In the example above we used wikipedia links to relevant concepts.
+This may not be the best solution, devising a good solution for this problem would require very intense research in the area of Ontological mapping.
 WP
-Our fixed towel can be used now to deploy and load libraries wrote in
-this new towel, and libraries deployed and loaded in this way will 
+Wcode(SITowel) can be used now to deploy and load libraries wrote in
+Wcode(SITowel), and libraries deployed and loaded in this way will 
 share a unique definition for certain units of measure.
 Note that libraries originally developed for
-Wcode(AdamsTowel) can still be loaded normally.
-If they was to internally define a concept of eg. Wcode(Meter),
-this would be interpreted as a private nested class
-inside of the loaded library, and will not be merged with the unified 
-concept of Wcode(Meter) defined in Wcode(SITowel).
-
+Wcode(AdamsTowel) can still be loaded normally since Wcode(SITowel) is structurally a superset of Wcode(AdamsTowel).
 
 WTitle(`(5/5)Deployment: programs, libraries and towels; summary')
 <ul><li>
@@ -382,49 +357,5 @@ loading libraries/towels.
 </li><li>
 Application developers can freely stain and embroider towels;
 in this way they can adapt Wcode(AdamTowel) to serve them better.
-However, Library developers need to carefully consider the effect of embroidery.
+However, library developers need to carefully consider the effect of embroidery.
 </li></ul>
- <!--
-
-
- <!--WTitle(Simpler complete program)
-
-Let now starts showing the simplest 42 program: an empty library.
-
-OBCode
-{}
-CCode
-
-If we save this valid program in a file Wcode(Test.L42) and we run Wcode(L42 Test), we get an error.
-WP
-As you see 42 is very intuitive, as you would expect from your former life experiences, most simple things just does not work.
-Note how valid programs can produce errors.
-We will soon learn how to produce errors in controlled and elegant ways.
--->
-<!--A 42 program execution WEmph(is) the generation of all its nested classes/interface.
-, code is simply executed from top to bottom as in 
-Python, Javascript or Php. However, the
-top level expression is a Library, and code can go in libraries 
-as an initializer for you need to put the code into an expression
--->
-
-<!-- LATER?
-Wcode(MyCode.hello(..)) 
-use directly the Wcode(MyCode) class instance as
-receiver. We can also give it a name 
-e se vuoi puoi anche salvarlo su un binding locale, 
-tipo x= MyCode  x.hello(...)
--->
-
-
-TODO:
-In 42 we have single and multiline strings, and string interpolation works on both.
-String interpolation 
-
-%x.foo()
-%varName/ClassName .foo()[].foo()[]()
-or
-%(...)
-Yes comments when reasonable
-string literals only in () and in multiline strings
-Bug: (un)balanced parenthesis in string literals, multi line str lit and comments are not ignored
