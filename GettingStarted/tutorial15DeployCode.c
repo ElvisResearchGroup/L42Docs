@@ -1,13 +1,14 @@
 WBigTitle(Deploy 42)
 In the context of 42 and AdamsTowel, there are three things that can be deployed:
  Executable programs,  Towels and Modules.
-
-
+WP
+-----
 I'm assuming the following extra features still to implement:
 -writing to url
 -removing unused code
 -symplifying dependency for Load that does not use stuff
-TODO: all Deploy. methods should be #$
+-all Deploy. methods should be #$
+----
 
 WTitle((1/5)Deploy Towels)
 
@@ -75,12 +76,13 @@ ToDeploy = Trait:{
   Meter = Units.of(Num)
   }
 Task = Deploy.#$towel(
-  url=\"https://github.com/MyProjectName/RichTowel.L42"
-  permissions=\".." //???
+  url=\"https://github.com/MyUserName/MyProjectName/RichTowel"
+  permissions=\".." //for example the OAuthToken
   code=Class:ToDeploy
 }
 CCode
-
+WComm the actual readable url would be something like
+WComm https://raw.githubusercontent.com/MyUserName/MyProjectName/RichTowel
 The former code will create your towel and update it
 on your github repository every time you
 run it.
@@ -104,7 +106,7 @@ WP
 In 42 is easy to code with multiple modules, and modules can be much smaller than usual third party libraries and framewors in other languages.
 WP
 In 42 it is possible to employ a programming model where every developer (or every pair of developers in a pair programming style) is the
-only one responsible of one (or more) modules and their maintenance process, while the group leader give specifications and tests to be met to the various module developers and will glue all the code together.
+only one responsible of one (or more) modules and their maintenance process, while the group leader give specifications and tests to be met by the various module developers and will glue all the code together.
 
 WP
 
@@ -126,8 +128,8 @@ Module = Trait:{
   AirplaneUnits = {...}
   }
 Task = Deploy.#$module(
-  url=\"https://github.com/MyProjectName/AirplaneUnits.L42"
-  permissions=\".." //???
+  url=\"https://github.com/MyUserName/MyProjectName/AirplaneUnits"
+  permissions=\".."
   code=Class:Module
   name='AirplaneUnits
   )
@@ -143,9 +145,9 @@ Same for any nested class stained on top of Wcode(AdamsTowel) and for
 any private unreachable one in Wcode(AirplaneUnits).
 WP
 The deployed library can be imported as usual.
-For example using
-Wcode(Imported = Load:{reuse [github.com/MyProjectName/AirplaneUnits.L42]})
-we will see the content of Wcode(AirplaneUnits) inside of Wcode(Imported).
+For example the main
+Wcode(Imported = Load:{reuse [github.com/MyUserName/MyProjectName/AirplaneUnits]})
+allows us to see the content of Wcode(AirplaneUnits) inside of Wcode(Imported).
 
 WP
 
@@ -211,8 +213,8 @@ ToJar = Trait:{reuse [L42.is/AdamTowel]
     )
   }
 Main = Deploy.#$jar(
-  url=\"https://github.com/MyProjectName/MyApplication.jar"
-  permissions=\".." //???
+  url=\"https://github.com/MyUserName/MyProjectName/MyApplication.jar"
+  permissions=\".."
   code=Class:ToJar
   )
 CCode
@@ -250,7 +252,7 @@ Main = Trait:{
     TestSuite_n = {...}
     }
   }
-Task = Deploy.#$jar(url=\"MyApplication" code=Class:Main)
+Task = Deploy.#$jar(url=\"..", permissions=\"..", code=Class:Main)
 CCode
 
 In general, for medium size projects is a good idea to keep executing the tests before the deployment; for example
@@ -304,10 +306,10 @@ We could do the following:
 OBCode
 RawCode = Trait:{reuse [L42.is/AdamTowel]
   Unit = Class:Trait({@AbstractTowel{
-    en.wikipedia.org/wiki/Quantity}}):
+    "en.wikipedia.org/wiki/Quantity"}}):
     Load:{reuse [L42.is/Unit]}
   SI = Class:Unit.TraitSI['Support=>Num]:{@AbstractTowel{
-    en.wikipedia.org/wiki/International_System_of_Units}}
+    "en.wikipedia.org/wiki/International_System_of_Units"}}
   Load$={
     class method Introspection.Nested.List _baseDeps()
     class method Introspection.Nested.List baseDeps() = this._baseDeps().withAlso(\[
