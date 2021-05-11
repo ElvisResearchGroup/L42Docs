@@ -969,7 +969,8 @@ if this.ohNoNoNOOO() (error AnswerNotUnderstood"Well, too bad")
 ]]></pre>
 
 In 42 interfaces can not have implemented methods, not even class ones, so you may be surprised that we can use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Message]]></span><it style="font-style: bold; color:green;">&#187;</it> as a decorator, since decorating is a method call.
-When operators are called on class names directly, they are desugared as a method on one of the class nested classes. For example
+When operators are called on a class name directly, they are desugared as a method on one of its
+nested libraries. For example
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Message:{..}]]></span><it style="font-style: bold; color:green;">&#187;</it> becomes
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Message.ClassOperators():{..}]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 It is very common for an interface to be usable as a decorator, creating new code with a meaningful default implementation for the interface.
@@ -978,16 +979,18 @@ It is very common for an interface to be usable as a decorator, creating new cod
 
 In 42 there is no explicit <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[try]]></span><it style="font-style: bold; color:green;">&#187;</it> statement,
 but any block of code delimited by round or curly brackets can contain <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[catch]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-
+In the code example below, lines 2 and 3 are conceptually inside the implict <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[try]]></span><it style="font-style: bold; color:green;">&#187;</it> statement.
+If nothing is thrown then lines 6, 7 and 8 are executed.
+Note that <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[b3]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[b4]]></span><it style="font-style: bold; color:green;">&#187;</it> can see <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[b1]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[b2]]></span><it style="font-style: bold; color:green;">&#187;</it>; this would not naturally happen in a language with explicit <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[try]]></span><it style="font-style: bold; color:green;">&#187;</it> statements; <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[b1]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[b2]]></span><it style="font-style: bold; color:green;">&#187;</it> would become local bindings inside the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[try]]></span><it style="font-style: bold; color:green;">&#187;</it> statement.
 <pre class="l42Big"><![CDATA[
 res = (
  b1 = CanGoWrong()
  b2 = CanGoWrong() //see b1
- catch error Wrong msg1  S"hi 1" //not see b1, b2
- catch error Message.Guard msg2  S"hi 2" //not see b1, b2
- b3 = CanGoWrong() //can see b1, b2
- b4 = CanGoWrong() //can see b1, b2, b3
- S"hi 3" //can see b1, b2, b3, b4
+ catch error Wrong msg1  S"hi 1" //does not see b1, b2
+ catch error Message.Guard msg2  S"hi 2" //does not see b1, b2
+ b3 = CanGoWrong(b1) //does see b1, b2
+ b4 = CanGoWrong(b2) //does see b1, b2, b3
+ S"hi 3" //does see b1, b2, b3, b4
  )
 ]]></pre>
 The catches above do not see local variables <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[b1]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[b2]]></span><it style="font-style: bold; color:green;">&#187;</it> because they may be capturing an error raised by the execution of the initialization of such variable.
@@ -995,7 +998,7 @@ L42 never exposes uninitialized data.
 If a catch is successful, then the result of its catch expression
 will be the result of the whole code block.
 In this way, blocks with catches behave like conditionals.
-That is, The code above can assign to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[res]]></span><it style="font-style: bold; color:green;">&#187;</it> either 
+That is, the code above can assign to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[res]]></span><it style="font-style: bold; color:green;">&#187;</it> either 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S"hi 1"]]></span><it style="font-style: bold; color:green;">&#187;</it>,
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S"hi 2"]]></span><it style="font-style: bold; color:green;">&#187;</it> or
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S"hi 3"]]></span><it style="font-style: bold; color:green;">&#187;</it>.
@@ -1281,7 +1284,7 @@ A typical example is fibonacci:
 <pre class="l42Big"><![CDATA[
 class method Num slowFibo(Num n) = {
   if n==0Num || n==1Num (return n)
-  return This.slowFibo(n=n-1\)+This.slowFibo(n=n-2\)
+  return This.slowFibo(n=n-1Num)+This.slowFibo(n=n-2Num)
   }
 ]]></pre>
 This fibonacci implementation would take a very long time to run, since it would require recomputing the same
@@ -1292,9 +1295,9 @@ This tweaked implementation relying on caching is much faster.
 ComputeFibo = Data:{
   Num that
   @Cache.Lazy method Num () = {
-    n=this.that()
-    if n==0Num ||n==1Num ( return n )
-    This fibo1=This(n-1Num)//a 'computation object'
+    n = this.that()
+    if n==0Num||n==1Num ( return n )
+    This fibo1 = This(n-1Num)//a 'computation object'
     return fibo1()+This(n-2Num)()
     }
   }

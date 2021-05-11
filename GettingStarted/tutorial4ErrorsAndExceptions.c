@@ -86,7 +86,8 @@ if this.ohNoNoNOOO() (error AnswerNotUnderstood"Well, too bad")
 CCode
 
 In 42 interfaces can not have implemented methods, not even class ones, so you may be surprised that we can use Wcode(Message) as a decorator, since decorating is a method call.
-When operators are called on class names directly, they are desugared as a method on one of the class nested classes. For example
+When operators are called on a class name directly, they are desugared as a method on one of its
+nested libraries. For example
 Wcode(`Message:{..}') becomes
 Wcode(`Message.ClassOperators():{..}').
 It is very common for an interface to be usable as a decorator, creating new code with a meaningful default implementation for the interface.
@@ -95,16 +96,18 @@ WTitle(Capturing errors and exceptions)
 
 In 42 there is no explicit Wcode(try) statement,
 but any block of code delimited by round or curly brackets can contain Wcode(catch).
-
+In the code example below, lines 2 and 3 are conceptually inside the implict Wcode(try) statement.
+If nothing is thrown then lines 6, 7 and 8 are executed.
+Note that Wcode(b3) and Wcode(b4) can see Wcode(b1) and Wcode(b2); this would not naturally happen in a language with explicit Wcode(try) statements; Wcode(b1) and Wcode(b2) would become local bindings inside the Wcode(try) statement.
 OBCode
 res = (
  b1 = CanGoWrong()
  b2 = CanGoWrong() //see b1
- catch error Wrong msg1  S"hi 1" //not see b1, b2
- catch error Message.Guard msg2  S"hi 2" //not see b1, b2
- b3 = CanGoWrong() //can see b1, b2
- b4 = CanGoWrong() //can see b1, b2, b3
- S"hi 3" //can see b1, b2, b3, b4
+ catch error Wrong msg1  S"hi 1" //does not see b1, b2
+ catch error Message.Guard msg2  S"hi 2" //does not see b1, b2
+ b3 = CanGoWrong(b1) //does see b1, b2
+ b4 = CanGoWrong(b2) //does see b1, b2, b3
+ S"hi 3" //does see b1, b2, b3, b4
  )
 CCode
 The catches above do not see local variables Wcode(b1) and Wcode(b2) because they may be capturing an error raised by the execution of the initialization of such variable.
@@ -112,7 +115,7 @@ L42 never exposes uninitialized data.
 If a catch is successful, then the result of its catch expression
 will be the result of the whole code block.
 In this way, blocks with catches behave like conditionals.
-That is, The code above can assign to Wcode(res) either 
+That is, the code above can assign to Wcode(res) either 
 Wcode(S"hi 1"),
 Wcode(S"hi 2") or
 Wcode(S"hi 3").

@@ -64,7 +64,7 @@ A typical example is fibonacci:
 OBCode
 class method Num slowFibo(Num n) = {
   if n==0Num || n==1Num (return n)
-  return This.slowFibo(n=n-1\)+This.slowFibo(n=n-2\)
+  return This.slowFibo(n=n-1Num)+This.slowFibo(n=n-2Num)
   }
 CCode
 This fibonacci implementation would take a very long time to run, since it would require recomputing the same
@@ -75,9 +75,9 @@ OBCode
 ComputeFibo = Data:{
   Num that
   @Cache.Lazy method Num () = {
-    n=this.that()
-    if n==0Num ||n==1Num ( return n )
-    This fibo1=This(n-1Num)//a 'computation object'
+    n = this.that()
+    if n==0Num||n==1Num ( return n )
+    This fibo1 = This(n-1Num)//a 'computation object'
     return fibo1()+This(n-2Num)()
     }
   }
