@@ -122,11 +122,11 @@ Wcode(S"hi 3").
 
 WTitle(Strong error safety)
 
-Errors guarantee a property called strong error safety
-(strong exception safety in the Java/C++ terminology)
-This means that the body of a catch will observe the same 
-state present at the start of the paragraph before.
-This is enforced by disallowing catching errors if the paragraph can mutate objects visible in the catch expression.
+In 42, error handling guarantees a property called strong error safety
+(strong exception safety in the Java/C++ terminology).
+This means that the body of a catch must not be able to observe
+state mutated by the computation that threw the error.
+This is enforced by disallowing catching errors in some situations.
 WBR
 That is, the following code do not compile
 OBCode
@@ -152,39 +152,72 @@ res = (
  )
 CCode
 
+As you can see, in the first version of the code, Wcode(p) is declared outside of the block
+and Wcode(p.age(p.age()+1Year)) mutates it.
+Wcode(p) would be visible after the Wcode(catch) is completed.
+In the second version instead, 
+Wcode(p) is out of scope after the Wcode(catch) is completed, and the whole mutable ROG reachable from Wcode(p) is ready to be garbage collected.
+WP
+Intuitively, a programmer who does a bunch of sequential operations on some mutable objects
+would expect them all to be executed.
+They expect the intermediate states of those objects not to be relevant to the surrounding program. Consider the following example:
+OBCode
+method Void birthDay(mut Person bob) = (
+  bob.age(\age+1\)
+  bob.drunkCount(\drunkCount+1\)
+  bob.partyCount(\partCount+1\)
+  )
+CCode
+Reading this code, most programmers would expect this method to keep the 3 counters aligned.
+WP
+Exceptions and errors violate this intuition, since they can be raised in the middle of the sequence and prevent the later operations.
+For example, if Wcode(`bob.drunkCount(\drunkCount+1\)') fails, then Bob will miss his party, possibly because he is too drunk.
+This violates the programmers' expectations
+outlined above.
+WP
+Exceptions can be accounted for, since the type system knows about them; so the programmer can be expected to plan for them.
+On the other hand, errors can be raised
+ anywhere and human programmers often
+ account for them only as a last resort.
+WP
+Thanks to strong error safety, this natural attitude of human programmers is somewhat mitigated: while it is true that Bob will miss his party, the program will never observe him in this sorry state. Bob is, indeed, ready to be garbage collected.
+WBR
+Without strong error safety, we could simply catch the error and keep observing Bob in his distress.
+
 WTitle(`(3/5) Exceptions and errors')
 
 Exceptions are like checked exceptions in java.
 As with errors, every immutable object can be thrown as an exception.
-You can just write Wcode(exception) instead of Wcode(error) while throwing or capturing. When capturing, Wcode(exception) is the default, so you can write Wcode(catch Foo x)
-instead of Wcode(catch exception Foo x)
-Exceptions represent expected, documented and reliable behaviour,
+You can just write Wcode(exception) instead of Wcode(error) while throwing or catching. When catching, Wcode(exception) is the default, so you can write Wcode(catch Foo x)
+instead of Wcode(catch exception Foo x).
+WBR
+Exceptions represent expected, documented and reliable behaviour;
 they are just another way to express control flow.
 They are useful to characterize multiple outcomes of an operation,
-where is important to prevent the programmer from forgetting about
-the many possible outcome and focusing only on their preferred one.
+where it is important to prevent the programmer from forgetting about
+the many possible outcomes while focusing only on their preferred one.
 Exceptions are checked, so methods leaking exceptions have to
-mention it in their header, as in the following.
+mention it in their headers, as in the following.
 OBCode
 /*somewhere in a GUI library*/
-method
+mut method
 S promptUser(S text)[CancelPressed] = {
   /*implementation to open a text dialog*/
   }
 CCode
 The programmer using Wcode(promptUser) has to handle 
 the possibility that the cancel button was pressed.
-However, L42 supports exception inference; to simply propagate all the exceptions leaked out by the other methods called in a method body, you can write Wcode(_), as shown below:
+However, L42 supports exception inference; to simply propagate the exceptions leaked out of the methods called in a method body, you can write Wcode(_), as shown below:
 OBCode
 /*somewhere in a GUI library*/
-method
+mut method
 S promptUser(S text)[_] = {
   /*implementation to open a text dialog*/
   }
 CCode
-Exceptions does not enforce strong exception safety as errors do,
+Exceptions do not enforce strong exception safety as errors do,
 so they can be used more flexibly, and since they are documented in
-the types, we can take their existence in account while writing imperative programs.
+the types, we can take their existence in account while writing programs.
 WP
 Often, the programmer wants to just turn exceptions into errors.
 While this can be done manually, L42 offers a convenient syntax: Wcode(whoops).
@@ -206,27 +239,28 @@ Res foo = {
   }
 CCode
 
-The two snippets of code behave near identically: 
-in the second the exceptions are also notified of the 
-position in the code where they are Wcode(whoopsed).
-This is conceptually similar to the very common Java patten to wrap checked exceptions into uncheced ones.
+The two snippets of code behave nearly identically: 
+in the second, the thrown objects are also notified of the 
+position in the code where they are whoopsed.
+This is conceptually similar to the very common
+Java patten where checked exceptions are wrapped in unchecked ones.
 WBR
 
-As we shown before,  we can use Wcode(X) to mark branches of code
-that the programmer believes would never be executed.
-Wcode(X) implements Wcode(Assert), thus code capturing
+As we have shown before,  we can use Wcode(X) to mark branches of code
+that the programmer believes will never be executed.
+Wcode(X) implements Wcode(Assert), so code capturing
 Wcode(X) is unreliable: as explained before, AdamTowel programmers are free
 to change when and how assertion violations are detected.
 In particular, the programmer may recognize that
-such branch could be actually executed, and thus replace the error with correct behaviour.
+such a branch could be actually executed, and thus replace the error with correct behaviour.
 WP
-Wcode(Assert)ions should not be thrown as exceptions, but only as errors.
+Assertions should not be thrown as exceptions, but only as errors.
 
 
 WTitle(`(4/5) Return')
 
-Return, as we have seen, can be used to exit from the inner
-most level of curly brackets.
+Return, as we have seen, can be used to exit  
+from the closest surrounding pair of curly brackets.
 Also curly brackets can have catches.
 In this case, all catch bodies must ends with
 Wcode(return),
