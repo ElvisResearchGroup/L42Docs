@@ -104,8 +104,8 @@ FileSystem = Load:{reuse[L42.is/FileSystem]}
 
 ReadSelf = {
   class method
-  S (mut FileSystem that) = 
-    that.read(fileName=S"This.L42")
+  S (mut FileSystem that)[FileSystem.Fail] = 
+    that.read(Url"This.L42")
   }
 Test = {}:Test""(expected=ReadSelf(FileSystem.Real.#$of())
     actual=S"reuse [L42.is/AdamTowel]%S.nl()MaxOfList = [###]end")
