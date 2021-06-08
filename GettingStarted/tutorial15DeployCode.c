@@ -325,7 +325,10 @@ Task = Deploy.#$jar(
     [hide='Load._baseDeps()]
   )
 CCode
-
+The generated main is going to be located in
+is.L42.metaGenerated.ExportedMain.main
+and the command would need to include the jar of 42 in the class path
+java -jar ... -cp..
 
 Now Wcode(SITowel) can be used  as a towel,
 and can be used to deploy libraries that can be loaded by 
