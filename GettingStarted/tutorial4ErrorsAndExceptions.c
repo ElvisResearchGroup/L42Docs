@@ -7,7 +7,7 @@ This is similar to Java unchecked exceptions.
 Every immutable object can be thrown as an error.
 While it is possible to thrown informative strings, they do no offer enough
 structure to fully take advantage of the error mechanism.
-AdamTowel defines the interface Wcode(Message):
+AdamsTowel defines the interface Wcode(Message):
 a structured way to provide a certain kind of message to the user.
 There are two main kinds of Wcode(Message): 
 Wcode(Guard) and Wcode(Assert).
@@ -249,7 +249,7 @@ WBR
 As we have shown before,  we can use Wcode(X) to mark branches of code
 that the programmer believes will never be executed.
 Wcode(X) implements Wcode(Assert), so code capturing
-Wcode(X) is unreliable: as explained before, AdamTowel programmers are free
+Wcode(X) is unreliable: as explained before, AdamsTowel programmers are free
 to change when and how assertion violations are detected.
 In particular, the programmer may recognize that
 such a branch could be actually executed, and thus replace the error with correct behaviour.

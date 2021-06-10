@@ -97,7 +97,7 @@ WP
 The method Wcode(move())
 first uses the Wcode(location(that)) setter method to update the Wcode(location) field
 with the Wcode(imm Point) leftmost element of the field Wcode(mut Points path).
-By the way, collections in Wcode(AdamTowel) are primarly designed to store and retrive
+By the way, collections in Wcode(AdamsTowel) are primarly designed to store and retrive
 immutable objects; later we will show also how to manipulate mutable ones.
 WBR
 The method then uses the Wcode(`#path()')

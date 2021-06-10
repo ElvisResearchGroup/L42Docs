@@ -415,7 +415,7 @@ is a non-<it style="font-style: bold; color:green;">&#171;</it><span class="code
 The method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[move()]]></span><it style="font-style: bold; color:green;">&#187;</it>
 first uses the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> setter method to update the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location]]></span><it style="font-style: bold; color:green;">&#187;</it> field
 with the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm Point]]></span><it style="font-style: bold; color:green;">&#187;</it> leftmost element of the field <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Points path]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-By the way, collections in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> are primarly designed to store and retrive
+By the way, collections in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> are primarly designed to store and retrive
 immutable objects; later we will show also how to manipulate mutable ones.
 <br/>
 The method then uses the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#path()]]></span><it style="font-style: bold; color:green;">&#187;</it>
@@ -677,7 +677,7 @@ but triky modulo arithmetic.
 
 </p><h2> Other numeric types </h2> <p>
 
-AdamTowel offers two other numeric types:
+AdamsTowel offers two other numeric types:
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Double]]></span><it style="font-style: bold; color:green;">&#187;</it> (64 bits floating point) and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Math.Long]]></span><it style="font-style: bold; color:green;">&#187;</it> (64 bits integers, rarely used).
 
 
@@ -696,7 +696,7 @@ Consider the following code, where the class decorator <it style="font-style: bo
 current context, while the
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[reuse]]></span><it style="font-style: bold; color:green;">&#187;</it> keyword imports the code from the web. 
 <pre class="l42Big"><![CDATA[
-reuse [L42.is/AdamTowel]
+reuse [L42.is/AdamsTowel]
 Unit = Load:{reuse [L42.is/Unit]}
 Year = Unit(I)
 Person = Data:{S name, Year age}
@@ -873,7 +873,7 @@ Direction = Collection.Enum:{
 
 <ul><li>
 We had a look at
-the most basic features of AdamTowel.
+the most basic features of AdamsTowel.
 There is rich support for defining your own specialized data structures instead of having to rely on the ones provided by default.
 </li><li>
 Use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Unit]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S.Alphanumeric]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Enum]]></span><it style="font-style: bold; color:green;">&#187;</it> to give meaning to your constants.
@@ -890,7 +890,7 @@ This is similar to Java unchecked exceptions.
 Every immutable object can be thrown as an error.
 While it is possible to thrown informative strings, they do no offer enough
 structure to fully take advantage of the error mechanism.
-AdamTowel defines the interface <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Message]]></span><it style="font-style: bold; color:green;">&#187;</it>:
+AdamsTowel defines the interface <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Message]]></span><it style="font-style: bold; color:green;">&#187;</it>:
 a structured way to provide a certain kind of message to the user.
 There are two main kinds of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Message]]></span><it style="font-style: bold; color:green;">&#187;</it>: 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Guard]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Assert]]></span><it style="font-style: bold; color:green;">&#187;</it>.
@@ -1132,7 +1132,7 @@ Java patten where checked exceptions are wrapped in unchecked ones.
 As we have shown before,  we can use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[X]]></span><it style="font-style: bold; color:green;">&#187;</it> to mark branches of code
 that the programmer believes will never be executed.
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[X]]></span><it style="font-style: bold; color:green;">&#187;</it> implements <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Assert]]></span><it style="font-style: bold; color:green;">&#187;</it>, so code capturing
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[X]]></span><it style="font-style: bold; color:green;">&#187;</it> is unreliable: as explained before, AdamTowel programmers are free
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[X]]></span><it style="font-style: bold; color:green;">&#187;</it> is unreliable: as explained before, AdamsTowel programmers are free
 to change when and how assertion violations are detected.
 In particular, the programmer may recognize that
 such a branch could be actually executed, and thus replace the error with correct behaviour.
@@ -1733,7 +1733,7 @@ A Java programmer may be tempted to just add
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this.front()!=this.back();]]></span><it style="font-style: bold; color:green;">&#187;</it> in the invariant,
 but this would just use the user defined <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[!=]]></span><it style="font-style: bold; color:green;">&#187;</it> operator, that
 on classes created using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> is likely to check for structural equality instead of pointer equality.
-AdamTowel offers <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[System.mutReferenceEquality(a and=b)]]></span><it style="font-style: bold; color:green;">&#187;</it> to check for reference equality, but 
+AdamsTowel offers <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[System.mutReferenceEquality(a and=b)]]></span><it style="font-style: bold; color:green;">&#187;</it> to check for reference equality, but 
 this method only works for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> objects.
 The wheels are mut objects indeed, but the invariant method takes a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> receiver, thus we can only see the wheels as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 In this case, the inability of using pointer equality is actually a good thing, since it does not correspond to what we really wanted to express: What if the two wheels are different objects but they share the same <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Tire]]></span><it style="font-style: bold; color:green;">&#187;</it> object?
@@ -2056,7 +2056,7 @@ Nums xs1 = Nums[10\;20\;30\] //xs1 <: imm Nums == //xs1 <: Nums
 imm xs2 = Nums[10\;20\;30\] //xs2 <: imm Nums == //xs2 <: Nums
 xs3 = Num.List[10\;20\;30\] //xs3 is another kind of list of nums
 ]]></pre>
-As you can see above, many of the most common <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> classes have a nested class
+As you can see above, many of the most common <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> classes have a nested class
 called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[.List]]></span><it style="font-style: bold; color:green;">&#187;</it> as a convenience feature, to avoid having to define your own in most programs.
 
 <br/>
@@ -2635,7 +2635,7 @@ In general, all the  non determinism in 42 is obtained by comunicating with othe
 42 allows to connect with Java, and Java allows to connect with C/assembly.
 The best way to connect with java is to use the library <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[JavaServer]]></span><it style="font-style: bold; color:green;">&#187;</it> as shown below:
 <pre class="l42Big"><![CDATA[
-reuse [L42.is/AdamTowel]
+reuse [L42.is/AdamsTowel]
 J0 = Load:{reuse [L42.is/JavaServer]}
 J = J0(slaveName=S"mySlave{}")
 ]]></pre>
@@ -2857,11 +2857,11 @@ FileSystem = Load:{reuse[L42.is/FileSystem]}
 
 ReadSelf = {
   class method
-  S (mut FileSystem that) = 
-    that.read(fileName=S"This.L42")
+  S (mut FileSystem that)[FileSystem.Fail] = 
+    that.read(Url"This.L42")
   }
 Test = {}:Test""(expected=ReadSelf(FileSystem.Real.#$of())
-    actual=S"reuse [L42.is/AdamTowel]%S.nl()MaxOfList = [###]end")
+    actual=S"reuse [L42.is/AdamsTowel]%S.nl()MaxOfList = [###]end")
 //end
 ]]></pre>
 
@@ -4236,7 +4236,7 @@ DataNoWither = Decorator:Data:{
 As you can see, with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Decorator]]></span><it style="font-style: bold; color:green;">&#187;</it> we can easy tweak any existing decorator and compose them into new ones.
 
 Another intersting example is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S.Alphanumeric]]></span><it style="font-style: bold; color:green;">&#187;</it>;
-it is present in AdamTowel, but it is quite easy to redefine:
+it is present in AdamsTowel, but it is quite easy to redefine:
 <pre class="l42Big"><![CDATA[
 Alphanumeric = Decorator:{
   AlphanumericTrait = Trait:{[HasToS]
@@ -4395,7 +4395,7 @@ First we load the libraries we need:
 Unit, JavaServer, GuiBuilder and Query.
 
 <pre class="l42Big"><![CDATA[
-reuse [L42.is/AdamTowel]
+reuse [L42.is/AdamsTowel]
 Unit = Load:{reuse[L42.is/Unit]}
 LoadJ = Load:{reuse[L42.is/JavaServer]}
 LoadGui = Load:{reuse[L42.is/GuiBuilder]}
@@ -4740,7 +4740,7 @@ we are unsatistied by this brittle solution: it only works since names or number
 </p><h2> (4/5) Putting all together </h2> <p>
 Finally, a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Main]]></span><it style="font-style: bold; color:green;">&#187;</it> puts all together
 <pre class="l42Big"><![CDATA[
-reuse [L42.is/AdamTowel]
+reuse [L42.is/AdamsTowel]
 Unit = Load:{reuse[L42.is/Unit]}
 LoadJ = Load:{reuse[L42.is/JavaServer]}
 LoadGui = Load:{reuse[L42.is/GuiBuilder]}
@@ -4812,20 +4812,12 @@ Concepts like the <it style="font-style: bold; color:green;">&#171;</it><span cl
  </p><p id="DeployCode"> </p><h1> Deploy 42 </h1> <p>
 In the context of 42 and AdamsTowel, there are three things that can be deployed:
  Executable programs,  Towels and Modules.
-</p><p>
------
-I'm assuming the following extra features still to implement:
--writing to url
--removing unused code
--symplifying dependency for Load that does not use stuff
--all Deploy. methods should be #$
-----
 
 </p><h2> (1/5)Deploy Towels </h2> <p>
 
 A towel is about the most massively useful thing a programmer can have.
 A towel has immense psychological value, and you should always know where your towel is.
-All the classes that we have used up to now without defining them, are defined in AdamTowel.
+All the classes that we have used up to now without defining them, are defined in AdamsTowel.
 They are all normal classes/libraries.
 <br/>
 You can code without a towel, but this means starting from first principles,
@@ -4834,7 +4826,6 @@ primitive things that 42 offers are Library literals
 (code as first class entities), the constant <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[void]]></span><it style="font-style: bold; color:green;">&#187;</it>,
 and the types <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Library]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Void]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Any]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 </p><p>
-
 
 Towels are libraries providing standard
 functionalities and types, such as number, boolean,
@@ -4849,7 +4840,6 @@ For similar reasons, any sizeable 42 program will use its own towel.
 We expect different programs to use massively different libraries for
 what in other languages is the standard library.
 That is, there is no such thing as 'the 42 standard library'.
-
 
 </p><h2> Using multiple Towels </h2> <p>
 
@@ -4880,25 +4870,39 @@ and basic classes.
 
 <pre class="l42Big"><![CDATA[
 reuse [L42.is/AdamsTowel]
-ToDeploy = Trait:{
+RichTowel = Trait:{
   reuse [L42.is/AdamsTowel]
   Unit = Load:{reuse [L42.is/Unit]}
   Kg = Units.of(Num)
   Meter = Units.of(Num)
   }
-Task = Deploy.#$towel(
-  url=\"https://github.com/MyUserName/MyProjectName/RichTowel"
-  permissions=\".." //for example the OAuthToken
-  code=Class:ToDeploy
-}
+Secret = {...}//Be careful to not commit the file 'Secret'
+  //It should contain your passwords/tokens, as in 
+  //class method S #$of()=S"ghp_..."
+GW = Load:{reuse[L42.is/GitWriter]}
+LoadDeploy = Load:{reuse[L42.is/Deploy]}
+DeployGit = LoadDeploy.with(writer=GW)
+DeployRicherTowel = DeployGit.towel(RichTowel()
+  on=Url"github.com/Bob/Modules42/RichTowel.L42"
+  writer=GW.#$of(token=Secret.#$of(),message=S".."))
 ]]></pre>
-The former code will create your towel and update it
-on your github repository every time you
-run it.
+If you have write access to a github project under <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bob/Modules42]]></span><it style="font-style: bold; color:green;">&#187;</it>, the former code will create your towel and update it
+on your github repository every time you run it.
+If you want to just write on your hard drive, you could just do
+
+<pre class="l42Big"><![CDATA[
+FS = Load:{reuse[L42.is/FileSystem]}
+LoadDeploy = Load:{reuse[L42.is/Deploy]}
+DeployFS = LoadDeploy.with(writer=FS)
+DeployRicherTowel = DeployFS.towel(RichTowel()
+  on=Url"myLocalPath/RichTowel.L42"
+  writer=FS.#$of())
+]]></pre>
+
+We are considering adding more variants, for example to allow writing on your FTP servers, google drives, dropbox and other similar services.
 </p><p>
 A <span style="color:#ff1111; font-weight: bold;"> Stained Towel </span> is a towel that looks like another but it is enriched by adding more things, either at the bottom.
-In our example, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[RichTowel]]></span><it style="font-style: bold; color:green;">&#187;</it>
- is just a stained variation of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+In our example, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[RichTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> is just a stained variation of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 
 
 </p><h2> (2/5)Module deployment </h2> <p>
@@ -4916,7 +4920,6 @@ In 42 is easy to code with multiple modules, and modules can be much smaller tha
 </p><p>
 In 42 it is possible to employ a programming model where every developer (or every pair of developers in a pair programming style) is the
 only one responsible of one (or more) modules and their maintenance process, while the group leader give specifications and tests to be met by the various module developers and will glue all the code together.
-
 </p><p>
 
 Modules can be deployed in a way similar to towel deployment;
@@ -4929,24 +4932,25 @@ using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><
 <pre class="l42Big"><![CDATA[
 reuse [L42.is/AdamsTowel]
 //could be L42.is/RichTowel and nothing would change
-
+//...
 Module = Trait:{
   reuse [L42.is/RichTowel]
-  //need to be RichTowel; for example AirplaneUnits is using Unit
+  //need to be RichTowel in this example,
+  //where AirplaneUnits is using Unit
   AirplaneUnitsUtilities = {...}
   AirplaneUnits = {...}
   }
-Task = Deploy.#$module(
-  url=\"https://github.com/MyUserName/MyProjectName/AirplaneUnits"
-  permissions=\".."
-  code=Class:Module
+DeployAirplaneModule = DeployGit.module(Module()
   name='AirplaneUnits
-  )
+  on=Url"github.com/Bob/Modules42/AirplaneUnits.L42"
+  writer=GW.#$of(token=Secret.#$of(),message=S".."))
 ]]></pre>
 
 This code deployes <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Module.AirplaneUnits]]></span><it style="font-style: bold; color:green;">&#187;</it> to an URL as a module.
 and turns private <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AirplaneUnitsUtilities]]></span><it style="font-style: bold; color:green;">&#187;</it> and any other 
 nested class stained on top of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+This includes 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Unit]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Kg]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Meter]]></span><it style="font-style: bold; color:green;">&#187;</it> from <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[RichTowel]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 <br/>
 If there was any nested class unreachable from public classes inside
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AirplaneUnitsUtilities]]></span><it style="font-style: bold; color:green;">&#187;</it> it will be pruned away.
@@ -4955,9 +4959,8 @@ any private unreachable one in <it style="font-style: bold; color:green;">&#171;
 </p><p>
 The deployed library can be imported as usual.
 For example the main
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Imported = Load:{reuse [github.com/MyUserName/MyProjectName/AirplaneUnits]}]]></span><it style="font-style: bold; color:green;">&#187;</it>
-allows us to see the content of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AirplaneUnits]]></span><it style="font-style: bold; color:green;">&#187;</it> inside of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Imported]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AirplaneUnits = Load:{reuse [github.com/Bob/Modules42/AirplaneUnits]}]]></span><it style="font-style: bold; color:green;">&#187;</it>
+allows us to see the content of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AirplaneUnits]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 </p><p>
 
 All the deployed code is closed code.
@@ -4969,9 +4972,8 @@ In particular all stained versions of the same towel are compatible.
 Every needed nested library
 that was not present in the original towel, will be made private.
 On the other side, all the classes in the original towel will 
-be made abstract by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Deploy.#$module(..)]]></span><it style="font-style: bold; color:green;">&#187;</it>
+be made abstract by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[DeployGit.module(..)]]></span><it style="font-style: bold; color:green;">&#187;</it>
 and will be rebound to the current towel by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Load]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-
 </p><p>
 
 Thus, in our example, 
@@ -4993,8 +4995,8 @@ and then save the result somewhere, such as on the website where the users can d
 For example, we could rework the code of the former chapter as follows:
 
 <pre class="l42Big"><![CDATA[
-reuse [L42.is/AdamTowel]
-ToJar = Trait:{reuse [L42.is/AdamTowel]
+reuse [L42.is/AdamsTowel]
+ToJar = Trait:{reuse [L42.is/AdamsTowel]
   Unit = Load:{reuse [L42.is/Unit]}
   LoadJ = Load:{reuse [L42.is/JavaServer]}
   LoadGui = Load:{reuse [L42.is/GuiBuilder]}
@@ -5021,28 +5023,30 @@ ToJar = Trait:{reuse [L42.is/AdamTowel]
     for e in j(\['Example]) ( e>>model )
     )
   }
-Main = Deploy.#$jar(
-  url=\"https://github.com/MyUserName/MyProjectName/MyApplication.jar"
-  permissions=\".."
-  code=Class:ToJar
-  )
+//..
+Tast = DeployGit.jar(ToJar()
+  on=Url"github.com/Bob/Modules42/MyApplication.jar"
+  writer=GW.#$of(token=Secret.#$of(),message=S".."))
 ]]></pre>
 As you can see,
 we are wrapping the application code into a trait, including
-a second reuse of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamTowel]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+a second reuse of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 In this way the code of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ToJar]]></span><it style="font-style: bold; color:green;">&#187;</it> is fully self contained, and 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Main]]></span><it style="font-style: bold; color:green;">&#187;</it> in the outer scope can still use all of the towel features by taking them from the outer <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[reuse [AdamTowel]]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-We then use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Deploy.#$jar(..)]]></span><it style="font-style: bold; color:green;">&#187;</it> to deploy our application onto a jar in a specific location.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Main]]></span><it style="font-style: bold; color:green;">&#187;</it> in the outer scope can still use all of the towel features by taking them from the outer <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[reuse [AdamsTowel]]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+We then use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[DeployGit.jar(..)]]></span><it style="font-style: bold; color:green;">&#187;</it> to deploy our application onto a jar in a specific location.
+Again, we could just deploy it on our file system or on another kind of service by using another kind of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[writer]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 </p><p>
-When 42 is used to deploy an application as Jar, you can see the whole 42 execution as a comprehensive compilation framework,
+When 42 is used to deploy an application as a Jar, you can see the whole 42 execution as a comprehensive compilation framework,
 encompassing all the tools and phases that could possibly be needed into a single cohesive abstraction.
 
+Such jar can be run with the following command
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[java -cp "L42.jar;MyApplication.jar" is.L42.metaGenerated.ExportedMain]]></span><it style="font-style: bold; color:green;">&#187;</it>
 </p><p>
 In this example we reuse AdamsTowel both outside <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ToJar]]></span><it style="font-style: bold; color:green;">&#187;</it>
 and inside of it.
 The two towels do not need to be the same.
 The outermost just has to support the deployment process
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Deploy]]></span><it style="font-style: bold; color:green;">&#187;</it>, while the inner one is needed to make
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[DeployGit]]></span><it style="font-style: bold; color:green;">&#187;</it>, while the inner one is needed to make
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ToJar]]></span><it style="font-style: bold; color:green;">&#187;</it> a closed library: only libraries that do not refer to external classes can be deployed.
 
 </p><h2> A 42 project testing and deploying </h2> <p>
@@ -5061,7 +5065,13 @@ Main = Trait:{
     TestSuite_n = {...}
     }
   }
-Task = Deploy.#$jar(url=\"..", permissions=\"..", code=Class:Main)
+Secret = {...}
+GW = Load:{reuse[L42.is/GitWriter]}
+LoadDeploy = Load:{reuse[L42.is/Deploy]}
+DeployGit = LoadDeploy.with(writer=GW)
+Tast = DeployGit.jar(Main()
+  on=Url"github.com/Bob/Modules42/MyApplication.jar"
+  writer=GW.#$of(token=Secret.#$of(),message=S".."))
 ]]></pre>
 
 In general, for medium size projects is a good idea to keep executing the tests before the deployment; for example
@@ -5081,9 +5091,9 @@ The most common embroidery tool
 is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Organize]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 Together with late casts, we can add methods to any existing class as shown below:
 <pre class="l42Big"><![CDATA[
-Code = Trait:Organize:{reuse [L42.is/AdamTowel]
+Code = Trait:Organize:{reuse [L42.is/AdamsTowel]
   S$ = {/*..more methods for string here..*/
-    method S reverse() = (/*..*/ this<:@This1 S /*..*/)
+    method S reverse() = (/*..*/ (this<:@This1 S).size() /*..*/)
     }
   Num$ = {/*..more methods for numbers here..*/}
   }
@@ -5092,12 +5102,12 @@ Code = Trait:Organize:{reuse [L42.is/AdamTowel]
 
 
 The advantage with respect to composing two separated
-libraries is that the scope is the same,
-that is the implementation of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[reverse()]]></span><it style="font-style: bold; color:green;">&#187;</it> will be able to use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bool]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> and so on.
+libraries is that the scope is the same:
+the implementation of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[reverse()]]></span><it style="font-style: bold; color:green;">&#187;</it> will be able to use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bool]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> and so on.
 
 
-Towel staining is a very minimal personalization, and stained towels
-are fully compatible with the original one.
+Towel staining is a very minimal personalization, and stained towels are fully compatible with the original one.
+
 By embroidery you can personalize a lot more the content of your towel,
 but when module deployment 
 relies on an embroidered towel, compatibility with the original towel is lost.
@@ -5113,7 +5123,7 @@ For example, one may want to develop a Towel for scientific use
 where the existence of some units of measure can be shared between all the libraries.
 We could do the following:
 <pre class="l42Big"><![CDATA[
-RawCode = Trait:{reuse [L42.is/AdamTowel]
+RawCode = Trait:{reuse [L42.is/AdamsTowel]
   Unit = Class:Trait({@AbstractTowel{
     "en.wikipedia.org/wiki/Quantity"}}):
     Load:{reuse [L42.is/Unit]}
@@ -5127,18 +5137,20 @@ RawCode = Trait:{reuse [L42.is/AdamTowel]
       ])      
     }
   }
-Task = Deploy.#$jar(
-  url=\"L42.is/SITowel"
-  code=Class:Organize:RawCode
+Secret = {...}
+GW = Load:{reuse[L42.is/GitWriter]}
+LoadDeploy = Load:{reuse[L42.is/Deploy]}
+DeployGit = LoadDeploy.with(writer=GW)
+DeployRicherTowel = DeployGit.towel(
+  Organize:RawCode
     ['Load.baseDeps()->'Load._baseDeps()]
     [hide='Load._baseDeps()]
-  )
+  on=Url"github.com/Bob/Modules42/SITowel.L42"
+  writer=GW.#$of(token=Secret.#$of(),message=S".."))
 ]]></pre>
-
-
-Now <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[SITowel]]></span><it style="font-style: bold; color:green;">&#187;</it> can be used  as a towel,
-and can be used to deploy libraries that can be loaded by 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[SITowel]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Now <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[github.com/Bob/Modules42/SITowel]]></span><it style="font-style: bold; color:green;">&#187;</it> can be used as a towel,
+and can be used to deploy modules that can be loaded by 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[github.com/Bob/Modules42/SITowel]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 </p><p>
 By using semantic URIs as
 ontological nodes, we
@@ -5161,13 +5173,13 @@ or as a compiler (to deploy programs, libraries and towels).
 Indeed we expect all sizeable 42 projects to use 42 as a compiler,
 to produce some reusable artefacts.
 </li><li>
-The distinction between towels (that do not need to be <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Load]]></span><it style="font-style: bold; color:green;">&#187;</it>ed)
+The distinction between towels (that do not need <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Load]]></span><it style="font-style: bold; color:green;">&#187;</it>)
 and modules is 
-introduced not by 42, but by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamTowel]]></span><it style="font-style: bold; color:green;">&#187;</it>; radically different towels may provide different meaning for the concepts of deploying and
+introduced not by 42, but by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it>; radically different towels may provide different meaning for the concepts of deploying and
 loading libraries/towels.
 </li><li>
 Application developers can freely stain and embroider towels;
-in this way they can adapt <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> to serve them better.
+in this way they can adapt <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> to serve them better.
 However, library developers need to carefully consider the effect of embroidery.
 </li></ul>
         </p>

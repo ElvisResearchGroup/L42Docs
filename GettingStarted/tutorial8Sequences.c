@@ -12,7 +12,7 @@ Nums xs1 = Nums[10\;20\;30\] //xs1 <: imm Nums == //xs1 <: Nums
 imm xs2 = Nums[10\;20\;30\] //xs2 <: imm Nums == //xs2 <: Nums
 xs3 = Num.List[10\;20\;30\] //xs3 is another kind of list of nums
 CCode
-As you can see above, many of the most common Wcode(AdamTowel) classes have a nested class
+As you can see above, many of the most common Wcode(AdamsTowel) classes have a nested class
 called Wcode(.List) as a convenience feature, to avoid having to define your own in most programs.
 
 WBR

@@ -1,20 +1,12 @@
 WBigTitle(Deploy 42)
 In the context of 42 and AdamsTowel, there are three things that can be deployed:
  Executable programs,  Towels and Modules.
-WP
------
-I'm assuming the following extra features still to implement:
--writing to url
--removing unused code
--symplifying dependency for Load that does not use stuff
--all Deploy. methods should be #$
-----
 
 WTitle((1/5)Deploy Towels)
 
 A towel is about the most massively useful thing a programmer can have.
 A towel has immense psychological value, and you should always know where your towel is.
-All the classes that we have used up to now without defining them, are defined in AdamTowel.
+All the classes that we have used up to now without defining them, are defined in AdamsTowel.
 They are all normal classes/libraries.
 WBR
 You can code without a towel, but this means starting from first principles,
@@ -23,7 +15,6 @@ primitive things that 42 offers are Library literals
 (code as first class entities), the constant Wcode(void),
 and the types Wcode(Library), Wcode(Void) and Wcode(Any).
 WP
-
 
 Towels are libraries providing standard
 functionalities and types, such as number, boolean,
@@ -38,7 +29,6 @@ WP
 We expect different programs to use massively different libraries for
 what in other languages is the standard library.
 That is, there is no such thing as 'the 42 standard library'.
-
 
 WTitle(Using multiple Towels)
 
@@ -69,27 +59,39 @@ and basic classes.
 
 OBCode
 reuse [L42.is/AdamsTowel]
-ToDeploy = Trait:{
+RichTowel = Trait:{
   reuse [L42.is/AdamsTowel]
   Unit = Load:{reuse [L42.is/Unit]}
   Kg = Units.of(Num)
   Meter = Units.of(Num)
   }
-Task = Deploy.#$towel(
-  url=\"https://github.com/MyUserName/MyProjectName/RichTowel"
-  permissions=\".." //for example the OAuthToken
-  code=Class:ToDeploy
-}
+Secret = {...}//Be careful to not commit the file 'Secret'
+  //It should contain your passwords/tokens, as in 
+  //class method S #$of()=S"ghp_..."
+GW = Load:{reuse[L42.is/GitWriter]}
+LoadDeploy = Load:{reuse[L42.is/Deploy]}
+DeployGit = LoadDeploy.with(writer=GW)
+DeployRicherTowel = DeployGit.towel(RichTowel()
+  on=Url"github.com/Bob/Modules42/RichTowel.L42"
+  writer=GW.#$of(token=Secret.#$of(),message=S".."))
 CCode
-WComm the actual readable url would be something like
-WComm https://raw.githubusercontent.com/MyUserName/MyProjectName/RichTowel
-The former code will create your towel and update it
-on your github repository every time you
-run it.
+If you have write access to a github project under Wcode(Bob/Modules42), the former code will create your towel and update it
+on your github repository every time you run it.
+If you want to just write on your hard drive, you could just do
+
+OBCode
+FS = Load:{reuse[L42.is/FileSystem]}
+LoadDeploy = Load:{reuse[L42.is/Deploy]}
+DeployFS = LoadDeploy.with(writer=FS)
+DeployRicherTowel = DeployFS.towel(RichTowel()
+  on=Url"myLocalPath/RichTowel.L42"
+  writer=FS.#$of())
+CCode
+
+We are considering adding more variants, for example to allow writing on your FTP servers, google drives, dropbox and other similar services.
 WP
 A WEmph(Stained Towel) is a towel that looks like another but it is enriched by adding more things, either at the bottom.
-In our example, Wcode(RichTowel)
- is just a stained variation of Wcode(AdamsTowel).
+In our example, Wcode(RichTowel) is just a stained variation of Wcode(AdamsTowel).
 
 
 WTitle((2/5)Module deployment)
@@ -107,7 +109,6 @@ In 42 is easy to code with multiple modules, and modules can be much smaller tha
 WP
 In 42 it is possible to employ a programming model where every developer (or every pair of developers in a pair programming style) is the
 only one responsible of one (or more) modules and their maintenance process, while the group leader give specifications and tests to be met by the various module developers and will glue all the code together.
-
 WP
 
 Modules can be deployed in a way similar to towel deployment;
@@ -120,24 +121,25 @@ using Wcode(AdamsTowel):
 OBCode
 reuse [L42.is/AdamsTowel]
 //could be L42.is/RichTowel and nothing would change
-
+//...
 Module = Trait:{
   reuse [L42.is/RichTowel]
-  //need to be RichTowel; for example AirplaneUnits is using Unit
+  //need to be RichTowel in this example,
+  //where AirplaneUnits is using Unit
   AirplaneUnitsUtilities = {...}
   AirplaneUnits = {...}
   }
-Task = Deploy.#$module(
-  url=\"https://github.com/MyUserName/MyProjectName/AirplaneUnits"
-  permissions=\".."
-  code=Class:Module
+DeployAirplaneModule = DeployGit.module(Module()
   name='AirplaneUnits
-  )
+  on=Url"github.com/Bob/Modules42/AirplaneUnits.L42"
+  writer=GW.#$of(token=Secret.#$of(),message=S".."))
 CCode
 
 This code deployes Wcode(Module.AirplaneUnits) to an URL as a module.
 and turns private Wcode(AirplaneUnitsUtilities) and any other 
 nested class stained on top of Wcode(AdamsTowel).
+This includes 
+Wcode(Unit), Wcode(Kg) and Wcode(Meter) from Wcode(RichTowel).
 WBR
 If there was any nested class unreachable from public classes inside
 Wcode(AirplaneUnitsUtilities) it will be pruned away.
@@ -146,9 +148,8 @@ any private unreachable one in Wcode(AirplaneUnits).
 WP
 The deployed library can be imported as usual.
 For example the main
-Wcode(Imported = Load:{reuse [github.com/MyUserName/MyProjectName/AirplaneUnits]})
-allows us to see the content of Wcode(AirplaneUnits) inside of Wcode(Imported).
-
+Wcode(AirplaneUnits = Load:{reuse [github.com/Bob/Modules42/AirplaneUnits]})
+allows us to see the content of Wcode(AirplaneUnits).
 WP
 
 All the deployed code is closed code.
@@ -160,9 +161,8 @@ In particular all stained versions of the same towel are compatible.
 Every needed nested library
 that was not present in the original towel, will be made private.
 On the other side, all the classes in the original towel will 
-be made abstract by Wcode(Deploy.#$module(..))
+be made abstract by Wcode(DeployGit.module(..))
 and will be rebound to the current towel by Wcode(Load).
-
 WP
 
 Thus, in our example, 
@@ -184,8 +184,8 @@ WBR
 For example, we could rework the code of the former chapter as follows:
 
 OBCode
-reuse [L42.is/AdamTowel]
-ToJar = Trait:{reuse [L42.is/AdamTowel]
+reuse [L42.is/AdamsTowel]
+ToJar = Trait:{reuse [L42.is/AdamsTowel]
   Unit = Load:{reuse [L42.is/Unit]}
   LoadJ = Load:{reuse [L42.is/JavaServer]}
   LoadGui = Load:{reuse [L42.is/GuiBuilder]}
@@ -212,28 +212,30 @@ ToJar = Trait:{reuse [L42.is/AdamTowel]
     for e in j(\['Example]) ( e>>model )
     )
   }
-Main = Deploy.#$jar(
-  url=\"https://github.com/MyUserName/MyProjectName/MyApplication.jar"
-  permissions=\".."
-  code=Class:ToJar
-  )
+//..
+Tast = DeployGit.jar(ToJar()
+  on=Url"github.com/Bob/Modules42/MyApplication.jar"
+  writer=GW.#$of(token=Secret.#$of(),message=S".."))
 CCode
 As you can see,
 we are wrapping the application code into a trait, including
-a second reuse of Wcode(AdamTowel).
+a second reuse of Wcode(AdamsTowel).
 In this way the code of Wcode(ToJar) is fully self contained, and 
-Wcode(Main) in the outer scope can still use all of the towel features by taking them from the outer Wcode(reuse [AdamTowel]).
-We then use Wcode(`Deploy.#$jar(..)') to deploy our application onto a jar in a specific location.
+Wcode(Main) in the outer scope can still use all of the towel features by taking them from the outer Wcode(reuse [AdamsTowel]).
+We then use Wcode(`DeployGit.jar(..)') to deploy our application onto a jar in a specific location.
+Again, we could just deploy it on our file system or on another kind of service by using another kind of Wcode(writer).
 WP
-When 42 is used to deploy an application as Jar, you can see the whole 42 execution as a comprehensive compilation framework,
+When 42 is used to deploy an application as a Jar, you can see the whole 42 execution as a comprehensive compilation framework,
 encompassing all the tools and phases that could possibly be needed into a single cohesive abstraction.
 
+Such jar can be run with the following command
+Wcode(java -cp "L42.jar;MyApplication.jar" is.L42.metaGenerated.ExportedMain)
 WP
 In this example we reuse AdamsTowel both outside Wcode(ToJar)
 and inside of it.
 The two towels do not need to be the same.
 The outermost just has to support the deployment process
-Wcode(Deploy), while the inner one is needed to make
+Wcode(DeployGit), while the inner one is needed to make
 Wcode(ToJar) a closed library: only libraries that do not refer to external classes can be deployed.
 
 WTitle(A 42 project testing and deploying)
@@ -252,7 +254,13 @@ Main = Trait:{
     TestSuite_n = {...}
     }
   }
-Task = Deploy.#$jar(url=\"..", permissions=\"..", code=Class:Main)
+Secret = {...}
+GW = Load:{reuse[L42.is/GitWriter]}
+LoadDeploy = Load:{reuse[L42.is/Deploy]}
+DeployGit = LoadDeploy.with(writer=GW)
+Tast = DeployGit.jar(Main()
+  on=Url"github.com/Bob/Modules42/MyApplication.jar"
+  writer=GW.#$of(token=Secret.#$of(),message=S".."))
 CCode
 
 In general, for medium size projects is a good idea to keep executing the tests before the deployment; for example
@@ -272,9 +280,9 @@ The most common embroidery tool
 is Wcode(Organize).
 Together with late casts, we can add methods to any existing class as shown below:
 OBCode
-Code = Trait:Organize:{reuse [L42.is/AdamTowel]
+Code = Trait:Organize:{reuse [L42.is/AdamsTowel]
   S$ = {/*..more methods for string here..*/
-    method S reverse() = (/*..*/ this<:@This1 S /*..*/)
+    method S reverse() = (/*..*/ (this<:@This1 S).size() /*..*/)
     }
   Num$ = {/*..more methods for numbers here..*/}
   }
@@ -283,12 +291,12 @@ CCode
 
 
 The advantage with respect to composing two separated
-libraries is that the scope is the same,
-that is the implementation of Wcode(reverse()) will be able to use Wcode(Bool), Wcode(Num) and so on.
+libraries is that the scope is the same:
+the implementation of Wcode(reverse()) will be able to use Wcode(Bool), Wcode(Num) and so on.
 
 
-Towel staining is a very minimal personalization, and stained towels
-are fully compatible with the original one.
+Towel staining is a very minimal personalization, and stained towels are fully compatible with the original one.
+
 By embroidery you can personalize a lot more the content of your towel,
 but when module deployment 
 relies on an embroidered towel, compatibility with the original towel is lost.
@@ -304,7 +312,7 @@ For example, one may want to develop a Towel for scientific use
 where the existence of some units of measure can be shared between all the libraries.
 We could do the following:
 OBCode
-RawCode = Trait:{reuse [L42.is/AdamTowel]
+RawCode = Trait:{reuse [L42.is/AdamsTowel]
   Unit = Class:Trait({@AbstractTowel{
     "en.wikipedia.org/wiki/Quantity"}}):
     Load:{reuse [L42.is/Unit]}
@@ -318,21 +326,20 @@ RawCode = Trait:{reuse [L42.is/AdamTowel]
       ])      
     }
   }
-Task = Deploy.#$jar(
-  url=\"L42.is/SITowel"
-  code=Class:Organize:RawCode
+Secret = {...}
+GW = Load:{reuse[L42.is/GitWriter]}
+LoadDeploy = Load:{reuse[L42.is/Deploy]}
+DeployGit = LoadDeploy.with(writer=GW)
+DeployRicherTowel = DeployGit.towel(
+  Organize:RawCode
     ['Load.baseDeps()->'Load._baseDeps()]
     [hide='Load._baseDeps()]
-  )
+  on=Url"github.com/Bob/Modules42/SITowel.L42"
+  writer=GW.#$of(token=Secret.#$of(),message=S".."))
 CCode
-The generated main is going to be located in
-is.L42.metaGenerated.ExportedMain.main
-and the command would need to include the jar of 42 in the class path
-java -jar ... -cp..
-
-Now Wcode(SITowel) can be used  as a towel,
-and can be used to deploy libraries that can be loaded by 
-Wcode(SITowel).
+Now Wcode(github.com/Bob/Modules42/SITowel) can be used as a towel,
+and can be used to deploy modules that can be loaded by 
+Wcode(github.com/Bob/Modules42/SITowel).
 WP
 By using semantic URIs as
 ontological nodes, we
@@ -355,12 +362,12 @@ or as a compiler (to deploy programs, libraries and towels).
 Indeed we expect all sizeable 42 projects to use 42 as a compiler,
 to produce some reusable artefacts.
 </li><li>
-The distinction between towels (that do not need to be Wcode(Load)ed)
+The distinction between towels (that do not need Wcode(Load))
 and modules is 
-introduced not by 42, but by Wcode(AdamTowel); radically different towels may provide different meaning for the concepts of deploying and
+introduced not by 42, but by Wcode(AdamsTowel); radically different towels may provide different meaning for the concepts of deploying and
 loading libraries/towels.
 </li><li>
 Application developers can freely stain and embroider towels;
-in this way they can adapt Wcode(AdamTowel) to serve them better.
+in this way they can adapt Wcode(AdamsTowel) to serve them better.
 However, library developers need to carefully consider the effect of embroidery.
 </li></ul>

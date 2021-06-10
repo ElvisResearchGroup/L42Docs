@@ -9,7 +9,7 @@ First we load the libraries we need:
 Unit, JavaServer, GuiBuilder and Query.
 
 OBCode
-reuse [L42.is/AdamTowel]
+reuse [L42.is/AdamsTowel]
 Unit = Load:{reuse[L42.is/Unit]}
 LoadJ = Load:{reuse[L42.is/JavaServer]}
 LoadGui = Load:{reuse[L42.is/GuiBuilder]}
@@ -354,7 +354,7 @@ we are unsatistied by this brittle solution: it only works since names or number
 WTitle((4/5) Putting all together)
 Finally, a Wcode(Main) puts all together
 OBCode
-reuse [L42.is/AdamTowel]
+reuse [L42.is/AdamsTowel]
 Unit = Load:{reuse[L42.is/Unit]}
 LoadJ = Load:{reuse[L42.is/JavaServer]}
 LoadGui = Load:{reuse[L42.is/GuiBuilder]}

@@ -26,7 +26,7 @@ but triky modulo arithmetic.
 
 WTitle(Other numeric types)
 
-AdamTowel offers two other numeric types:
+AdamsTowel offers two other numeric types:
 Wcode(Double) (64 bits floating point) and Wcode(Math.Long) (64 bits integers, rarely used).
 
 
@@ -45,7 +45,7 @@ Consider the following code, where the class decorator Wcode(Load) allows us to 
 current context, while the
 Wcode(reuse) keyword imports the code from the web. 
 OBCode
-reuse [L42.is/AdamTowel]
+reuse [L42.is/AdamsTowel]
 Unit = Load:{reuse [L42.is/Unit]}
 Year = Unit(I)
 Person = Data:{S name, Year age}
@@ -222,7 +222,7 @@ WTitle((5/5) Summary)
 
 <ul><li>
 We had a look at
-the most basic features of AdamTowel.
+the most basic features of AdamsTowel.
 There is rich support for defining your own specialized data structures instead of having to rely on the ones provided by default.
 </li><li>
 Use Wcode(Unit), Wcode(S.Alphanumeric) and Wcode(Enum) to give meaning to your constants.

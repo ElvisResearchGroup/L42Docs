@@ -108,7 +108,7 @@ ReadSelf = {
     that.read(Url"This.L42")
   }
 Test = {}:Test""(expected=ReadSelf(FileSystem.Real.#$of())
-    actual=S"reuse [L42.is/AdamTowel]%S.nl()MaxOfList = [###]end")
+    actual=S"reuse [L42.is/AdamsTowel]%S.nl()MaxOfList = [###]end")
 //end
 CCode
 

@@ -244,7 +244,7 @@ A Java programmer may be tempted to just add
 Wcode(this.front()!=this.back();) in the invariant,
 but this would just use the user defined Wcode(!=) operator, that
 on classes created using Wcode(Data) is likely to check for structural equality instead of pointer equality.
-AdamTowel offers Wcode(`System.mutReferenceEquality(a and=b)') to check for reference equality, but 
+AdamsTowel offers Wcode(`System.mutReferenceEquality(a and=b)') to check for reference equality, but 
 this method only works for Wcode(mut) objects.
 The wheels are mut objects indeed, but the invariant method takes a Wcode(read) receiver, thus we can only see the wheels as Wcode(read).
 In this case, the inability of using pointer equality is actually a good thing, since it does not correspond to what we really wanted to express: What if the two wheels are different objects but they share the same Wcode(mut Tire) object?

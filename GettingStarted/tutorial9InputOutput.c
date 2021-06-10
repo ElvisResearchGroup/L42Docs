@@ -145,7 +145,7 @@ In general, all the  non determinism in 42 is obtained by comunicating with othe
 42 allows to connect with Java, and Java allows to connect with C/assembly.
 The best way to connect with java is to use the library Wcode(JavaServer) as shown below:
 OBCode
-reuse [L42.is/AdamTowel]
+reuse [L42.is/AdamsTowel]
 J0 = Load:{reuse [L42.is/JavaServer]}
 J = J0(slaveName=S"mySlave{}")
 CCode

@@ -410,7 +410,7 @@ CCode
 As you can see, with Wcode(Decorator) we can easy tweak any existing decorator and compose them into new ones.
 
 Another intersting example is Wcode(S.Alphanumeric);
-it is present in AdamTowel, but it is quite easy to redefine:
+it is present in AdamsTowel, but it is quite easy to redefine:
 OBCode
 Alphanumeric = Decorator:{
   AlphanumericTrait = Trait:{[HasToS]
