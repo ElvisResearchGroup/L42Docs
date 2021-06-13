@@ -7,6 +7,22 @@ or the mathematical rationale for the correctness of 42.
 WBR
 The language 42 and many 42 metaphors are inspired by
  The Hitchhiker's Guide to the Galaxy by Douglas Adams.
+
+
+WTitle(`Dowloading and running')
+Currently, you can download and run 42 as a 
+Java program.
+<ul>
+<li>
+  Download here <a href="L42.jar">L42.jar</a>
+</li>
+<li>
+  Run with Wcode(java --enable-preview -jar L42.jar) to start the IDE.
+</li>
+<li>
+  Run with Wcode(java --enable-preview -jar L42.jar ProjectName) to run the 42 program inside of the folder Wcode(ProjectName) from the command line.
+</li>
+</ul>
 WBigTitle(Basics)
 WTitle((1/5)Simple hello world program)
 Let's look at a simple hello world program: 
