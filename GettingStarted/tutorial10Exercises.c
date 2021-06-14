@@ -100,7 +100,7 @@ WTitle((3/5) Read/Write files)
 Write a static method Wcode(ReadSelf) returning the content of the file where the current source code is located.
 WBR
 OBCode
-FileSystem = Load:{reuse[L42.is/FileSystem]}
+FileSystem = Load:{reuse [L42.is/FileSystem]}
 
 ReadSelf = {
   class method

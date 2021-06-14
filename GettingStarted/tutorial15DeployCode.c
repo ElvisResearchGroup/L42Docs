@@ -68,8 +68,8 @@ RichTowel = Trait:{
 Secret = {...}//Be careful to not commit the file 'Secret'
   //It should contain your passwords/tokens, as in 
   //class method S #$of()=S"ghp_..."
-GW = Load:{reuse[L42.is/GitWriter]}
-LoadDeploy = Load:{reuse[L42.is/Deploy]}
+GW = Load:{reuse [L42.is/GitWriter]}
+LoadDeploy = Load:{reuse [L42.is/Deploy]}
 DeployGit = LoadDeploy.with(writer=GW)
 DeployRicherTowel = DeployGit.towel(RichTowel()
   on=Url"github.com/Bob/Modules42/RichTowel.L42"
@@ -80,8 +80,8 @@ on your github repository every time you run it.
 If you want to just write on your hard drive, you could just do
 
 OBCode
-FS = Load:{reuse[L42.is/FileSystem]}
-LoadDeploy = Load:{reuse[L42.is/Deploy]}
+FS = Load:{reuse [L42.is/FileSystem]}
+LoadDeploy = Load:{reuse [L42.is/Deploy]}
 DeployFS = LoadDeploy.with(writer=FS)
 DeployRicherTowel = DeployFS.towel(RichTowel()
   on=Url"myLocalPath/RichTowel.L42"
@@ -255,8 +255,8 @@ Main = Trait:{
     }
   }
 Secret = {...}
-GW = Load:{reuse[L42.is/GitWriter]}
-LoadDeploy = Load:{reuse[L42.is/Deploy]}
+GW = Load:{reuse [L42.is/GitWriter]}
+LoadDeploy = Load:{reuse [L42.is/Deploy]}
 DeployGit = LoadDeploy.with(writer=GW)
 Tast = DeployGit.jar(Main()
   on=Url"github.com/Bob/Modules42/MyApplication.jar"
@@ -327,8 +327,8 @@ RawCode = Trait:{reuse [L42.is/AdamsTowel]
     }
   }
 Secret = {...}
-GW = Load:{reuse[L42.is/GitWriter]}
-LoadDeploy = Load:{reuse[L42.is/Deploy]}
+GW = Load:{reuse [L42.is/GitWriter]}
+LoadDeploy = Load:{reuse [L42.is/Deploy]}
 DeployGit = LoadDeploy.with(writer=GW)
 DeployRicherTowel = DeployGit.towel(
   Organize:RawCode

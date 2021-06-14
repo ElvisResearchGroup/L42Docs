@@ -10,10 +10,10 @@ Unit, JavaServer, GuiBuilder and Query.
 
 OBCode
 reuse [L42.is/AdamsTowel]
-Unit = Load:{reuse[L42.is/Unit]}
-LoadJ = Load:{reuse[L42.is/JavaServer]}
-LoadGui = Load:{reuse[L42.is/GuiBuilder]}
-Query = Load:{reuse[L42.is/Query]}
+Unit = Load:{reuse [L42.is/Unit]}
+LoadJ = Load:{reuse [L42.is/JavaServer]}
+LoadGui = Load:{reuse [L42.is/GuiBuilder]}
+Query = Load:{reuse [L42.is/Query]}
 CCode
 We then declare some useful units. Persons have ages expressed in years,
 heights expressed in meters and weights expressed in Kgs.
@@ -355,10 +355,10 @@ WTitle((4/5) Putting all together)
 Finally, a Wcode(Main) puts all together
 OBCode
 reuse [L42.is/AdamsTowel]
-Unit = Load:{reuse[L42.is/Unit]}
-LoadJ = Load:{reuse[L42.is/JavaServer]}
-LoadGui = Load:{reuse[L42.is/GuiBuilder]}
-Query = Load:{reuse[L42.is/Query]}
+Unit = Load:{reuse [L42.is/Unit]}
+LoadJ = Load:{reuse [L42.is/JavaServer]}
+LoadGui = Load:{reuse [L42.is/GuiBuilder]}
+Query = Load:{reuse [L42.is/Query]}
 Year = Unit(I)
 Meter = Unit(Num)
 Kg = Unit(Num)
