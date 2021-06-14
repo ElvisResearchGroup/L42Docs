@@ -14,7 +14,10 @@ Currently, you can download and run 42 as a
 Java program.
 <ul>
 <li>
-  Download here <a href="L42.jar">L42.jar</a>
+  For windows download here <a href="L42Win.jar">L42Win.jar</a>
+</li>
+<li>
+  For Linux download here <a href="L42Linux.jar">L42Linux.jar</a>
 </li>
 <li>
   Run with Wcode(java --enable-preview -jar L42.jar) to start the IDE.

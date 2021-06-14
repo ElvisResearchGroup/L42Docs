@@ -49,7 +49,7 @@
 </ol>
 </div></div><div class="finishFloat"></div></div>
 
- </p><p id="Basics"> </p><h1> Target audience </h1> <p>
+ </p><p id="Basics"> </p><div style="break-after:page"></div><h1> Target audience </h1> <p>
 This tutorial is design for expert programmers, already knowledgeable in 
 at least two or three of the languages Java, C#, C++ and Python.
 This tutorial lays out the basic knowledge for programming in 42 using AdamsTowel, but
@@ -65,7 +65,10 @@ Currently, you can download and run 42 as a
 Java program.
 <ul>
 <li>
-  Download here <a href="L42.jar">L42.jar</a>
+  For windows download here <a href="L42Win.jar">L42Win.jar</a>
+</li>
+<li>
+  For Linux download here <a href="L42Linux.jar">L42Linux.jar</a>
 </li>
 <li>
   Run with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[java --enable-preview -jar L42.jar]]></span><it style="font-style: bold; color:green;">&#187;</it> to start the IDE.
@@ -74,7 +77,7 @@ Java program.
   Run with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[java --enable-preview -jar L42.jar ProjectName]]></span><it style="font-style: bold; color:green;">&#187;</it> to run the 42 program inside of the folder <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ProjectName]]></span><it style="font-style: bold; color:green;">&#187;</it> from the command line.
 </li>
 </ul>
-</p><h1> Basics </h1> <p>
+</p><div style="break-after:page"></div><h1> Basics </h1> <p>
 </p><h2> (1/5)Simple hello world program </h2> <p>
 Let's look at a simple hello world program: 
 
@@ -332,7 +335,7 @@ Points[_;_;_]:  from a variable length sequence of values.
 
 Note that in 42 these are all just expressions, and represent one or more methods in the named class.
 This means that even concepts quite different from numbers, strings and collections may benefit from this syntactic support.
- </p><p id="ModifiersIntro"> </p><h1> Keep control:  Modifiers, kinds of references and objects </h1> <p>
+ </p><p id="ModifiersIntro"> </p><div style="break-after:page"></div><h1> Keep control:  Modifiers, kinds of references and objects </h1> <p>
 
 </p><h2> (1/5)Kinds of objects </h2> <p>
 In object oriented languages, objects can form complex networks of dependencies by referring to each other using their fields.
@@ -665,7 +668,7 @@ store them into (class) local binding.
 Some programmers found the fact that class objects are instances of themselves deeply concerning
 or disturbing, while for others it is just a good story to tell to break the ice at parties.
 </li></ul>
- </p><p id="BasicClasses"> </p><h1> Basic classes </h1> <p>
+ </p><p id="BasicClasses"> </p><div style="break-after:page"></div><h1> Basic classes </h1> <p>
 
 </p><h2> (1/5) Num </h2> <p>
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> is a general number type,
@@ -897,7 +900,7 @@ In this way, the type system will help you to use values with the semantics that
 Be sure to define all of the right base classes to establish a convenient vocabulary
 to talk about your problem domain.
 </li></ul>
- </p><p id="ErrorsAndExceptions"> </p><h1> Errors and Exceptions: Messages in AdamsTowel </h1> <p>
+ </p><p id="ErrorsAndExceptions"> </p><div style="break-after:page"></div><h1> Errors and Exceptions: Messages in AdamsTowel </h1> <p>
 
 </p><h2> (1/5)Errors, Messages, Asserts, Guards, .... So much terminology </h2> <p> 
 In 42, when something takes an unexpected turn,
@@ -1268,7 +1271,7 @@ Up to half of good 42 code will be composed of
 just error/exception handling/lifting and management.
 Do not be scared of turning your code in it's own policemen.
 </li></ul>
- </p><p id="Caching"> </p><h1> Caching </h1> <p>
+ </p><p id="Caching"> </p><div style="break-after:page"></div><h1> Caching </h1> <p>
 </p><h2> (1/5) Normalization </h2> <p>
 One of the big advantages of deeply immutable objects is that two structurally identical objects are referentially transparent, that is, you can not distinguish whether they are represented in memory by one object or two.
 This means that it is possible to reuse the same objects to save memory. While in other languages the programmer would have to implement some specific support to reuse objects, in L42 this is supported directly in the language, by a process called <span style="color:#ff1111; font-weight: bold;"> normalization </span>.
@@ -1503,7 +1506,7 @@ instead of returning the broken object, the error is leaked during object constr
 This, in turn, allows us to encode class invariants and to provide a static guarantee that users of a class can rely upon.
 
 </li></ul>
- </p><p id="CachingMut"> </p><h1> Caching on Mutable objects </h1> <p>
+ </p><p id="CachingMut"> </p><div style="break-after:page"></div><h1> Caching on Mutable objects </h1> <p>
 </p><h2> (1/5) Cache invalidation </h2> <p>
 The main advantage of caching method of immutable objects is that the cache is always valid.
 L42 allows to cache also methods of mutable objects, and discovers on its own when the cache needs to be invalidated.
@@ -1814,7 +1817,7 @@ Note how avoiding pointer equality tests is required when normalization is took 
 Consider the example of a list whose invariant requires all object to  pointer unique.
 A valid list of such type may contain two structurally equal but not pointer equal objects.
 If such a list becomes immutable and was normalized, those two objects would become point equals, and the invariant would be broken by normalization.
- </p><p id="InterfacesAndData"> </p><h1> Interfaces, subtypes and matching </h1> <p>
+ </p><p id="InterfacesAndData"> </p><div style="break-after:page"></div><h1> Interfaces, subtypes and matching </h1> <p>
 
 </p><h2> (1/5)Interfaces, Basis and Details </h2> <p>
 </p><h2> Interfaces Basis </h2> <p>
@@ -2058,7 +2061,7 @@ Java 8 default methods, since the implementation can be generated by examining t
 In the right conditions, matching is a useful tool to reduce code size and complexity.
 However, dynamic dispach is still the preferred option in the general case: we can only match on a finite
 amount of pre-defined cases, thus matching is fragile with respect to code evolution.
- </p><p id="Sequences"> </p><h1> Collection: list, map, set, optional and their operations </h1> <p>
+ </p><p id="Sequences"> </p><div style="break-after:page"></div><h1> Collection: list, map, set, optional and their operations </h1> <p>
 
 </p><h2> (1/5)lists manipulation </h2> <p>
 
@@ -2504,7 +2507,7 @@ Most methods have a general version that works with an index, and specialized <i
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[for]]></span><it style="font-style: bold; color:green;">&#187;</it> is very useful and flexible. It is common to find methods composed from just a large
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[for]]></span><it style="font-style: bold; color:green;">&#187;</it> statement plus a little pre and post processing around it.
 </li></ul>
- </p><p id="InputOutput"> </p><h1> Input Output with Object Capabilities </h1> <p>
+ </p><p id="InputOutput"> </p><div style="break-after:page"></div><h1> Input Output with Object Capabilities </h1> <p>
 </p><h2> (1/5) Controlling non determinism </h2> <p>
 Traditionally, in imperative languages I/O and side effects can happen everywhere, while
 in pure functional languages like Haskell they are kept in check by monads.
@@ -2767,7 +2770,7 @@ Since they can only be called in a few controlled places, we can control what pa
 </li><li>
 Capability objects are a very convenient centralized point of control to inject security or other kinds of restrictions.
 </li></ul>
- </p><p id="Exercises"> </p><h1> Exercises </h1> <p>
+ </p><p id="Exercises"> </p><div style="break-after:page"></div><h1> Exercises </h1> <p>
 
 A very large class of practically useful programs can be obtained
 just by declaring
@@ -2869,7 +2872,7 @@ Again we see yet another way to handle errors; preconditions are appropriate whe
 Write a static method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ReadSelf]]></span><it style="font-style: bold; color:green;">&#187;</it> returning the content of the file where the current source code is located.
 <br/>
 <pre class="l42Big"><![CDATA[
-FileSystem = Load:{reuse[L42.is/FileSystem]}
+FileSystem = Load:{reuse [L42.is/FileSystem]}
 
 ReadSelf = {
   class method
@@ -3073,7 +3076,7 @@ points with invariants.
 </li><li>
 Well organized code, properly divided in files and folders is much  easier to navigate and maintain.
 </li></ul>
- </p><p id="MetaprogrammingIntro"> </p><h1> Finally, Metaprogramming </h1> <p>
+ </p><p id="MetaprogrammingIntro"> </p><div style="break-after:page"></div><h1> Finally, Metaprogramming </h1> <p>
 
 Metaprogramming is the most important feature of 42.
 All the decorators that you have seen up to now are implemented with metaprogramming, 
@@ -3467,7 +3470,7 @@ enabling simple and natural testing and code reuse patterns.
 <br/>
 When reusing code, we have to be mindful of missing types and missing methods. Structuring the code-base to avoid those issues will require some experience, and is indeed one of the hardest parts about writing complex 42 programs.
 
- </p><p id="Refactoring"> </p><h1> Traits and rename </h1> <p>
+ </p><p id="Refactoring"> </p><div style="break-after:page"></div><h1> Traits and rename </h1> <p>
 
 </p><h2> (1/5)An introduction to Programmatic Refactoring </h2> <p>
 
@@ -3840,7 +3843,7 @@ The internal declaration is simply trashed.
 Finally, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Info]]></span><it style="font-style: bold; color:green;">&#187;</it> allows to explore the shape of code as metadata.
 
 
- </p><p id="MoreDecorators"> </p><h1> More decorators </h1> <p>
+ </p><p id="MoreDecorators"> </p><div style="break-after:page"></div><h1> More decorators </h1> <p>
 Using the expressive power of programmatic refactoring many different decorators can be designed. Here we list and explain some of the most useful.
 
 </p><h2> (1/5)Public </h2> <p>
@@ -4400,7 +4403,7 @@ join our effort to design the painful metaprogramming guide.
 In the current state of the art we do not have an answer for what is the best 42 (meta-)programming style.
 Indeed, we still do not understand the question.
 </li></ul>
- </p><p id="ExampleOfProgram"> </p><h1> Example of a 42 program </h1> <p>
+ </p><p id="ExampleOfProgram"> </p><div style="break-after:page"></div><h1> Example of a 42 program </h1> <p>
 
 In this chapter, we will see how to develop a GUI connected with a Data Base.
 For simplicity we consider to have a database with a single table <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person]]></span><it style="font-style: bold; color:green;">&#187;</it> that contains a fiew fields.
@@ -4412,10 +4415,10 @@ Unit, JavaServer, GuiBuilder and Query.
 
 <pre class="l42Big"><![CDATA[
 reuse [L42.is/AdamsTowel]
-Unit = Load:{reuse[L42.is/Unit]}
-LoadJ = Load:{reuse[L42.is/JavaServer]}
-LoadGui = Load:{reuse[L42.is/GuiBuilder]}
-Query = Load:{reuse[L42.is/Query]}
+Unit = Load:{reuse [L42.is/Unit]}
+LoadJ = Load:{reuse [L42.is/JavaServer]}
+LoadGui = Load:{reuse [L42.is/GuiBuilder]}
+Query = Load:{reuse [L42.is/Query]}
 ]]></pre>
 We then declare some useful units. Persons have ages expressed in years,
 heights expressed in meters and weights expressed in Kgs.
@@ -4757,10 +4760,10 @@ we are unsatistied by this brittle solution: it only works since names or number
 Finally, a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Main]]></span><it style="font-style: bold; color:green;">&#187;</it> puts all together
 <pre class="l42Big"><![CDATA[
 reuse [L42.is/AdamsTowel]
-Unit = Load:{reuse[L42.is/Unit]}
-LoadJ = Load:{reuse[L42.is/JavaServer]}
-LoadGui = Load:{reuse[L42.is/GuiBuilder]}
-Query = Load:{reuse[L42.is/Query]}
+Unit = Load:{reuse [L42.is/Unit]}
+LoadJ = Load:{reuse [L42.is/JavaServer]}
+LoadGui = Load:{reuse [L42.is/GuiBuilder]}
+Query = Load:{reuse [L42.is/Query]}
 Year = Unit(I)
 Meter = Unit(Num)
 Kg = Unit(Num)
@@ -4825,7 +4828,7 @@ to take queries written in another language (for now, just SQL and IQL, but the 
 and converts them into a simple 42 well typed API that can be used
 to build programs in an compact and elegant way.
 Concepts like the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[QueryBox]]></span><it style="font-style: bold; color:green;">&#187;</it> can be used to control what part of an application is allowed to do important operations, adding a great deal of security.
- </p><p id="DeployCode"> </p><h1> Deploy 42 </h1> <p>
+ </p><p id="DeployCode"> </p><div style="break-after:page"></div><h1> Deploy 42 </h1> <p>
 In the context of 42 and AdamsTowel, there are three things that can be deployed:
  Executable programs,  Towels and Modules.
 
@@ -4895,8 +4898,8 @@ RichTowel = Trait:{
 Secret = {...}//Be careful to not commit the file 'Secret'
   //It should contain your passwords/tokens, as in 
   //class method S #$of()=S"ghp_..."
-GW = Load:{reuse[L42.is/GitWriter]}
-LoadDeploy = Load:{reuse[L42.is/Deploy]}
+GW = Load:{reuse [L42.is/GitWriter]}
+LoadDeploy = Load:{reuse [L42.is/Deploy]}
 DeployGit = LoadDeploy.with(writer=GW)
 DeployRicherTowel = DeployGit.towel(RichTowel()
   on=Url"github.com/Bob/Modules42/RichTowel.L42"
@@ -4907,8 +4910,8 @@ on your github repository every time you run it.
 If you want to just write on your hard drive, you could just do
 
 <pre class="l42Big"><![CDATA[
-FS = Load:{reuse[L42.is/FileSystem]}
-LoadDeploy = Load:{reuse[L42.is/Deploy]}
+FS = Load:{reuse [L42.is/FileSystem]}
+LoadDeploy = Load:{reuse [L42.is/Deploy]}
 DeployFS = LoadDeploy.with(writer=FS)
 DeployRicherTowel = DeployFS.towel(RichTowel()
   on=Url"myLocalPath/RichTowel.L42"
@@ -5082,8 +5085,8 @@ Main = Trait:{
     }
   }
 Secret = {...}
-GW = Load:{reuse[L42.is/GitWriter]}
-LoadDeploy = Load:{reuse[L42.is/Deploy]}
+GW = Load:{reuse [L42.is/GitWriter]}
+LoadDeploy = Load:{reuse [L42.is/Deploy]}
 DeployGit = LoadDeploy.with(writer=GW)
 Tast = DeployGit.jar(Main()
   on=Url"github.com/Bob/Modules42/MyApplication.jar"
@@ -5154,8 +5157,8 @@ RawCode = Trait:{reuse [L42.is/AdamsTowel]
     }
   }
 Secret = {...}
-GW = Load:{reuse[L42.is/GitWriter]}
-LoadDeploy = Load:{reuse[L42.is/Deploy]}
+GW = Load:{reuse [L42.is/GitWriter]}
+LoadDeploy = Load:{reuse [L42.is/Deploy]}
 DeployGit = LoadDeploy.with(writer=GW)
 DeployRicherTowel = DeployGit.towel(
   Organize:RawCode
