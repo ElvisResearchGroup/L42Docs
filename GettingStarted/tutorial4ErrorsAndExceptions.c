@@ -259,10 +259,9 @@ Assertions should not be thrown as exceptions, but only as errors.
 
 WTitle(`(4/5) Return')
 
-Return, as we have seen, can be used to exit  
+As we have seen, we have used Wcode(return) to exit  
 from the closest surrounding pair of curly brackets.
-Also curly brackets can have catches.
-In this case, all catch bodies must ends with
+Also curly brackets can have catches, which must complete by throwing a
 Wcode(return),
 Wcode(error) or
 Wcode(exception).
@@ -271,10 +270,10 @@ OBCode
 {
   x = DoStuff()
   catch Stuff e1
-    return void //just swallow the exception (this block return 'Void')
+    return S"a" //just swallow the exception
   catch Message.Guard e2 (
     obj.doSideEffect()
-    return void //do something and return
+    return S"b" //do something and return
     )
   catch error Message e3
     error X"not supposed to happen"
@@ -283,7 +282,7 @@ OBCode
     return y
     whoops Message.Guard
     )
-  }  
+  }
 CCode
 
 Moreover, curly brackets/return can be used
