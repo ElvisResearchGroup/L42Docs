@@ -261,7 +261,8 @@ WTitle(`(4/5) Return')
 
 As we have seen, we have used Wcode(return) to exit  
 from the closest surrounding pair of curly brackets.
-Also curly brackets can have catches, which must complete by throwing a
+Also curly brackets can have 
+Wcode(catch exception) or Wcode(catch error), which must complete by throwing a
 Wcode(return),
 Wcode(error) or
 Wcode(exception).
@@ -285,8 +286,8 @@ OBCode
   }
 CCode
 
-Moreover, curly brackets/return can be used
-to provide a different result if some computation fails: 
+Moreover, curly brackets can be used
+to Wcode(return) a different result if some computation fails: 
 
 OBCode
 res = {
@@ -299,72 +300,65 @@ CCode
 WTitle(`Return looks similar to error/exception')
 Return is actually another thing that can be thrown and captured.
 While only immutable values can be thrown as errors/exceptions,
-return can throw any kind of value, but returns can not flow
+return can throw any kind of value, but returns can not leak
 outside of the scope of a method.
 Hold your head before it explodes, but curly brackets are just a syntactic sugar
  to capture returns; these two snippets of code are equivalent: 
 <div class= "compare">
 OBCode
-N res = {
-  
-  if bla (return e1)
+Num res = {
+  if bla ( return e1 )
   return e2
-  
-
-
   
   }
 CCode
 OBCode
-N res = (
-  Void unused= (
-    if bla ( return e1 )
-    return e2
-    )
-  catch return N x ( x )
-  error void //this line is never executed
+Num res = (
+  if bla ( return e1 )
+  return e2
+  catch return Num x ( x )
   )
 CCode
 </div>
 WP
 Depending on how your brain works,
-knowing the desugaring of Wcode({..return..})
+knowing the mechanics of Wcode({..return..})
 can help you to use return better and understand why you can omit 
 Wcode({..return..}) for simple method bodies, and why you can
 write multiple groups of curly brackets and have local returns.
 Or it may just be very confusing. If you are in the second group, just
 never ever write Wcode(catch return) explicitly and continue
-your 42 experience ignoring the issue.
-
+on with your 42 experience.
 
 WTitle(`(5/5) Errors, exceptions and return, summary')
 <ul><li>
-Always detect if your code misbehaves, and 
-terminate it with an Wcode(Assert)
+Always detect misbehaviour in your code, and 
+terminate it with an Wcode(Assert).
 </li><li>
-Whenever something out of your
-control happen, Give it a name and throw it as an error, as in
+Whenever something outside your
+ control happens, give it a name and throw it as an error, as in:
 OBCode
 NameOfIssue = Message:{[Message.Guard]}
 /*...*/
 if /*..*/ ( error NameOfIssue"more info" )
 CCode
-It just take 2 lines, and will make debugging your code so much 
+It just takes 2 lines, and will make debugging your code so much 
 easier.
 </li><li>
-Use errors intensivelly, 
-but use exceptions sparsely: they are needed only in few 
+Use errors intensively, but use exceptions sparingly:
+ they are needed only in few 
 cases, mostly when designing public libraries.
 </li><li>
-To convert exception into errors or other exceptions, use the convenient short
-syntax Wcode(`whoops T1,..,Tn""').
+To convert exception into errors, use the convenient short
+syntax Wcode(`whoops T1,..,Tn').
 </li><li>
-Instead of manually writing long lists of leaked exceptions, just use Wcode([_]).
+Instead of manually writing long lists of leaked exceptions, 
+you can use Wcode([_]). This is particularly convenient for small auxiliary methods.
 </li><li>
 It is sometimes possible to write elegant and correct code
 that is not covered in layers upon layers of error/exception checking,
 but often is not possible or not convenient.
 Up to half of good 42 code will be composed of
-just error/exception handling/lifting and management.
-Do not be scared of turning your code in it's own policemen.
+just error/exception handling, repackaging and lifting.
+Do not be scared of turning your code into it's own policemen.
 </li></ul>

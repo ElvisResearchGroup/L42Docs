@@ -1,7 +1,7 @@
 WBigTitle(Caching on Mutable objects)
 WTitle((1/5) Cache invalidation)
-The main advantage of caching method of immutable objects is that the cache is always valid.
-L42 allows to cache also methods of mutable objects, and discovers on its own when the cache needs to be invalidated.
+The main advantage of caching methods of immutable objects is that the cache stays valid.
+L42 can also cache methods of mutable objects, and discovers on its own when the cache needs to be invalidated.
 Consider this trivial variation of the Wcode(Point) example above where the fields can be updated:
 
 OBCode
@@ -14,12 +14,12 @@ Point = Data:{
     if x<0Double || y<0Double error X".."
   }
 CCode
-When a setter for Wcode(x) or Wcode(y) is invoked, then two Wcode(Cache.Now) methods are recomputed.
+When a setter for Wcode(x) or Wcode(y) is invoked, then the two Wcode(Cache.Now) methods are recomputed.
 
 In other programming languages, this behaviour can be encoded by
 making the fields private and customizing the implementations of the setters to recompute the distance when needed. This pattern can grow very complex very fast.
 L42 guarantees that a cached value is always structurally equivalent to the value that would be returned by calling the method again.
-Moreover, for Wcode(Cache.Now) L42 also guarantees that such computation would terminate without errors.
+Moreover, for Wcode(Cache.Now) L42 also guarantees that, if the computation was re-run, it would terminate without errors.
 Thus, when Wcode(Cache.Now) is used to emulate invariants, those invariants are guaranteed to hold for all observable objects, that is, all objects where the annotated method could possibly be called.
 
 This is possible thanks to the strong L42 type system, and we believe this property can not be broken.

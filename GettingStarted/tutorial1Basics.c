@@ -100,7 +100,7 @@ is denoted by an upper-case name, and can be created from a library literal or f
 A library literal can be a class (default case) or an interface (starts with the Wcode(interface) keyword).
 A nested library in 42 is similar to a static inner class in Java, or a nested class in C++. It is just a convenient way to separate the various components of our program and organize them into a tree shape.
 WP
-The class Wcode(MyCode) from before offers a single class method, has no fields and you can not create instances of Wcode(MyCode), since no factory is present; you can think about it as a module.
+The class Wcode(MyCode) from before offers a single class method, has no fields and you can not create instances of Wcode(MyCode), since no factory is present.
 In 42 we do not have constructors. Objects are created by WTerm(factory methods), that are just normal methods that happen to return an instance of their class. We believe this is a much simpler and more consistent approach to object initialization than having special syntax that encourages programmers to make assumptions about the behaviour of the operations.
 
 WTitle((3/5)Simple class with internal state)
