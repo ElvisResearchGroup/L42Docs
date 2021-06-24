@@ -19,16 +19,17 @@ When a setter for Wcode(x) or Wcode(y) is invoked, then the two Wcode(Cache.Now)
 In other programming languages, this behaviour can be encoded by
 making the fields private and customizing the implementations of the setters to recompute the distance when needed. This pattern can grow very complex very fast.
 L42 guarantees that a cached value is always structurally equivalent to the value that would be returned by calling the method again.
-Moreover, for Wcode(Cache.Now) L42 also guarantees that, if the computation was re-run, it would terminate without errors.
+Moreover, for Wcode(Cache.Now), L42 also guarantees that if the computation was re-run then it would terminate without errors.
 Thus, when Wcode(Cache.Now) is used to emulate invariants, those invariants are guaranteed to hold for all observable objects, that is, all objects where the annotated method could possibly be called.
 
 This is possible thanks to the strong L42 type system, and we believe this property can not be broken.
 That is, we believe this property to hold even in the presence of exceptions, errors, aliasing, input output and non deterministic behaviour.
-It is possible to make L42 work together with Java or even (possibly broken) native code, and we believe our property will hold also in those cases.
+It is possible to make L42 work together with Java or even with (possibly broken) native code, and we believe our property will continue to hold.
 
 WTitle((2/5) Deeply mutable objects)
 As discussed above, a deeply mutable object is a mutable object with some mutable fields.
-Also deeply mutable objects can support Wcode(Cache.Now), but such mutable state needs to be WEmph(encapsulated), as we have seen before for the class
+Also deeply mutable objects can support Wcode(Cache.Now), 
+but such objects must have WEmph(encapsulated) state, as we have seen before for the class
 Wcode(Animal).
 
 OBCode
@@ -53,13 +54,17 @@ It can be accessed as Wcode(read) by doing Wcode(`this.path()'), but can not be 
 However, we can write WEmph(capsule mutator) methods by using 
 Wcode(Cache.Clear).
 Similarly to Wcode(Cache.Now), a class method can be annotated with Wcode(Cache.Clear) and can
-take parameters representing the object fields.
+take parameters representing the object's fields.
 In addition, more parameters can be present encoding extra arguments.
 To clarify, consider this richer example, where our Wcode(Animal) has an invariant and another capsule mutator method:
 
 OBCode
 Point = Data:{ Double x, Double y
-  method Double distance(Point that) = 3Double
+  method Double distance(Point that) = (
+    x = this.x()-that.x()
+    y = this.y()-that.y()
+    (x*x)+(y*y)).pow(exp=\"0.5")
+    )
   }
 
 Points = Collection.list(Point)
@@ -105,9 +110,10 @@ We added a method to remove the farthest away point if it is over a certain dist
 As you can see, the parameters Wcode(path) and Wcode(location) corresponds to fields, while
 the parameter Wcode(distance) is extra needed information.
 When we call Wcode(`this.removeFarthest(distance=3\)') we pass only Wcode(distance); the other parameters are passed automatically.
-As an invariant, here we require that the current location is not in the Wcode(path).
+WBR
+As an invariant, we require that the current location is not in the Wcode(path).
 This code, in the current form, has a bug; can you spot it?
-Look carefully to the method Wcode(move()):
+Look carefully at the method Wcode(move()):
 
 OBCode
   mut method
@@ -119,25 +125,34 @@ CCode
 Here we first set up the location, then we remove it from the path.
 The method Wcode(move()) recomputes the invariant twice: one after the field setter 
 and one after the call to the Wcode(Cache.Clear) method.
-This first check is going to fail, since the leftmost element of the path has not being removed yet.
+This first check is going to fail, since the leftmost element of the path has not been removed yet.
 In this case we can solve the problem by swapping the lines:
 
 OBCode
   mut method
   Void move() = (
-    left=this.path().left()
-    this.removeLeftPath()
-    this.location(left)
+    left=this.path().left() //store left value
+    this.removeLeftPath()   //before removing it
+    this.location(left)     //set location to left
     )
 CCode
 
-However, this kind of solution does not scales in the general case; next we will see a programming pattern allowing to delay in a controlled way the invariant checks, or more in general, the recomputation of Wcode(Cache.Now).
+However, this kind of solution does not scale in the general case. 
+Next, we will see a 
+programming pattern that allows 
+ the invariant checks
+ (and more generally
+    the recomputation of Wcode(Cache.Now) methods)
+to be delayed in a controlled way.
 
-Every method annotated as Wcode(Cache.Now) can instead be annotated as 
+WTitle(Cache.LazyRead)
+
+Every method annotated as Wcode(Cache.Now) could instead be annotated as 
 Wcode(Cache.LazyRead).
-Wcode(Cache.LazyRead) allows to encode conventional caching on mutable data-structures and automatic cache invalidation:
-The operations are computed when they are first asked, and the cache is automatically invalidated when a Wcode(Cache.Clear) method terminates.
-Again, we think that at all times Wcode(Cache.LazyRead) has the same semantic as recomputing the value, but with a different performance.
+This annotation enables caching on mutable data-structures with automatic cache invalidation:
+the operations are computed when their results are first requested, and the cache is automatically invalidated when a Wcode(Cache.Clear) method terminates.
+At all times, as for Wcode(Cache.Now), Wcode(Cache.LazyRead) has the same semantic as recomputing the value, but with a different performance.
+WBR
 This annotation is called Wcode(Cache.LazyRead) because it produces a 
 Wcode(read) method, while 
 Wcode(Cache.Lazy) works on immutable ones.

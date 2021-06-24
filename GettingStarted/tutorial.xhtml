@@ -1520,16 +1520,17 @@ When a setter for <it style="font-style: bold; color:green;">&#171;</it><span cl
 In other programming languages, this behaviour can be encoded by
 making the fields private and customizing the implementations of the setters to recompute the distance when needed. This pattern can grow very complex very fast.
 L42 guarantees that a cached value is always structurally equivalent to the value that would be returned by calling the method again.
-Moreover, for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> L42 also guarantees that, if the computation was re-run, it would terminate without errors.
+Moreover, for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it>, L42 also guarantees that if the computation was re-run then it would terminate without errors.
 Thus, when <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> is used to emulate invariants, those invariants are guaranteed to hold for all observable objects, that is, all objects where the annotated method could possibly be called.
 
 This is possible thanks to the strong L42 type system, and we believe this property can not be broken.
 That is, we believe this property to hold even in the presence of exceptions, errors, aliasing, input output and non deterministic behaviour.
-It is possible to make L42 work together with Java or even (possibly broken) native code, and we believe our property will hold also in those cases.
+It is possible to make L42 work together with Java or even with (possibly broken) native code, and we believe our property will continue to hold.
 
 </p><h2> (2/5) Deeply mutable objects </h2> <p>
 As discussed above, a deeply mutable object is a mutable object with some mutable fields.
-Also deeply mutable objects can support <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it>, but such mutable state needs to be <span style="color:#ff1111; font-weight: bold;"> encapsulated </span>, as we have seen before for the class
+Also deeply mutable objects can support <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it>, 
+but such objects must have <span style="color:#ff1111; font-weight: bold;"> encapsulated </span> state, as we have seen before for the class
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 
 <pre class="l42Big"><![CDATA[
@@ -1554,13 +1555,17 @@ It can be accessed as <it style="font-style: bold; color:green;">&#171;</it><spa
 However, we can write <span style="color:#ff1111; font-weight: bold;"> capsule mutator </span> methods by using 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 Similarly to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it>, a class method can be annotated with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> and can
-take parameters representing the object fields.
+take parameters representing the object's fields.
 In addition, more parameters can be present encoding extra arguments.
 To clarify, consider this richer example, where our <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it> has an invariant and another capsule mutator method:
 
 <pre class="l42Big"><![CDATA[
 Point = Data:{ Double x, Double y
-  method Double distance(Point that) = 3Double
+  method Double distance(Point that) = (
+    x = this.x()-that.x()
+    y = this.y()-that.y()
+    (x*x)+(y*y)).pow(exp=\"0.5")
+    )
   }
 
 Points = Collection.list(Point)
@@ -1606,9 +1611,10 @@ We added a method to remove the farthest away point if it is over a certain dist
 As you can see, the parameters <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[path]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location]]></span><it style="font-style: bold; color:green;">&#187;</it> corresponds to fields, while
 the parameter <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[distance]]></span><it style="font-style: bold; color:green;">&#187;</it> is extra needed information.
 When we call <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this.removeFarthest(distance=3\)]]></span><it style="font-style: bold; color:green;">&#187;</it> we pass only <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[distance]]></span><it style="font-style: bold; color:green;">&#187;</it>; the other parameters are passed automatically.
-As an invariant, here we require that the current location is not in the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[path]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<br/>
+As an invariant, we require that the current location is not in the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[path]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 This code, in the current form, has a bug; can you spot it?
-Look carefully to the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[move()]]></span><it style="font-style: bold; color:green;">&#187;</it>:
+Look carefully at the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[move()]]></span><it style="font-style: bold; color:green;">&#187;</it>:
 
 <pre class="l42Big"><![CDATA[
   mut method
@@ -1620,20 +1626,26 @@ Look carefully to the method <it style="font-style: bold; color:green;">&#171;</
 Here we first set up the location, then we remove it from the path.
 The method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[move()]]></span><it style="font-style: bold; color:green;">&#187;</it> recomputes the invariant twice: one after the field setter 
 and one after the call to the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> method.
-This first check is going to fail, since the leftmost element of the path has not being removed yet.
+This first check is going to fail, since the leftmost element of the path has not been removed yet.
 In this case we can solve the problem by swapping the lines:
 
 <pre class="l42Big"><![CDATA[
   mut method
   Void move() = (
-    left=this.path().left()
-    this.removeLeftPath()
-    this.location(left)
+    left=this.path().left() //store left value
+    this.removeLeftPath()   //before removing it
+    this.location(left)     //set location to left
     )
 ]]></pre>
 
-However, this kind of solution does not scales in the general case; next we will see a programming pattern allowing to delay in a controlled way the invariant checks, or more in general, the recomputation of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-
+However, this kind of solution does not scale in the general case. 
+Next, we will see a 
+programming pattern that allows 
+ the invariant checks
+ (and more generally
+    the recomputation of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> methods)
+to be delayed in a controlled way.
+</p><p>
 Every method annotated as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> can instead be annotated as 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.LazyRead]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.LazyRead]]></span><it style="font-style: bold; color:green;">&#187;</it> allows to encode conventional caching on mutable data-structures and automatic cache invalidation:
