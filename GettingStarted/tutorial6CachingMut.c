@@ -149,20 +149,23 @@ WTitle(Cache.LazyRead)
 
 Every method annotated as Wcode(Cache.Now) could instead be annotated as 
 Wcode(Cache.LazyRead).
-This annotation enables caching on mutable data-structures with automatic cache invalidation:
+This annotation enables lazy caching on mutable data-structures with automatic cache invalidation:
 the operations are computed when their results are first requested, and the cache is automatically invalidated when a Wcode(Cache.Clear) method terminates.
-At all times, as for Wcode(Cache.Now), Wcode(Cache.LazyRead) has the same semantic as recomputing the value, but with a different performance.
+Both Wcode(Cache.Now) and Wcode(Cache.LazyRead) methods behave as if they where recomputing the result, but with a different performance.
+
 WBR
 This annotation is called Wcode(Cache.LazyRead) because it produces a 
 Wcode(read) method, while 
-Wcode(Cache.Lazy) works on immutable ones.
+Wcode(Cache.Lazy) works on immutable methods.
 
 Cache invalidation is considered one of the great challenges in writing correct programs; L42 can handle it correctly and automatically.
-However, there is a cost: you have to encode the algorithm so that the type system accepts your code and that the caching annotations can be applied.
+However, there is a cost: you have to encode the algorithm so that the type system accepts your code and so that the caching annotations can be applied.
 
 WTitle((3/5) Box patten)
 
-As we have seen, in order to write well encapsulated mutable objects we need to designed them well, using Wcode(capsule) to initialize the mutable data, using Wcode(Cache.Clear) to mutate such state and Wcode(Cache.Now) for the invariant.
+As we have seen, in order to
+write mutable objects with encapsulated state,
+we need to designed them well, using Wcode(capsule) to initialize the mutable data, using Wcode(Cache.Clear) to mutate such state, and Wcode(Cache.Now) for the invariant.
 However, we can also program a naive deeply mutable object and box it up as a second step.
 This can require a little more code, but it is more intuitive, and works very well for arbitrary complex cases.
 Consider the following code:
@@ -183,10 +186,10 @@ Bike = Data:{
 //components can mutate (get damaged)
 //and be updated (replaced with new ones)
 CCode
-As you can see, the Wcode(Bike) is a deeply mutable class, design with no attention to
+As you can see, the Wcode(Bike) is a deeply mutable class, designed with no attention to
 correctness: if the programmer is not carefully, the same Wcode(Weel) 
 may end up used for multiple bikes at the same time.
-Also, the method called Wcode(invariant) only represents a programmer intention, but it is not enforced in any way and thus it could be silently broken.
+Also, the method called Wcode(invariant) only represents a programmer intention, but it is not enforced in any way, so it could be silently broken.
 
 We can easy create a Wcode(BikeBox) class containing and encapsulating, such a Wcode(Bike):
 OBCode
@@ -200,7 +203,7 @@ BikeBox = Data:{
   Void nail(mut Bike box) = box.nail()
   
   @Cache.Clear class method
-  Void nail(mut Bike box, Second time) = box.nail(time=time)
+  Void rain(mut Bike box, Second time) = box.rain(time=time)
 
   @Cache.Clear class method
   Void front(mut Bike box, capsule Wheel that) = box.front(that)
@@ -218,16 +221,20 @@ As you can see, no matter how complex some class code is, we can simply wrap it 
  and Wcode(Cache.Clear) on top of it.
 In this way we end up with two types:
 Wcode(Bike), that does not offers any guarantee,
- and Wcode(BikeBox), ensuring the invariant and that the state is well encapsulated.
+ and Wcode(BikeBox), ensuring the invariant and
+encapsulating the state.
+
+
+
 The methods Wcode(`BikeBox.nail()'),
-Wcode(`BikeBox.rail(time)')
+Wcode(`BikeBox.rain(time)')
 and
 Wcode(`BikeBox.front(that)')
  will check for the invariant exactly one time, at the end of their execution.
-Following this pattern, the programmer can perform an arbitrary long computation before the checks are triggered.
+Following this pattern, we can perform an arbitrary long computation before the checks are triggered.
 
-When writing other classes we can chose to use Wcode(Bike)
-or Wcode(BikeBox) depending on the specific details of our code.
+When writing other classes, we can chose to use Wcode(Bike)
+or Wcode(BikeBox), depending on the specific details of our code.
 If we chose to use Wcode(Bike) as a field of another class, we can still check 
 the Wcode(Bike) invariant inside the invariant of the composite class:
 OBCode
@@ -310,6 +317,27 @@ That is, by declaring lent exposers manually we gain the possibility of writing 
 In exchange for this extra flexibility, the class can not use 
 Wcode(Cache.Clear), Wcode(Cache.Now) or Wcode(Cache.LazyRead) directly.
 However, we can still use through the box pattern, as show before.
+
+ /*
+  
+  
+               recType     parameters   transformedInto storage       timing
+  .Lazy        class       zero                         class         firstCall
+  .Lazy        imm         zero                         norm          firstCall
+//.Lazy        read        zero                         instance      invalidation  //access all fields, even mut
+  .Eager       imm*        zero                         norm          parallelAfterFactory
+  .LazyRead    class       fields       read0           instance      invalidation
+  .Now         class       fields       read0           instance      duringFactory+
+  .Clear       class       fields+      mut+           -instance      whenCalled
+  
+  imm* = only on intrinsically imm objects
+  fields  = fields where caps is seen as read; imm/class are seen as imm/class.
+  fields+ = fields where caps is seen as mut, plus imm/caps/class user defined parameters
+  -note .Lazy on class similar to static fields
+  invalidation = first call after invalidation or factory
+  duringFactory+ = duringFactory and after invalidation
+  
+  */
 
 WTitle((5/5) Summary)
 
