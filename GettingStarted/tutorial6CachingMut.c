@@ -145,19 +145,28 @@ programming pattern that allows
     the recomputation of Wcode(Cache.Now) methods)
 to be delayed in a controlled way.
 
-WTitle(Cache.LazyRead)
-
+WTitle(Cache.Lazy and Cache.LazyRead)
+As we have seen before, we can annotate with Wcode(@Cache.Lazy) Wcode(imm) and Wcode(class) methods so that the result
+will be computed only the first time the method is called.
+We can also annotate Wcode(read) methods in the same way.
+However, the cache is now stored on the actual objects and not on a normalized version.
+This happens because Wcode(read) reference can refer to either mutable or immutable objects, and only immutable objects
+can have a normalized version.
+If anything in the ROG of the Wcode(read) object is mutated, then the cache is invalidated,
+and it will be recomputed the next time the method is called.
+Indeed this annotation enables lazy caching on mutable data-structures with automatic cache invalidation:
+the operations are computed when their results are first requested, and the cache is automatically
+invalidated when a Wcode(Cache.Clear) method terminates.
+WP
+Finally, a Wcode(@Cache.Lazy read method) can only be applied on classes whose fields are all
+Wcode(imm), Wcode(capsule) or Wcode(class).
+If a class has Wcode(mut) fields, but those are not actually used to compute the cached value,
+we can use the Wcode(@Cache.LazyRead) annotation instead.
 Every method annotated as Wcode(Cache.Now) could instead be annotated as 
-Wcode(Cache.LazyRead).
-This annotation enables lazy caching on mutable data-structures with automatic cache invalidation:
-the operations are computed when their results are first requested, and the cache is automatically invalidated when a Wcode(Cache.Clear) method terminates.
-Both Wcode(Cache.Now) and Wcode(Cache.LazyRead) methods behave as if they where recomputing the result, but with a different performance.
-
-WBR
-This annotation is called Wcode(Cache.LazyRead) because it produces a 
-Wcode(read) method, while 
-Wcode(Cache.Lazy) works on immutable methods.
-
+Wcode(Cache.LazyRead); indeed this annotation works similarly to Wcode(Cache.Now): it is applied on
+Wcode(class) methods whose parameters represent fields, and Wcode(Data) generates a correspondent no-arg Wcode(read) method.
+Both Wcode(Cache.Now), Wcode(Cache.Lazy) and Wcode(Cache.LazyRead) methods behave as if they where recomputing the result, but with a different performance.
+WP
 Cache invalidation is considered one of the great challenges in writing correct programs; L42 can handle it correctly and automatically.
 However, there is a cost: you have to encode the algorithm so that the type system accepts your code and so that the caching annotations can be applied.
 
@@ -324,7 +333,7 @@ However, we can still use through the box pattern, as show before.
                recType     parameters   transformedInto storage       timing
   .Lazy        class       zero                         class         firstCall
   .Lazy        imm         zero                         norm          firstCall
-//.Lazy        read        zero                         instance      invalidation  //access all fields, even mut
+.Lazy        read        zero                         instance      invalidation  //access all fields, even mut
   .Eager       imm*        zero                         norm          parallelAfterFactory
   .LazyRead    class       fields       read0           instance      invalidation
   .Now         class       fields       read0           instance      duringFactory+
@@ -336,7 +345,29 @@ However, we can still use through the box pattern, as show before.
   -note .Lazy on class similar to static fields
   invalidation = first call after invalidation or factory
   duringFactory+ = duringFactory and after invalidation
-  
+
+What about an annotation
+
+  @ForkJoin
+  class method T0 foo(T1 x1..Tn xn,morePars) = ..
+
+requiring x1(..) .. xn(..) to be capsule mutators taking a sub set of morePars,
+  all defined on different capsule fields.
+and it would be generating a method like the following:
+  mut method T0 foo(morePars) = (
+    T1 x1=this.x1(morePars) //executed in parallel
+    ..                      //executed in parallel
+    T1 xn=this.xn(morePars) //executed in parallel
+    This.foo(x1=x1..xn=xn,morePars)
+    )
+it would be much harder to check it if we ask to write the method directly, like
+@ForkJoin  mut method T0 foo(morePars) = (
+    T1 x1=this.x1(morePars) //Data checks the expression is exactly this.x1(..) where x1 is a generated 
+    ..                      //capsule mutator, and all the x1..xn are on different capsule values
+    T1 xn=this.xn(morePars) //but we could make it more flexible, like having xi having an expression
+    //just using imm/capsule stuff
+    This.foo(x1=x1..xn=xn,morePars)//this could then be any expression
+    )
   */
 
 WTitle((5/5) Summary)
