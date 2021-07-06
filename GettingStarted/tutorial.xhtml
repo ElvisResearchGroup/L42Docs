@@ -1645,20 +1645,33 @@ programming pattern that allows
  (and more generally
     the recomputation of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> methods)
 to be delayed in a controlled way.
-
-</p><h2> Cache.LazyRead </h2> <p>
-
+</p><p>
+</p><h2> Cache.Lazy and Cache.LazyRead </h2> <p>
+As we have seen before, 
+we can annotate <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it> methods 
+with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> so that 
+the result will be computed once, the first time that
+the method is called.
+We can also annotate <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> methods in the same way.
+However, the cache is now stored in the actual objects and not in a normalized version.
+This happens because a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> reference can refer to either mutable or immutable objects, and only immutable objects
+can have normalized versions.
+If anything in the ROG of the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> object is mutated, then the cache is invalidated,
+and it will be recomputed the next time the method is called.
+Indeed this annotation enables lazy caching on mutable data-structures, where the cache is automatically invalidated and removed when a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> method terminates.
+</p><p>
+Finally, a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.Lazy read method]]></span><it style="font-style: bold; color:green;">&#187;</it> can only be applied to classes whose fields are all
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+This restriction is required since the type system can not track when the ROG from <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> fields is mutated.
+</p><p>
+If a class has <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> fields, but those are not actually used to compute the cached value,
+we can apply the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.LazyRead]]></span><it style="font-style: bold; color:green;">&#187;</it> annotation to an opportune <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it> method instead.
 Every method annotated as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> could instead be annotated as 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.LazyRead]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-This annotation enables lazy caching on mutable data-structures with automatic cache invalidation:
-the operations are computed when their results are first requested, and the cache is automatically invalidated when a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> method terminates.
-Both <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.LazyRead]]></span><it style="font-style: bold; color:green;">&#187;</it> methods behave as if they where recomputing the result, but with a different performance.
-
-<br/>
-This annotation is called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.LazyRead]]></span><it style="font-style: bold; color:green;">&#187;</it> because it produces a 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> method, while 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> works on immutable methods.
-
+This annotation is a point in the middle between <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it>; it produces the same behaviour as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> but works similarly to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it>: it is applied to
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it> methods whose parameters represent fields, and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> generates a correspondent no-arg <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> method.
+Both <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.LazyRead]]></span><it style="font-style: bold; color:green;">&#187;</it> methods behave as if they where recomputing the result, but with a different performance.
+</p><p>
 Cache invalidation is considered one of the great challenges in writing correct programs; L42 can handle it correctly and automatically.
 However, there is a cost: you have to encode the algorithm so that the type system accepts your code and so that the caching annotations can be applied.
 
@@ -1732,10 +1745,10 @@ The methods <it style="font-style: bold; color:green;">&#171;</it><span class="c
 and
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[BikeBox.front(that)]]></span><it style="font-style: bold; color:green;">&#187;</it>
  will check for the invariant exactly one time, at the end of their execution.
-Following this pattern, the programmer can perform an arbitrary long computation before the checks are triggered.
+Following this pattern, we can perform an arbitrary long computation before the checks are triggered.
 
-When writing other classes we can chose to use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it>
-or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[BikeBox]]></span><it style="font-style: bold; color:green;">&#187;</it> depending on the specific details of our code.
+When writing other classes, we can chose to use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it>
+or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[BikeBox]]></span><it style="font-style: bold; color:green;">&#187;</it>, depending on the specific details of our code.
 If we chose to use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it> as a field of another class, we can still check 
 the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it> invariant inside the invariant of the composite class:
 <pre class="l42Big"><![CDATA[
@@ -1818,6 +1831,49 @@ That is, by declaring lent exposers manually we gain the possibility of writing 
 In exchange for this extra flexibility, the class can not use 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.LazyRead]]></span><it style="font-style: bold; color:green;">&#187;</it> directly.
 However, we can still use through the box pattern, as show before.
+
+ /*
+  
+  
+               recType     parameters   transformedInto storage       timing
+  .Lazy        class       zero                         class         firstCall
+  .Lazy        imm         zero                         norm          firstCall
+.Lazy        read        zero                         instance      invalidation  //access all fields, even mut
+  .Eager       imm*        zero                         norm          parallelAfterFactory
+  .LazyRead    class       fields       read0           instance      invalidation
+  .Now         class       fields       read0           instance      duringFactory+
+  .Clear       class       fields+      mut+           -instance      whenCalled
+  
+  imm* = only on intrinsically imm objects
+  fields  = fields where caps is seen as read; imm/class are seen as imm/class.
+  fields+ = fields where caps is seen as mut, plus imm/caps/class user defined parameters
+  -note .Lazy on class similar to static fields
+  invalidation = first call after invalidation or factory
+  duringFactory+ = duringFactory and after invalidation
+
+What about an annotation
+
+  @ForkJoin
+  class method T0 foo(T1 x1..Tn xn,morePars) = ..
+
+requiring x1(..) .. xn(..) to be capsule mutators taking a sub set of morePars,
+  all defined on different capsule fields.
+and it would be generating a method like the following:
+  mut method T0 foo(morePars) = (
+    T1 x1=this.x1(morePars) //executed in parallel
+    ..                      //executed in parallel
+    T1 xn=this.xn(morePars) //executed in parallel
+    This.foo(x1=x1..xn=xn,morePars)
+    )
+it would be much harder to check it if we ask to write the method directly, like
+@ForkJoin  mut method T0 foo(morePars) = (
+    T1 x1=this.x1(morePars) //Data checks the expression is exactly this.x1(..) where x1 is a generated 
+    ..                      //capsule mutator, and all the x1..xn are on different capsule values
+    T1 xn=this.xn(morePars) //but we could make it more flexible, like having xi having an expression
+    //just using imm/capsule stuff
+    This.foo(x1=x1..xn=xn,morePars)//this could then be any expression
+    )
+  */
 
 </p><h2> (5/5) Summary </h2> <p>
 

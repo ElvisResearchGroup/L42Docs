@@ -144,26 +144,30 @@ programming pattern that allows
  (and more generally
     the recomputation of Wcode(Cache.Now) methods)
 to be delayed in a controlled way.
-
+WP
 WTitle(Cache.Lazy and Cache.LazyRead)
-As we have seen before, we can annotate with Wcode(@Cache.Lazy) Wcode(imm) and Wcode(class) methods so that the result
-will be computed only the first time the method is called.
+As we have seen before, 
+we can annotate Wcode(imm) and Wcode(class) methods 
+with Wcode(@Cache.Lazy) so that 
+the result will be computed once, the first time that
+the method is called.
 We can also annotate Wcode(read) methods in the same way.
-However, the cache is now stored on the actual objects and not on a normalized version.
-This happens because Wcode(read) reference can refer to either mutable or immutable objects, and only immutable objects
-can have a normalized version.
+However, the cache is now stored in the actual objects and not in a normalized version.
+This happens because a Wcode(read) reference can refer to either mutable or immutable objects, and only immutable objects
+can have normalized versions.
 If anything in the ROG of the Wcode(read) object is mutated, then the cache is invalidated,
 and it will be recomputed the next time the method is called.
-Indeed this annotation enables lazy caching on mutable data-structures with automatic cache invalidation:
-the operations are computed when their results are first requested, and the cache is automatically
-invalidated when a Wcode(Cache.Clear) method terminates.
+Indeed this annotation enables lazy caching on mutable data-structures, where the cache is automatically invalidated and removed when a Wcode(Cache.Clear) method terminates.
 WP
-Finally, a Wcode(@Cache.Lazy read method) can only be applied on classes whose fields are all
+Finally, a Wcode(@Cache.Lazy read method) can only be applied to classes whose fields are all
 Wcode(imm), Wcode(capsule) or Wcode(class).
+This restriction is required since the type system can not track when the ROG from Wcode(mut) fields is mutated.
+WP
 If a class has Wcode(mut) fields, but those are not actually used to compute the cached value,
-we can use the Wcode(@Cache.LazyRead) annotation instead.
+we can apply the Wcode(@Cache.LazyRead) annotation to an opportune Wcode(class) method instead.
 Every method annotated as Wcode(Cache.Now) could instead be annotated as 
-Wcode(Cache.LazyRead); indeed this annotation works similarly to Wcode(Cache.Now): it is applied on
+Wcode(Cache.LazyRead).
+This annotation is a point in the middle between Wcode(Cache.Now) and Wcode(Cache.Lazy); it produces the same behaviour as Wcode(Cache.Lazy) but works similarly to Wcode(Cache.Now): it is applied to
 Wcode(class) methods whose parameters represent fields, and Wcode(Data) generates a correspondent no-arg Wcode(read) method.
 Both Wcode(Cache.Now), Wcode(Cache.Lazy) and Wcode(Cache.LazyRead) methods behave as if they where recomputing the result, but with a different performance.
 WP

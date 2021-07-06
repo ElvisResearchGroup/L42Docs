@@ -90,10 +90,20 @@ var L42HighlightRules = function() {
     }, "identifier");
 
     this.$rules = {
-        "start" : [
-            {
-                token : "comment",
-                regex : "\\/\\/.*$"
+        "start" : [{
+              token : function(val) {
+                return [{
+                  type: "keyword",
+                  value: val.slice(0, "reuse".length)
+                  }, {
+                  type: "reuselibrary",
+                  value: val.slice("reuse".length)
+                  }];
+              },
+              regex : "reuse\\s*\\[[^\\]\\n]*\\]" // reuse [L42.is/AdamsTowel]
+            },{
+              token : "comment",
+              regex : "\\/\\/.*$"
             },
             DocCommentHighlightRules.getStartRule("doc-start"),
             {
@@ -182,17 +192,6 @@ var L42HighlightRules = function() {
                         }];
                 },
                 regex : "[a-z_$][a-zA-Z0-9_$]*\\=(?!=|\\>)" // parameter:
-            }, {
-                token : function(val) {
-                    return [{
-                            type: "keyword",
-                            value: val.slice(0, "reuse".length)
-                        }, {
-                            type: "reuselibrary",
-                            value: val.slice("reuse".length)
-                        }];
-                },
-                regex : "reuse\\s{1,}[^\{\}\\s]*" // resuse l42.is/AdamTowel
             }, {
                 token : keywordMapper,
                 regex : "[a-zA-Z_$][a-zA-Z0-9_$]*\\b"
