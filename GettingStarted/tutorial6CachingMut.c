@@ -152,16 +152,17 @@ with Wcode(@Cache.Lazy) so that
 the result will be computed once, the first time that
 the method is called.
 We can also annotate Wcode(read) methods in the same way.
-However, the cache is now stored in the actual objects and not in a normalized version.
+However, the cache is now stored in the actual objects and not in the normalized versions.
 This happens because a Wcode(read) reference can refer to either mutable or immutable objects, and only immutable objects
 can have normalized versions.
 If anything in the ROG of the Wcode(read) object is mutated, then the cache is invalidated,
-and it will be recomputed the next time the method is called.
+and the result will be recomputed the next time the method is called.
 Indeed this annotation enables lazy caching on mutable data-structures, where the cache is automatically invalidated and removed when a Wcode(Cache.Clear) method terminates.
-WP
-Finally, a Wcode(@Cache.Lazy read method) can only be applied to classes whose fields are all
-Wcode(imm), Wcode(capsule) or Wcode(class).
-This restriction is required since the type system can not track when the ROG from Wcode(mut) fields is mutated.
+Finally, since the type system can not track when the ROG from Wcode(mut) fields is mutated, a Wcode(@Cache.Lazy read method) can only be applied to 
+classes whose fields are all
+Wcode(imm), Wcode(capsule) or Wcode(class);
+that is, their instance all have WTerm(encapsulated state).
+
 WP
 If a class has Wcode(mut) fields, but those are not actually used to compute the cached value,
 we can apply the Wcode(@Cache.LazyRead) annotation to an opportune Wcode(class) method instead.
@@ -169,9 +170,9 @@ Every method annotated as Wcode(Cache.Now) could instead be annotated as
 Wcode(Cache.LazyRead).
 This annotation is a point in the middle between Wcode(Cache.Now) and Wcode(Cache.Lazy); it produces the same behaviour as Wcode(Cache.Lazy) but works similarly to Wcode(Cache.Now): it is applied to
 Wcode(class) methods whose parameters represent fields, and Wcode(Data) generates a correspondent no-arg Wcode(read) method.
-Both Wcode(Cache.Now), Wcode(Cache.Lazy) and Wcode(Cache.LazyRead) methods behave as if they where recomputing the result, but with a different performance.
+Wcode(Cache.Now), Wcode(Cache.Lazy) and Wcode(Cache.LazyRead) methods all behave as if they where recomputing the result, but with a different performance.
 WP
-Cache invalidation is considered one of the great challenges in writing correct programs; L42 can handle it correctly and automatically.
+Cache invalidation is considered one of the <a href="https://martinfowler.com/bliki/TwoHardThings.html">great challenges</a> in writing correct programs; L42 can handle it correctly and automatically.
 However, there is a cost: you have to encode the algorithm so that the type system accepts your code and so that the caching annotations can be applied.
 
 WTitle((3/5) Box patten)
@@ -180,7 +181,7 @@ As we have seen, in order to
 write mutable objects with encapsulated state,
 we need to designed them well, using Wcode(capsule) to initialize the mutable data, using Wcode(Cache.Clear) to mutate such state, and Wcode(Cache.Now) for the invariant.
 However, we can also program a naive deeply mutable object and box it up as a second step.
-This can require a little more code, but it is more intuitive, and works very well for arbitrary complex cases.
+This can require a little more code, but it is more intuitive, and works very well for arbitrarily complex cases.
 Consider the following code:
 
 OBCode
@@ -244,7 +245,7 @@ Wcode(`BikeBox.rain(time)')
 and
 Wcode(`BikeBox.front(that)')
  will check for the invariant exactly one time, at the end of their execution.
-Following this pattern, we can perform an arbitrary long computation before the checks are triggered.
+Following this pattern, we can perform an arbitrarily long computation before the checks are triggered.
 
 When writing other classes, we can chose to use Wcode(Bike)
 or Wcode(BikeBox), depending on the specific details of our code.
@@ -272,8 +273,8 @@ CCode
 
 WTitle((4/5) Controlling the ROG shape)
 
-An attentive reader may have notice that we would allow for fields Wcode(left)
- and Wcode(right) to point to the
+An attentive reader may have notice that we would allow for fields Wcode(front)
+ and Wcode(back) to point to the
  same Wcode(Wheel) object.
 A Java programmer may be tempted to just add 
 Wcode(this.front()!=this.back();) in the invariant,
@@ -281,13 +282,14 @@ but this would just use the user defined Wcode(!=) operator, that
 on classes created using Wcode(Data) is likely to check for structural equality instead of pointer equality.
 AdamsTowel offers Wcode(`System.mutReferenceEquality(a and=b)') to check for reference equality, but 
 this method only works for Wcode(mut) objects.
-The wheels are mut objects indeed, but the invariant method takes a Wcode(read) receiver, thus we can only see the wheels as Wcode(read).
-In this case, the inability of using pointer equality is actually a good thing, since it does not correspond to what we really wanted to express: What if the two wheels are different objects but they share the same Wcode(mut Tire) object?
+The wheels are indeed Wcode(mut) objects,
+but the invariant method takes a Wcode(read) receiver; thus we can only see the wheels as Wcode(read).
+In this case, the inability to use pointer equality is actually a good thing, since it does not correspond to what we really wanted to express: what if the two wheels are different objects but they share the same Wcode(mut Tire) object?
 What we want is to check that the mutable objects are not aliased in physically unreasonable ways.
-More in general, we want to ensure a tree shape of the mutable part of the object graph.
+Generally, what we often want is to ensure the tree shape of the mutable part of the object graph.
 
-In 42 we can create classes where all the instances are guaranteed to follow this property, by making all fields either Wcode(imm) or
-Wcode(capsule) of a class recursively respecting this property.
+In 42, we can create classes where all of the instances are guaranteed to follow this property, by making all fields either Wcode(capsule) types of classes that recursively respect this property
+or Wcode(imm)/Wcode(class).
 However, according to what we have seen up to now, Wcode(capsule) fields can only be mutated by defining Wcode(Cache.Clear) methods, and those methods will be unable to mutate any other 
 Wcode(capsule) field.
 Consider the following code:
@@ -305,7 +307,7 @@ Chain = Data:{ var Num damage
   }
 CCode
 
-Here the Wcode(Chain) can rub onto the wheel damaging it.
+Here the Wcode(Chain) can rub onto the wheel, damaging it.
 The parameter of method Wcode(onWheel) is
 Wcode(lent). This guarantees that the object graphs of the chain and the wheel will 
 not be mangled together by the method Wcode(onWheel).
@@ -316,6 +318,7 @@ OBCode
 Bike = Data:{
   var capsule Wheel front
   var capsule Wheel back
+  lent method lent Wheel #front() //lent exposer
   lent method lent Wheel #back() //lent exposer
   var capsule Seat seat
   var capsule Chain chain
@@ -326,9 +329,10 @@ Bike = Data:{
   }
 BikeBox = Data:{..}//as before
 CCode
-That is, by declaring lent exposers manually we gain the possibility of writing methods mutating the capsule fields without using the Wcode(Cache.Clear) pattern.
-In exchange for this extra flexibility, the class can not use 
-Wcode(Cache.Clear), Wcode(Cache.Now) or Wcode(Cache.LazyRead) directly.
+That is, by declaring lent exposers manually we gain the possibility of writing methods that mutate the capsule fields without using the Wcode(Cache.Clear) pattern.
+In exchange for this extra flexibility, 
+those fields do not count as Wcode(capsule) fields for the sake of 
+Wcode(Cache.Clear), Wcode(Cache.Now) or Wcode(Cache.LazyRead) annotations.
 However, we can still use through the box pattern, as show before.
 
  /*

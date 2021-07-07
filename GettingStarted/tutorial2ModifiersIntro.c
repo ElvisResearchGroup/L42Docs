@@ -167,9 +167,10 @@ Now we use the modifier Wcode(capsule); this requires the value of the field to 
 Immutable objects are also encapsulated since
 they do not influence aliasing, so they are free from aliasing limitations.
 The Wcode(capsule)
- modifier WEmph(forces) the users to provide Wcode(capsule) values.
+ modifier WEmph(forces) the users to provide Wcode(capsule) values,
  and WEmph(ensures)
- that instances of Wcode(Animal) have encapsulated state; that is, the value of all fields in an Wcode(Animal) is encapsulated.
+ that instances of Wcode(Animal) have WTerm(encapsulated state);
+ that is, the values of all fields in an Wcode(Animal) are encapsulated.
 WBR
 A mutable object with encapsulated state can only be mutated by calling one of its methods.
 This allows for the same kind of local reasoning as if all of the fields were immutable.
