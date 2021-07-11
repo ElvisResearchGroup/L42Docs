@@ -335,48 +335,7 @@ those fields do not count as Wcode(capsule) fields for the sake of
 Wcode(Cache.Clear), Wcode(Cache.Now) or Wcode(Cache.LazyRead) annotations.
 However, we can still use through the box pattern, as show before.
 
- /*
-  
-  
-               recType     parameters   transformedInto storage       timing
-  .Lazy        class       zero                         class         firstCall
-  .Lazy        imm         zero                         norm          firstCall
-.Lazy        read        zero                         instance      invalidation  //access all fields, even mut
-  .Eager       imm*        zero                         norm          parallelAfterFactory
-  .LazyRead    class       fields       read0           instance      invalidation
-  .Now         class       fields       read0           instance      duringFactory+
-  .Clear       class       fields+      mut+           -instance      whenCalled
-  
-  imm* = only on intrinsically imm objects
-  fields  = fields where caps is seen as read; imm/class are seen as imm/class.
-  fields+ = fields where caps is seen as mut, plus imm/caps/class user defined parameters
-  -note .Lazy on class similar to static fields
-  invalidation = first call after invalidation or factory
-  duringFactory+ = duringFactory and after invalidation
 
-What about an annotation
-
-  @ForkJoin
-  class method T0 foo(T1 x1..Tn xn,morePars) = ..
-
-requiring x1(..) .. xn(..) to be capsule mutators taking a sub set of morePars,
-  all defined on different capsule fields.
-and it would be generating a method like the following:
-  mut method T0 foo(morePars) = (
-    T1 x1=this.x1(morePars) //executed in parallel
-    ..                      //executed in parallel
-    T1 xn=this.xn(morePars) //executed in parallel
-    This.foo(x1=x1..xn=xn,morePars)
-    )
-it would be much harder to check it if we ask to write the method directly, like
-@ForkJoin  mut method T0 foo(morePars) = (
-    T1 x1=this.x1(morePars) //Data checks the expression is exactly this.x1(..) where x1 is a generated 
-    ..                      //capsule mutator, and all the x1..xn are on different capsule values
-    T1 xn=this.xn(morePars) //but we could make it more flexible, like having xi having an expression
-    //just using imm/capsule stuff
-    This.foo(x1=x1..xn=xn,morePars)//this could then be any expression
-    )
-  */
 
 WTitle((5/5) Summary)
 
@@ -391,3 +350,167 @@ Note how avoiding pointer equality tests is required when normalization is took 
 Consider the example of a list whose invariant requires all object to  pointer unique.
 A valid list of such type may contain two structurally equal but not pointer equal objects.
 If such a list becomes immutable and was normalized, those two objects would become point equals, and the invariant would be broken by normalization.
+WP
+It can be hard to remember the differences between all of the Wcode(Cache.***) annotations.
+Below, we show a table summarizing them.
+
+<table>
+<tr>
+<th>annotation</th>
+<th>recType</th>
+<th>parameters</th>
+<th>transformedInto</th>
+<th>storage</th>
+<th>timing</th>
+</tr>
+<tr>
+<td>Cache.Lazy</td>
+<td>class</td>
+<td>zero</td>
+<td></td>
+<td>class</td>
+<td>first call</td>
+</tr>
+<tr>
+<td>Cache.Lazy</td>
+<td>imm</td>
+<td>zero</td>
+<td></td>
+<td>norm</td>
+<td>first call</td>
+</tr>
+<tr>
+<td>Cache.Lazy</td>
+<td>read*</td>
+<td>zero</td>
+<td></td>
+<td>instance</td>
+<td>invalidation</td>
+</tr>
+<tr>
+
+<td>Cache.Eager</td>
+<td>imm*</td>
+<td>zero</td>
+<td></td>
+<td>norm</td>
+<td>parallel</td>
+</tr>
+<tr>
+
+<td>Cache.LazyRead</td>
+<td>class</td>
+<td>fields</td>
+<td>read0</td>
+<td>instance</td>
+<td>invalidation</td>
+</tr>
+
+<tr>
+<td>Cache.Now</td>
+<td>class</td>
+<td>fields</td>
+<td>read0</td>
+<td>instance</td>
+<td>invalidation+</td>
+</tr>
+<tr>
+<td>Cache.Clear</td>
+<td>class</td>
+<td>fields+</td>
+<td>mut+</td>
+<td>instance-</td>
+<td>when called</td>
+</tr>
+</table>
+
+WP
+Notes:
+<ul>
+<li>
+imm* = applicable only on classes with all fields Wcode(imm)/Wcode(class) and not Wcode(var).
+</li>
+<li>
+read* = applicable only on classes with all fields Wcode(imm)/Wcode(capsule).
+</li>
+<li>
+fields  = method parameters are field names.
+Capsule fields are seen as Wcode(read).
+</li>
+<li>
+fields+ = the first parameter is a Wcode(capsule) field, seen as Wcode(mut). Additional parameters can be Wcode(imm),Wcode(capsule) or Wcode(class).
+</li>
+<li>
+invalidation = the method is executed on the first call, or the first call after invalidation.
+</li>
+<li>
+invalidation+ = the method is executed during the factory, and immediately after any invalidation.
+</li>
+<li>
+instance- = caches in the instance are invalidated.
+</li>
+<li>
+read0 = a Wcode(read) method with zero parameters.
+</li>
+<li>
+mut+ = a Wcode(mut) method with the additional parameters as for fields+.
+</li>
+<li>
+parallel = executed in a parallel worker starting after the factory.
+</li>
+</ul>
+
+
+
+WP
+ /*
+
+class MixAndMatch{
+  capsule T p1
+  mut method lent T1 #p1()
+  capsule T p2
+  mut method lent T1 #p2()
+  capsule T p3
+  mut method lent T1 #p3()
+  capsule T p4
+  mut method lent T1 #p4()
+  @ForkJoin mut method mix1()=(
+    T r1=mix(a=this.#p1(),b=this.#p2())
+    T r2=mix(a=this.#p3(),b=this.#p4())
+    e
+    )
+  @ForkJoin mut method mix2()=(
+    T r1=mix(a=this.#p1(),b=this.#p3())
+    T r2=mix(a=this.#p2(),b=this.#p4())
+    e
+    )
+  }
+
+What about an annotation
+ class ParkingBox{
+  capsule Bike mike
+  capsule Bike bob
+  @Cache.Clear class method T1 x1(mut Bike mike,morePars)=(..)
+  @Cache.Clear class method T1 x2(mut Bike bob,morePars)=(..)
+
+  @ForkJoin//correct if: x1.firstPar!=x2.firstPar
+  class method T0 foo(T1 x1, T x2, morePars) = ..
+
+requiring x1(..) .. xn(..) to be capsule mutators taking a sub set of morePars,
+  all defined on different capsule fields.
+and it would be generating a method like the following:
+  mut method T0 foo(morePars) = (
+    T1 x1=this.x1(morePars) //executed in parallel
+    ..                      //executed in parallel
+    T1 xn=this.xn(morePars) //executed in parallel
+    This.foo(x1=x1..xn=xn,morePars)
+    )
+it would be much harder to check it if we ask to write the method directly, like
+@ForkJoin  mut method T0 foo(morePars) = ( //(Ds e)
+    T1 x1=this.x1(morePars) //Data checks the expression is exactly this.x1(..) where x1 is a generated 
+    ..                      //capsule mutator, and all the x1..xn are on different capsule values
+    T1 xn=this.xn(morePars) //but we could make it more flexible, like having xi having an expression
+    //just using imm/capsule stuff
+    This.foo(x1=x1..xn=xn,morePars)//this could then be any expression
+    )
+  */

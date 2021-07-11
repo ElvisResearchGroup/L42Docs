@@ -256,6 +256,11 @@ ol li {
   border-color: darkgray;  
   }
 
+table,td,th,tr {
+  border: 1px solid black;
+  text-align: center;
+  }
+
 .index{
   background: linear-gradient(to right, rgb(100,100,150), white,white,white,white);
   display: inline-block;
