@@ -1841,17 +1841,29 @@ However, we can still use through the box pattern, as show before.
 
 </p><h2> (5/5) Summary </h2> <p>
 
-Caching and representation invariants can be applied also to mutable objects.
-Proving properties on mutable objects requires to know and apply various patterns.
-Historically, in software verification, representation invariants where small 
-units of code, mostly focusing on the direct content of the fields and mostly relying on either pointer equality or the binary value of primitive datatypes, where the invariants could be purposely broken while still being able to observe the broken object.
-Nothing of this is possible in 42; in particular, 42 guarantees that broken object can not be observed.
-The box patterns allows to divide the value in two types: the one with an enforced invariant and the raw object state, recovering the flexibility of temporarily open invariants without any of the drawbacks.
+Representation invariants and lazy caching
+can be applied to mutable objects as well as immutable ones.
 
-Note how avoiding pointer equality tests is required when normalization is took into account.
-Consider the example of a list whose invariant requires all object to  pointer unique.
-A valid list of such type may contain two structurally equal but not pointer equal objects.
-If such a list becomes immutable and was normalized, those two objects would become point equals, and the invariant would be broken by normalization.
+Proving properties on mutable
+ objects requires us to know and apply various patterns.
+Historically, in software verification, representation invariants where small 
+units of code, mostly focusing on the direct content of the fields and mostly relying on either pointer equality or the binary value of primitive datatypes, where the invariants could be deliberately  broken while the program was still able to observe the broken object.
+None of this is possible in 42; in particular, 42 guarantees that no broken objects can be observed.
+The box pattern allows us to divide the value into two types:
+the one with an enforced invariant and the raw object state.
+This recovers 
+the flexibility of temporarily open invariants without any of the drawbacks.
+
+Note that a sound language with normalization and caching/invariants
+can not offer pointer equality tests on immutable objects.
+
+Consider the example of a list whose invariant requires all
+ of its elements to have a distinct pointer values.
+A list with such an invariant may contain two structurally equal but not pointer equal elements.
+Suppose such a list became immutable and was
+normalized.
+Now those two elements
+would be pointer equal, and the invariant would have been broken by normalization.
 </p><p>
 It can be hard to remember the differences between all of the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.***]]></span><it style="font-style: bold; color:green;">&#187;</it> annotations.
 Below, we show a table summarizing them.
