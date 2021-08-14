@@ -270,6 +270,13 @@ FamilyGarageBox = Data:{
   Void invariant(read FamilyGarage box) = box.invariant()  
   }
 CCode
+WP
+As we have seen, with the box pattern we
+can have the flexibility of temporarily open invariants without any of the drawbacks.
+Of course, programmers will need to keep in mind which values are protected by invariants
+and which values are unsupervised by invariants.
+In 42 this is under the control of the type system: a value of type Wcode(Bike) has no special guarantees, while a value of type 
+Wcode(BikeBox) will ensure the invariant.
 
 WTitle((4/5) Controlling the ROG shape)
 
@@ -350,7 +357,8 @@ None of this is possible in 42; in particular, 42 guarantees that no broken obje
 The box pattern allows us to divide the value into two types:
 the one with an enforced invariant and the raw object state.
 This recovers 
-the flexibility of temporarily open invariants without any of the drawbacks.
+the flexibility of temporarily open invariants
+without any of the drawbacks.
 
 Note that a sound language with normalization and caching/invariants
 can not offer pointer equality tests on immutable objects.
