@@ -533,4 +533,42 @@ it would be much harder to check it if we ask to write the method directly, like
     //just using imm/capsule stuff
     This.foo(x1=x1..xn=xn,morePars)//this could then be any expression
     )
+//a ForkJoin method must have an empty exception list
+-forall D in Ds,
+FV(D.e) only of class/imm/capsule types;
+except for MCalls of form this.m(..) where m is a clear call
+
+-forall x capsule field, forall D1 != D2 in Ds
+  D1 and D2 can not both call a clear method on x
+-forall D in Ds, they do not use dom(Ds)
+-forall D in Ds, D is not var
+---------------
+forkJoin L, MWT ok iff:
+  MWT.e =(Ds e)
+  MWT.exceptions=empty
+  forall D in Ds okE(MWT.G,D.e)
+  forall D in Ds, FV(D.e) disjoint dom(Ds)
+  forall D1, D2 in Ds where
+      D1!=D2,
+      D1.e=ctx[this.m(x1=e1..xn=en)],
+      D2.e=ctx'[this.m'(x'1=e'1..x'k=e'n)]
+      x'=clearOn(L,m(x1..xn))
+      x"=clearOn(L,m'(x'1..x'k))
+    we have x'!=x"
+
+okE(G,e,L)
+  recursivelly propagates on the structure, but
+  okE(G,x,L) if 
+    either G(x) undefined
+    or G(x).mdf in {imm,capsule,class}
+    or G(x).mdf=read and G(this).mdf in {imm,capsule,class,read}
+  okE(G,this.m(x1=e1..xn=en),L) holds if
+    okE(G,e1,L)..okE(G,en,L) holds
+    either G(this).mdf in {imm,capsule,class,read}
+    or G(this).mdf in {mut,lent} clearOn(L,m(x1..xn)) is defined
+  
+clearOn(L,s)= x::0
+  L(s)= MH=native{...clear..} ctx[this.#?x::0()]
+  //the field name, if any, that selector s is a clear method for.
+
   */

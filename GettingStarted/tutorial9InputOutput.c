@@ -261,3 +261,38 @@ Since they can only be called in a few controlled places, we can control what pa
 </li><li>
 Capability objects are a very convenient centralized point of control to inject security or other kinds of restrictions.
 </li></ul>
+
+WTitle(Digressions / Expansions)
+
+WTitle(Non deterministic errors)
+
+When discussing errors, we did not mention how to handle errors happening in a non deterministic way; for example, how to recover when the execution run out of memory space.
+In 42 this is modelled by non deterministic errors. They can only be catched in a main, in another capability method or in a Wcode(mut) method of a capability object. 
+AdamsTowel offers a single non deterministic error: Wcode(System.NonDeterministicError). When a non deterministic error happens, we can recover it by catching an Wcode(error System.NonDeterministicError).
+
+The code below shows how to cause a stack overflow and to recover from it.
+OBCode
+Looping={
+  class method Void loop() = this.loop()
+  class method Void #$loopStop() = (
+    Looping.loop()
+    catch error System.NonDeterministicError e (
+      Debug(S"This is printed")
+      )
+    Debug(S"And then this is printed")
+    )
+  }
+Main1=Looping.#$loopStop()
+CCode
+
+That is, to recover from a non deterministic error we need to satisfy both the requirements of Wcode('#$') non determinism and of strong error safety.
+
+WTitle(Aborting wastefull cache eagers)
+Wcode(@Cache.Eager) methods may return a cached result; such result is guaranteed to be the same that would be computed if we were to directly execute the method.
+How those this work if the method is non terminating or simply outragiously slow?
+Those eager cache methods will eagerly spend precious machine resource. If the results of those computations are ever needed by a main, the whole 42 process will get stuck waiting, as it would indeed happen if we were to directly execute the method. All good: in this case 42 correctly lifted the behavioural bug into caching.
+However, if the result is never needed by a main, it would be nice to be able to stop those runaway pointless computations.
+We can obtain this by calling Wcode(Cache.#$stopCacheEager()).
+WB
+This works no matter if they are in loop, simply slow, or stuck waiting on another cache being slowly computed.
+In some cases, we can even have multiple computations stuck waiting on each other in a circular fascion.
