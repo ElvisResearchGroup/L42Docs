@@ -2035,7 +2035,46 @@ it would be much harder to check it if we ask to write the method directly, like
     //just using imm/capsule stuff
     This.foo(x1=x1..xn=xn,morePars)//this could then be any expression
     )
+//a ForkJoin method must have an empty exception list
+-forall D in Ds,
+FV(D.e) only of class/imm/capsule types;
+except for MCalls of form this.m(..) where m is a clear call
+
+-forall x capsule field, forall D1 != D2 in Ds
+  D1 and D2 can not both call a clear method on x
+-forall D in Ds, they do not use dom(Ds)
+-forall D in Ds, D is not var
+---------------
+forkJoin L, MWT ok iff:
+  MWT.e =(Ds e)
+  MWT.exceptions=empty
+  forall D in Ds okE(MWT.G,D.e)
+  forall D in Ds, FV(D.e) disjoint dom(Ds)
+  forall D1, D2 in Ds where
+      D1!=D2,
+      D1.e=ctx[this.m(x1=e1..xn=en)],
+      D2.e=ctx'[this.m'(x'1=e'1..x'k=e'n)]
+      x'=clearOn(L,m(x1..xn))
+      x"=clearOn(L,m'(x'1..x'k))
+    we have x'!=x"
+
+okE(G,e,L)
+  recursivelly propagates on the structure, but
+  okE(G,x,L) if 
+    either G(x) undefined
+    or G(x).mdf in {imm,capsule,class}
+    or G(x).mdf=read and G(this).mdf in {imm,capsule,class,read}
+  okE(G,this.m(x1=e1..xn=en),L) holds if
+    okE(G,e1,L)..okE(G,en,L) holds
+    either G(this).mdf in {imm,capsule,class,read}
+    or G(this).mdf in {mut,lent} clearOn(L,m(x1..xn)) is defined
+  
+clearOn(L,s)= x::0
+  L(s)= MH=native{...clear..} ctx[this.#?x::0()]
+  //the field name, if any, that selector s is a clear method for.
+
   */
+
  </p><p id="InterfacesAndData"> </p><div style="break-after:page"></div><h1> Interfaces, subtypes and matching </h1> <p>
 
 </p><h2> (1/5)Interfaces, Basis and Details </h2> <p>
@@ -2989,6 +3028,41 @@ Since they can only be called in a few controlled places, we can control what pa
 </li><li>
 Capability objects are a very convenient centralized point of control to inject security or other kinds of restrictions.
 </li></ul>
+
+</p><h2> Digressions / Expansions </h2> <p>
+
+</p><h2> Non deterministic errors </h2> <p>
+
+When discussing errors, we did not mention how to handle errors happening in a non deterministic way; for example, how to recover when the execution run out of memory space.
+In 42 this is modelled by non deterministic errors. They can only be catched in a main, in another capability method or in a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> method of a capability object. 
+AdamsTowel offers a single non deterministic error: <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[System.NonDeterministicError]]></span><it style="font-style: bold; color:green;">&#187;</it>. When a non deterministic error happens, we can recover it by catching an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[error System.NonDeterministicError]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+
+The code below shows how to cause a stack overflow and to recover from it.
+<pre class="l42Big"><![CDATA[
+Looping={
+  class method Void loop() = this.loop()
+  class method Void #$loopStop() = (
+    Looping.loop()
+    catch error System.NonDeterministicError e (
+      Debug(S"This is printed")
+      )
+    Debug(S"And then this is printed")
+    )
+  }
+Main1=Looping.#$loopStop()
+]]></pre>
+
+That is, to recover from a non deterministic error we need to satisfy both the requirements of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA['#$']]></span><it style="font-style: bold; color:green;">&#187;</it> non determinism and of strong error safety.
+
+</p><h2> Aborting wastefull cache eagers </h2> <p>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.Eager]]></span><it style="font-style: bold; color:green;">&#187;</it> methods may return a cached result; such result is guaranteed to be the same that would be computed if we were to directly execute the method.
+How those this work if the method is non terminating or simply outragiously slow?
+Those eager cache methods will eagerly spend precious machine resource. If the results of those computations are ever needed by a main, the whole 42 process will get stuck waiting, as it would indeed happen if we were to directly execute the method. All good: in this case 42 correctly lifted the behavioural bug into caching.
+However, if the result is never needed by a main, it would be nice to be able to stop those runaway pointless computations.
+We can obtain this by calling <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.#$stopCacheEager()]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+WB
+This works no matter if they are in loop, simply slow, or stuck waiting on another cache being slowly computed.
+In some cases, we can even have multiple computations stuck waiting on each other in a circular fascion.
  </p><p id="Exercises"> </p><div style="break-after:page"></div><h1> Exercises </h1> <p>
 
 A very large class of practically useful programs can be obtained
