@@ -58,7 +58,7 @@ Java or C.
 For now you can think of Wcode(Main = ) as a top level command. We will understand later how this fits with the general language design.
 WP
 Wcode(Debug)
-is a simple class whose most important method print a message on the console.
+is a simple class whose most important method print a message on the terminal.
 WP
 In 42, when a class has a WEmph(`most important') method, it is conventional to use the empty name, so that can be used with the short syntax Wcode(`Debug(S"Hello world")') instead of a more verbose Wcode(Debug.println(..)). 
 
@@ -90,7 +90,7 @@ We write Wcode(class method) to define a method that can be called on the class 
 This is roughly equivalent to a static method in languages like Java or C++ , or class methods in Python.
 Note that Wcode(%) inserts a value into a string.
 WP
-Note how the method is called using the parameter name explicitly.
+Note that the method is called using the parameter name explicitly.
 We believe this increases readability.
 WP
 You may also notice how there are two different usages for curly brackets:  if there is at least one Wcode(return) keyword then the expression is a block of statements,
@@ -124,11 +124,11 @@ WBR
 Here you can see we define a Wcode(Point) class with coordinates Wcode(x) and Wcode(y) of type Wcode(Num),
 unlimited precision rational number.
 
-In addition of Wcode(x),
+In addition to Wcode(x),
  Wcode(y),
  Wcode(add(x))
- and Wcode(add(y))
- Wcode(Point) will offer many other useful methods since it has been declared using
+ and Wcode(add(y)),
+ Wcode(Point) will offer many other useful methods, since it has been declared using
  Wcode(Data).
  WP
 Indeed, Wcode(Data) is a decorator. Decorators are classes/objects that offer an operator Wcode(:), called the decorator operator,
@@ -146,11 +146,11 @@ Indeed, method bodies are just expressions, and the curly brackets turn a block 
 
 In the method Wcode(add(x)) we show how to create a new 
 Wcode(Point) instance and how to call WTerm(getter methods).
-In the method Wcode(add(y)) we show an improved version, using the Wcode(with) method, another gift of Data, that allows us to easily create a clone with one or more fields updated.
+In the method Wcode(add(y)) we show an improved version, using the Wcode(with) method, another gift of Data, which allows us to easily create a clone with one or more fields updated.
 We can define two methods, Wcode(add(x)) and Wcode(add(y)) with the same method name, if parameter names are different.
 WP
 Note that we always use getters and we never access fields directly.
-In many other languages we can use write Wcode(a.fieldName) and Wcode(a.fieldName= newValue). Such syntax does not exists in 42. The same goes for object instantiation; in many languages there is a special Wcode(new ClassName(..)) dedicated syntax, while in 42 it is just a method call.
+In many other languages we can use write Wcode(a.fieldName) and Wcode(a.fieldName= newValue). Such syntax does not exists in 42. The same goes for object instantiation; in many languages there is a dedicated  Wcode(new ClassName(..)) syntax, while in 42 it is just a method call.
 WP
 Also, similarly to what happens in Python, we need to use Wcode(this.methodName()) to call methods when the receiver is Wcode(this).
 While it makes some code more verbose, naming the receiver avoids ambiguities about scoping and nesting for method resolution.
@@ -270,8 +270,8 @@ WBR as in the class declaration
 Wcode(Points = Collection.list(Point))
 </li></ul>
 
-
-WTitle(`Object creation summary')
+</p><div style="margin-left: 30px;">
+<h2> Object creation summary </h2> <p>
 42 supports many different syntactic forms that are convenient for creating objects: 
 <ul><li>
 12Num:  from a numeric representation
@@ -285,3 +285,14 @@ Points[_;_;_]:  from a variable length sequence of values.
 
 Note that in 42 these are all just expressions, and represent one or more methods in the named class.
 This means that even concepts quite different from numbers, strings and collections may benefit from this syntactic support.
+</p></div>
+<p>
+WTitle(Digressions / Expansions)
+Here, after the summaries, we will digress and expand
+on topics related to the chapter. 
+Digressions/expansions may be more technical and challenging, and may refer to any content in any of the other chapters, including the forward ones.
+For example, we are now going to make some more precise remarks about:
+WTitle(Method selector)
+In 42 a method selector is the method name plus the list of all the parameter names, in order.
+Methods in a class must be uniquely identified by their method selectors.
+This provides a good part of the expressive power of overloading, while avoiding all the complexities of type driven overloading resolution.

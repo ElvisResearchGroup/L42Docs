@@ -108,7 +108,7 @@ Java or C.
 For now you can think of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Main = ]]></span><it style="font-style: bold; color:green;">&#187;</it> as a top level command. We will understand later how this fits with the general language design.
 </p><p>
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Debug]]></span><it style="font-style: bold; color:green;">&#187;</it>
-is a simple class whose most important method print a message on the console.
+is a simple class whose most important method print a message on the terminal.
 </p><p>
 In 42, when a class has a <span style="color:#ff1111; font-weight: bold;"> most important </span> method, it is conventional to use the empty name, so that can be used with the short syntax <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Debug(S"Hello world")]]></span><it style="font-style: bold; color:green;">&#187;</it> instead of a more verbose <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Debug.println(..)]]></span><it style="font-style: bold; color:green;">&#187;</it>. 
 
@@ -140,7 +140,7 @@ We write <it style="font-style: bold; color:green;">&#171;</it><span class="code
 This is roughly equivalent to a static method in languages like Java or C++ , or class methods in Python.
 Note that <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[%]]></span><it style="font-style: bold; color:green;">&#187;</it> inserts a value into a string.
 </p><p>
-Note how the method is called using the parameter name explicitly.
+Note that the method is called using the parameter name explicitly.
 We believe this increases readability.
 </p><p>
 You may also notice how there are two different usages for curly brackets:  if there is at least one <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[return]]></span><it style="font-style: bold; color:green;">&#187;</it> keyword then the expression is a block of statements,
@@ -174,11 +174,11 @@ Point = Data:{
 Here you can see we define a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> class with coordinates <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[x]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[y]]></span><it style="font-style: bold; color:green;">&#187;</it> of type <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it>,
 unlimited precision rational number.
 
-In addition of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[x]]></span><it style="font-style: bold; color:green;">&#187;</it>,
+In addition to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[x]]></span><it style="font-style: bold; color:green;">&#187;</it>,
  <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[y]]></span><it style="font-style: bold; color:green;">&#187;</it>,
  <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(x)]]></span><it style="font-style: bold; color:green;">&#187;</it>
- and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(y)]]></span><it style="font-style: bold; color:green;">&#187;</it>
- <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> will offer many other useful methods since it has been declared using
+ and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(y)]]></span><it style="font-style: bold; color:green;">&#187;</it>,
+ <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> will offer many other useful methods, since it has been declared using
  <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it>.
  </p><p>
 Indeed, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> is a decorator. Decorators are classes/objects that offer an operator <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[:]]></span><it style="font-style: bold; color:green;">&#187;</it>, called the decorator operator,
@@ -196,11 +196,11 @@ Indeed, method bodies are just expressions, and the curly brackets turn a block 
 
 In the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(x)]]></span><it style="font-style: bold; color:green;">&#187;</it> we show how to create a new 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> instance and how to call <it style="font-style: italic;">getter methods</it>.
-In the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(y)]]></span><it style="font-style: bold; color:green;">&#187;</it> we show an improved version, using the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[with]]></span><it style="font-style: bold; color:green;">&#187;</it> method, another gift of Data, that allows us to easily create a clone with one or more fields updated.
+In the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(y)]]></span><it style="font-style: bold; color:green;">&#187;</it> we show an improved version, using the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[with]]></span><it style="font-style: bold; color:green;">&#187;</it> method, another gift of Data, which allows us to easily create a clone with one or more fields updated.
 We can define two methods, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(x)]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(y)]]></span><it style="font-style: bold; color:green;">&#187;</it> with the same method name, if parameter names are different.
 </p><p>
 Note that we always use getters and we never access fields directly.
-In many other languages we can use write <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.fieldName]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.fieldName= newValue]]></span><it style="font-style: bold; color:green;">&#187;</it>. Such syntax does not exists in 42. The same goes for object instantiation; in many languages there is a special <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[new ClassName(..)]]></span><it style="font-style: bold; color:green;">&#187;</it> dedicated syntax, while in 42 it is just a method call.
+In many other languages we can use write <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.fieldName]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.fieldName= newValue]]></span><it style="font-style: bold; color:green;">&#187;</it>. Such syntax does not exists in 42. The same goes for object instantiation; in many languages there is a dedicated  <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[new ClassName(..)]]></span><it style="font-style: bold; color:green;">&#187;</it> syntax, while in 42 it is just a method call.
 </p><p>
 Also, similarly to what happens in Python, we need to use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this.methodName()]]></span><it style="font-style: bold; color:green;">&#187;</it> to call methods when the receiver is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 While it makes some code more verbose, naming the receiver avoids ambiguities about scoping and nesting for method resolution.
@@ -320,8 +320,8 @@ To introduce the concept of list for a certain type, use
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Points = Collection.list(Point)]]></span><it style="font-style: bold; color:green;">&#187;</it>
 </li></ul>
 
-
-</p><h2> Object creation summary </h2> <p>
+</p><div style="margin-left: 30px;">
+<h2> Object creation summary </h2> <p>
 42 supports many different syntactic forms that are convenient for creating objects: 
 <ul><li>
 12Num:  from a numeric representation
@@ -335,6 +335,17 @@ Points[_;_;_]:  from a variable length sequence of values.
 
 Note that in 42 these are all just expressions, and represent one or more methods in the named class.
 This means that even concepts quite different from numbers, strings and collections may benefit from this syntactic support.
+</p></div>
+<p>
+</p><h2> Digressions / Expansions </h2> <p>
+Here, after the summaries, we will digress and expand
+on topics related to the chapter. 
+Digressions/expansions may be more technical and challenging, and may refer to any content in any of the other chapters, including the forward ones.
+For example, we are now going to make some more precise remarks about:
+</p><h2> Method selector </h2> <p>
+In 42 a method selector is the method name plus the list of all the parameter names, in order.
+Methods in a class must be uniquely identified by their method selectors.
+This provides a good part of the expressive power of overloading, while avoiding all the complexities of type driven overloading resolution.
  </p><p id="ModifiersIntro"> </p><div style="break-after:page"></div><h1> Keep control:  Modifiers, kinds of references and objects </h1> <p>
 
 </p><h2> (1/5)Kinds of objects </h2> <p>
@@ -2079,7 +2090,7 @@ clearOn(L,s)= x::0
 
 </p><h2> (1/5)Interfaces, Basis and Details </h2> <p>
 </p><h2> Interfaces Basis </h2> <p>
-In 42 interfaces are quite similar to interfaces in other OO languages.
+Interfaces in 42 are quite similar to interfaces in other OO languages.
 There are however a couple of important differences.
 
 </p><p>
@@ -2101,7 +2112,7 @@ In 42, we say that the method <it style="font-style: bold; color:green;">&#171;<
 implemented in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Square]]></span><it style="font-style: bold; color:green;">&#187;</it>
 <span style="color:#ff1111; font-weight: bold;"> is declared by </span>
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Shape]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-Each method is declared in a single point. 
+Each method is declared at a single point. 
 Methods can be 
 defined (that is, declared and implemented)
 in the class itself;

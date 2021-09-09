@@ -2,7 +2,7 @@ WBigTitle(`Interfaces, subtypes and matching')
 
 WTitle((1/5)`Interfaces, Basis and Details')
 WTitle( Interfaces Basis)
-In 42 interfaces are quite similar to interfaces in other OO languages.
+Interfaces in 42 are quite similar to interfaces in other OO languages.
 There are however a couple of important differences.
 
 WP
@@ -24,7 +24,8 @@ In 42, we say that the method Wcode(draw(that))
 implemented in Wcode(Square)
 WEmph(is declared by)
 Wcode(Shape).
-Each method is declared in a single point. 
+Each method is declared at a single point. 
+WComm HERE 7/9/21
 Methods can be 
 defined (that is, declared and implemented)
 in the class itself;
