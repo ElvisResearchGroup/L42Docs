@@ -542,8 +542,16 @@ except for MCalls of form this.m(..) where m is a clear call
   D1 and D2 can not both call a clear method on x
 -forall D in Ds, they do not use dom(Ds)
 -forall D in Ds, D is not var
----------------
-forkJoin L, MWT ok iff:
+
+
+@ForkJoin
+is closed by Data.Close
+and behaves like the forkJon test below, but 
+clearOn will check for a class method with @Cache.Clear
+and the absence of body or total absence of the native capsule mutator
+_______
+#Define forkJoin(L, MWT)    okE(G,e,L)    clearOn(L,s)= x::0
+forkJoin(L, MWT) holds iff:
   MWT.e =(Ds e)
   MWT.exceptions=empty
   forall D in Ds okE(MWT.G,D.e)
@@ -557,15 +565,16 @@ forkJoin L, MWT ok iff:
     we have x'!=x"
 
 okE(G,e,L)
-  recursivelly propagates on the structure, but
-  okE(G,x,L) if 
-    either G(x) undefined
-    or G(x).mdf in {imm,capsule,class}
-    or G(x).mdf=read and G(this).mdf in {imm,capsule,class,read}
-  okE(G,this.m(x1=e1..xn=en),L) holds if
-    okE(G,e1,L)..okE(G,en,L) holds
-    either G(this).mdf in {imm,capsule,class,read}
-    or G(this).mdf in {mut,lent} clearOn(L,m(x1..xn)) is defined
+  recursivelly propagates on the structure of 'e', but
+okE(G,x,L) holds iff 
+  either G(x) undefined
+  or G(x).mdf in {imm,capsule,class}
+  or G(x).mdf=read and G(this).mdf in {imm,capsule,class,read}
+okE(G,this.m(x1=e1..xn=en),L) holds iff
+  okE(G,e1,L)..okE(G,en,L) holds
+  either G(this).mdf in {imm,capsule,class,read}
+  or G(this).mdf in {mut,lent} 
+    and clearOn(L,m(x1..xn)) is defined
   
 clearOn(L,s)= x::0
   L(s)= MH=native{...clear..} ctx[this.#?x::0()]
