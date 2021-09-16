@@ -20,20 +20,20 @@ Square = {[Shape]
   }
 CCode
 
-In 42, we say that the method Wcode(draw(that)) 
-implemented in Wcode(Square)
-WEmph(is declared by)
-Wcode(Shape).
-Each method is declared at a single point. 
-WComm HERE 7/9/21
-Methods can be 
-defined (that is, declared and implemented)
-in the class itself;
+In 42, we say that the method Wcode(draw(that))
+WTerm(implemented) in Wcode(Square)
+is WTerm(declared) by
+Wcode(Shape). 
+Each method is WTerm(declared) at a single point. 
+Method declarations include parameter and return types.
+A method can be 
+WTerm(defined) (that is, declared and implemented)
+in the same class;
 or declared in a (transitively) implemented interface and
 then just implemented.
-This means that a class can not 
+This means that a class cannot 
 satisfy multiple interfaces declaring methods
-with the same name.
+with the same method selector.
 For example, this code is ill-typed: 
 OBCode
 Card = {interface
@@ -47,13 +47,14 @@ Wrong = {[Card,Gun] //not allowed
 CCode
 
 
-Note that would be bad 42 code anyway, you should define an enumeration (or an alphanumeric)
+Note that would be bad 42 code anyway; you should define an enumeration (or an alphanumeric)
 for your cards and use a Wcode(Second) unit of measure
-for the time.
+for the time,
+which would make the unavoidable type error more obvious.
 
 WP
 
-However, interface diamond is allowed, that is, the following code is correct: 
+Interface diamonds are allowed; that is, the following code is correct: 
 OBCode
 Shape = {interface
   method Void draw(mut Canvas that)
@@ -74,6 +75,7 @@ CCode
 WP
 
 You can refine the return type of an interface method, by repeating the full type signature with the desired return type.
+On the other hand, the parameter types cannot be refined.
 OBCode
 Monster = {interface
   method Monster spawnMinion()
@@ -83,13 +85,12 @@ BigMonster = {[Monster]
   }
 CCode
 
-However, the parameter types can not be refined.
 
 WTitle((2/5) Interfaces and class methods)
 
-Interface methods in 42 are all abstract, that is, without bodies.
+Interface methods in 42 are all abstract; that is, without bodies.
 A version of the body will be provided by all classes implementing the interface.
-WEmph(This also include class methods.)
+WEmph(This also includes class methods.)
 WBR
 For example, consider the following code: 
 OBCode
@@ -117,16 +118,16 @@ kindOfShape.numberOfSides()==4Num //holds
 Shape s= kindOfShape.newShape(Color.red())
 CCode
 
-The pattern in the code above allows to encode the abstract factory 
+The pattern in the code above encodes the abstract factory 
 pattern in a much simpler way: 
 the binding Wcode(kindOfShape) serve the role of
 an instance of an abstract factory, and can create instances of
 a specific kind of shape.
 WP
 
-In 42 interfaces can not have 
+In 42 interfaces do not have 
 implemented class methods.
-Sometimes there is the need of semantically associate some behaviour with an interface.
+Sometimes we want to semantically associate some behaviour with an interface.
 For example we could check intersections between shapes using
 the draw method.
 What we would need, is a traditional (non dynamically dispatched) static method.
@@ -145,54 +146,67 @@ Shape = {interface
 CCode
 
 WTitle((3/5)`Subtyping')
-Dynamic dispatch is the most important feature of Object oriented languages.
-Subtiping is the main feature supporting dynamic dispach; for example 
+Dynamic dispatch is the most important feature of object oriented languages.
+Subtyping is the main feature supporting dynamic dispach; for example 
 we can iterate over a list of Wcode(Shape)
-and Wcode(draw) them without the need to consider case by case all the possible kinds of 
-Wcode(Shape).
+and Wcode(draw) them without the need to explicitly handle in the code all the possible kinds of 
+Wcode(Shape) on a case by case basis.
  
-Note how modifiers (Wcode(mut),
+Note that modifiers (Wcode(mut),
 Wcode(read),
-Wcode(capsule),..)) offers subtyping but not dynamic dispatch.
+Wcode(capsule),..)) offer subtyping but not dynamic dispatch.
 
-There is a fundamental compromise between interfaces and classes:
+WP
+Interfaces and classes represent two fundamentally alternative compromises between
+the providers and users of objects:
 <ul><li>
 Interfaces allows client code to be implicitly parametric on the behaviour of individual objects.
-The client code can take no assumption on the specific implementation of the interface.
+The client code can make no assumption on the specific implementation of the interface.
 </li><li>
-Classes allows client code to rely on their invariant.
+Classes allows client code to rely on their invariants.
 The user code is forced to pass only a specific kind of implementation.
 </li></ul>
 
+WP
+In simpler terms, if we have a Wcode(Shape s) interface,
+and we call Wcode(s.draw()), we will get the right kind of drawing behaviour for that shape.
+On the other hand, we can not statically predict what kind of shape and behaviour we will execute.
+WBR
+If instead we have a Wcode(Square s) class,
+then we can
+statically predict what kind of behaviour Wcode(s.draw()) will execute, and that the width and height of the drawn shape are going to be equal, as for the Wcode(Square) invariant.
+On the other hand, our Wcode(Square) using code can only be used with squares, not any of the other kinds of shape.
 
 WTitle((4/5)`Matching')
 
-It is possible to inspect the runtime type of object by using matching.
-We will now provide varius examples of matching and explain the behaviour.
-
+It is possible to inspect the runtime type of an object by using matching.
+We will now provide various examples of matching and explain the behaviour.
+WP
 OBCode
 method Square example1(Shape s1, Shape s2) = {
-  if s1 <: Square ( return x )//s1 is of type Square in the if body
+  if s1 <: Square ( return s1 )//s1 is of type Square in the if body
   if Square y = s1.bar() ( return y ) //if bar returns a Square, we call it y
-  if x<: HasToS, z<:Triangle ( return z.with(x.toS()) )
+  if s1<: Circle, s2<:Square ( return s2.with(side=s1.radius()) )
   error X""
   }
 CCode 
 We can use an Wcode(if) to check for the type of a local binding or an expression.
 We can also check for more then one local binding at a time.
-This Wcode(if-return) pattern allows to write complex dispatch in a compact way.
-The syntax Wcode(<:) can also be used in expressions when the type system is unable to figure out
-the type, usually because some information will be generated by a decorator on a later stage, thus sometimes we may have to write code like the following
-Wcode(a.bla()<:mut Foo.baz()): the method 
+This Wcode(if-return) pattern allows us to write complex dispatch in a compact way.
+WP
+The syntax Wcode(<:) can also be used in expressions when the type system needs help with figuring out
+the type, usually because some information will be generated by a decorator at a later stage. Sometimes we may have to write code like the following
+Wcode((a.bla()<:mut Foo).baz()):
+the method 
 Wcode(baz()) is called on the result of 
 Wcode(a.bla()), that we expect to return a
 Wcode(mut Foo).
-While the Wcode(if _ <: _) will run the check at run time,
-the cast is checked at compile time, as if we wrote 
+While Wcode(if _ <: _) will check the type at run time,
+the explicit (sub-)type annotation with Wcode(<:) is checked at compile time, as if we wrote 
 Wcode(`(mut Foo tmp = a.bla(), tmp.baz())')
 
-WBR
-The code below
+WP
+The code below:
 OBCode
 method Point example2(Point left,Point right) = {
   (x1,y1) = left
@@ -200,7 +214,7 @@ method Point example2(Point left,Point right) = {
   return Point(x=x1+x2,y=y1+y2)  
   }
 CCode
-is equivalent to
+is equivalent to:
 OBCode
 method Point example2(Point left,Point right) = {
   x1=left.x()

@@ -2130,19 +2130,20 @@ Square = {[Shape]
   }
 ]]></pre>
 
-In 42, we say that the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[draw(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> 
-implemented in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Square]]></span><it style="font-style: bold; color:green;">&#187;</it>
-<span style="color:#ff1111; font-weight: bold;"> is declared by </span>
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Shape]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-Each method is declared at a single point. 
-Methods can be 
-defined (that is, declared and implemented)
-in the class itself;
+In 42, we say that the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[draw(that)]]></span><it style="font-style: bold; color:green;">&#187;</it>
+<it style="font-style: italic;">implemented</it> in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Square]]></span><it style="font-style: bold; color:green;">&#187;</it>
+is <it style="font-style: italic;">declared</it> by
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Shape]]></span><it style="font-style: bold; color:green;">&#187;</it>. 
+Each method is <it style="font-style: italic;">declared</it> at a single point. 
+Method declarations include parameter and return types.
+A method can be 
+<it style="font-style: italic;">defined</it> (that is, declared and implemented)
+in the same class;
 or declared in a (transitively) implemented interface and
 then just implemented.
-This means that a class can not 
+This means that a class cannot 
 satisfy multiple interfaces declaring methods
-with the same name.
+with the same method selector.
 For example, this code is ill-typed: 
 <pre class="l42Big"><![CDATA[
 Card = {interface
@@ -2156,13 +2157,14 @@ Wrong = {[Card,Gun] //not allowed
 ]]></pre>
 
 
-Note that would be bad 42 code anyway, you should define an enumeration (or an alphanumeric)
+Note that would be bad 42 code anyway; you should define an enumeration (or an alphanumeric)
 for your cards and use a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Second]]></span><it style="font-style: bold; color:green;">&#187;</it> unit of measure
-for the time.
+for the time,
+which would make the unavoidable type error more obvious.
 
 </p><p>
 
-However, interface diamond is allowed, that is, the following code is correct: 
+Interface diamonds are allowed; that is, the following code is correct: 
 <pre class="l42Big"><![CDATA[
 Shape = {interface
   method Void draw(mut Canvas that)
@@ -2183,6 +2185,7 @@ LoudCat = {[Animal, Noisy]
 </p><p>
 
 You can refine the return type of an interface method, by repeating the full type signature with the desired return type.
+On the other hand, the parameter types cannot be refined.
 <pre class="l42Big"><![CDATA[
 Monster = {interface
   method Monster spawnMinion()
@@ -2192,13 +2195,12 @@ BigMonster = {[Monster]
   }
 ]]></pre>
 
-However, the parameter types can not be refined.
 
 </p><h2> (2/5) Interfaces and class methods </h2> <p>
 
-Interface methods in 42 are all abstract, that is, without bodies.
+Interface methods in 42 are all abstract; that is, without bodies.
 A version of the body will be provided by all classes implementing the interface.
-<span style="color:#ff1111; font-weight: bold;"> This also include class methods. </span>
+<span style="color:#ff1111; font-weight: bold;"> This also includes class methods. </span>
 <br/>
 For example, consider the following code: 
 <pre class="l42Big"><![CDATA[
@@ -2226,16 +2228,16 @@ kindOfShape.numberOfSides()==4Num //holds
 Shape s= kindOfShape.newShape(Color.red())
 ]]></pre>
 
-The pattern in the code above allows to encode the abstract factory 
+The pattern in the code above encodes the abstract factory 
 pattern in a much simpler way: 
 the binding <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[kindOfShape]]></span><it style="font-style: bold; color:green;">&#187;</it> serve the role of
 an instance of an abstract factory, and can create instances of
 a specific kind of shape.
 </p><p>
 
-In 42 interfaces can not have 
+In 42 interfaces do not have 
 implemented class methods.
-Sometimes there is the need of semantically associate some behaviour with an interface.
+Sometimes we want to semantically associate some behaviour with an interface.
 For example we could check intersections between shapes using
 the draw method.
 What we would need, is a traditional (non dynamically dispatched) static method.
@@ -2254,53 +2256,66 @@ Shape = {interface
 ]]></pre>
 
 </p><h2> (3/5)Subtyping </h2> <p>
-Dynamic dispatch is the most important feature of Object oriented languages.
-Subtiping is the main feature supporting dynamic dispach; for example 
+Dynamic dispatch is the most important feature of object oriented languages.
+Subtyping is the main feature supporting dynamic dispach; for example 
 we can iterate over a list of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Shape]]></span><it style="font-style: bold; color:green;">&#187;</it>
-and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[draw]]></span><it style="font-style: bold; color:green;">&#187;</it> them without the need to consider case by case all the possible kinds of 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Shape]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[draw]]></span><it style="font-style: bold; color:green;">&#187;</it> them without the need to explicitly handle in the code all the possible kinds of 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Shape]]></span><it style="font-style: bold; color:green;">&#187;</it> on a case by case basis.
  
-Note how modifiers (<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>,
+Note that modifiers (<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>,
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it>,
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it>,..)) offers subtyping but not dynamic dispatch.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it>,..)) offer subtyping but not dynamic dispatch.
 
-There is a fundamental compromise between interfaces and classes:
+</p><p>
+Interfaces and classes represent two fundamentally alternative compromises between
+the providers and users of objects:
 <ul><li>
 Interfaces allows client code to be implicitly parametric on the behaviour of individual objects.
-The client code can take no assumption on the specific implementation of the interface.
+The client code can make no assumption on the specific implementation of the interface.
 </li><li>
-Classes allows client code to rely on their invariant.
+Classes allows client code to rely on their invariants.
 The user code is forced to pass only a specific kind of implementation.
 </li></ul>
 
+</p><p>
+In simpler terms, if we have a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Shape s]]></span><it style="font-style: bold; color:green;">&#187;</it> interface,
+and we call <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[s.draw()]]></span><it style="font-style: bold; color:green;">&#187;</it>, we will get the right kind of drawing behaviour for that shape.
+On the other hand, we can not statically predict what kind of shape and behaviour we will execute.
+<br/>
+If instead we have a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Square s]]></span><it style="font-style: bold; color:green;">&#187;</it> class,
+then we can
+statically predict what kind of behaviour <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[s.draw()]]></span><it style="font-style: bold; color:green;">&#187;</it> will execute, and that the width and height of the drawn shape are going to be equal, as for the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Square]]></span><it style="font-style: bold; color:green;">&#187;</it> invariant.
+On the other hand, our <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Square]]></span><it style="font-style: bold; color:green;">&#187;</it> using code can only be used with squares, not any of the other kinds of shape.
 
 </p><h2> (4/5)Matching </h2> <p>
 
-It is possible to inspect the runtime type of object by using matching.
-We will now provide varius examples of matching and explain the behaviour.
-
+It is possible to inspect the runtime type of an object by using matching.
+We will now provide various examples of matching and explain the behaviour.
+</p><p>
 <pre class="l42Big"><![CDATA[
 method Square example1(Shape s1, Shape s2) = {
-  if s1 <: Square ( return x )//s1 is of type Square in the if body
+  if s1 <: Square ( return s1 )//s1 is of type Square in the if body
   if Square y = s1.bar() ( return y ) //if bar returns a Square, we call it y
-  if x<: HasToS, z<:Triangle ( return z.with(x.toS()) )
+  if s1<: Circle, s2<:Square ( return s2.with(side=s1.radius()) )
   error X""
   }
 ]]></pre> 
 We can use an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[if]]></span><it style="font-style: bold; color:green;">&#187;</it> to check for the type of a local binding or an expression.
 We can also check for more then one local binding at a time.
-This <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[if-return]]></span><it style="font-style: bold; color:green;">&#187;</it> pattern allows to write complex dispatch in a compact way.
-The syntax <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[<:]]></span><it style="font-style: bold; color:green;">&#187;</it> can also be used in expressions when the type system is unable to figure out
-the type, usually because some information will be generated by a decorator on a later stage, thus sometimes we may have to write code like the following
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.bla()<:mut Foo.baz()]]></span><it style="font-style: bold; color:green;">&#187;</it>: the method 
+This <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[if-return]]></span><it style="font-style: bold; color:green;">&#187;</it> pattern allows us to write complex dispatch in a compact way.
+</p><p>
+The syntax <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[<:]]></span><it style="font-style: bold; color:green;">&#187;</it> can also be used in expressions when the type system needs help with figuring out
+the type, usually because some information will be generated by a decorator at a later stage. Sometimes we may have to write code like the following
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[(a.bla()<:mut Foo).baz()]]></span><it style="font-style: bold; color:green;">&#187;</it>:
+the method 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[baz()]]></span><it style="font-style: bold; color:green;">&#187;</it> is called on the result of 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.bla()]]></span><it style="font-style: bold; color:green;">&#187;</it>, that we expect to return a
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Foo]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 While the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[if _ <: _]]></span><it style="font-style: bold; color:green;">&#187;</it> will run the check at run time,
-the cast is checked at compile time, as if we wrote 
+the explicit (sub-)type annotation with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[<:]]></span><it style="font-style: bold; color:green;">&#187;</it> is checked at compile time, as if we wrote 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[(mut Foo tmp = a.bla(), tmp.baz())]]></span><it style="font-style: bold; color:green;">&#187;</it>
 
-<br/>
+</p><p>
 The code below
 <pre class="l42Big"><![CDATA[
 method Point example2(Point left,Point right) = {
