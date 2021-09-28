@@ -113,7 +113,7 @@ Geometry1 = Class:TraitGeometryPoint //declaring class Geometry1
   imm p = Geometry1.Point(x=3\, y=4\)
   p2 = p.double()//example usage
 CCode
-That is, any Wcode(read), Wcode(imm) or Wcode(mut) no-args abstract method can play the role of a getter for a correspondly named field, and any abstract Wcode(class) method can play the role of a factory, where the parameters are used to initialize the fields.
+That is, any Wcode(read), Wcode(imm) or Wcode(mut) no-arg abstract method can play the role of a getter for a correspondly named field, and any abstract Wcode(class) method can play the role of a factory, where the parameters are used to initialize the fields.
 Finally, Wcode(mut) methods with one argument called Wcode(that) can play the role of a setter.
 Candidate getters and setters are connected with the parameters of candidate factories by name.
 To allow for more then one getter/setter for each parameter, getters/setters names can also start with any number of Wcode(#).

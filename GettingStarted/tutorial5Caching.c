@@ -215,11 +215,11 @@ There are three kinds of caching, depending on the time the caching behaviour ac
 
 <ul><li>
 Wcode(Cache.Lazy) computes the cached value when the annotated method is first called.
-It works on Wcode(imm) and Wcode(class) no-args methods.
-An obvious workaround for the no-args limitation is to define computation objects; this also works well with normalization: computation objects will 
+It works on Wcode(imm) and Wcode(class) no-arg methods.
+An obvious workaround for the no-arg limitation is to define computation objects; this also works well with normalization: computation objects will 
 retrieve the cached results of any structurally equivalent object.
 </li><li>
-Wcode(Cache.Eager) computes the cached value in a separate parallel worker, starting when the object is created. It only works on Wcode(imm) no-args methods of classes whose objects are all deeply immutable.
+Wcode(Cache.Eager) computes the cached value in a separate parallel worker, starting when the object is created. It only works on Wcode(imm) no-arg methods of classes whose objects are all deeply immutable.
 Those classes will automatically normalize their instances upon creation.
 </li><li>
 Wcode(Cache.Now) computes the cached value during object construction.
