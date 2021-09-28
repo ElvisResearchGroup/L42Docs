@@ -1,18 +1,23 @@
 m4_include(`header.h')m4_dnl
 
-WTitle(`First, read in any order those introductions')
-<Button class= 'button' type= 'button' onclick= 'selectDiv("a");'>
-Why 42
+WComm WTitle(`First, read in any order those introductions')
+WComm <Button class= 'button' type= 'button' onclick= 'selectDiv("a");'>
+WComm Why 42
+WComm </Button>
+
+WComm <Button class= 'button' type= 'button' onclick= 'selectDiv("c");'>
+WComm Pure OO
+WComm </Button>
+
+<Button class= 'button' type= 'button' onclick=
+ "location.href = 'tutorial.xhtml';">
+Download
 </Button>
 
-<Button class= 'button' type= 'button' onclick= 'selectDiv("c");'>
-Pure OO
-</Button>
 
-
-<Button class= 'button' type= 'button' onclick= 'selectDiv("b");'>
-Learn through examples
-</Button>
+WComm <Button class= 'button' type= 'button' onclick= 'selectDiv("b");'>
+WComm Learn through examples
+WComm </Button>
 
 
 <Button class= 'button' type= 'button' onclick=
@@ -20,9 +25,54 @@ Learn through examples
 See the full Tutorial
 </Button>
 
+<Button class= 'button' type= 'button' onclick=
+ "location.href = 'https://github.com/ElvisResearchGroup/L42';">
+Git Repository
+</Button>
 
-<Div id= "a"><p>
+<Div><p>
 WTitle(Why 42)
+
+42 is a new programming language, whose name is inspired by The Hitchhiker's Guide to the Galaxy.
+Why should you give 42 a try?
+WP
+42 programs are secure, easy to optimize and customize.
+WBR
+More in details:
+WP
+<ul>
+<li>
+<h5>Security by Modularization</h5>
+A secure program never does the wrong action. For example, it never commits to the database ill formed data.
+In 42 you can clearly specify what those actions are and what are the corresponding correctnes criteria. The rest of the code will be unable to break those constraints.
+In this way the programmer can focus the majority of their time on writing correct software, while the security is guaranteed by the system.
+</li><li>
+<h5>Performance by Abstraction</h5>
+Most of the performance issues are not about smart ways to generate ultra fast assembly. Most often they are about code repeating the same operations over and over again. It may be a poorly designed algorithm, abstraction mismatch, or maintenance spoiling your perfomance by slowly twisting assumptions.
+In 42 various forms of caching and automatic parallelism are proven semantically unobservable. This means that those optimizations are easy to insert and are unable to impact the behaviour of the system
+</li><li>
+<h5>Customization by Composition</h5>
+Not all projects have the same requirements, and not all the deveolopers have the same preferences. Most languages are stuck with a single standard library, that ends up being obsolete after a few years. At best, developers can use a linter to enforce a specific programming style.
+In 42, towels cover the same role of the standard library, but towels can be personalized, to fit better a given company, project or programmer.
+Methods and classes can be added, removed or simply renamed. This can be done while preserving compatibility with all of the third party libraries ecosystem.
+</li>
+</ul>
+WP
+All those statements looks unbelivable given current programming widsom.
+
+<ul><li>
+In the Wlink(tutorial,guide), we explain the language, and we explain those statements and how they work.
+</li><li>
+You can also 
+Wlink(tutorial,dowload 42) and try it yourself.
+</li><li>
+You can also engage with the open source GitHub <a href="https://github.com/ElvisResearchGroup/L42">repository</a>.
+</li>
+</ul>
+
+
+
+<!--
 42 is a new programming language,
 whose name is inspired by The Hitchhiker's Guide to the Galaxy.
 The language's goal is to allow the transparent cooperation and composition of millions of libraries at the same time, while providing a much higher security that any other widly used language.
@@ -46,7 +96,7 @@ By using reference and object capabilities,
 WP
 Reference and object capabilities
 enforce the correctness of caching, representation invariants and parallelism.
-
+-->
 </p></Div>
 
 
@@ -107,9 +157,9 @@ closures/lambdas and null.
 
 m4_include(`syntaxCompare.h')m4_dnl
 
-WTitle(`Now, dig into the tutorial!')
+WComm WTitle(`Now, dig into the tutorial!')
 
-Wlink(tutorial,Let's board the Vogon ship)
+WComm Wlink(tutorial,Let's board the Vogon ship)
 
 
 m4_include(`footer.h')m4_dnl
