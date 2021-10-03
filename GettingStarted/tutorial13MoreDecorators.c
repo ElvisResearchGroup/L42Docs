@@ -246,6 +246,26 @@ Wcode(Name that) choses the nested class to influence, and it is Wcode(Name"This
 Wcode(Bool noFwd) is false by default, and 
 prevents Wcode(fwd imm) and Wcode(fwd mut) constructors when true.
 
+Wcode(Name that) can also specify an alternative name for the empty name constructor and the field names and order.
+Wcode(Data.AddConstructors) can also be built as an alphanumeric to simply initialize the Wcode(Name that) parameter.
+Also Wcode(Data) can be built as an alphanumeric and it will internally propagate that parameter
+to Wcode(Data.AddConstructors).
+The code below provides good examples:
+OBCode
+Data:{ Num y, Num x } //no explict constructor, #apply(y,x) is inferred
+Data"(x,y)":{ Num y, Num x } //#apply(x,y) is explicitly provided
+Data.AddConstructors"(x,y)":{ Num y, Num x } //to add only the constructors
+Data"of(x,y)":{ Num y, Num x } //of(x,y) explicitly provided
+Data"B(x,y)":{ B={ Num y, Num x } } //The nested B is completed, constructor provided
+Data"B.of(x,y)":{ B={ Num y, Num x } } //The nested B is completed, constructor provided
+Data"B":{ B={ Num y, Num x } } //The nested B is completed, constructor inferred
+Data.Relax"(x,y)":{ Num x, Num y  method Num foo() } //ensures 'foo' is not a field
+
+CCode
+Passing the constructor parameter names explicitly is very useful in case we want to
+ reorganize the order of the fields or explicitly exclude some abstract method 
+that would be inferred to be a field otherwise.
+
 WTitle(`Data.Close')
 
 Wcode(Data.Close) also takes two parameters:
@@ -327,6 +347,7 @@ In the end, Wcode(Data) just composes all of those decorators and traits togeter
 OBCode
 method Trait :(Trait that)[Data$Fail]=(
   name=this.that()
+  cs=Name(string=name.path())
   autoNorm=this.autoNorm()
   var Trait acc=that
   acc:=this.optionallyApply(This.addHasToS(), acc=acc)
@@ -337,9 +358,9 @@ method Trait :(Trait that)[Data$Fail]=(
   acc:=this.optionallyApply(This.addImmClone(), acc=acc)
   acc:=this.optionallyApply(This.addImmNorm(), acc=acc)  
   acc:=AddConstructors(name,noFwd=autoNorm):acc
-  acc:=Wither(name):acc
-  acc:=Defaults(name):acc
-  acc:=Close(name,autoNorm=autoNorm):acc
+  acc:=Wither(cs):acc
+  acc:=Defaults(cs):acc
+  acc:=Close(cs,autoNorm=autoNorm):acc
   if this.check() (This.checkCoherent(acc.code()))
   acc
   )  

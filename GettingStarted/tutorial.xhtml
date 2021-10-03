@@ -4434,6 +4434,26 @@ Forward types can also be used as parameters in regular methods, and the type sy
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bool noFwd]]></span><it style="font-style: bold; color:green;">&#187;</it> is false by default, and 
 prevents <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[fwd imm]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[fwd mut]]></span><it style="font-style: bold; color:green;">&#187;</it> constructors when true.
 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Name that]]></span><it style="font-style: bold; color:green;">&#187;</it> can also specify an alternative name for the empty name constructor and the field names and order.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.AddConstructors]]></span><it style="font-style: bold; color:green;">&#187;</it> can also be built as an alphanumeric to simply initialize the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Name that]]></span><it style="font-style: bold; color:green;">&#187;</it> parameter.
+Also <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> can be built as an alphanumeric and it will internally propagate that parameter
+to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.AddConstructors]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+The code below provides good examples:
+<pre class="l42Big"><![CDATA[
+Data:{ Num y, Num x } //no explict constructor, #apply(y,x) is inferred
+Data"(x,y)":{ Num y, Num x } //#apply(x,y) is explicitly provided
+Data.AddConstructors"(x,y)":{ Num y, Num x } //to add only the constructors
+Data"of(x,y)":{ Num y, Num x } //of(x,y) explicitly provided
+Data"B(x,y)":{ B={ Num y, Num x } } //The nested B is completed, constructor provided
+Data"B.of(x,y)":{ B={ Num y, Num x } } //The nested B is completed, constructor provided
+Data"B":{ B={ Num y, Num x } } //The nested B is completed, constructor inferred
+Data.Relax"(x,y)":{ Num x, Num y  method Num foo() } //ensures 'foo' is not a field
+
+]]></pre>
+Passing the constructor parameter names explicitly is very useful in case we want to
+ reorganize the order of the fields or explicitly exclude some abstract method 
+that would be inferred to be a field otherwise.
+
 </p><h2> Data.Close </h2> <p>
 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data.Close]]></span><it style="font-style: bold; color:green;">&#187;</it> also takes two parameters:
@@ -4515,6 +4535,7 @@ In the end, <it style="font-style: bold; color:green;">&#171;</it><span class="c
 <pre class="l42Big"><![CDATA[
 method Trait :(Trait that)[Data$Fail]=(
   name=this.that()
+  cs=Name(string=name.path())
   autoNorm=this.autoNorm()
   var Trait acc=that
   acc:=this.optionallyApply(This.addHasToS(), acc=acc)
@@ -4525,9 +4546,9 @@ method Trait :(Trait that)[Data$Fail]=(
   acc:=this.optionallyApply(This.addImmClone(), acc=acc)
   acc:=this.optionallyApply(This.addImmNorm(), acc=acc)  
   acc:=AddConstructors(name,noFwd=autoNorm):acc
-  acc:=Wither(name):acc
-  acc:=Defaults(name):acc
-  acc:=Close(name,autoNorm=autoNorm):acc
+  acc:=Wither(cs):acc
+  acc:=Defaults(cs):acc
+  acc:=Close(cs,autoNorm=autoNorm):acc
   if this.check() (This.checkCoherent(acc.code()))
   acc
   )  
