@@ -15,19 +15,21 @@ Java program.
 <ul>
 <li>
   For windows download here <a href="L42PortableWin.zip">L42PortableWin.zip</a>
-  or <a href="L42Win.jar">L42Win.jar</a>
+  WComm or <a href="L42Win.jar">L42Win.jar</a>
 </li>
 <li>
-  For Linux download here <a href="L42Linux.jar">L42Linux.jar</a>
+  For Linux download here <a href="L42PortableLinux.zip">L42PortableLinux.zip</a>
+  WComm <a href="L42Linux.jar">L42Linux.jar</a>
+</li>
+  WComm <li>  The portable version contains also an appropriate JVM.</li>
+  <li>  Run Wcode(L42)
+    WComm  Wcode(java --enable-preview -jar L42.jar) 
+    to start the IDE.
 </li>
 <li>
-  The portable version contains also an appropriate JVM.
-</li>
-<li>
-  Run with Wcode(java --enable-preview -jar L42.jar) to start the IDE.
-</li>
-<li>
-  Run with Wcode(java --enable-preview -jar L42.jar ProjectName) to run the 42 program inside of the folder Wcode(ProjectName) from the command line.
+  Run Wcode(L42 ProjectName)
+  WComm with Wcode(java --enable-preview -jar L42.jar ProjectName)
+  to run the 42 program inside of the folder Wcode(ProjectName) from the command line.
 </li>
 </ul>
 WBigTitle(Basics)
