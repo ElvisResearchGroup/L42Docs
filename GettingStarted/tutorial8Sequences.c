@@ -444,3 +444,100 @@ Wcode(\) can help remove a lot of boilerplate, but is a concept unique to 42, an
 Wcode(for) is very useful and flexible. It is common to find methods composed from just a large
 Wcode(for) statement plus a little pre and post processing around it.
 </li></ul>
+
+WTitle(Digressions / Expansions)
+Collections supports iteration with the Wcode(for) syntax.
+Iteration in 42 is significativelly more flexible than in most other languages, and it is delegated on method calls.
+Iteration in 42 is designed to support two main iteration strategy:
+explicit indexes and iterator objects.
+For example, the code
+
+OBCode
+for read a in as, var b in bs ( b:=b.foo(a) )
+CCode
+would expand to
+OBCode
+aIt = as.#iterator()
+bIt = bs.##iterator()
+var ai = as.#startIndex()
+var bi = bs.#startIndex()
+while aIt.#hasElem(ai).#itAnd(bIt.#hasElem(bi)).#more() (
+  var a=aIt.#elem#read(ai)
+  var b = bIt.#elem#default(bi)
+  b := bIt.#update#default(bi,val=b.foo(a))
+  ai := ai.#succ()
+  bi := bi.#succ()
+  ) 
+CCode
+Since Wcode(a) is declared Wcode(read), Wcode(#elem#read) is used instead of Wcode(#elem#default).
+Since Wcode(b) is declared Wcode(var) Wcode(.##iterator) is used instead of Wcode(.#iterator).
+
+
+WTitle(Iteration methods in detail)
+
+<ul>
+<li>
+</li><li>
+Wcode(#iterator) and Wcode(##iterator)
+WBR
+They return an object able to provide the elements of the list. The second variant
+returns a Wcode(mut) object, this is needed to provide the mutable version of those elements, and to update those elements in the list.
+The second variant is used if the local binding is explicitly declared either Wcode(var), Wcode(mut),Wcode(lent) or Wcode(capsule).
+For complex bindings, like Wcode(`(key, mut val)=e'), the second variant is used if any binding component would require it.
+</li><li>
+Wcode(#startIndex) and Wcode(#succ)
+WBR
+The initial iteration hint is produced by Wcode(#startIndex) and moved forward by Wcode(#succ).
+</li><li>
+Wcode(#hasElem), Wcode(#itAnd) and Wcode(#more)
+WBR
+The iterator checks if it has more elements to provide by calling Wcode(#hasElem).
+Since iterations in 42 can work on multiple collections at the same time,
+Wcode(#hasElem) results can be combined with Wcode(#itAnd) and the final result is extracted with Wcode(#more).
+This design offers a lot of flexibility;
+special kinds of collections may return special daya types to coordinate termination in some way.
+The AdamsTowel collections opt for an efficient solution where 
+there are four logical results for Wcode(#hasElem):
+Wcode(mustStop=2),Wcode(mustContinue=-2), Wcode(likeToContinue=1) and Wcode(canContinue=0).
+Then Wcode(I.#itAnd) compute the max in absolute value, throwing error in case 
+Wcode(mustStop) and Wcode(mustContinue) are compared. Then Wcode(#more) holds for negative numbers.
+
+With this design, the result of the single Wcode(#hasElem) method coordinates the various iterators to check if more elements are possibly available, and to decide how strongly to insist for those elements to be visited.
+</li></ul>
+
+WTitle(Possible implementations of Iteration methods)
+
+The iterator methods allows for a range of possible options.
+The simplest one, and possibly the most efficient, is to delegate everything to the collection object:
+in this case, there is no need to create a new object to serve as an iterator, since
+the collection itself is able to simply access/update its elements by index, thus 
+Wcode(#iterator) and Wcode(#varIterator) may simply return Wcode(this).
+Wcode(#startIndex) returns the Wcode(0I)
+and Wcode(#hasElem) returns Wcode(0I) if Wcode(that<this.size()) and Wcode(I"-1") otherwise.
+Finally, Wcode(#close) will throw error if Wcode(#hasElem) would return Wcode(0I).
+WP
+Another option would be the one of a linked list, where it would be unefficient to
+rely on the index to access the elements.
+In this case,
+the Wcode(#iterator) and Wcode(#varIterator) may simply return a singleton object
+delegating the behaviour to the index object.
+Wcode(#startIndex) can simply expose the first internal
+node, and Wcode(#succ) can produce the next node.
+The singleton object may be able to see private methods of those
+internal nodes, thus even if we expose the internal nodes, they will be 
+just unusable black boxes to the library user, and all the interations can be mediated, and checked by the singleton iterator object.
+WP
+Iterators in Java and other languages will throw an error if the collection is somehow modified during the iteration. This could be supported by providing a specialized sublist object that can remember its version; but it is unclear if this is a good idea in 42, where most collections would be iterated while they are immutable.
+The few cases of iteration on mutable collections
+may be the ones where there are good reasons to perform mutation during iteration.
+While adding elements at the start of a collection under iteration is most likely a bug, other operations have very reasonable use cases.
+For example, 
+appending elements at the end of a list while computing a fixpoint, removing tasks from the end of a list if they are now unneded,
+or replacing already visited elements with new ones.
+
+
+WTitle(More methods to facilitate iterations)
+Most collections will support Wcode(vals) and Wcode(#vals) returning the collection iself;
+Wcode(vals(that,to)) and Wcode(#vals(that,to)) returning a sublist view of the collection;
+Wcode(cut), Wcode(#cut) returning a sublist view of the collection that does not insist on exploring all the element;
+and Wcode(default) and Wcode(#default) returning a sublist view of the collection returning a default value instead of throwing an error if the index would be out of range.

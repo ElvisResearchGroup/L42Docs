@@ -1367,6 +1367,11 @@ ComputeFibo(42\)() == 267914296Num
 ]]></pre>
 As you can see, instead of a method with parameters we can declare a class with fields and an empty named method doing the actual computation.
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> is an annotation recognized by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> that works only on <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it> methods with no arguments and with an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> result.
+
+That is, 42 does not directly recognize the annotation <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Decorating the surrounding library with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> translates <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> into
+an actual implementation.
+
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ComputeFibo fibo1]]></span><it style="font-style: bold; color:green;">&#187;</it> is a <span style="color:#ff1111; font-weight: bold;"> computation object </span>: an imm object whose only goal is to support one (or more) computationally intense methods.
 Thanks to normalization, the cache of computation objects is centrally stored, and thus recursive calls computing fibonacci will be able to reuse the cache from other objects.
 That is, the method result is cached on the normalized version of the receiver. In this way, 
@@ -1996,16 +2001,22 @@ parallel = executed in a parallel worker starting after the factory.
 </ul>
 
 </p><h2> Digressions / Expansions </h2> <p>
-As have seen, we can see parallel programming as a form of caching.
+As have seen, parallel programming can be viewed as a form of caching.
 In some cases, we need parallel programming on mutable data.
-In our experience, this is not very common, the cost of copying data around is much smaller that what most programmers assume.
+In our experience, this is not very common; the cost of copying data around is much smaller that most programmers assume.
 Let us repeat this very clearly: there are many other ways to optimize software, and they are much easier and much, much more rewarding than avoiding coping the few mutable parts of your data structure a couple of times.
-We think that only highly skilled and motivated programmers can discover and hunt down all of those other much more pressing performance issues before approaching the performance limits of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Eager]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 
-However, if you are in such a situation
+We think that only highly skilled and motivated programmers 
+can discover and hunt down all of those other much more pressing algorithmic issues that
+often spoil performance.
+Only after approaching the performance limits of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Eager]]></span><it style="font-style: bold; color:green;">&#187;</it> with good algorithms,
+it could make sense to adopt parallel programming on mutable data to avoid some
+extra clones.
+
+However, if you are in such a situation,
 you can use the annotation <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.ForkJoin]]></span><it style="font-style: bold; color:green;">&#187;</it> as shown below.
 Again, the 42 type system will ensure that parallelism is not observable.
-
+</p><p>
 <pre class="l42Big"><![CDATA[
 Example = Data:{
   @Cache.ForkJoin class method capsule D foo(capsule A a,capsule B b, capsule C c) = (
@@ -2016,21 +2027,28 @@ Example = Data:{
     )
   }
 ]]></pre>
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.ForkJoin]]></span><it style="font-style: bold; color:green;">&#187;</it> is also activated by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> and works only on methods whose body is just a round parenthesis block.
-The initialization expressions for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a0]]></span><it style="font-style: bold; color:green;">&#187;</it>,<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[b0]]></span><it style="font-style: bold; color:green;">&#187;</it> and 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[c0]]></span><it style="font-style: bold; color:green;">&#187;</it>, are run in parallel, and the final expression is run only when all the initialization expressions are completed.
+Like other <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.***]]></span><it style="font-style: bold; color:green;">&#187;</it> annotations, 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.ForkJoin]]></span><it style="font-style: bold; color:green;">&#187;</it> is translated by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> 
+into an actual implementation.
+
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.ForkJoin]]></span><it style="font-style: bold; color:green;">&#187;</it> works only on methods whose body is exactly a round parenthesis block.
+The initialization expressions for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a0]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[b0]]></span><it style="font-style: bold; color:green;">&#187;</it>, and 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[c0]]></span><it style="font-style: bold; color:green;">&#187;</it> are run in parallel, and the final expression is run only when 
+all of the initialization expressions are completed.
 The method itself can take any kind of parameters, and they can all be used in the final expression, but the initialization expressions need to fit one of the following three safe parallel patterns:
 
 </p><h2> Non-Mutable computation </h2> <p>
 In this pattern, none of the initialization expressions can use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[lent]]></span><it style="font-style: bold; color:green;">&#187;</it> parameters.
 In this way nothing can be mutated while the forkjoin is open, thus parallelism is safe.
-This is more expressive than <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Eager]]></span><it style="font-style: bold; color:green;">&#187;</it> since it allows to run parallel code on <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> references of mutable objects.
+This is more expressive than <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Eager]]></span><it style="font-style: bold; color:green;">&#187;</it> since it allows us to run parallel code on <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> references of mutable objects.
 
 </p><h2> Single-Mutable computation </h2> <p>
 In this pattern, a single initialization expression can use any kind of parameter, while the other ones can not 
 use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[lent]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> parameters.
 This pattern allows the initialization expression that can use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> to recursively explore a complex mutable data structure and to command updates to immutable elements arbitrarily nested inside of it.
-Consider for example this code updating in parallel all the immutable strings of a mutable list of strings:
+Consider for example this code computing in parallel 
+new immutable string values for all of
+the entries in a mutable list:
 
 <pre class="l42Big"><![CDATA[
 UpdateList=Public:Data:{
@@ -2053,12 +2071,12 @@ MainUpdate = (
   Debug(data)//["aa"; "bb"; "cc"; "dd"; "ee"]
   )
 ]]></pre>
-As you can see, we do not need to ever copy the whole list, we can update the elements in place one by one.
+As you can see, we do not need to ever copy the whole list. We can update the elements in place one by one.
 If the operation <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[map(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> is complex enough, running it in parallel could be beneficial.
-As you can see, it is trivial to adapt that code to explore other kind of data structures, like for example a binary tree.
-Or, in other words, if you are unsure on how to adapt that code to work on a tree, you should stick on <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Eager]]></span><it style="font-style: bold; color:green;">&#187;</it> and accept that you are not (yet) part of the few elite programmers with enough skill to take advantage of the 42 fork join.
+As you can see, it is trivial to adapt that code to explore other kinds of collections, like for example a binary tree.
+Or, in other words, if you are unsure on how to adapt that code to work on a tree, you should stick with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Eager]]></span><it style="font-style: bold; color:green;">&#187;</it> and accept that you are not (yet) one of the few elite programmers with enough skill to take advantage of the 42 fork join.
 
-AdamsTowel could use metaprogramming features to define code parallelizing user defined operations on lists, maps and other common datastructures. However, we think this is beyond the responsibility of AdamsTowel, and should instead be handled by some user defined library.
+AdamsTowel could use metaprogramming features to define code that parallelises user defined operations on lists, maps and other common datastructures. However, we think this is beyond the responsibility of AdamsTowel, and should instead be handled by some user defined library.
 
 </p><h2> This-Mutable computation </h2> <p>
 In this pattern, the 'this' variable is considered specially.
@@ -2817,6 +2835,132 @@ Most methods have a general version that works with an index, and specialized <i
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[for]]></span><it style="font-style: bold; color:green;">&#187;</it> is very useful and flexible. It is common to find methods composed from just a large
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[for]]></span><it style="font-style: bold; color:green;">&#187;</it> statement plus a little pre and post processing around it.
 </li></ul>
+
+</p><h2> Digressions / Expansions </h2> <p>
+Collections supports iteration with the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[for]]></span><it style="font-style: bold; color:green;">&#187;</it> syntax.
+Iteration in 42 is significativelly more flexible than in most other languages, and it is delegated on method calls.
+Iteration in 42 is designed to support two main iteration strategy:
+explicit indexes and iterator objects.
+For example, if 42 had an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[while-else]]></span><it style="font-style: bold; color:green;">&#187;</it> statement like Python, the code
+
+<pre class="l42Big"><![CDATA[
+for read a in as, var b in bs ( b:=b.foo(a) )
+]]></pre>
+would expand to
+<pre class="l42Big"><![CDATA[
+aIt = as.#iterator()
+bIt = bs.#varIterator()
+var ai = as.#startIndex()
+var bi = bs.#startIndex()
+while aIt.#hasElem(ai).isZero() (
+  var a=aIt.#elem#read(ai)
+  var b = bIt.#elem#default(bi)
+  b := bIt.#update#default(bi,val=b.foo(a))
+  ai := ai.#succ()
+  bi := bi.#succ()
+  ) 
+else (//only executed when exiting the while without a break
+  aIt.#close(ai)
+  bIt.#close(bi)
+  )
+]]></pre>
+Since <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a]]></span><it style="font-style: bold; color:green;">&#187;</it> is declared <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#elem#read]]></span><it style="font-style: bold; color:green;">&#187;</it> is used instead of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#elem#default]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Since <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[b]]></span><it style="font-style: bold; color:green;">&#187;</it> is declared <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it> <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[.#varIterator]]></span><it style="font-style: bold; color:green;">&#187;</it> is used instead of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[.#iterator]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+
+Since 42 do not have such a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[while-else]]></span><it style="font-style: bold; color:green;">&#187;</it> construct, the expansion is less intuitive, as below:
+
+<pre class="l42Big"><![CDATA[
+aIt = as.#iterator()
+bIt = bs.#varIterator()
+var ai = as.#startIndex()
+var bi = bs.#startIndex()
+( loop if aIt.#hasElem(ai).isZero() (
+    var a=aIt.#elem#read(ai)
+    var b = bIt.#elem#default(bi)
+    b := bIt.#update#default(bi,val=b.foo(a))
+    ai := ai.#succ()
+    bi := bi.#succ()
+    ) 
+  else ( 
+    aIt.#close(ai)
+    bIt.#close(bi)
+    exception void
+    )
+  catch Void _ void
+  error void
+  )
+]]></pre>
+
+
+</p><h2> Iteration methods in detail </h2> <p>
+
+<ul>
+<li>
+</li><li>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#iterator]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#varIterator]]></span><it style="font-style: bold; color:green;">&#187;</it>
+<br/>
+They return an object able to provide the elements of the list. The varIterator variant
+may also be able to provide the mutable version of those elements, and to update those elements in the list.
+The varIterator variant if used if the local binding is explicitly declared either <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>,<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[lent]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+For complex bindings, like <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[(key, mut val)=e]]></span><it style="font-style: bold; color:green;">&#187;</it>, the varIterator variant is used if any binding component would require it.
+</li><li>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#startIndex]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#succ]]></span><it style="font-style: bold; color:green;">&#187;</it>
+<br/>
+The initial iteration hint is produced by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#startIndex]]></span><it style="font-style: bold; color:green;">&#187;</it> and moved forward by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#succ]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+</li><li>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#hasElem]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[min]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[isZero]]></span><it style="font-style: bold; color:green;">&#187;</it>
+<br/>
+The iterator checks if it has more elements to provide by calling <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#hasElem]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Since iterations in 42 can work on multiple collections at the same time,
+there are three logical results for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#hasElem]]></span><it style="font-style: bold; color:green;">&#187;</it>:
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mustStop]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mustContinue]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[canContinue]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+In most iterators implementations we expect <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mustStop]]></span><it style="font-style: bold; color:green;">&#187;</it> to be a negative number,
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mustContinue]]></span><it style="font-style: bold; color:green;">&#187;</it> to be zero, and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[canContinue]]></span><it style="font-style: bold; color:green;">&#187;</it> to be a positive number.
+The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[canContinue]]></span><it style="font-style: bold; color:green;">&#187;</it> result is very useful to iterate on infinite collections, or on collections that can provide a default value when the index is out of the range.
+However, special kinds of collections may want to return different daya types instead of numbers, to coordinate termination in some other way.
+</li><li>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#close]]></span><it style="font-style: bold; color:green;">&#187;</it>
+<br/>
+When the iteration terminates, all the iterators have a chance to clean up some internal data, or to throw an error/exception if they want to notify an unexpected abrupt termination of the iteration.
+</li><li>
+</li></ul>
+
+</p><h2> Possible implementations of Iteration methods </h2> <p>
+
+The iterator methods allows for a range of possible options.
+The simplest one, and possibly the most efficient, is to delegate everything to the collection object:
+in this case, there is no need to create a new object to serve as an iterator, since
+the collection itself is able to simply access/update its elements by index, thus 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#iterator]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#varIterator]]></span><it style="font-style: bold; color:green;">&#187;</it> may simply return <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#startIndex]]></span><it style="font-style: bold; color:green;">&#187;</it> returns the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[0I]]></span><it style="font-style: bold; color:green;">&#187;</it>
+and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#hasElem]]></span><it style="font-style: bold; color:green;">&#187;</it> returns <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[0I]]></span><it style="font-style: bold; color:green;">&#187;</it> if <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[that<this.size()]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[I"-1"]]></span><it style="font-style: bold; color:green;">&#187;</it> otherwise.
+Finally, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#close]]></span><it style="font-style: bold; color:green;">&#187;</it> will throw error if <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#hasElem]]></span><it style="font-style: bold; color:green;">&#187;</it> would return <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[0I]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+</p><p>
+Another option would be the one of a linked list, where it would be unefficient to
+rely on the index to access the elements.
+In this case,
+the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#iterator]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#varIterator]]></span><it style="font-style: bold; color:green;">&#187;</it> may simply return a singleton object
+delegating the behaviour to the index object.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#startIndex]]></span><it style="font-style: bold; color:green;">&#187;</it> can simply expose the first internal
+node, and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#succ]]></span><it style="font-style: bold; color:green;">&#187;</it> can produce the next node.
+The singleton object may be able to see private methods of those
+internal nodes, thus even if we expose the internal nodes, they will be 
+just unusable black boxes to the library user, and all the interations can be mediated, and checked by the singleton iterator object.
+</p><p>
+Iterators in Java and other languages will throw an error if the collection is somehow modified during the iteration. This could be supported by providing a specialized sublist object that can remember its version; but it is unclear if this is a good idea in 42, where most collections would be iterated while they are immutable.
+The few cases of iteration on mutable collections
+may be the ones where there are good reasons to perform mutation during iteration.
+While adding elements at the start of a collection under iteration is most likely a bug, other operations have very reasonable use cases.
+For example, 
+appending elements at the end of a list while computing a fixpoint, removing tasks from the end of a list if they are now unneded,
+or replacing already visited elements with new ones.
+
+
+</p><h2> More methods to facilitate iterations </h2> <p>
+Most collections will support <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[vals]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#vals]]></span><it style="font-style: bold; color:green;">&#187;</it> returning the collection iself;
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[vals(that,to)]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#vals(that,to)]]></span><it style="font-style: bold; color:green;">&#187;</it> returning a sublist view of the collection;
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[cut]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#cut]]></span><it style="font-style: bold; color:green;">&#187;</it> returning a sublist view of the collection that does not insist on exploring all the element;
+and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[default]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#default]]></span><it style="font-style: bold; color:green;">&#187;</it> returning a sublist view of the collection returning a default value instead of throwing an error if the index would be out of range.
  </p><p id="InputOutput"> </p><div style="break-after:page"></div><h1> Input Output with Object Capabilities </h1> <p>
 </p><h2> (1/5) Controlling non determinism </h2> <p>
 Traditionally, in imperative languages I/O and side effects can happen everywhere, while

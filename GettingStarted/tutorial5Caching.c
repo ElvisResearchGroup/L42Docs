@@ -87,6 +87,11 @@ ComputeFibo(42\)() == 267914296Num
 CCode
 As you can see, instead of a method with parameters we can declare a class with fields and an empty named method doing the actual computation.
 Wcode(Cache.Lazy) is an annotation recognized by Wcode(Data) that works only on Wcode(imm) or Wcode(class) methods with no arguments and with an Wcode(imm) result.
+
+That is, 42 does not directly recognize the annotation Wcode(Cache.Lazy).
+Decorating the surrounding library with Wcode(Data) translates Wcode(Cache.Lazy) into
+an actual implementation.
+
 Wcode(ComputeFibo fibo1) is a WEmph(computation object): an imm object whose only goal is to support one (or more) computationally intense methods.
 Thanks to normalization, the cache of computation objects is centrally stored, and thus recursive calls computing fibonacci will be able to reuse the cache from other objects.
 That is, the method result is cached on the normalized version of the receiver. In this way, 

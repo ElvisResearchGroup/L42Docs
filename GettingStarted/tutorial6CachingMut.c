@@ -481,16 +481,22 @@ parallel = executed in a parallel worker starting after the factory.
 </ul>
 
 WTitle(Digressions / Expansions)
-As have seen, we can see parallel programming as a form of caching.
+As have seen, parallel programming can be viewed as a form of caching.
 In some cases, we need parallel programming on mutable data.
-In our experience, this is not very common, the cost of copying data around is much smaller that what most programmers assume.
+In our experience, this is not very common; the cost of copying data around is much smaller that most programmers assume.
 Let us repeat this very clearly: there are many other ways to optimize software, and they are much easier and much, much more rewarding than avoiding coping the few mutable parts of your data structure a couple of times.
-We think that only highly skilled and motivated programmers can discover and hunt down all of those other much more pressing performance issues before approaching the performance limits of Wcode(Cache.Eager).
 
-However, if you are in such a situation
+We think that only highly skilled and motivated programmers 
+can discover and hunt down all of those other much more pressing algorithmic issues that
+often spoil performance.
+Only after approaching the performance limits of Wcode(Cache.Eager) with good algorithms,
+it could make sense to adopt parallel programming on mutable data to avoid some
+extra clones.
+
+However, if you are in such a situation,
 you can use the annotation Wcode(@Cache.ForkJoin) as shown below.
 Again, the 42 type system will ensure that parallelism is not observable.
-
+WP
 OBCode
 Example = Data:{
   @Cache.ForkJoin class method capsule D foo(capsule A a,capsule B b, capsule C c) = (
@@ -501,21 +507,28 @@ Example = Data:{
     )
   }
 CCode
-Wcode(@Cache.ForkJoin) is also activated by Wcode(Data) and works only on methods whose body is just a round parenthesis block.
-The initialization expressions for Wcode(a0),Wcode(b0) and 
-Wcode(c0), are run in parallel, and the final expression is run only when all the initialization expressions are completed.
+Like other Wcode(@Cache.***) annotations, 
+Wcode(@Cache.ForkJoin) is translated by Wcode(Data) 
+into an actual implementation.
+
+Wcode(@Cache.ForkJoin) works only on methods whose body is exactly a round parenthesis block.
+The initialization expressions for Wcode(a0), Wcode(b0), and 
+Wcode(c0) are run in parallel, and the final expression is run only when 
+all of the initialization expressions are completed.
 The method itself can take any kind of parameters, and they can all be used in the final expression, but the initialization expressions need to fit one of the following three safe parallel patterns:
 
 WTitle(Non-Mutable computation)
 In this pattern, none of the initialization expressions can use Wcode(mut) or Wcode(lent) parameters.
 In this way nothing can be mutated while the forkjoin is open, thus parallelism is safe.
-This is more expressive than Wcode(Cache.Eager) since it allows to run parallel code on Wcode(read) references of mutable objects.
+This is more expressive than Wcode(Cache.Eager) since it allows us to run parallel code on Wcode(read) references of mutable objects.
 
 WTitle(Single-Mutable computation)
 In this pattern, a single initialization expression can use any kind of parameter, while the other ones can not 
 use Wcode(mut), Wcode(lent) or Wcode(read) parameters.
 This pattern allows the initialization expression that can use Wcode(mut) to recursively explore a complex mutable data structure and to command updates to immutable elements arbitrarily nested inside of it.
-Consider for example this code updating in parallel all the immutable strings of a mutable list of strings:
+Consider for example this code computing in parallel 
+new immutable string values for all of
+the entries in a mutable list:
 
 OBCode
 UpdateList=Public:Data:{
@@ -538,12 +551,12 @@ MainUpdate = (
   Debug(data)//["aa"; "bb"; "cc"; "dd"; "ee"]
   )
 CCode
-As you can see, we do not need to ever copy the whole list, we can update the elements in place one by one.
+As you can see, we do not need to ever copy the whole list. We can update the elements in place one by one.
 If the operation Wcode(`map(that)') is complex enough, running it in parallel could be beneficial.
-As you can see, it is trivial to adapt that code to explore other kind of data structures, like for example a binary tree.
-Or, in other words, if you are unsure on how to adapt that code to work on a tree, you should stick on Wcode(Cache.Eager) and accept that you are not (yet) part of the few elite programmers with enough skill to take advantage of the 42 fork join.
+As you can see, it is trivial to adapt that code to explore other kinds of collections, like for example a binary tree.
+Or, in other words, if you are unsure on how to adapt that code to work on a tree, you should stick with Wcode(Cache.Eager) and accept that you are not (yet) one of the few elite programmers with enough skill to take advantage of the 42 fork join.
 
-AdamsTowel could use metaprogramming features to define code parallelizing user defined operations on lists, maps and other common datastructures. However, we think this is beyond the responsibility of AdamsTowel, and should instead be handled by some user defined library.
+AdamsTowel could use metaprogramming features to define code that parallelises user defined operations on lists, maps and other common datastructures. However, we think this is beyond the responsibility of AdamsTowel, and should instead be handled by some user defined library.
 
 WTitle(This-Mutable computation)
 In this pattern, the 'this' variable is considered specially.
