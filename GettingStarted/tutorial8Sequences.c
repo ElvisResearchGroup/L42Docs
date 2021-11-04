@@ -147,7 +147,7 @@ foo.removeRight(val=b) //remove the rightmost b
 CCode
 
 
-WTitle((2/5) `Iterations on lists')
+WTitle((2/5) `Iterations on lists and views')
 
 We now show various pattens to iterate on lists.
 First some usual foreach:
