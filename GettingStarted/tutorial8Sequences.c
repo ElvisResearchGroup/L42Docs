@@ -54,7 +54,7 @@ X[
   Nums[a;b;b;c]--Nums[b;c] == Nums[a];
   ]
 CCode
-In addition of operators, immutable lists also supports a pletora of methods:
+In addition of operators, immutable lists also supports a plethora of methods:
 OBCode
 X[
   //replacement
@@ -171,37 +171,53 @@ In the example above, a dynamic error would be raised if
 Wcode(rs),
  Wcode(as) and
  Wcode(bs) have different length.
-This behaviour can be tuned in many way: 
-iterators can be parametrized with
-Wcode(cut()) , Wcode(vals(that,to)) and Wcode(cutVals(that,to)):
-Wcode(cut()) allows to skip extra elements, while Wcode(vals(that,to))
-allows iterate on a subsequence only.
-
-WBR
-Let see some examples: 
+We believe this is the right default behaviour.
+To allow, for example, Wcode(bs) to be longer then Wcode(as) and Wcode(rs),the programmer can 
+use some variants of Wcode(vals(that,to)); a method producing an iterator on a subsequence of the original sequence.
+The following variants are available: Wcode(vals(that,to)), Wcode(vals(that)), Wcode(vals(to)), Wcode(#vals(that,to)), Wcode(#vals(that)) and Wcode(#vals(to)).
+In concrete example below we use them control iteration:
 OBCode
-for x in xs.cut(), y in ys ( .. )
-//will iterate as long as xs, even if ys is longer.
-//will stop after xs.size() cycles, and fail if xs.size()>ys.size()
+for a in as, b in bs.vals(to=as.size()), var r in rs ( r:= r+a+b )
+//will give error if bs.size()<as.size() or as.size()!=rs.size()
 
-for x in xs.vals(5I to 10I), y in ys ( .. )
-//will iterate across xs elements from position 5 to 10, pairing them up with elements 0-5 of ys.
-//will stop after 5 cycles, and go in error is ys.size()!=5 or xs.size()<10
+for a in as.vals(1I), b in bs.vals(1I to=as.size()), var r in rs ( r:= r+a+b )
+//will skip the first element of as and bs. Will skip any extra element of bs.
+//will give error if as.size()!=rs.size()+1I
+CCode
 
-for x in xs.cut(), y in ys.cut() ( .. )
-//will iterate for as long as both xs and ys have elements.
-//similar to a functional zip
-
-rs = Nums[1\;2\;3\;]
-imm as =  Nums[10\;20\;30\;40\;50\;]
-imm bs =  Nums[100\;200\]
-for a in as.cut(), b in bs+300Num, var r in rs ( r:= r+a+b )
-//rs==Nums[111\;222\;333\;]
+The class Wcode(Collection.View) provides flexible iterators and sub-sequences.
+Consider the following code examples:
+OBCode
+NView = Collection.View(Num.List).cut()
+MainCut = {
+  xs= Num.List[..]
+  ys= Num.List[..]
+  for x in xs, y in NView(ys) ( .. )
+    //will iterate as long as xs, even if ys is longer.
+    //will stop after xs.size() cycles, and fail if xs.size()>ys.size()
+  for x in NView(xs), y in NView(ys) ( .. )
+    //will iterate for as long as both xs and ys have elements.
+    //similar to a functional zip
+  }
+NViewM = Collection.View(Num.List).more()
+MainMore = {
+  xs= Num.List[..]
+  ys= Num.List[..]
+  for x in xs, y in NViewM(ys, more=30Num) ( .. )
+    //will iterate as long as xs, even if ys is shorter.
+    //y = 30Num when the iteration get over ys.size()
+  for x in NViewM(xs, more=10Num), y in NViewM(ys, more=30Num) ( .. )
+    //will iterate for as long as either of xs and ys have elements, and values
+    //x = 10Num, y = 30Num are used when the collections exhausted their elements.
+  for x in NView(xs), y in NViewM(ys, more=30Num) ( .. )
+    //behaves as in the "x in xs" case: a 'cut' view will consume 'more' elements
+    //if they are available
+  }
 CCode
 
 WTitle(`The power of the \')
 
-There are varius methods taking advantage of the Wcode(\) syntactic sugar.
+There are various methods taking advantage of the Wcode(\) syntactic sugar.
 They provides an expressive power similar to what list comprehensions provides in python and streams in Java, but by just using simple control flow like for/if:
 
 OBCode
@@ -271,13 +287,13 @@ CCode
 
 As you can see, to insert a mutable point we need to use Wcode(mutVal) and to
 take the point out we have to add the Wcode(`#') to the method.
-When iterating on a list, if we expect a mixture of mut and imm values we must add Wcode(read)
+When iterating on a list, if we expect a mixture of Wcode(mut) and Wcode(imm) values we must add Wcode(read)
 to avoid a runtime error.
 If we expect all values to be Wcode(mut), we can write Wcode(mut) instead.
-When a mut collection is promoted to Wcode(imm), it still remembers what values were originally inserted as
+When a Wcode(mut) collection is promoted to Wcode(imm), it still remembers what values were originally inserted as
  Wcode(mut).
 To make it so that all values can be read as Wcode(imm), we can use the method
-Wcode(.immNorm()). In addtion of normalizing the collection, it also marks all values
+Wcode(.immNorm()). In addition of normalizing the collection, it also marks all values
 accessible as Wcode(imm), as shown in the code below:
 
 OBCode
@@ -295,16 +311,16 @@ Wcode(Collection) also support maps, sets, optional and enumerations.
 We will add more kinds of collections in the future.
 
 WTitle(`Optional')
-In 42 there is no concept of null, and all the values are always intentially initialized before
+In 42 there is no concept of null, and all the values are always intentionally initialized before
 they can be read.
 There are two main reasons programmers relies on nulls: optional values and circular/delayed initialization.
-Circuar initialization can be solved with a Wcode(fwd) types, an advanced typing feature that we do not discuss here.
+Circular initialization can be solved with a Wcode(fwd) types, an advanced typing feature that we do not discuss here.
 Optional values are a staple of functional programming and are logically equivalent to a collection of zero or one element, or, if you prefer, a box that may or may not contain an element of a certain type.
 Optionals values can be obtained with Wcode(Collection.optional(that)) as shown below.
 Optionals are also optimized so that they do not require the creation of any new objects at run time.
 
 OBCode
-Point = Data:{var Num x, var Num y}
+Point = Data:{ var Num x, var Num y }
 OPoint = Collection.optional(Point)
 Main = (
   imm p00=Point(x=0\ y=0\)//an imm Point in 00
@@ -333,11 +349,11 @@ CCode
 At this point in the tutorial, some readers will be confused that we can update the local variable binding 
 Wcode(p00Box:= OPoint()) even if it is immutable.
 Other readers instead will remember that immutability is a property of the reference and not of the binding/field: a local binding and fields declared Wcode(var) can be updated.
-The updated value need to respect the modifier of the fild/binding type: if it is Wcode(mut/imm) it needs to be updated with another Wcode(mut/imm); if it is Wcode(read) than it can be updated with either
+The updated value need to respect the modifier of the field/binding type: if it is Wcode(mut/imm) it needs to be updated with another Wcode(mut/imm); if it is Wcode(read) than it can be updated with either
 Wcode(mut), Wcode(imm) or Wcode(read).
 Oh, yes, another reader will realize ... and a Wcode(capsule) reference can be assigned to any of Wcode(mut), Wcode(imm), Wcode(lent) or Wcode(read).
 
-Note how both local bindings are updated using the same exact expression :
+Note how both local bindings are updated using the same exact expression:
 Wcode(p00Box:= OPoint()    p01Box:= OPoint())
 In 42 Wcode(OPoint()) can be either Wcode(mut) or Wcode(imm) (or Wcode(capsule) indeed)
 On the other side, consider 
@@ -347,7 +363,7 @@ while the second one is mutable since Wcode(p01) is Wcode(mut).
 
 WTitle(`Map')
 Thanks to normalization 42 can have very fast and most reliable hash sets and hash maps.
-The values of sets and the keys of maps must be immutable, and are normalized just before being intserted in the collection.
+The values of sets and the keys of maps must be immutable, and are normalized just before being inserted in the collection.
 Then, the value of the normalized pointer is used to check for equality and hashcode.
 This have various positive effects:
 
@@ -390,15 +406,15 @@ Main = (
   optPoint.#val().x(50\)//update the field of the objectv inside the map
   CCode
 
-As you can see, when objects are retrived from the map, we obtain an optional value; this is because statically we can not know if a key is mapped to a value or not.
+As you can see, when objects are retried from the map, we obtain an optional value; this is because statically we can not know if a key is mapped to a value or not.
 WBR
 In addition to conventional Wcode(size()) and Wcode(isEmpty()),
 maps offers the following methods:
 <ul><li>
 To extract a value using the key:
 Wcode(val(key)), Wcode(#val(key)) and Wcode(readVal(key)); to extract an optional
-Wcode(imm), Wcode(mut) or a Wcode(read) reference, respectivelly.
-As for lists, it is always safe to extract a Wcode(read) reference. An empty optional will be produced when attempting to extract as Wcode(imm/mut) a value that was inserted as Wcode(mut/imm) instead, so to relayably ask if a key is contained in the map we should write Wcode(map.readVal(key=myKey).isPresent()).
+Wcode(imm), Wcode(mut) or a Wcode(read) reference, respectively.
+As for lists, it is always safe to extract a Wcode(read) reference. An empty optional will be produced when attempting to extract as Wcode(imm/mut) a value that was inserted as Wcode(mut/imm) instead, so to reliably ask if a key is contained in the map we should write Wcode(map.readVal(key=myKey).isPresent()).
 
 </li><li>
 Mutable maps can be modified by
@@ -407,11 +423,11 @@ Finally, an association can be removed using Wcode(remove(key)).
 </li><li>
 Wcode(Collection.map(that)) creates a class remembering the insertion order.
 This is needed to make the iteration deterministic.
-The keys can be retreived with their order using
+The keys can be retrieved with their order using
 Wcode(key(that)) passing the desired Wcode(I index), from zero to Wcode(\size-1I)
-The corresponding value can be retreived by methods Wcode(val(that)), Wcode(#val(that)) and Wcode(readVal(that)) 
+The corresponding value can be retrieved by methods Wcode(val(that)), Wcode(#val(that)) and Wcode(readVal(that)) 
 to extract a
-Wcode(imm), Wcode(mut) or a Wcode(read) (not optional) reference to the value, respectivelly.
+Wcode(imm), Wcode(mut) or a Wcode(read) (not optional) reference to the value, respectively.
 </li></ul>
      
 
@@ -447,7 +463,7 @@ Wcode(for) statement plus a little pre and post processing around it.
 
 WTitle(Digressions / Expansions)
 Collections supports iteration with the Wcode(for) syntax.
-Iteration in 42 is significativelly more flexible than in most other languages, and it is delegated on method calls.
+Iteration in 42 is way more flexible than in most other languages, and it is delegated on method calls.
 Iteration in 42 is designed to support two main iteration strategy:
 explicit indexes and iterator objects.
 For example, the code
@@ -461,7 +477,7 @@ aIt = as.#iterator()
 bIt = bs.##iterator()
 var ai = as.#startIndex()
 var bi = bs.#startIndex()
-while aIt.#hasElem(ai).#itAnd(bIt.#hasElem(bi)).#more() (
+while aIt.#hasElem(ai).#itAnd(bIt.#hasElem(bi)) (
   var a=aIt.#elem#read(ai)
   var b = bIt.#elem#default(bi)
   b := bIt.#update#default(bi,val=b.foo(a))
@@ -493,14 +509,14 @@ Wcode(#hasElem), Wcode(#itAnd) and Wcode(#more)
 WBR
 The iterator checks if it has more elements to provide by calling Wcode(#hasElem).
 Since iterations in 42 can work on multiple collections at the same time,
-Wcode(#hasElem) results can be combined with Wcode(#itAnd) and the final result is extracted with Wcode(#more).
+Wcode(#hasElem) results can be combined with Wcode(#itAnd).
 This design offers a lot of flexibility;
-special kinds of collections may return special daya types to coordinate termination in some way.
+special kinds of collections may return special data types to coordinate termination in some way.
 The AdamsTowel collections opt for an efficient solution where 
 there are four logical results for Wcode(#hasElem):
-Wcode(mustStop=2),Wcode(mustContinue=-2), Wcode(likeToContinue=1) and Wcode(canContinue=0).
-Then Wcode(I.#itAnd) compute the max in absolute value, throwing error in case 
-Wcode(mustStop) and Wcode(mustContinue) are compared. Then Wcode(#more) holds for negative numbers.
+Wcode(mustContinue), Wcode(mustStop), Wcode(canContinue) and Wcode(canStop).
+The iteration will stop if all the Wcode(#hasElem) return Wcode(mustStop) or Wcode(canStop),
+and an error is raised if some Wcode(#hasElem) returns Wcode(mustContinue) and some other returns Wcode(mustStop).
 
 With this design, the result of the single Wcode(#hasElem) method coordinates the various iterators to check if more elements are possibly available, and to decide how strongly to insist for those elements to be visited.
 </li></ul>
@@ -516,7 +532,7 @@ Wcode(#startIndex) returns the Wcode(0I)
 and Wcode(#hasElem) returns Wcode(0I) if Wcode(that<this.size()) and Wcode(I"-1") otherwise.
 Finally, Wcode(#close) will throw error if Wcode(#hasElem) would return Wcode(0I).
 WP
-Another option would be the one of a linked list, where it would be unefficient to
+Another option would be the one of a linked list, where it would be inefficient to
 rely on the index to access the elements.
 In this case,
 the Wcode(#iterator) and Wcode(#varIterator) may simply return a singleton object
@@ -525,19 +541,12 @@ Wcode(#startIndex) can simply expose the first internal
 node, and Wcode(#succ) can produce the next node.
 The singleton object may be able to see private methods of those
 internal nodes, thus even if we expose the internal nodes, they will be 
-just unusable black boxes to the library user, and all the interations can be mediated, and checked by the singleton iterator object.
+just unusable black boxes to the library user, and all the interactions can be mediated, and checked by the singleton iterator object.
 WP
 Iterators in Java and other languages will throw an error if the collection is somehow modified during the iteration. This could be supported by providing a specialized sublist object that can remember its version; but it is unclear if this is a good idea in 42, where most collections would be iterated while they are immutable.
 The few cases of iteration on mutable collections
 may be the ones where there are good reasons to perform mutation during iteration.
 While adding elements at the start of a collection under iteration is most likely a bug, other operations have very reasonable use cases.
 For example, 
-appending elements at the end of a list while computing a fixpoint, removing tasks from the end of a list if they are now unneded,
+appending elements at the end of a list while computing a fixpoint, removing tasks from the end of a list if they are now unneeded,
 or replacing already visited elements with new ones.
-
-
-WTitle(More methods to facilitate iterations)
-Most collections will support Wcode(vals) and Wcode(#vals) returning the collection iself;
-Wcode(vals(that,to)) and Wcode(#vals(that,to)) returning a sublist view of the collection;
-Wcode(cut), Wcode(#cut) returning a sublist view of the collection that does not insist on exploring all the element;
-and Wcode(default) and Wcode(#default) returning a sublist view of the collection returning a default value instead of throwing an error if the index would be out of range.
