@@ -23,64 +23,66 @@ WTitle((2/5) Example: File System)
 
 To read and write files we need to load a Wcode(FileSystem) library as shown below:
 OBCode
-FS = Load:{reuse [L42.is/FileSystem]}
+Fs = Load:{reuse [L42.is/FileSystem]}
 CCode
-Wcode(FS) is the local name for the library located at Wcode(L42.is/FileSystem).
-The Wcode(Load) decorator embeds the librady in the current environment.
+Wcode(Fs) is the local name for the library located at Wcode(L42.is/FileSystem).
+The Wcode(Load) decorator embeds the library in the current environment.
 We can now use our file system:
 OBCode
 Main1 = (
-  mut FS f = FS.Real.#$of()
-  S s=f.read(fileName=S"data.txt") //non determistic operation
+  mut Fs f = Fs.Real.#$of()
+  f.write(on=Url"data.txt",content=S"SomeContent0") //non determistic operation
+  S s=f.read(Url"data.txt") //non determistic operation
   //the result depends on the current file content
-  f.write(fileName=S"data.txt",content=S"SomeContent") //non determistic operation
+  f.write(on=Url"data.txt",content=S"SomeContent") //non determistic operation
   //the operation could go in error if there is not enough space to write the content on disk.
   Debug(s)
   )
-  }
 CCode
 The crucial point in the former code example is the call to 
-Wcode(FS.Real.#$of()).
+Wcode(Fs.Real.#$of()).
 This instantiates a capability object using the capability method Wcode(#$of()).
 
 We could write the code inside a method in the following way:
 OBCode
-ReadWrite = {class method
-  Void (mut FS f) = (
-    S s=f.read(fileName=S"data.txt")
-    f.write(fileName=S"data.txt",content=S"SomeContent")
-    Debug(s)
-    )
-  }
-Main1 = ReadWrite(f=FS.Real.#$of())
+ReadWrite = { class method Void (mut Fs f)[_] = (
+  S s=f.read(Url"data.txt")
+  f.write(on=Url"data.txt",content=S"SomeContent")
+  Debug(s)
+  ) }
+Main1 = ReadWrite(f=Fs.Real.#$of())
 CCode
-Note how we pass the capability object explicity to the method.
+Note how we pass the capability object explicitly to the method.
 This is the most common style, and have great testing advantages:
-Indeed, Wcode(FS) corresponds to the following interface:
+Indeed, Wcode(Fs) corresponds to the following interface:
 OBCode
 interface
-mut method Void makeDirs(S fileName)
-mut method Void delete(S fileName)
-mut method Void write(S fileName,S content)
-mut method S read(S fileName)
+mut method Void delete(Url that)[Fs.Fail]
+mut method Void makeDirs(Url that)[Fs.Fail]
+mut method S read(Url that)[Fs.Fail]
+mut method S readBase64(Url that)[Fs.Fail]
+mut method Void write(Url on, S content)[Fs.Fail]
+mut method Void write(Url on, S contentBase64)[Fs.Fail]
 CCode
-and Wcode(FS.Real) is simply an implementation of such interface connected with the real file system.
+and Wcode(Fs.Real) is simply an implementation of such interface connected with the real file system.
 Thus, we can write a simple mock to check that the function behaves as expected:
 OBCode
 Mock = Data:{[Fs]
   var S log=S""
-  method makeDirs(fileName) = error X""
-  method delete(fileName) = error X""
-  method write(fileName,content) = ( 
-    X[actual=fileName expected=S"data.txt";
-      actual=content  expected=S"SomeContent";]
-    this.log(\log++S"write")
-    )
-  method read(fileName) = (
-    X[actual=fileName expected=S"data.txt"]
+  method delete(that) = error X""
+  method makeDirs(that) = error X""
+  method read(that) = (
+    X[actual=that expected=Url"data.txt"]
     this.log(\log++S"read")
     S"oldContent"
     )
+  method readBase64(that) = error X""
+  method write(on,content) = ( 
+    X[actual=on expected=Url"data.txt";
+      actual=content expected=S"SomeContent";]
+    this.log(\log++S"write")
+    )
+  method write(on,contentBase64) = error X""
   }
 Test1= (
   m=Mock()

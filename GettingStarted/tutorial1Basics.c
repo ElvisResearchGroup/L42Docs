@@ -9,7 +9,9 @@ The language 42 and many 42 metaphors are inspired by
  The Hitchhiker's Guide to the Galaxy by Douglas Adams.
 
 
-WTitle(`Dowloading and running')
+</p><h2 id="Download"> Downloading and running </h2> <p>
+WComm WTitle(`Downloading and running')
+
 Currently, you can download and run 42 as a 
 Java program.
 <ul>

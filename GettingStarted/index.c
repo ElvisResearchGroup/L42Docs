@@ -10,7 +10,7 @@ WComm Pure OO
 WComm </Button>
 
 <Button class= 'button' type= 'button' onclick=
- "location.href = 'tutorial.xhtml';">
+ "location.href = 'tutorial.xhtml#Download';">
 Download
 </Button>
 
@@ -218,7 +218,8 @@ All those statements looks unbelievable given current programming wisdom.
 In the Wlink(tutorial,guide), we explain the language, and we explain those statements and how they work.
 </li><li>
 You can also 
-Wlink(tutorial,dowload 42) and try it yourself.
+<a href="tutorial.xhtml#Download">download 42</a>
+and try it yourself.
 </li><li>
 You can also engage with the open source GitHub <a href="https://github.com/ElvisResearchGroup/L42">repository</a>.
 </li>
