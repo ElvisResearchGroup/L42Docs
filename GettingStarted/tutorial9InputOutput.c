@@ -98,38 +98,43 @@ For example, the user could embed some security and on some restrictions in an a
 Consider the following code:
 
 OBCode
-OnlyTxt = Data:{[Fs]
-  capsule Fs inner
-  class method
-  Void checkTxt(S that)= X.Checked[
-    that.endsWith(S".txt")
+OnlyTxt = Public:{[Fs]
+  mut Fs inner
+  
+  read method Void checkTxt(Url that) = X.Guarded[
+    that.toS().endsWith(S".txt")
     ]
-  method makeDirs(fileName) = error X""
-  @Cache.Clear class method Void delete(mut Fs inner, S fileName) = (
-    this.checkTxt(fileName)
-    inner.delete(fileName)
+  method makeDirs(that) = error X""
+  method write(on,contentBase64) = error X""
+  method readBase64(that) = error X""
+  method delete(that) = (
+    this.checkTxt(that)
+    this.#inner().delete(that)
     )
-  @Cache.Clear class method Void write(mut Fs inner, S fileName, S content) = ( 
-    this.checkTxt(fileName)
-    inner.write(fileName=fileName, content=content)
+  method write(on,content) = ( 
+    this.checkTxt(on)
+    this.#inner().write(on=on, content=content)
     )
-  @Cache.Clear class method Void read(mut Fs inner, S fileName) = ( 
-    this.checkTxt(fileName)
-    inner.read(fileName=fileName)
+  method read(that) = ( 
+    this.checkTxt(that)
+    this.#inner().read(that)
     )
-  class method          //example user declared #$ method, that can
-  mut This #$of() =     //use $# methods inside its body
-    This(inner=Fs.Real.#$of())
+  @Public class method mut This #$of() = //example user declared #$ method, that can
+    This(inner=Fs.Real.#$of())   //use $# methods inside its body
+  @Public class method mut This(mut Fs inner)
   }
 SaferMain = (
   fs = OnlyTxt.#$of()
   ReadWrite(f=fs)
+  Debug(S"done")
   )
 CCode
 Any code that would take in input a Wcode(mut OnlyTxt) would have a limited access to the file system; only able to read and write onWcode(`*.txt') files.
-Note that the field Wcode(inner) is not private but it is well encapsulated, thus a user of 
-a Wcode(mut OnlyTxt) could only extract the Wcode(read) version of Wcode(inner).
-We will see later how to set some members private, but in this case just encapsulation is sufficient.
+Here we see for the first time the decorator Wcode(Public).
+Wcode(Public) explores all the nested classes of the decorated code, and if there is at least a Wcode(@Public) annotation, all the other members of such nested class will become private.
+Methods implemented from interfaces are left untouched.
+In the example above, Wcode(Public) leaves the two factory methods visible and hides the field getter and exposer.
+We discuss Wcode(Public) more in the detail later.
 WBR
 Instances of Wcode(mut OnlyTxt) are capability objects; note how Wcode(OnlyTxt) can even declare a Wcode(#$of) method. In this way for the user there is no syntactical difference between using Wcode(Fs.Real) or using Wcode(OnlyTxt).
 Capability objects are a useful abstraction and can be designed and implemented by normal 42 programs; they are not just a way for the language implementation to expose native code.

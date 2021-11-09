@@ -2967,64 +2967,66 @@ or by using a <it style="font-style: italic;">capability method</it>: a method w
 
 To read and write files we need to load a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FileSystem]]></span><it style="font-style: bold; color:green;">&#187;</it> library as shown below:
 <pre class="l42Big"><![CDATA[
-FS = Load:{reuse [L42.is/FileSystem]}
+Fs = Load:{reuse [L42.is/FileSystem]}
 ]]></pre>
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FS]]></span><it style="font-style: bold; color:green;">&#187;</it> is the local name for the library located at <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[L42.is/FileSystem]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Load]]></span><it style="font-style: bold; color:green;">&#187;</it> decorator embeds the librady in the current environment.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Fs]]></span><it style="font-style: bold; color:green;">&#187;</it> is the local name for the library located at <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[L42.is/FileSystem]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Load]]></span><it style="font-style: bold; color:green;">&#187;</it> decorator embeds the library in the current environment.
 We can now use our file system:
 <pre class="l42Big"><![CDATA[
 Main1 = (
-  mut FS f = FS.Real.#$of()
-  S s=f.read(fileName=S"data.txt") //non determistic operation
+  mut Fs f = Fs.Real.#$of()
+  f.write(on=Url"data.txt",content=S"SomeContent0") //non determistic operation
+  S s=f.read(Url"data.txt") //non determistic operation
   //the result depends on the current file content
-  f.write(fileName=S"data.txt",content=S"SomeContent") //non determistic operation
+  f.write(on=Url"data.txt",content=S"SomeContent") //non determistic operation
   //the operation could go in error if there is not enough space to write the content on disk.
   Debug(s)
   )
-  }
 ]]></pre>
 The crucial point in the former code example is the call to 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FS.Real.#$of()]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Fs.Real.#$of()]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 This instantiates a capability object using the capability method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#$of()]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 
 We could write the code inside a method in the following way:
 <pre class="l42Big"><![CDATA[
-ReadWrite = {class method
-  Void (mut FS f) = (
-    S s=f.read(fileName=S"data.txt")
-    f.write(fileName=S"data.txt",content=S"SomeContent")
-    Debug(s)
-    )
-  }
-Main1 = ReadWrite(f=FS.Real.#$of())
+ReadWrite = { class method Void (mut Fs f)[_] = (
+  S s=f.read(Url"data.txt")
+  f.write(on=Url"data.txt",content=S"SomeContent")
+  Debug(s)
+  ) }
+Main1 = ReadWrite(f=Fs.Real.#$of())
 ]]></pre>
-Note how we pass the capability object explicity to the method.
+Note how we pass the capability object explicitly to the method.
 This is the most common style, and have great testing advantages:
-Indeed, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FS]]></span><it style="font-style: bold; color:green;">&#187;</it> corresponds to the following interface:
+Indeed, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Fs]]></span><it style="font-style: bold; color:green;">&#187;</it> corresponds to the following interface:
 <pre class="l42Big"><![CDATA[
 interface
-mut method Void makeDirs(S fileName)
-mut method Void delete(S fileName)
-mut method Void write(S fileName,S content)
-mut method S read(S fileName)
+mut method Void delete(Url that)[Fs.Fail]
+mut method Void makeDirs(Url that)[Fs.Fail]
+mut method S read(Url that)[Fs.Fail]
+mut method S readBase64(Url that)[Fs.Fail]
+mut method Void write(Url on, S content)[Fs.Fail]
+mut method Void write(Url on, S contentBase64)[Fs.Fail]
 ]]></pre>
-and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FS.Real]]></span><it style="font-style: bold; color:green;">&#187;</it> is simply an implementation of such interface connected with the real file system.
+and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Fs.Real]]></span><it style="font-style: bold; color:green;">&#187;</it> is simply an implementation of such interface connected with the real file system.
 Thus, we can write a simple mock to check that the function behaves as expected:
 <pre class="l42Big"><![CDATA[
 Mock = Data:{[Fs]
   var S log=S""
-  method makeDirs(fileName) = error X""
-  method delete(fileName) = error X""
-  method write(fileName,content) = ( 
-    X[actual=fileName expected=S"data.txt";
-      actual=content  expected=S"SomeContent";]
-    this.log(\log++S"write")
-    )
-  method read(fileName) = (
-    X[actual=fileName expected=S"data.txt"]
+  method delete(that) = error X""
+  method makeDirs(that) = error X""
+  method read(that) = (
+    X[actual=that expected=Url"data.txt"]
     this.log(\log++S"read")
     S"oldContent"
     )
+  method readBase64(that) = error X""
+  method write(on,content) = ( 
+    X[actual=on expected=Url"data.txt";
+      actual=content expected=S"SomeContent";]
+    this.log(\log++S"write")
+    )
+  method write(on,contentBase64) = error X""
   }
 Test1= (
   m=Mock()
@@ -3040,38 +3042,43 @@ For example, the user could embed some security and on some restrictions in an a
 Consider the following code:
 
 <pre class="l42Big"><![CDATA[
-OnlyTxt = Data:{[Fs]
-  capsule Fs inner
-  class method
-  Void checkTxt(S that)= X.Checked[
-    that.endsWith(S".txt")
+OnlyTxt = Public:{[Fs]
+  mut Fs inner
+  
+  read method Void checkTxt(Url that) = X.Guarded[
+    that.toS().endsWith(S".txt")
     ]
-  method makeDirs(fileName) = error X""
-  @Cache.Clear class method Void delete(mut Fs inner, S fileName) = (
-    this.checkTxt(fileName)
-    inner.delete(fileName)
+  method makeDirs(that) = error X""
+  method write(on,contentBase64) = error X""
+  method readBase64(that) = error X""
+  method delete(that) = (
+    this.checkTxt(that)
+    this.#inner().delete(that)
     )
-  @Cache.Clear class method Void write(mut Fs inner, S fileName, S content) = ( 
-    this.checkTxt(fileName)
-    inner.write(fileName=fileName, content=content)
+  method write(on,content) = ( 
+    this.checkTxt(on)
+    this.#inner().write(on=on, content=content)
     )
-  @Cache.Clear class method Void read(mut Fs inner, S fileName) = ( 
-    this.checkTxt(fileName)
-    inner.read(fileName=fileName)
+  method read(that) = ( 
+    this.checkTxt(that)
+    this.#inner().read(that)
     )
-  class method          //example user declared #$ method, that can
-  mut This #$of() =     //use $# methods inside its body
-    This(inner=Fs.Real.#$of())
+  @Public class method mut This #$of() = //example user declared #$ method, that can
+    This(inner=Fs.Real.#$of())   //use $# methods inside its body
+  @Public class method mut This(mut Fs inner)
   }
 SaferMain = (
   fs = OnlyTxt.#$of()
   ReadWrite(f=fs)
+  Debug(S"done")
   )
 ]]></pre>
 Any code that would take in input a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut OnlyTxt]]></span><it style="font-style: bold; color:green;">&#187;</it> would have a limited access to the file system; only able to read and write onWcode(*.txt) files.
-Note that the field <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[inner]]></span><it style="font-style: bold; color:green;">&#187;</it> is not private but it is well encapsulated, thus a user of 
-a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut OnlyTxt]]></span><it style="font-style: bold; color:green;">&#187;</it> could only extract the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> version of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[inner]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-We will see later how to set some members private, but in this case just encapsulation is sufficient.
+Here we see for the first time the decorator <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it> explores all the nested classes of the decorated code, and if there is at least a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Public]]></span><it style="font-style: bold; color:green;">&#187;</it> annotation, all the other members of such nested class will become private.
+Methods implemented from interfaces are left untouched.
+In the example above, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it> leaves the two factory methods visible and hides the field getter and exposer.
+We discuss <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it> more in the detail later.
 <br/>
 Instances of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut OnlyTxt]]></span><it style="font-style: bold; color:green;">&#187;</it> are capability objects; note how <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[OnlyTxt]]></span><it style="font-style: bold; color:green;">&#187;</it> can even declare a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#$of]]></span><it style="font-style: bold; color:green;">&#187;</it> method. In this way for the user there is no syntactical difference between using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Fs.Real]]></span><it style="font-style: bold; color:green;">&#187;</it> or using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[OnlyTxt]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 Capability objects are a useful abstraction and can be designed and implemented by normal 42 programs; they are not just a way for the language implementation to expose native code.
