@@ -221,20 +221,24 @@ There are various methods taking advantage of the Wcode(\) syntactic sugar.
 They provides an expressive power similar to what list comprehensions provides in python and streams in Java, but by just using simple control flow like for/if:
 
 OBCode
-as =  Nums[1\;2\;3\;4\;]
+as =  Num.List[1\;2\;3\;4\;]
 //mapping
-bs0 = Nums[](for a in as \add(a*10Num))
-//bs0==Nums[10\;20\;30\;40\]
+bs0 = Num.List[](for a in as \add(a*10Num))
+//bs0==Num.List[10\;20\;30\;40\]
 //filtering
-bs1 = Nums[](for a in as if a>2Num \add(a))
-//bs1==Nums[3\;4\]
+bs1 = Num.List[](for a in as if a>2Num \add(a))
+//bs1==Num.List[3\;4\]
 //flatmapping
-bs2 = Nums[](for a in as for b in bs0 \add(a+b))
-//bs0==Nums[11\;21\;31\;41\;12\;22\;32\;42\;13\;23\;33\;43\;14\;24\;34\;44\;]
-//reduce
-tot0 = as.reduce()(for v in \vals \add(\acc+v)) //would go in error if as.isEmpty()
-tot1 = as.reduce(0\)(for v in \vals \add(\acc+v)) //ok also if as.isEmpty()
-//tot0 == tot1 == 10Num
+bs2 = Num.List[](for a in as for b in bs0 \add(a+b))
+//bs0==Num.List[11\;21\;31\;41\;12\;22\;32\;42\;13\;23\;33\;43\;14\;24\;34\;44\;]
+//reduce to string
+str0 = S"the content is: ".builder()(for a in as \add(a))
+//str0 = S"the content is: 1234"
+str1 = (if ns.isEmpty() S"[]" 
+    else S"[%ns.left()".builder()(for n in ns.vals(1I) \add(S", %n"))++S"]")
+//str1 = S"[1, 2, 3, 4]"
+acc  = (var x = 0Num for a in as ( x+=a ) x) //reduce/fold
+//acc == 10Num
 
 //checks a property; great in an if or an X[]
 ok0 = Match.Some()(for a in as \add(a>3Num))
