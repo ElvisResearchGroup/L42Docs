@@ -62,7 +62,7 @@ We can use Wcode(Animal) by writing, for example:
 OBCode
 mut Animal dog1 = Animal(location=\(x=0\, y=0\))
 dog2 = Animal(location=\(x=0\, y=0\)) //type 'mut Animal' inferred for dog2
-dog1.run()
+dog2.run()
 CCode
 
 WTitle(`(2/5)Interaction between mutable and immutable')
@@ -114,11 +114,11 @@ In general, methods starting with `#' should be used with care.
 WP
 This code models an animal following a path. It can be used like this:
 OBCode
-zero= Point(x=0\, y=0\)
-ps1= Points[ \(x=12\, y=20\);\(x=1\, y=2\)]
-ps2= Points[ zero;\(x=1\, y=2\)]
-dog1= Animal(location=zero, path=ps1)
-dog2= Animal(location=zero, path=ps2)
+zero = Point(x=0\, y=0\)
+ps1  = Points[\(x=12\, y=20\); \(x=1\, y=2\)]
+ps2  = Points[zero; \(x=1\, y=2\)]
+dog1 = Animal(location=zero, path=ps1)
+dog2 = Animal(location=zero, path=ps2)
 dog1.move()
 dog2.move()
 CCode
@@ -129,10 +129,10 @@ The second dog goes to 0: 0.
 This code involves a mutable animal with a mutable field. This is often
 a terrible idea, since its behaviour may depend on aliasing:  what happens if two dogs follow the same path?
 OBCode
-zero= Point(x=0\, y=0\)
-ps= Points[ \(x=12\, y=20\);\(x=1\, y=2\) ]
-dog1= Animal(location=zero, path=ps)
-dog2= Animal(location=zero, path=ps)
+zero = Point(x=0\, y=0\)
+ps   = Points[\(x=12\, y=20\); \(x=1\, y=2\) ]
+dog1 = Animal(location=zero, path=ps)
+dog2 = Animal(location=zero, path=ps)
 dog1.move()
 dog2.move()
 CCode
@@ -189,11 +189,11 @@ breaking local reasoning about Animals.
 
 With Wcode(capsule Points path), we are forced to initialize two animals using different paths:
 OBCode
-zero= Point(x: 0Num, y: 0Num)
-capsule Points ps= Points[\(x=12\, y=20\);\(x=1\, y= 2\)]
-dog1= Animal(location=zero, path=ps)
+zero = Point(x: 0Num, y: 0Num)
+capsule Points ps = Points[\(x=12\, y=20\);\(x=1\, y= 2\)]
+dog1 = Animal(location=zero, path=ps)
 //dog2= Animal(location=zero, path=ps) Does not compile
-dog2= Animal(location=zero, path=\[ \(x=12\, y=20\);\(x= 1\, y=2\)])
+dog2 = Animal(location=zero, path=\[\(x=12\, y=20\); \(x= 1\, y=2\)])
 dog1.move()
 dog2.move()
 CCode
@@ -218,8 +218,8 @@ In most cases you can promote such reference to immutable/capsule; just make the
  The type system will take care of the rest.
 If a reference can not be safely promoted to immutable/capsule, you may have to clone some data or to refactor your code.
 OBCode
-mut Animal dog1= Animal(__) //no promotion here
-Animal dog2= Animal(__) //promotion mutable->immutable
+mut Animal dog1 = Animal(__) //no promotion here
+Animal dog2 = Animal(__) //promotion mutable->immutable
 dog1.move()
 //dog2.move()  //ill-typed, requires a mut Animal
 CCode

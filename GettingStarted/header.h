@@ -12,6 +12,14 @@ m4_include(`macro.h')m4_dnl
     <script src="js/utils.js"></script>
     <link rel="shortcut icon" href="css/favicon.ico"/>
     <title>42 - Metaprogramming as default</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script src="https://www.googletagmanager.com/gtag/js?id=G-M0E4M0XH2Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-M0E4M0XH2Z');
+    </script>
   </head>
   <body onload='doOnLoad();'>
     <div id="wrapper">
