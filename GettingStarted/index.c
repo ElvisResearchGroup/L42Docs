@@ -30,6 +30,17 @@ See the full Tutorial
 Git Repository
 </Button>
 
+<Button class= 'button' type= 'button' onclick=
+ "location.href = 'https://www.youtube.com/MarcoServetto';">
+42 Videos
+</Button>
+
+<Button class= 'button' type= 'button' onclick=
+ "location.href = 'https://ecs.wgtn.ac.nz/mailman/listinfo/team42';">
+Mailing List
+</Button>
+
+
 <Div><p>
 WTitle(Why 42)
 
