@@ -19,6 +19,14 @@
       gtag('js', new Date());
       gtag('config', 'G-M0E4M0XH2Z');
     </script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=UA-212820693-1">
+    </script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-212820693-1');
+    </script>
   </head>
   <body onload='doOnLoad();'>
     <div id="wrapper">
@@ -602,7 +610,7 @@ For example, we could add to <it style="font-style: bold; color:green;">&#171;</
 
 <pre class="l42Big"><![CDATA[
 read method
-Bool hasArrived()
+Bool hasArrived() =
   this.path().isEmpty()
 ]]></pre>
 This method can be called on both mutable and immutable animals: 
@@ -700,12 +708,11 @@ When in doubt of what numeric type to use, <it style="font-style: bold; color:gr
 is a good first guess.
 Some examples of usage: 
 <pre class="l42Big"><![CDATA[
-little= 123Num
-stillLittle= 4567890Num
-big= 100000000000000000Num
-bigger= 100000000000000000.0001Num
-fraction1= Num"1234567/890"
-fraction2 == little/stillLittle //holds
+little      = 123Num
+stillLittle = 4567890Num
+big         = 100000000000000000Num
+bigger      = 100000000000000000.0001Num
+fraction1   = Num"1234567/890"
 Debug(fraction1) //will print '1234567/890'
 Debug(Num"12/4") //will print '3'
 ]]></pre>
@@ -953,13 +960,13 @@ The following code show usages of <it style="font-style: bold; color:green;">&#1
  and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[X]]></span><it style="font-style: bold; color:green;">&#187;</it> (for postcondition checks in the middle and, in general, blaming the function implementation).
 
 <pre class="l42Big"><![CDATA[
-method Nat confirmAnswer(Nat answer) (
+method Num confirmAnswer(Num answer) (
   X.Pre[ //preconditions
     answer>0Num; //simplest form
     answer<10000Num msg=S"here with personalized message answer= %answer";
     actual=answer, expected=42Num //do a better error reporting
     ] //in a bunch of assertions, they are all going to be checked/reported together.
-  recomputedAnswer=6Num*7Num
+  recomputedAnswer = 6Num*7Num
   X[//postconditions/checks in the middle
     actual=recomputedAnswer
     expected=42Num
@@ -979,10 +986,10 @@ and checks that they are structurally equivalent.
 for example, instead of defining <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[opposite]]></span><it style="font-style: bold; color:green;">&#187;</it> inside of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Direction]]></span><it style="font-style: bold; color:green;">&#187;</it>, we could compute it externally as shown below:
 <pre class="l42Big"><![CDATA[
 Direction = Collection.Enum:{
-  North={} East={} South={} West={}
+  North = {}, East = {}, South = {}, West = {}
   }
 /*..*/
-Direction opposite={
+Direction opposite = {
   if d==Direction.North() return Direction.South()
   if d==Direction.South() return Direction.North()
   if d==Direction.East() return Direction.West()
@@ -5717,8 +5724,10 @@ However, library developers need to carefully consider the effect of embroidery.
       <div id="footerwrap">
         <div id="footer">
           <ul style='padding: 10px;'>
-            <li style='display:inline;'><a href="http://ecs.victoria.ac.nz/Main/MarcoServetto" >Contact Us</a> |</li>
-            <li style='display:inline;'><a href= "http://ecs.victoria.ac.nz/mailman/listinfo/team42">Mailing list</a> |</li>
+            <li style='display:inline;'>
+            <a href="mailto:marco.servetto@gmail.com" rel="me">Contact Us</a> |</li>
+            <li style='display:inline;'>
+            <a href= "http://ecs.victoria.ac.nz/mailman/listinfo/team42">Mailing list</a> |</li>
           </ul>
         </div>
       </div>

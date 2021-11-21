@@ -28,13 +28,13 @@ The following code show usages of Wcode(X.Pre) (for preconditions and, in genera
  and Wcode(X) (for postcondition checks in the middle and, in general, blaming the function implementation).
 
 OBCode
-method Nat confirmAnswer(Nat answer) (
+method Num confirmAnswer(Num answer) (
   X.Pre[ //preconditions
     answer>0Num; //simplest form
     answer<10000Num msg=S"here with personalized message answer= %answer";
     actual=answer, expected=42Num //do a better error reporting
     ] //in a bunch of assertions, they are all going to be checked/reported together.
-  recomputedAnswer=6Num*7Num
+  recomputedAnswer = 6Num*7Num
   X[//postconditions/checks in the middle
     actual=recomputedAnswer
     expected=42Num
@@ -54,10 +54,10 @@ Wcode(X) is often used as last case in a sequence of if-return;
 for example, instead of defining Wcode(opposite) inside of Wcode(Direction), we could compute it externally as shown below:
 OBCode
 Direction = Collection.Enum:{
-  North={} East={} South={} West={}
+  North = {}, East = {}, South = {}, West = {}
   }
 /*..*/
-Direction opposite={
+Direction opposite = {
   if d==Direction.North() return Direction.South()
   if d==Direction.South() return Direction.North()
   if d==Direction.East() return Direction.West()

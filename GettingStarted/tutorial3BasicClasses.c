@@ -7,12 +7,11 @@ When in doubt of what numeric type to use, Wcode(Num)
 is a good first guess.
 Some examples of usage: 
 OBCode
-little= 123Num
-stillLittle= 4567890Num
-big= 100000000000000000Num
-bigger= 100000000000000000.0001Num
-fraction1= Num"1234567/890"
-fraction2 == little/stillLittle //holds
+little      = 123Num
+stillLittle = 4567890Num
+big         = 100000000000000000Num
+bigger      = 100000000000000000.0001Num
+fraction1   = Num"1234567/890"
 Debug(fraction1) //will print '1234567/890'
 Debug(Num"12/4") //will print '3'
 CCode

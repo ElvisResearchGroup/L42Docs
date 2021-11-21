@@ -243,7 +243,7 @@ For example, we could add to Wcode(Animal)
 
 OBCode
 read method
-Bool hasArrived()
+Bool hasArrived() =
   this.path().isEmpty()
 CCode
 This method can be called on both mutable and immutable animals: 

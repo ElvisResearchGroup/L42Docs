@@ -20,6 +20,14 @@ m4_include(`macro.h')m4_dnl
       gtag('js', new Date());
       gtag('config', 'G-M0E4M0XH2Z');
     </script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=UA-212820693-1">
+    </script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-212820693-1');
+    </script>
   </head>
   <body onload='doOnLoad();'>
     <div id="wrapper">
