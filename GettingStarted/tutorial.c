@@ -1,4 +1,8 @@
 m4_include(`header.h')m4_dnl
+<!-- Event snippet for Page view conversion page -->
+<script>
+  gtag('event', 'conversion', {'send_to': 'AW-10810288706/U3KJCKekmIUDEMLU36Io'});
+</script>
 OFloatClass(index)
 <div class="rotate90"> Index of Content</div>
 ContinueFloat
