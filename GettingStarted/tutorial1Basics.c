@@ -23,6 +23,9 @@ Java program.
   For Linux download here <a href="L42PortableLinux.zip">L42PortableLinux.zip</a>
   WComm <a href="L42Linux.jar">L42Linux.jar</a>
 </li>
+<li>
+  For Mac download here <a href="L42PortableMac.zip">L42PortableMac.zip</a>
+</li>
   WComm <li>  The portable version contains also an appropriate JVM.</li>
   <li>  Run Wcode(L42)
     WComm  Wcode(java --enable-preview -jar L42.jar) 
