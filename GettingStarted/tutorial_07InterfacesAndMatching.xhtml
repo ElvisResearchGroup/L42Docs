@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+ <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" media="all"/>
+    <script src="js/ace.js"></script>
+    <script src="js/utils.js"></script>
+    <link rel="shortcut icon" href="css/favicon.ico"/>
+    <title>42 - Metaprogramming as default</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script src="https://www.googletagmanager.com/gtag/js?id=G-M0E4M0XH2Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-M0E4M0XH2Z');
+    </script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=UA-212820693-1">
+    </script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-212820693-1');
+    </script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=AW-10810288706"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-10810288706');
+    </script>
+<!-- Event snippet for Page view conversion page -->
+<script>
+gtag('event', 'conversion', {'send_to': 'AW-10810288706/U3KJCKekmIUDEMLU36Io'});
+</script>
+  </head>
+  <body onload='doOnLoad();'>
+    <div id="wrapper">
+      <div id="headerwrap">
+        <div id="header">
+          <img style='float:left;'
+            src='css/logoBlue.png' alt='42' width='120' height='120'/>
+          <h3 style='float:left;'>
+            <p style='font-size:150%; color:rgb(250,250,250);'>42 - The definitive answer to design, code and everything</p>
+            <p style='font-size:100%; color:rgb(250,250,250);'> --But you are not going to like it</p>
+          </h3>
+        </div>
+      </div>
+      <div id="contentwrap">
+        <div id="content">
+<p>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+<div class="rotate90"> Index of Content</div>
+</div><div class="inFloat">
+<ol>
+ <li><a href="tutorial_01Basics.xhtml"> Basic concepts </a></li>
+ <li><a href="tutorial_02ModifiersIntro.xhtml"> Introduction to modifiers </a></li>
+ <li><a href="tutorial_03BasicClasses.xhtml"> Basic Classes </a></li>
+ <li><a href="tutorial_04ErrorsAndExceptions.xhtml"> Errors and Exceptions </a></li>
+ <li><a href="tutorial_05Caching.xhtml"> Caching </a></li>
+ <li><a href="tutorial_06CachingMut.xhtml"> Caching on Mutable objects </a></li>
+ <li><a href="tutorial_07InterfacesAndMatching.xhtml"> Interfaces and Matching </a></li>
+ <li><a href="tutorial_08Sequences.xhtml"> Collections and Sequences </a></li>
+ <li><a href="tutorial_09InputOutput.xhtml"> Input Output </a></li>
+ <li><a href="tutorial_10Exercises.xhtml"> Exercises </a></li>
+ <li><a href="tutorial_11MetaprogrammingIntro.xhtml"> Metaprogramming Introduction </a></li>
+ <li><a href="tutorial_12Refactoring.xhtml"> Programmatic Refactoring </a></li> 
+ <li><a href="tutorial_13MoreDecorators.xhtml"> More Decorators </a></li>
+ <li><a href="tutorial_14ExampleOfProgram.xhtml"> Example of a 42 Program </a></li>
+ <li><a href="tutorial_15DeployCode.xhtml"> Deploy code </a></li>
+</ol>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+</div><div class="inFloat">
+&nbsp; &nbsp; &nbsp; <a href="tutorial_06CachingMut.xhtml"> Previous </a>...<a href="tutorial_08Sequences.xhtml"> Next </a>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+
+ </p><p id="InterfacesAndMatching"> </p><div style="break-after:page"></div><h1> Interfaces, subtypes and matching </h1> <p>
+
+</p><h2> (1/5)Interfaces, Basis and Details </h2> <p>
+</p><h2> Interfaces Basis </h2> <p>
+Interfaces in 42 are quite similar to interfaces in other OO languages.
+There are however a couple of important differences.
+
+</p><p>
+
+While implementing an interface method, you can avoid the
+type signature.
+For example, in the following code, to implement <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Shape.draw(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> inside
+of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Square]]></span><it style="font-style: bold; color:green;">&#187;</it>, the types <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Void]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Canvas]]></span><it style="font-style: bold; color:green;">&#187;</it> are not repeated.
+<pre class="l42Big"><![CDATA[
+Shape = {interface
+  method Void draw(mut Canvas that)
+  }
+Square = {[Shape]
+  method draw(that) = /*..*/
+  }
+]]></pre>
+
+In 42, we say that the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[draw(that)]]></span><it style="font-style: bold; color:green;">&#187;</it>
+<it style="font-style: italic;">implemented</it> in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Square]]></span><it style="font-style: bold; color:green;">&#187;</it>
+is <it style="font-style: italic;">declared</it> by
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Shape]]></span><it style="font-style: bold; color:green;">&#187;</it>. 
+Each method is <it style="font-style: italic;">declared</it> at a single point. 
+Method declarations include parameter and return types.
+A method can be 
+<it style="font-style: italic;">defined</it> (that is, declared and implemented)
+in the same class;
+or declared in a (transitively) implemented interface and
+then just implemented.
+This means that a class cannot 
+satisfy multiple interfaces declaring methods
+with the same method selector.
+For example, this code is ill-typed: 
+<pre class="l42Big"><![CDATA[
+Card = {interface
+  method Num draw() //the value of the drawn card
+  }
+Gun = {interface
+  method Num draw() //the time it takes to drawn the gun
+  }
+Wrong = {[Card,Gun] //not allowed
+  }
+]]></pre>
+
+
+Note that would be bad 42 code anyway; you should define an enumeration (or an alphanumeric)
+for your cards and use a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Second]]></span><it style="font-style: bold; color:green;">&#187;</it> unit of measure
+for the time,
+which would make the unavoidable type error more obvious.
+
+</p><p>
+
+Interface diamonds are allowed; that is, the following code is correct: 
+<pre class="l42Big"><![CDATA[
+Shape = {interface
+  method Void draw(mut Canvas that)
+  }
+Animal = {interface [Shape]
+  method Meter run()
+  }
+Noisy = {interface [Shape]
+  method Void play(mut Audio that)
+  }
+LoudCat = {[Animal, Noisy]
+  method draw(that) = /*..*/
+  method run() = /*..*/
+  method play(that) = /*..*/
+  }
+]]></pre>
+
+</p><p>
+
+You can refine the return type of an interface method, by repeating the full type signature with the desired return type.
+On the other hand, the parameter types cannot be refined.
+<pre class="l42Big"><![CDATA[
+Monster = {interface
+  method Monster spawnMinion()
+  }
+BigMonster = {[Monster]
+  method BigMonster spawnMinion() = /*..*/
+  }
+]]></pre>
+
+
+</p><h2> (2/5) Interfaces and class methods </h2> <p>
+
+Interface methods in 42 are all abstract; that is, without bodies.
+A version of the body will be provided by all classes implementing the interface.
+<span style="color:#ff1111; font-weight: bold;"> This also includes class methods. </span>
+<br/>
+For example, consider the following code: 
+<pre class="l42Big"><![CDATA[
+Shape = {interface
+  class method 
+  Num numberOfSides()
+  class method
+  This newShape(Color that)
+  method
+  Void draw(Canvas that)
+  }
+
+Square = {[Shape]
+  Color color
+  method numberOfSides() = //class method implemented
+    4Num
+  method newShape(that) //class method implemented
+    This(color=that)
+  method draw(that) = //immutable method implemented
+    /*..*/
+  }
+/*..*/
+class Shape kindOfShape= Square
+kindOfShape.numberOfSides()==4Num //holds
+Shape s= kindOfShape.newShape(Color.red())
+]]></pre>
+
+The pattern in the code above encodes the abstract factory 
+pattern in a much simpler way: 
+the binding <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[kindOfShape]]></span><it style="font-style: bold; color:green;">&#187;</it> serve the role of
+an instance of an abstract factory, and can create instances of
+a specific kind of shape.
+</p><p>
+
+In 42 interfaces do not have 
+implemented class methods.
+Sometimes we want to semantically associate some behaviour with an interface.
+For example we could check intersections between shapes using
+the draw method.
+What we would need, is a traditional (non dynamically dispatched) static method.
+In 42, static methods are just nested classes with a single class method with the empty name. In 42 adding new classes is very common, so do not be scared of adding a new class just to host a method.
+
+<br/>
+For example
+<pre class="l42Big"><![CDATA[
+Shape = {interface
+  /*..*/
+  Intersect = {class method
+    Bool (Shape left, Shape right) = 
+      /*..*/
+    }
+  }
+]]></pre>
+
+</p><h2> (3/5)Subtyping </h2> <p>
+Dynamic dispatch is the most important feature of object oriented languages.
+Subtyping is the main feature supporting dynamic dispach; for example 
+we can iterate over a list of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Shape]]></span><it style="font-style: bold; color:green;">&#187;</it>
+and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[draw]]></span><it style="font-style: bold; color:green;">&#187;</it> them without the need to explicitly handle in the code all the possible kinds of 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Shape]]></span><it style="font-style: bold; color:green;">&#187;</it> on a case by case basis.
+ 
+Note that modifiers (<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>,
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it>,
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it>,..)) offer subtyping but not dynamic dispatch.
+
+</p><p>
+Interfaces and classes represent two fundamentally alternative compromises between
+the providers and users of objects:
+<ul><li>
+Interfaces allows client code to be implicitly parametric on the behaviour of individual objects.
+The client code can make no assumption on the specific implementation of the interface.
+</li><li>
+Classes allows client code to rely on their invariants.
+The user code is forced to pass only a specific kind of implementation.
+</li></ul>
+
+</p><p>
+In simpler terms, if we have a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Shape s]]></span><it style="font-style: bold; color:green;">&#187;</it> interface,
+and we call <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[s.draw()]]></span><it style="font-style: bold; color:green;">&#187;</it>, we will get the right kind of drawing behaviour for that shape.
+On the other hand, we can not statically predict what kind of shape and behaviour we will execute.
+<br/>
+If instead we have a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Square s]]></span><it style="font-style: bold; color:green;">&#187;</it> class,
+then we can
+statically predict what kind of behaviour <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[s.draw()]]></span><it style="font-style: bold; color:green;">&#187;</it> will execute, and that the width and height of the drawn shape are going to be equal, as for the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Square]]></span><it style="font-style: bold; color:green;">&#187;</it> invariant.
+On the other hand, our <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Square]]></span><it style="font-style: bold; color:green;">&#187;</it> using code can only be used with squares, not any of the other kinds of shape.
+
+</p><h2> (4/5)Matching </h2> <p>
+
+It is possible to inspect the runtime type of an object by using matching.
+We will now provide various examples of matching and explain the behaviour.
+</p><p>
+<pre class="l42Big"><![CDATA[
+method Square example1(Shape s1, Shape s2) = {
+  if s1 <: Square ( return s1 )//s1 is of type Square in the if body
+  if Square y = s1.bar() ( return y ) //if bar returns a Square, we call it y
+  if s1<: Circle, s2<:Square ( return s2.with(side=s1.radius()) )
+  error X""
+  }
+]]></pre> 
+We can use an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[if]]></span><it style="font-style: bold; color:green;">&#187;</it> to check for the type of a local binding or an expression.
+We can also check for more then one local binding at a time.
+When an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[if]]></span><it style="font-style: bold; color:green;">&#187;</it> checks for types it cannot have an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[else]]></span><it style="font-style: bold; color:green;">&#187;</it> branch.
+This <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[if-return]]></span><it style="font-style: bold; color:green;">&#187;</it> pattern allows us to write complex dispatch in a compact way, without the need of an explicit <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[else]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+
+</p><p>
+The syntax <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[<:]]></span><it style="font-style: bold; color:green;">&#187;</it> can also be used in expressions when the type system needs help with figuring out
+the type, usually because some information will be generated by a decorator at a later stage. Sometimes we may have to write code like the following
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[(a.bla()<:mut Foo).baz()]]></span><it style="font-style: bold; color:green;">&#187;</it>:
+the method 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[baz()]]></span><it style="font-style: bold; color:green;">&#187;</it> is called on the result of 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.bla()]]></span><it style="font-style: bold; color:green;">&#187;</it>, that we expect to return a
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Foo]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+While <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[if _ <: _]]></span><it style="font-style: bold; color:green;">&#187;</it> will check the type at run time,
+the explicit (sub-)type annotation with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[<:]]></span><it style="font-style: bold; color:green;">&#187;</it> is checked at compile time, as if we wrote 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[(mut Foo tmp = a.bla(), tmp.baz())]]></span><it style="font-style: bold; color:green;">&#187;</it>
+
+</p><p>
+The code below:
+<pre class="l42Big"><![CDATA[
+method Point example2(Point left,Point right) = {
+  (x1,y1) = left
+  (x2,y2) = right
+  return Point(x=x1+x2,y=y1+y2)  
+  }
+]]></pre>
+is equivalent to:
+<pre class="l42Big"><![CDATA[
+method Point example2(Point left,Point right) = {
+  x1=left.x()
+  y1=left.y()
+  x2=right.x()
+  y2=right.y()
+  return Point(x=x1+x2,y=y1+y2)  
+  }
+]]></pre>
+That is: we can match out the result of any no-arg method into a variable with the same name, plus an optional numeric suffix.
+This syntax can also be used inside of the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[if]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+This is often done for fields. Of course it works also to extract a sigle field:
+
+<pre class="l42Big"><![CDATA[
+method Square example3(Shapes ss) = {
+  (size) = ss //extracts the 'size' from ss
+  (I size1) = ss//same but with explicit type
+  if (Square left) = ss ( return left )//matches if the leftmost element of the list is a Square
+  if (Triangle left, Square right) = ss ( return right )//matches if the leftmost and the
+    //rightmost elements are a Triangle and a Square.
+  if Circle(Point center) = ss.left() ( return center.squareAround() ) //matches if the leftmost
+    //is a Circle and the method center() returns a Point. Both checks are dynamic.
+  error X""
+  }
+]]></pre>
+
+As we have seen, matches are a form of syntactic sugar allowing more compact code for extracting subcomponents and taking decisions about their dynamic types.
+
+</p><h2> (5/5)Interfaces, subtypes and matching, summary </h2> <p>
+
+Interfaces in 42 serve the same role that they serve in other languages,
+with a little bit of a twist in the details.
+
+The big news is that decorators (<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> in our examples) can
+provide the boilerplate implementations for free.
+This is much more powerful than traits, multiple inheritance or
+Java 8 default methods, since the implementation can be generated by examining the class.
+ 
+<br/>
+In the right conditions, matching is a useful tool to reduce code size and complexity.
+However, dynamic dispach is still the preferred option in the general case. On the other hand type matching works only on a finite
+number of hard-coded cases, making it fragile with respect to code evolution.
+<br/>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+</div><div class="inFloat">
+&nbsp; &nbsp; &nbsp; <a href="tutorial_06CachingMut.xhtml"> Previous </a>...<a href="tutorial_08Sequences.xhtml"> Next </a>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+
+        </p>
+        </div>
+      </div>
+      <div id="footerwrap">
+        <div id="footer">
+          <ul style='padding: 10px;'>
+            <li style='display:inline;'>
+            <a href="mailto:marco.servetto@gmail.com" rel="me">Contact Us</a> |</li>
+            <li style='display:inline;'>
+            <a href= "http://ecs.victoria.ac.nz/mailman/listinfo/team42">Mailing list</a> |</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+	
+  </body>
+</html>
+

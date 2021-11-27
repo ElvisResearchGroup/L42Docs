@@ -1,8 +1,6 @@
 m4_include(`header.h')m4_dnl
-<!-- Event snippet for Page view conversion page -->
-<script>
-  gtag('event', 'conversion', {'send_to': 'AW-10810288706/U3KJCKekmIUDEMLU36Io'});
-</script>
+WConversion
+m4_include(`postHeader.h')m4_dnl
 OFloatClass(index)
 <div class="rotate90"> Index of Content</div>
 ContinueFloat
@@ -13,7 +11,7 @@ WMenuItem(`#BasicClasses',`Basic Classes')
 WMenuItem(`#ErrorsAndExceptions',`Errors and Exceptions')
 WMenuItem(`#Caching',`Caching')
 WMenuItem(`#CachingMut',`Caching on Mutable objects')
-WMenuItem(`#InterfacesAndData',`Interfaces and Data')
+WMenuItem(`#InterfacesAndMatching',`Interfaces and Matching')
 WMenuItem(`#Sequences',`Collections and Sequences')
 WMenuItem(`#InputOutput',`Input Output')
 WMenuItem(`#Exercises',`Exercises')
@@ -32,7 +30,7 @@ WChapter(`BasicClasses',`tutorial3BasicClasses.c')
 WChapter(`ErrorsAndExceptions',`tutorial4ErrorsAndExceptions.c')
 WChapter(`Caching',`tutorial5Caching.c')
 WChapter(`CachingMut',`tutorial6CachingMut.c')
-WChapter(`InterfacesAndData',`tutorial7InterfacesAndMatching.c')
+WChapter(`InterfacesAndMatching',`tutorial7InterfacesAndMatching.c')
 WChapter(`Sequences',`tutorial8Sequences.c')
 WChapter(`InputOutput',`tutorial9InputOutput.c')
 WChapter(`Exercises',`tutorial10Exercises.c')

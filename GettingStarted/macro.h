@@ -23,3 +23,11 @@ m4_define(`ContinueFloat',`</div><div class="inFloat">')m4_dnl
 m4_define(`WNewPage',`<div style="break-after:page"></div>')m4_dnl
 m4_define(`CFloat',`</div></div><div class="finishFloat"></div></div>')m4_dnl
 m4_define(`WComm',`m4_dnl ')m4_dnl
+m4_define(`WPrevNext',
+`<br/>
+OFloatClass(index)
+ContinueFloat
+&nbsp; &nbsp; &nbsp; <a href="tutorial_$1.xhtml"> Previous </a>...<a href="tutorial_$2.xhtml"> Next </a>
+CFloat
+<br/>'
+)m4_dnl

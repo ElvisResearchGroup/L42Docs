@@ -27,6 +27,14 @@
       gtag('js', new Date());
       gtag('config', 'UA-212820693-1');
     </script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=AW-10810288706"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-10810288706');
+    </script>
+WConversion
   </head>
   <body onload='doOnLoad();'>
     <div id="wrapper">
@@ -43,10 +51,6 @@
       <div id="contentwrap">
         <div id="content">
 <p>
-<!-- Event snippet for Page view conversion page -->
-<script>
-  gtag('event', 'conversion', {'send_to': 'AW-10810288706/U3KJCKekmIUDEMLU36Io'});
-</script>
 <div class="index"><div class="wrapFloat"><div class="inFloat">
 <div class="rotate90"> Index of Content</div>
 </div><div class="inFloat">
@@ -57,7 +61,7 @@
  <li><a href="#ErrorsAndExceptions"> Errors and Exceptions </a></li>
  <li><a href="#Caching"> Caching </a></li>
  <li><a href="#CachingMut"> Caching on Mutable objects </a></li>
- <li><a href="#InterfacesAndData"> Interfaces and Data </a></li>
+ <li><a href="#InterfacesAndMatching"> Interfaces and Matching </a></li>
  <li><a href="#Sequences"> Collections and Sequences </a></li>
  <li><a href="#InputOutput"> Input Output </a></li>
  <li><a href="#Exercises"> Exercises </a></li>
@@ -2151,7 +2155,7 @@ MainTree = (
 
 This pattern relies on the fact that using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> fields we can define arbitrary complex data structures composed of disjoint mutable object graphs.
 Note that even if <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> aliases to parts of this data structure can be visible outside, we can not access them when the forkjoin is open, since the declarations can not use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> parameters.
- </p><p id="InterfacesAndData"> </p><div style="break-after:page"></div><h1> Interfaces, subtypes and matching </h1> <p>
+ </p><p id="InterfacesAndMatching"> </p><div style="break-after:page"></div><h1> Interfaces, subtypes and matching </h1> <p>
 
 </p><h2> (1/5)Interfaces, Basis and Details </h2> <p>
 </p><h2> Interfaces Basis </h2> <p>
@@ -5743,4 +5747,3 @@ However, library developers need to carefully consider the effect of embroidery.
 	
   </body>
 </html>
-

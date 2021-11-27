@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+ <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" media="all"/>
+    <script src="js/ace.js"></script>
+    <script src="js/utils.js"></script>
+    <link rel="shortcut icon" href="css/favicon.ico"/>
+    <title>42 - Metaprogramming as default</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script src="https://www.googletagmanager.com/gtag/js?id=G-M0E4M0XH2Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-M0E4M0XH2Z');
+    </script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=UA-212820693-1">
+    </script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-212820693-1');
+    </script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=AW-10810288706"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-10810288706');
+    </script>
+<!-- Event snippet for Page view conversion page -->
+<script>
+gtag('event', 'conversion', {'send_to': 'AW-10810288706/U3KJCKekmIUDEMLU36Io'});
+</script>
+  </head>
+  <body onload='doOnLoad();'>
+    <div id="wrapper">
+      <div id="headerwrap">
+        <div id="header">
+          <img style='float:left;'
+            src='css/logoBlue.png' alt='42' width='120' height='120'/>
+          <h3 style='float:left;'>
+            <p style='font-size:150%; color:rgb(250,250,250);'>42 - The definitive answer to design, code and everything</p>
+            <p style='font-size:100%; color:rgb(250,250,250);'> --But you are not going to like it</p>
+          </h3>
+        </div>
+      </div>
+      <div id="contentwrap">
+        <div id="content">
+<p>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+<div class="rotate90"> Index of Content</div>
+</div><div class="inFloat">
+<ol>
+ <li><a href="tutorial_01Basics.xhtml"> Basic concepts </a></li>
+ <li><a href="tutorial_02ModifiersIntro.xhtml"> Introduction to modifiers </a></li>
+ <li><a href="tutorial_03BasicClasses.xhtml"> Basic Classes </a></li>
+ <li><a href="tutorial_04ErrorsAndExceptions.xhtml"> Errors and Exceptions </a></li>
+ <li><a href="tutorial_05Caching.xhtml"> Caching </a></li>
+ <li><a href="tutorial_06CachingMut.xhtml"> Caching on Mutable objects </a></li>
+ <li><a href="tutorial_07InterfacesAndMatching.xhtml"> Interfaces and Matching </a></li>
+ <li><a href="tutorial_08Sequences.xhtml"> Collections and Sequences </a></li>
+ <li><a href="tutorial_09InputOutput.xhtml"> Input Output </a></li>
+ <li><a href="tutorial_10Exercises.xhtml"> Exercises </a></li>
+ <li><a href="tutorial_11MetaprogrammingIntro.xhtml"> Metaprogramming Introduction </a></li>
+ <li><a href="tutorial_12Refactoring.xhtml"> Programmatic Refactoring </a></li> 
+ <li><a href="tutorial_13MoreDecorators.xhtml"> More Decorators </a></li>
+ <li><a href="tutorial_14ExampleOfProgram.xhtml"> Example of a 42 Program </a></li>
+ <li><a href="tutorial_15DeployCode.xhtml"> Deploy code </a></li>
+</ol>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+</div><div class="inFloat">
+&nbsp; &nbsp; &nbsp; <a href="tutorial_02ModifiersIntro.xhtml"> Previous </a>...<a href="tutorial_04ErrorsAndExceptions.xhtml"> Next </a>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+
+ </p><p id="BasicClasses"> </p><div style="break-after:page"></div><h1> Basic classes </h1> <p>
+
+</p><h2> (1/5) Num </h2> <p>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> is a general number type,
+implemented as an arbitrary precision rational.
+When in doubt of what numeric type to use, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it>
+is a good first guess.
+Some examples of usage: 
+<pre class="l42Big"><![CDATA[
+little      = 123Num
+stillLittle = 4567890Num
+big         = 100000000000000000Num
+bigger      = 100000000000000000.0001Num
+fraction1   = Num"1234567/890"
+Debug(fraction1) //will print '1234567/890'
+Debug(Num"12/4") //will print '3'
+]]></pre>
+
+Another useful numeric type is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[I]]></span><it style="font-style: bold; color:green;">&#187;</it>, for index and index offsets.
+It corresponds to sizes and indexes in sequences.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[I]]></span><it style="font-style: bold; color:green;">&#187;</it>s are returned by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[size()]]></span><it style="font-style: bold; color:green;">&#187;</it> methods
+and are expected as parameter by indexing methods.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[I]]></span><it style="font-style: bold; color:green;">&#187;</it> represent 32 bit integers with the usual 
+but triky modulo arithmetic.
+
+</p><h2> Other numeric types </h2> <p>
+
+AdamsTowel offers two other numeric types:
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Double]]></span><it style="font-style: bold; color:green;">&#187;</it> (64 bits floating point) and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Math.Long]]></span><it style="font-style: bold; color:green;">&#187;</it> (64 bits integers, rarely used).
+
+
+</p><h2> Conversions </h2> <p>
+Conversions between various numeric classes must be performed explicitly.
+
+AdamsTowel offers a simple way to convert between numeric classes; all numeric  classes implements <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Math.Numeric]]></span><it style="font-style: bold; color:green;">&#187;</it>
+so that they can be converted in to each other using the empty named method. For example we can convert indexes into doubles by writing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Double(12I)]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+This will avoid precision loss as much as possible.
+
+</p><h2> (2/5) Units: An example library </h2> <p>
+
+We will now see how to load and use an interesting 42 Library:<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Unit]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+
+Consider the following code, where the class decorator <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Load]]></span><it style="font-style: bold; color:green;">&#187;</it> allows us to load libraries and embed them in the 
+current context, while the
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[reuse]]></span><it style="font-style: bold; color:green;">&#187;</it> keyword imports the code from the web. 
+<pre class="l42Big"><![CDATA[
+reuse [L42.is/AdamsTowel]
+Unit = Load:{reuse [L42.is/Unit]}
+Year = Unit(I)
+Person = Data:{S name, Year age}
+]]></pre>
+
+The library
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Unit]]></span><it style="font-style: bold; color:green;">&#187;</it>
+offers methods to create units out of numeric supports, like <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[I]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+The code above shows how to create a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Year]]></span><it style="font-style: bold; color:green;">&#187;</it> unit and use it to represent a person age.
+
+Units can be added to themselves and multiplied by constants; for example
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[3Year+2Year == 5Year]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[3Year *2I == 6Year]]></span><it style="font-style: bold; color:green;">&#187;</it> would hold, but <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[3Year * 2Year]]></span><it style="font-style: bold; color:green;">&#187;</it> would not compile.
+
+Units could be used to manually define 
+all of the units of the SI system.
+Prebuild reusable code for the SI system is already provided in the library; we simply need to specify the desired support, as shown in the code below:
+
+<pre class="l42Big"><![CDATA[
+SI = Class:Unit.TraitSI['Support=>Num]
+..
+res = (6SI.Meter + 4SI.Meter) * 2Num //20Meter
+//wrong = 6SI.Meter + 2SI.Second
+]]></pre>
+
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Unit.TraitSI]]></span><it style="font-style: bold; color:green;">&#187;</it> is a <it style="font-style: italic;">trait</it>; traits contains reusable code and operations to adapt it to the current needs.
+We will see more on traits (much) later in this guide.
+<br/>
+In the case of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Unit.TraitSI]]></span><it style="font-style: bold; color:green;">&#187;</it>, we can adapt it to many kinds of numeric support and extract the code using 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Class:Unit.TraitSI['Support=>Num]]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+The syntax <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[['Support=>Num]]]></span><it style="font-style: bold; color:green;">&#187;</it> maps the class called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Support]]></span><it style="font-style: bold; color:green;">&#187;</it> inside of the library onto the class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> defined outside of the library. We will explain the precise use of such mappings later.
+
+</p><p>
+As you can see, we can sum meters together, and we can use the support for multiplication, but we can not mix different units of measure.
+
+Mathematically you can obtain the support out of the unit by
+division; that is, 42 meters divided by 2 meters is  21.
+Units also provide method  <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#inner()]]></span><it style="font-style: bold; color:green;">&#187;</it>,
+which is just extracting the value of the support from the unit.
+This can be convenient during programming but 
+does not make a lot of sense mathematically and thus 
+it should be used with care, similarly to other methods starting with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<pre class="l42Big"><![CDATA[
+Num n1 = 42SI.Meter / 2SI.Meter //= 21Num
+Num n2 = 42SI.Meter.#inner() //= 42Num
+]]></pre>
+</p><p>
+
+
+Some code which uses units in interesting ways:
+
+<pre class="l42Big"><![CDATA[
+SI.Meter res1 = (6SI.Meter+4SI.Meter)*2Num //20M
+
+Num res2 = 42SI.Meter/2SI.Meter
+
+Num res3 = (42SI.Meter).#inner()
+
+SI.Velocity fast1 =  42SI.Meter/0.1SI.Second
+
+fast2 = SI.Velocity"420" //equivalent ways to initialize it
+fast3 = SI.Velocity"840/2"
+
+distance1 = 60SI.Second * fast1
+
+g = 9.8SI.Acceleration
+
+speedAfter = 10SI.Second * g //98 m/s
+
+t = 10SI.Second
+
+//free fall distance d=(gt^2)/2
+distance2 = (g*t*t)/2Num //490 m after 10s free fall
+
+//Newton=Kg*m/s2 = Kg*Acceleration
+rocketForce = 900SI.Newton
+stackWeight = 60SI.Kg+20SI.Kg //my weight+rocket weight
+gForceOnMe = stackWeight*g //little less than 800
+myLift = rocketForce-gForceOnMe
+if myLift>0SI.Newton (Debug(S"I can fly"))
+myAcc = myLift/stackWeight
+reachedHeight = (myAcc*t*t)/2Num //after t (10 sec)
+//works assuming the rocket fuel burnt in 10 sec is negligible
+]]></pre>
+
+
+</p><h2> (3/5) Alphanumeric </h2> <p>
+In the same way <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Units]]></span><it style="font-style: bold; color:green;">&#187;</it> allows easy creation of
+arithmetic classes,
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Alphanumeric]]></span><it style="font-style: bold; color:green;">&#187;</it> allows easy creation of alphanumeric classes: 
+classes that can be instantiated from a string literal that follow certain 
+properties.
+
+
+<pre class="l42Big"><![CDATA[
+Email = S.Alphanumeric:{
+  S local //fields
+  S domain
+  
+  class method
+  This (S string)={
+    index= string.indexOf(S"@") //works only for simple emails
+    if index==I"-1" (error S.ParseError"@ not found")
+    local= string.subString(0I to=index) //string slicing
+    domain= string.subString(index+1I to=\size) //string slicing
+    if domain.contains(S"@") (error S.ParseError"multiple @ found")
+    return This(string,local=local,domain=domain)
+    } //call the factory with fields plus the original string
+  }
+...
+myEmail = Email"arthur.dent@gmail.com"
+myEmail.local()==S"arthur.dent" //holds
+myEmail.domain()==S"gmail.com" //holds
+myEmail.toS()==S"arthur.dent@gmail.com" //holds
+]]></pre>
+
+Note: we raise an error if <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[string]]></span><it style="font-style: bold; color:green;">&#187;</it> does not have the shape we expected.
+We will see errors/exception in more detail soon.
+We can define fields, and compute their values by parsing the string.
+It is common to propagate the original string from the factory into the object; but 
+it is not mandatory. For example you could apply some form of normalization, as shown below: 
+
+<pre class="l42Big"><![CDATA[
+Email = S.Alphanumeric:{
+  S local //fields
+  S domain
+  
+  class method
+  This (S string)={
+    /*..*/
+    local = string.subString(0\ to=index).replace(S"." with=S"")
+    domain = /*..*/
+    normedEmail = S"%local@%domain"
+    /*..*/
+    return This(normedEmail, local=local, domain=domain)
+    } 
+  }
+/*..*/
+myEmail = Email"arthur.dent@gmail.com"
+myEmail.local()==S"arthurdent" //holds
+myEmail.toS()==S"arthurdent@gmail.com" //holds
+]]></pre>
+
+</p><h2> (4/5) Enumerations </h2> <p>
+
+Enumerations can be obtained with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Enum]]></span><it style="font-style: bold; color:green;">&#187;</it>, as in the following code:
+<pre class="l42Big"><![CDATA[
+Direction = Collection.Enum:{
+  North={} East={} South={} West={}
+  }
+/*..*/
+Debug(Direction.Vals()) // [North; East; South; West]
+n = Direction.North()
+s = Direction.South()
+if n==s (/* .. dead code .. */)
+Debug(n) //North
+for d in Direction.Vals() (
+  Debug(d) //prints all the directions in order.
+  )
+n==Direction.Vals(S"North") //holds
+]]></pre>
+
+Enumerations allows us to add operations as methods on the cases, as shown below:
+<pre class="l42Big"><![CDATA[
+Direction = Collection.Enum:{
+  method This opposite()
+  North = {method This1 opposite() = South() }
+  East = {method This1 opposite() = West() }
+  South = {method This1 opposite() = North() }
+  West = {method This1 opposite() = East() }
+  }
+]]></pre>
+
+</p><h2> (5/5) Summary </h2> <p>
+
+<ul><li>
+We had a look at
+the most basic features of AdamsTowel.
+There is rich support for defining your own specialized data structures instead of having to rely on the ones provided by default.
+</li><li>
+Use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Unit]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S.Alphanumeric]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Enum]]></span><it style="font-style: bold; color:green;">&#187;</it> to give meaning to your constants.
+In this way, the type system will help you to use values with the semantics that you decided.
+Be sure to define all of the right base classes to establish a convenient vocabulary
+to talk about your problem domain.
+</li></ul>
+<br/>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+</div><div class="inFloat">
+&nbsp; &nbsp; &nbsp; <a href="tutorial_02ModifiersIntro.xhtml"> Previous </a>...<a href="tutorial_04ErrorsAndExceptions.xhtml"> Next </a>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+
+        </p>
+        </div>
+      </div>
+      <div id="footerwrap">
+        <div id="footer">
+          <ul style='padding: 10px;'>
+            <li style='display:inline;'>
+            <a href="mailto:marco.servetto@gmail.com" rel="me">Contact Us</a> |</li>
+            <li style='display:inline;'>
+            <a href= "http://ecs.victoria.ac.nz/mailman/listinfo/team42">Mailing list</a> |</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+	
+  </body>
+</html>
+

@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+ <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" media="all"/>
+    <script src="js/ace.js"></script>
+    <script src="js/utils.js"></script>
+    <link rel="shortcut icon" href="css/favicon.ico"/>
+    <title>42 - Metaprogramming as default</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script src="https://www.googletagmanager.com/gtag/js?id=G-M0E4M0XH2Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-M0E4M0XH2Z');
+    </script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=UA-212820693-1">
+    </script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-212820693-1');
+    </script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=AW-10810288706"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-10810288706');
+    </script>
+<!-- Event snippet for Page view conversion page -->
+<script>
+gtag('event', 'conversion', {'send_to': 'AW-10810288706/U3KJCKekmIUDEMLU36Io'});
+</script>
+  </head>
+  <body onload='doOnLoad();'>
+    <div id="wrapper">
+      <div id="headerwrap">
+        <div id="header">
+          <img style='float:left;'
+            src='css/logoBlue.png' alt='42' width='120' height='120'/>
+          <h3 style='float:left;'>
+            <p style='font-size:150%; color:rgb(250,250,250);'>42 - The definitive answer to design, code and everything</p>
+            <p style='font-size:100%; color:rgb(250,250,250);'> --But you are not going to like it</p>
+          </h3>
+        </div>
+      </div>
+      <div id="contentwrap">
+        <div id="content">
+<p>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+<div class="rotate90"> Index of Content</div>
+</div><div class="inFloat">
+<ol>
+ <li><a href="tutorial_01Basics.xhtml"> Basic concepts </a></li>
+ <li><a href="tutorial_02ModifiersIntro.xhtml"> Introduction to modifiers </a></li>
+ <li><a href="tutorial_03BasicClasses.xhtml"> Basic Classes </a></li>
+ <li><a href="tutorial_04ErrorsAndExceptions.xhtml"> Errors and Exceptions </a></li>
+ <li><a href="tutorial_05Caching.xhtml"> Caching </a></li>
+ <li><a href="tutorial_06CachingMut.xhtml"> Caching on Mutable objects </a></li>
+ <li><a href="tutorial_07InterfacesAndMatching.xhtml"> Interfaces and Matching </a></li>
+ <li><a href="tutorial_08Sequences.xhtml"> Collections and Sequences </a></li>
+ <li><a href="tutorial_09InputOutput.xhtml"> Input Output </a></li>
+ <li><a href="tutorial_10Exercises.xhtml"> Exercises </a></li>
+ <li><a href="tutorial_11MetaprogrammingIntro.xhtml"> Metaprogramming Introduction </a></li>
+ <li><a href="tutorial_12Refactoring.xhtml"> Programmatic Refactoring </a></li> 
+ <li><a href="tutorial_13MoreDecorators.xhtml"> More Decorators </a></li>
+ <li><a href="tutorial_14ExampleOfProgram.xhtml"> Example of a 42 Program </a></li>
+ <li><a href="tutorial_15DeployCode.xhtml"> Deploy code </a></li>
+</ol>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+</div><div class="inFloat">
+&nbsp; &nbsp; &nbsp; <a href="tutorial_08Sequences.xhtml"> Previous </a>...<a href="tutorial_10Exercises.xhtml"> Next </a>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+
+ </p><p id="InputOutput"> </p><div style="break-after:page"></div><h1> Input Output with Object Capabilities </h1> <p>
+</p><h2> (1/5) Controlling non determinism </h2> <p>
+Traditionally, in imperative languages I/O and side effects can happen everywhere, while
+in pure functional languages like Haskell they are kept in check by monads.
+
+In 42 we have type modifiers to keep mutation and aliasing under control.
+With only the features shown up to now, 42 is a deterministic language, thus
+every expression that takes in input only immutable objects
+can be called multiple times with the same arguments and will produce the same result.
+<br/>
+The whole caching system relies on this property to work.
+<br/>
+Thus input output, random numbers and any other kind of observable non determinism must preserve this property.
+Introducing object capabilities:
+<br/>
+An <it style="font-style: italic;">object capability</it> is a mutable object whose methods can do some non deterministic, or otherwise privileged operation.
+If a method is given a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> reference to an object capability, then it can be non deterministic,
+otherwise it will be deterministic.
+Creation of new object capabilities is only possible by either relying on an existent object capability
+or by using a <it style="font-style: italic;">capability method</it>: a method whose name starts with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#$]]></span><it style="font-style: bold; color:green;">&#187;</it>; however those specially named methods can only be called from a main, from another capability method or from a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> method of a capability object.
+
+</p><h2> (2/5) Example: File System </h2> <p>
+
+To read and write files we need to load a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FileSystem]]></span><it style="font-style: bold; color:green;">&#187;</it> library as shown below:
+<pre class="l42Big"><![CDATA[
+Fs = Load:{reuse [L42.is/FileSystem]}
+]]></pre>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Fs]]></span><it style="font-style: bold; color:green;">&#187;</it> is the local name for the library located at <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[L42.is/FileSystem]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Load]]></span><it style="font-style: bold; color:green;">&#187;</it> decorator embeds the library in the current environment.
+We can now use our file system:
+<pre class="l42Big"><![CDATA[
+Main1 = (
+  mut Fs f = Fs.Real.#$of()
+  f.write(on=Url"data.txt",content=S"SomeContent0") //non determistic operation
+  S s=f.read(Url"data.txt") //non determistic operation
+  //the result depends on the current file content
+  f.write(on=Url"data.txt",content=S"SomeContent") //non determistic operation
+  //the operation could go in error if there is not enough space to write the content on disk.
+  Debug(s)
+  )
+]]></pre>
+The crucial point in the former code example is the call to 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Fs.Real.#$of()]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+This instantiates a capability object using the capability method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#$of()]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+
+We could write the code inside a method in the following way:
+<pre class="l42Big"><![CDATA[
+ReadWrite = { class method Void (mut Fs f)[_] = (
+  S s=f.read(Url"data.txt")
+  f.write(on=Url"data.txt",content=S"SomeContent")
+  Debug(s)
+  ) }
+Main1 = ReadWrite(f=Fs.Real.#$of())
+]]></pre>
+Note how we pass the capability object explicitly to the method.
+This is the most common style, and have great testing advantages:
+Indeed, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Fs]]></span><it style="font-style: bold; color:green;">&#187;</it> corresponds to the following interface:
+<pre class="l42Big"><![CDATA[
+interface
+mut method Void delete(Url that)[Fs.Fail]
+mut method Void makeDirs(Url that)[Fs.Fail]
+mut method S read(Url that)[Fs.Fail]
+mut method S readBase64(Url that)[Fs.Fail]
+mut method Void write(Url on, S content)[Fs.Fail]
+mut method Void write(Url on, S contentBase64)[Fs.Fail]
+]]></pre>
+and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Fs.Real]]></span><it style="font-style: bold; color:green;">&#187;</it> is simply an implementation of such interface connected with the real file system.
+Thus, we can write a simple mock to check that the function behaves as expected:
+<pre class="l42Big"><![CDATA[
+Mock = Data:{[Fs]
+  var S log=S""
+  method delete(that) = error X""
+  method makeDirs(that) = error X""
+  method read(that) = (
+    X[actual=that expected=Url"data.txt"]
+    this.log(\log++S"read")
+    S"oldContent"
+    )
+  method readBase64(that) = error X""
+  method write(on,content) = ( 
+    X[actual=on expected=Url"data.txt";
+      actual=content expected=S"SomeContent";]
+    this.log(\log++S"write")
+    )
+  method write(on,contentBase64) = error X""
+  }
+Test1= (
+  m=Mock()
+  ReadWrite(f=m)
+  {}:Test"ReadWriteOk"(actual=m.log() expected=S"readwrite")
+  )
+]]></pre>
+
+</p><h2> (3/5) Object capabilities programming patterns </h2> <p>
+
+The advantage of the division of the file system in an interface and a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Real]]></span><it style="font-style: bold; color:green;">&#187;</it> implementation are not limited to testing.
+For example, the user could embed some security and on some restrictions in an alternative implementation of a file system.
+Consider the following code:
+
+<pre class="l42Big"><![CDATA[
+OnlyTxt = Public:{[Fs]
+  mut Fs inner
+  
+  read method Void checkTxt(Url that) = X.Guarded[
+    that.toS().endsWith(S".txt")
+    ]
+  method makeDirs(that) = error X""
+  method write(on,contentBase64) = error X""
+  method readBase64(that) = error X""
+  method delete(that) = (
+    this.checkTxt(that)
+    this.#inner().delete(that)
+    )
+  method write(on,content) = ( 
+    this.checkTxt(on)
+    this.#inner().write(on=on, content=content)
+    )
+  method read(that) = ( 
+    this.checkTxt(that)
+    this.#inner().read(that)
+    )
+  @Public class method mut This #$of() = //example user declared #$ method, that can
+    This(inner=Fs.Real.#$of())   //use $# methods inside its body
+  @Public class method mut This(mut Fs inner)
+  }
+SaferMain = (
+  fs = OnlyTxt.#$of()
+  ReadWrite(f=fs)
+  Debug(S"done")
+  )
+]]></pre>
+Any code that would take in input a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut OnlyTxt]]></span><it style="font-style: bold; color:green;">&#187;</it> would have a limited access to the file system; only able to read and write onWcode(*.txt) files.
+Here we see for the first time the decorator <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it> explores all the nested classes of the decorated code, and if there is at least a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Public]]></span><it style="font-style: bold; color:green;">&#187;</it> annotation, all the other members of such nested class will become private.
+Methods implemented from interfaces are left untouched.
+In the example above, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it> leaves the two factory methods visible and hides the field getter and exposer.
+We discuss <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Public]]></span><it style="font-style: bold; color:green;">&#187;</it> more in the detail later.
+<br/>
+Instances of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut OnlyTxt]]></span><it style="font-style: bold; color:green;">&#187;</it> are capability objects; note how <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[OnlyTxt]]></span><it style="font-style: bold; color:green;">&#187;</it> can even declare a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#$of]]></span><it style="font-style: bold; color:green;">&#187;</it> method. In this way for the user there is no syntactical difference between using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Fs.Real]]></span><it style="font-style: bold; color:green;">&#187;</it> or using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[OnlyTxt]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Capability objects are a useful abstraction and can be designed and implemented by normal 42 programs; they are not just a way for the language implementation to expose native code.
+We have just shown that new object capabilities can easy be defined by simple wrapping over existing capability objects.
+
+<br/>
+Since inner is of type <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Fs]]></span><it style="font-style: bold; color:green;">&#187;</it>, this programming patterns allows to layer many levels of security / restrictions on top of a capability object, as shown below:
+<pre class="l42Big"><![CDATA[
+fs = OnlyTxt(inner=OnlySmallFiles(inner=Fs.Real.#$of()))
+]]></pre>
+
+
+</p><h2> (4/5) Connection with other languages </h2> <p>
+In general, all the  non determinism in 42 is obtained by comunicating with other languages.
+42 allows to connect with Java, and Java allows to connect with C/assembly.
+The best way to connect with java is to use the library <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[JavaServer]]></span><it style="font-style: bold; color:green;">&#187;</it> as shown below:
+<pre class="l42Big"><![CDATA[
+reuse [L42.is/AdamsTowel]
+J0 = Load:{reuse [L42.is/JavaServer]}
+J = J0(slaveName=S"mySlave{}")
+]]></pre>
+The code above loads the library <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[JavaServer]]></span><it style="font-style: bold; color:green;">&#187;</it>. It is a generic library: before being used we need to provide a name for the Java slave.
+A 42 program is not a single process but a cluster of intercommunicating Java processes.
+There is one master process where the 42 computation is actually running and many other slave processes allowing safe input output and safe interaction with arbitrary code.
+Such slave processes have their own name: in this case <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mySlave]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Slaves also have a set of options, that can be specified between the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[{}]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+We do not describe the details of those options here.
+The class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[J]]></span><it style="font-style: bold; color:green;">&#187;</it> can now be used to comunicate with the Java slave as shown below:
+<pre class="l42Big"><![CDATA[
+MainAsk = (
+  j = J.#$of()
+  j.loadCode(fullName=S"foo.Bar1",code=S"""
+    |package foo;
+    |import is.L42.platformSpecific.javaEvents.Event;
+    |public record Bar1(Event event){//class Bar1 will be instanstiated by 42
+    |  public Bar1{                  //and the Event parameter is provided
+    |    event.registerAskEvent("BarAsk",(k,id,msg)->
+    |      "any string computed in Java using "+id+" and "+msg);
+    |    }
+    |  }
+    """)
+  S.Opt text = j.askEvent(key=S"BarAsk", id=S"anId",msg=S"aMsg")
+  {}:Test"OptOk"(actual=text, expected=S"""
+    |["any string computed in Java using anId and aMsg"]
+    """.trim())
+  )
+]]></pre>
+This code asks the event <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["anId"]]></span><it style="font-style: bold; color:green;">&#187;</it> on the channel <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarAsk"]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+The Java code registers the capacity of answering to the channel <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarAsk"]]></span><it style="font-style: bold; color:green;">&#187;</it> and
+computes an answer parametrized over <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[id]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[msg]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+The method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[askEvent]]></span><it style="font-style: bold; color:green;">&#187;</it> is syncronus: it will wait for java to provide an answer as an optional string; optional since Java can return <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[null]]></span><it style="font-style: bold; color:green;">&#187;</it> as a result.
+
+As you can see, you can embed arbitrary Java code in 42 and communicate back and forth serializing data and instructions as strings.
+
+Syncronus comunication is sometimes undesirable. 
+For example, to use Java to open a GUI it would be better to have asyncronus comunication and a queue of events.
+You can do this with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[J.Handler]]></span><it style="font-style: bold; color:green;">&#187;</it>, as shown below:
+<pre class="l42Big"><![CDATA[
+Model = Data:J.Handler:{
+  var I count, mut J j
+  @J.Handler mut method Void fromJavaToL42(S msg)=(
+    this.count(\count+1\)
+    Debug(S"pong received %msg with count=%this.count()")
+    if this.count()<40I (
+      this.#j().submitEvent(key=S"BarIn", id=S"ping", msg=S"the message %this.count()")
+      whoops J.Fail
+      )
+    else this.#j().kill()
+    )
+  }
+MainPingPong = (
+  j=J.#$of()
+  j.loadCode(fullName=S"foo.Bar2",code=S"""
+    |package foo;
+    |import is.L42.platformSpecific.javaEvents.Event;
+    |public record Bar2(Event event){
+    | public Bar2{
+    |    event.registerEvent("BarIn","ping"(k,id,msg)->{
+    |      System.out.println("Ping Event received "+id+" "+msg);
+    |      event.submitEvent("BarOut","fromJavaToL42","pong");
+    |      });
+    |    event.registerEvent("Kill",(k,id,msg)->{
+    |      System.out.println("Doing cleanup before slave JVM is killed");
+    |      System.exit(0);
+    |      });
+    |    }
+    |  }
+    """)
+  model=Model(count=0I, j=j)
+  model.fromJavaToL42(msg=S"Initial message")
+  keys=S.List[S"BarOut"]
+  models=J.Handler.Map[key=S"BarOut" mutVal=model]
+  for e in j(keys) ( e>>models )
+  Debug(S"Completed")
+  )
+]]></pre>
+The class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Model]]></span><it style="font-style: bold; color:green;">&#187;</it> handles the events inside of 42:
+if Java send an event with id <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["fromJavaToL42"]]></span><it style="font-style: bold; color:green;">&#187;</it> then the method
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Model.fromJavaToL42(msg)]]></span><it style="font-style: bold; color:green;">&#187;</it> will be called.
+In turn, such method
+sends to java the message 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["ping"]]></span><it style="font-style: bold; color:green;">&#187;</it> on channel <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarIn"]]></span><it style="font-style: bold; color:green;">&#187;</it> using
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut method J.submitEvent(key,id,msg)]]></span><it style="font-style: bold; color:green;">&#187;</it>
+up to 40 times, and kills the slave JVM after that.
+
+In <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MainPingPong]]></span><it style="font-style: bold; color:green;">&#187;</it> we initialize the slave JVM to respond to two channels:
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarIn"]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["Kill"]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+In our example Java will submit an asyncronus event to 42 as a response to
+the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarIn":"ping"]]></span><it style="font-style: bold; color:green;">&#187;</it> event and will terminate the slave on any <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["Kill"]]></span><it style="font-style: bold; color:green;">&#187;</it> event.
+The slave should always terminate its JVM when receiving a kill, but can do any kind of clean-up before that.
+After a JVM is terminated, it can be restarted by simply calling <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[J.loadCode(fullName,code)]]></span><it style="font-style: bold; color:green;">&#187;</it> again.
+
+Finally, we set up the event loop:
+An event loop will collect events from a list of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[keys]]></span><it style="font-style: bold; color:green;">&#187;</it> and dispatch them
+to a map of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[models]]></span><it style="font-style: bold; color:green;">&#187;</it>, mapping every key to a specific <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[model]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Note that both <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[keys]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[models]]></span><it style="font-style: bold; color:green;">&#187;</it> are mutable objects. In this way we can dynamically
+register and unregistered keys/models by mutating <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[keys]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[models]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+If the JVM is killed or the list of keys becomes empty, the event loop <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[for e in j(keys)]]></span><it style="font-style: bold; color:green;">&#187;</it> will terminate.
+The operation <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[e>>models]]></span><it style="font-style: bold; color:green;">&#187;</it> dispatches the event to the model.
+<br/>
+We need to use two different channels (<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarIn"]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarOut"]]></span><it style="font-style: bold; color:green;">&#187;</it>) to distinguish if an event is should be handled by 42 or by Java.
+
+
+</p><h2> (5/5) Object capabilities summuary </h2> <p>
+<ul><li>
+While most languages run in a single process, 42 runs in a cluster of processes; this is needed so that the master process is procted from any slave process going into undefined behaviour.
+This is the final piece of the puzzle allowing the correctness properties of 42 to be ensured in any circumstance.
+</li><li>
+To enable non deterministic behaviour we need to call those specially named <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#$]]></span><it style="font-style: bold; color:green;">&#187;</it> methods.
+Since they can only be called in a few controlled places, we can control what parts of the code can perform non determinism by explicitly passing capability objects.
+</li><li>
+Capability objects are a very convenient centralized point of control to inject security or other kinds of restrictions.
+</li></ul>
+
+</p><h2> Digressions / Expansions </h2> <p>
+
+</p><h2> Non deterministic errors </h2> <p>
+
+When discussing errors, we did not mention how to handle errors happening in a non deterministic way; for example, how to recover when the execution run out of memory space.
+In 42 this is modelled by non deterministic errors. They can only be catched in a main, in another capability method or in a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> method of a capability object. 
+AdamsTowel offers a single non deterministic error: <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[System.NonDeterministicError]]></span><it style="font-style: bold; color:green;">&#187;</it>. When a non deterministic error happens, we can recover it by catching an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[error System.NonDeterministicError]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+
+The code below shows how to cause a stack overflow and to recover from it.
+<pre class="l42Big"><![CDATA[
+Looping={
+  class method Void loop() = this.loop()
+  class method Void #$loopStop() = (
+    Looping.loop()
+    catch error System.NonDeterministicError e (
+      Debug(S"This is printed")
+      )
+    Debug(S"And then this is printed")
+    )
+  }
+Main1=Looping.#$loopStop()
+]]></pre>
+
+That is, to recover from a non deterministic error we need to satisfy both the requirements of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA['#$']]></span><it style="font-style: bold; color:green;">&#187;</it> non determinism and of strong error safety.
+
+</p><h2> Aborting wastefull cache eagers </h2> <p>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.Eager]]></span><it style="font-style: bold; color:green;">&#187;</it> methods may return a cached result; such result is guaranteed to be the same that would be computed if we were to directly execute the method.
+How those this work if the method is non terminating or simply outragiously slow?
+Those eager cache methods will eagerly spend precious machine resource. If the results of those computations are ever needed by a main, the whole 42 process will get stuck waiting, as it would indeed happen if we were to directly execute the method. All good: in this case 42 correctly lifted the behavioural bug into caching.
+However, if the result is never needed by a main, it would be nice to be able to stop those runaway pointless computations.
+We can obtain this by calling <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.#$stopCacheEager()]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+WB
+This works no matter if they are in loop, simply slow, or stuck waiting on another cache being slowly computed.
+In some cases, we can even have multiple computations stuck waiting on each other in a circular fascion.
+<br/>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+</div><div class="inFloat">
+&nbsp; &nbsp; &nbsp; <a href="tutorial_08Sequences.xhtml"> Previous </a>...<a href="tutorial_10Exercises.xhtml"> Next </a>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+
+        </p>
+        </div>
+      </div>
+      <div id="footerwrap">
+        <div id="footer">
+          <ul style='padding: 10px;'>
+            <li style='display:inline;'>
+            <a href="mailto:marco.servetto@gmail.com" rel="me">Contact Us</a> |</li>
+            <li style='display:inline;'>
+            <a href= "http://ecs.victoria.ac.nz/mailman/listinfo/team42">Mailing list</a> |</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+	
+  </body>
+</html>
+

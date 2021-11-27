@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+ <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" media="all"/>
+    <script src="js/ace.js"></script>
+    <script src="js/utils.js"></script>
+    <link rel="shortcut icon" href="css/favicon.ico"/>
+    <title>42 - Metaprogramming as default</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script src="https://www.googletagmanager.com/gtag/js?id=G-M0E4M0XH2Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-M0E4M0XH2Z');
+    </script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=UA-212820693-1">
+    </script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-212820693-1');
+    </script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=AW-10810288706"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-10810288706');
+    </script>
+<!-- Event snippet for Page view conversion page -->
+<script>
+gtag('event', 'conversion', {'send_to': 'AW-10810288706/U3KJCKekmIUDEMLU36Io'});
+</script>
+  </head>
+  <body onload='doOnLoad();'>
+    <div id="wrapper">
+      <div id="headerwrap">
+        <div id="header">
+          <img style='float:left;'
+            src='css/logoBlue.png' alt='42' width='120' height='120'/>
+          <h3 style='float:left;'>
+            <p style='font-size:150%; color:rgb(250,250,250);'>42 - The definitive answer to design, code and everything</p>
+            <p style='font-size:100%; color:rgb(250,250,250);'> --But you are not going to like it</p>
+          </h3>
+        </div>
+      </div>
+      <div id="contentwrap">
+        <div id="content">
+<p>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+<div class="rotate90"> Index of Content</div>
+</div><div class="inFloat">
+<ol>
+ <li><a href="tutorial_01Basics.xhtml"> Basic concepts </a></li>
+ <li><a href="tutorial_02ModifiersIntro.xhtml"> Introduction to modifiers </a></li>
+ <li><a href="tutorial_03BasicClasses.xhtml"> Basic Classes </a></li>
+ <li><a href="tutorial_04ErrorsAndExceptions.xhtml"> Errors and Exceptions </a></li>
+ <li><a href="tutorial_05Caching.xhtml"> Caching </a></li>
+ <li><a href="tutorial_06CachingMut.xhtml"> Caching on Mutable objects </a></li>
+ <li><a href="tutorial_07InterfacesAndMatching.xhtml"> Interfaces and Matching </a></li>
+ <li><a href="tutorial_08Sequences.xhtml"> Collections and Sequences </a></li>
+ <li><a href="tutorial_09InputOutput.xhtml"> Input Output </a></li>
+ <li><a href="tutorial_10Exercises.xhtml"> Exercises </a></li>
+ <li><a href="tutorial_11MetaprogrammingIntro.xhtml"> Metaprogramming Introduction </a></li>
+ <li><a href="tutorial_12Refactoring.xhtml"> Programmatic Refactoring </a></li> 
+ <li><a href="tutorial_13MoreDecorators.xhtml"> More Decorators </a></li>
+ <li><a href="tutorial_14ExampleOfProgram.xhtml"> Example of a 42 Program </a></li>
+ <li><a href="tutorial_15DeployCode.xhtml"> Deploy code </a></li>
+</ol>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+</div><div class="inFloat">
+&nbsp; &nbsp; &nbsp; <a href="tutorial_04ErrorsAndExceptions.xhtml"> Previous </a>...<a href="tutorial_06CachingMut.xhtml"> Next </a>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+
+ </p><p id="Caching"> </p><div style="break-after:page"></div><h1> Caching </h1> <p>
+</p><h2> (1/5) Normalization </h2> <p>
+One of the big advantages of deeply immutable objects is that two structurally identical objects are referentially transparent, that is, you can not distinguish whether they are represented in memory by one object or two.
+This means that it is possible to reuse the same objects to save memory. While in other languages the programmer would have to implement some specific support to reuse objects, in L42 this is supported directly in the language, by a process called <span style="color:#ff1111; font-weight: bold;"> normalization </span>.
+An immutable object can be turned into its normalized version using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[.norm()]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<pre class="l42Big"><![CDATA[
+Person = Data:{S name}
+..
+var bob1 = Person(S"Bob")//one bob in memory
+var bob2 = Person(S"Bob")//two bobs in memory
+bob1:=bob1.norm()
+bob2:=bob2.norm()//most likely now bob2 refers to
+//the same object of bob1.
+//The object originally pointed to by bob2 is now inaccessible and
+//can be garbage collected.
+bob2:=bob2.norm()//repeating normalization has no effect; normalization is idempotent.
+//The second calls to norm is as fast as a field access.
+]]></pre>
+As you can see, objects are born not normalized and can be normalized manually by the programmer.
+Normalization is cheap but it is not free, so it is not convenient to apply it on short lived objects.
+The programmer can express that all objects of a class are normalized during creation by passing parameters to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it>:
+<pre class="l42Big"><![CDATA[
+Person = Data('This,autoNorm=\.true()):{S name}
+..
+var bob1 = Person(S"Bob")//one bob in memory
+var bob2 = Person(S"Bob")//still only one bob in memory
+bob2:=bob2.norm()//no-op, bob2 was already normalized
+]]></pre>
+Normalization starts by checking if another structurally equivalent object has ever been normalized.
+Normalization normalizes all the sub objects
+and also supports circular objects.
+<br/>
+Consider the following richer example:
+<pre class="l42Big"><![CDATA[
+Person = Data:{S name}//no more autoNorm!
+Dog = Data:{S name, Person owner}
+..
+bob1 = Person(S"Bob")//one bob in memory
+bob2 = Person(S"Bob")//two bobs in memory
+dog1 = Dog(S"Grunthos", bob1)
+dog2 = Dog(S"Agrajag", bob2)//two Dogs in memory
+//dog1.owner() is a different object from dog2.owner()
+//albeit they are structurally identical and we
+//can not tell them apart using 42.
+dog1.norm()//note: we do not reassign dog1 or dog2
+dog2.norm()
+//dog1 and dog2 are different objects, but
+//dog1.owner() is now the same object as dog2.owner()
+]]></pre>
+Normalizing an object normalizes the whole ROG.
+In the example, normalizing the two dogs also normalizes their owners, to the same normalized object.
+All of the dogs' fields are then replaced with the normalized versions, so the two dogs now share an owner object.
+Note that bob1 and bob2 are still two different objects.
+</p><p>
+
+The logic needed for normalization is the same needed to check if two arbitrary objects are structurally equal, to print an object to a readable string and to clone objects.
+Thus data allows for all of those operations indirectly relying on normalization.
+Those are all operations requiring to scan the whole ROG of the object, so the cost of normalization is acceptable in context.
+
+</p><h2> (2/5) Lazy Caching </h2> <p>
+
+Some methods may take a long time to compute, but they are deterministic, and thus we could cache the result and reuse it many times.
+A typical example is fibonacci:
+<pre class="l42Big"><![CDATA[
+class method Num slowFibo(Num n) = {
+  if n==0Num || n==1Num (return n)
+  return This.slowFibo(n=n-1Num)+This.slowFibo(n=n-2Num)
+  }
+]]></pre>
+This fibonacci implementation would take a very long time to run, since it would require recomputing the same
+results an exponential amount of times.
+
+This tweaked implementation relying on caching is much faster.
+<pre class="l42Big"><![CDATA[
+ComputeFibo = Data:{
+  Num that
+  @Cache.Lazy method Num () = {
+    n = this.that()
+    if n==0Num||n==1Num ( return n )
+    This fibo1 = This(n-1Num)//a 'computation object'
+    return fibo1()+This(n-2Num)()
+    }
+  }
+//...
+//usage example
+ComputeFibo(42\)() == 267914296Num
+]]></pre>
+As you can see, instead of a method with parameters we can declare a class with fields and an empty named method doing the actual computation.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> is an annotation recognized by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> that works only on <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it> methods with no arguments and with an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> result.
+
+That is, 42 does not directly recognize the annotation <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Decorating the surrounding library with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> translates <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> into
+an actual implementation.
+
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ComputeFibo fibo1]]></span><it style="font-style: bold; color:green;">&#187;</it> is a <span style="color:#ff1111; font-weight: bold;"> computation object </span>: an imm object whose only goal is to support one (or more) computationally intense methods.
+Thanks to normalization, the cache of computation objects is centrally stored, and thus recursive calls computing fibonacci will be able to reuse the cache from other objects.
+That is, the method result is cached on the normalized version of the receiver. In this way, 
+all the redundant fibonacci calls are avoided.
+
+</p><p>
+As you can see, the caching is is completely handled by the language and is not connected with the specific algorithm. This pattern is general enough to support any method from immutable data to an immutable result.
+
+</p><h2> (3/5) Automatic parallelism </h2> <p>
+When decorated by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> caches the results of methods after they have been called the first time.
+However, why wait for the methods to be called?
+Once the receiver object is created, the method could be computed <span style="color:#ff1111; font-weight: bold;"> eagerly </span> in a separed worker, so that when we call the method, we may get the result without waiting at all.
+That is, if we use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Eager]]></span><it style="font-style: bold; color:green;">&#187;</it> we can get automatic parallelism: the language will handle a set of parallel workers to execute such method bodies.
+
+</p><p>
+An important consideration here is that both <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Eager]]></span><it style="font-style: bold; color:green;">&#187;</it> are unobservable; that is, the observed result of the code is not impacted by lazy or eager cache.
+
+Consider the following code:
+
+<pre class="l42Big"><![CDATA[
+Task = Data:{ //Tasks are also computation objects
+  S text
+  @Cache.Eager method Bool isPolite() = ( .. )
+  @Cache.Eager method Bool isGrammatical() = ( .. )
+  }
+Tasks = Collection.list(Task)
+
+Main=(
+  tasks=Tasks[
+    \(text=S"..");
+    ..
+    \(text=S"..");
+    ]
+  for t in tasks (
+    Debug( t.isPolite() )
+    )
+  )
+]]></pre>
+Here we declare a Task object with a string field and two eager methods: one will check if the text in the string is polite and another will check if the string is grammatically correct.
+This can take quite a while. By using eager methods, it is sufficient to just create the objects to start those computations in parallel.
+When we need the results, we can just iterate on those task objects and call the methods.
+Objects with eager methods are automatically normed during creation, as if we used 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data('This,autoNorm=\.true())]]></span><it style="font-style: bold; color:green;">&#187;</it> instead of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+
+As you can see, in 42, parallelism and caching are just two sides of the same coin.
+
+</p><h2> (4/5) Invariants and derived fields </h2> <p>
+We have seen that cached behaviour can be computed lazily or eagerly on immutable objects.
+But we can bring caching even earlier and compute some behaviour <span style="color:#ff1111; font-weight: bold;"> at the same time </span> 
+as object instantiation.
+This allows us to encode derived fields: 
+fields whose values are completely determined
+by other values in the same object.
+Consider the following example:
+<pre class="l42Big"><![CDATA[
+Point = Data:{//not ok, the three-arg factory still exists
+  Double x
+  Double y
+  Double distanceFromOrigin
+  //should always be the square root of x^2+y^2
+  class method This (Double x, Double y) = \(
+    x=x
+    y=y
+    distanceFromOrigin=((x*x)+(y*y)).pow(exp=\"0.5")
+    )
+  }
+]]></pre>
+where the class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> has 3 fields, but the value of the third one should depend only on the other two.
+In 42, the code above would simply define a class with three unrelated fields, and while we are offering a factory that conveniently takes <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[x]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[y]]></span><it style="font-style: bold; color:green;">&#187;</it> and initialize the third field with 
+the computed value, the user could easy create invalid instances by calling the factory method with three arguments.
+As we will see later, in 42 we can prevent this from happening by making such a method private.
+However, we would still be able to create an invalid <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> inside of other <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> methods.
+Ideally, we would like to truly have only two fields, and have the third one as a precomputed derived value.
+
+In 42, we can encode such concept using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it>:
+<pre class="l42Big"><![CDATA[
+Point = Data:{
+  Double x
+  Double y
+  @Cache.Now class method Double distanceFromOrigin(Double x, Double y) = 
+    ((x*x)+(y*y)).pow(exp=\"0.5")
+  }
+]]></pre>
+The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> class defined above has a single factory method taking just <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[x]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[y]]></span><it style="font-style: bold; color:green;">&#187;</it>. In this way there is no need to have multiple ways to build the object and then hide the dangerous ones after the fact.
+
+The method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[distanceFromOrigin(x,y)]]></span><it style="font-style: bold; color:green;">&#187;</it> is computed when a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> object is created.
+Moreover, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> adds a method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read method Double distanceFromOrigin()]]></span><it style="font-style: bold; color:green;">&#187;</it>, allowing us to read the computed/cached value as we would if it were a field.
+Note that <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> makes a
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> method calling the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it> one.
+
+If the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[distanceFromOrigin(x,y)]]></span><it style="font-style: bold; color:green;">&#187;</it> leaks an error, it will be propagated out as if the method were manually called during object construction.
+
+This means that any time you receive a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it>, it has a valid distance.
+</p><p>
+We can build on this behaviour to encode class invariants:
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> methods with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Void]]></span><it style="font-style: bold; color:green;">&#187;</it> return type
+designed to simply throw error if the state is incorrect.
+For example, consider this updated version of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it>:
+
+<pre class="l42Big"><![CDATA[
+Point = Data:{
+  Double x
+  Double y
+  @Cache.Now class method Double distanceFromOrigin(Double x, Double y) = 
+    ((x*x)+(y*y)).pow(exp=\"0.5")
+  @Cache.Now class method Void invariant(Double x, Double y) = 
+    if !(x>=0Double && y>=0Double) error X"""%
+      | Invalid state:
+      | x = %x
+      | y = %y
+      """
+  }
+]]></pre>
+
+Now, every time user code receives a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it>, they can rely on the fact that <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[x]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[y]]></span><it style="font-style: bold; color:green;">&#187;</it> are
+non-negative and not NaN.
+
+</p><h2> (5/5) Summary </h2> <p>
+In 42 immutable objects, can be normalized in order to save memory.
+This works also on circular object graphs. In case you are interested in the details, it relies on a variation of DFA normalization.
+As a special case, objects without fields (immutable or not) are always represented in memory as a single object.
+Results of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Eager]]></span><it style="font-style: bold; color:green;">&#187;</it>
+ are attached to the normalized version of an object, thus making it possible to recover them simply by building a structurally identical object.
+</p><p>
+There are three kinds of caching, depending on the time the caching behaviour activates:
+
+<ul><li>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> computes the cached value when the annotated method is first called.
+It works on <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it> no-arg methods.
+An obvious workaround for the no-arg limitation is to define computation objects; this also works well with normalization: computation objects will 
+retrieve the cached results of any structurally equivalent object.
+</li><li>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Eager]]></span><it style="font-style: bold; color:green;">&#187;</it> computes the cached value in a separate parallel worker, starting when the object is created. It only works on <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> no-arg methods of classes whose objects are all deeply immutable.
+Those classes will automatically normalize their instances upon creation.
+</li><li>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> computes the cached value during object construction.
+Since the object does not exist yet, the annotation can only be placed on a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it> method whose parameters represent the needed object fields.
+This annotation does influence the observable behaviour.
+If there is no error computing the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> methods,
+then the fully initialized object is returned.
+But, if an error is raised computing the cache,
+instead of returning the broken object, the error is leaked during object construction.
+<br/>
+This, in turn, allows us to encode class invariants and to provide a static guarantee that users of a class can rely upon.
+
+</li></ul>
+<br/>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+</div><div class="inFloat">
+&nbsp; &nbsp; &nbsp; <a href="tutorial_04ErrorsAndExceptions.xhtml"> Previous </a>...<a href="tutorial_06CachingMut.xhtml"> Next </a>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+
+        </p>
+        </div>
+      </div>
+      <div id="footerwrap">
+        <div id="footer">
+          <ul style='padding: 10px;'>
+            <li style='display:inline;'>
+            <a href="mailto:marco.servetto@gmail.com" rel="me">Contact Us</a> |</li>
+            <li style='display:inline;'>
+            <a href= "http://ecs.victoria.ac.nz/mailman/listinfo/team42">Mailing list</a> |</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+	
+  </body>
+</html>
+

@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+ <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" media="all"/>
+    <script src="js/ace.js"></script>
+    <script src="js/utils.js"></script>
+    <link rel="shortcut icon" href="css/favicon.ico"/>
+    <title>42 - Metaprogramming as default</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script src="https://www.googletagmanager.com/gtag/js?id=G-M0E4M0XH2Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-M0E4M0XH2Z');
+    </script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=UA-212820693-1">
+    </script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-212820693-1');
+    </script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=AW-10810288706"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-10810288706');
+    </script>
+<!-- Event snippet for Page view conversion page -->
+<script>
+gtag('event', 'conversion', {'send_to': 'AW-10810288706/U3KJCKekmIUDEMLU36Io'});
+</script>
+  </head>
+  <body onload='doOnLoad();'>
+    <div id="wrapper">
+      <div id="headerwrap">
+        <div id="header">
+          <img style='float:left;'
+            src='css/logoBlue.png' alt='42' width='120' height='120'/>
+          <h3 style='float:left;'>
+            <p style='font-size:150%; color:rgb(250,250,250);'>42 - The definitive answer to design, code and everything</p>
+            <p style='font-size:100%; color:rgb(250,250,250);'> --But you are not going to like it</p>
+          </h3>
+        </div>
+      </div>
+      <div id="contentwrap">
+        <div id="content">
+<p>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+<div class="rotate90"> Index of Content</div>
+</div><div class="inFloat">
+<ol>
+ <li><a href="tutorial_01Basics.xhtml"> Basic concepts </a></li>
+ <li><a href="tutorial_02ModifiersIntro.xhtml"> Introduction to modifiers </a></li>
+ <li><a href="tutorial_03BasicClasses.xhtml"> Basic Classes </a></li>
+ <li><a href="tutorial_04ErrorsAndExceptions.xhtml"> Errors and Exceptions </a></li>
+ <li><a href="tutorial_05Caching.xhtml"> Caching </a></li>
+ <li><a href="tutorial_06CachingMut.xhtml"> Caching on Mutable objects </a></li>
+ <li><a href="tutorial_07InterfacesAndMatching.xhtml"> Interfaces and Matching </a></li>
+ <li><a href="tutorial_08Sequences.xhtml"> Collections and Sequences </a></li>
+ <li><a href="tutorial_09InputOutput.xhtml"> Input Output </a></li>
+ <li><a href="tutorial_10Exercises.xhtml"> Exercises </a></li>
+ <li><a href="tutorial_11MetaprogrammingIntro.xhtml"> Metaprogramming Introduction </a></li>
+ <li><a href="tutorial_12Refactoring.xhtml"> Programmatic Refactoring </a></li> 
+ <li><a href="tutorial_13MoreDecorators.xhtml"> More Decorators </a></li>
+ <li><a href="tutorial_14ExampleOfProgram.xhtml"> Example of a 42 Program </a></li>
+ <li><a href="tutorial_15DeployCode.xhtml"> Deploy code </a></li>
+</ol>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+</div><div class="inFloat">
+&nbsp; &nbsp; &nbsp; <a href="tutorial_09InputOutput.xhtml"> Previous </a>...<a href="tutorial_11MetaprogrammingIntro.xhtml"> Next </a>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+
+ </p><p id="Exercises"> </p><div style="break-after:page"></div><h1> Exercises </h1> <p>
+
+A very large class of practically useful programs can be obtained
+just by declaring
+basic classes, collections
+and simple Data classes.
+
+Let's see some exercises and solutions 
+to understand better how 42 code looks like
+
+</p><h2> (1/5) Max method </h2> <p>
+Write a static method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MaxOfList]]></span><it style="font-style: bold; color:green;">&#187;</it> returning the max from a list of numbers
+</p><p>
+Basic Solution: 
+<pre class="l42Big"><![CDATA[
+MaxOfList = {//static method pattern
+  UndefinedOnEmpty = Message:{[Message.Guard]}
+  //Max is undefined on empty lists.
+  //Since there was no mention of preconditions, we should explicitly handle all the error cases as Guards
+  class method
+  Num (Num.List that) = {
+    if that.isEmpty() ( error UndefinedOnEmpty"Max is undefined on empty lists" )
+    //now that we know we can proceed: 
+    var Num maxCandidate= that.left()
+    //there is no such thing like a minimum Num, we need to select one element from the list.
+    for n in that (
+      //we could write 'that.withoutLeft()' to avoid checking on the first again
+      if maxCandidate<n (maxCandidate:= n)
+      //update the variable to keep track of the max so far.
+      )
+    return maxCandidate
+    }
+  }
+]]></pre>
+
+Solution using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[.reduce()]]></span><it style="font-style: bold; color:green;">&#187;</it>:
+<pre class="l42Big"><![CDATA[
+MaxOfList = {
+  class method
+  Num (Num.List that) =
+    that.reduce()(
+      for e in \vals() (
+        if \acc < e \add(e) 
+        )
+      )
+  }
+]]></pre>
+Where the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[reduce()]]></span><it style="font-style: bold; color:green;">&#187;</it>  will already throw a meaningful error in case of an empty list: <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Collection.OperationUndefinedOnEmpty]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Defining your own error may still produce more readable errors, so feel free to mix and match the two approaches as show in the next exercise:
+
+
+</p><h2> (2/5) Merging and filtering </h2> <p>
+Write a static method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MapText]]></span><it style="font-style: bold; color:green;">&#187;</it> producing a string from to lists of strings of the same length.
+ For example
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MapText(keys=S.List[S"a";S"b";S"c"] vals=S.List[S"z";S"y";S"z"])]]></span><it style="font-style: bold; color:green;">&#187;</it>
+should produce <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S"[a->z, b->y, c->z]"]]></span><it style="font-style: bold; color:green;">&#187;</it>
+</p><p>
+Solution: 
+<pre class="l42Big"><![CDATA[
+MapText = {
+  UnequalSize = Message:{[Message.Guard]}
+  class method
+  S (S.List keys, S.List vals) = {
+    if keys.size() !=  vals.size() error UnequalSize
+      "keys= %keys.size(), values= %vals.size()" 
+    //the former formatting allows us to keep a whole line for the error message
+    res = S.List()(for k in keys, v in vals \add(S"%k->%v"))
+    if res.isEmpty() return S"[]"
+    text = res.reduce()(for s in \vals \add(\acc++S", %s"))
+    return S"[%text]"
+    }
+  }
+]]></pre>
+Note how we write <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[\add(\acc++S", %s")]]></span><it style="font-style: bold; color:green;">&#187;</it>
+instead of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[\add(S"%\acc, %s")]]></span><it style="font-style: bold; color:green;">&#187;</it> since 
+ string interpolation does not currently support the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[\]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+
+<br/>
+Write a static method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FilterUpTo{ class method S.List(S.List that, I size)}]]></span><it style="font-style: bold; color:green;">&#187;</it> filtering out from a list of strings the ones longer
+than <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[size]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+For example 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[FilterUpTo(S.List[S"a";S"ab";S"abc"] size=2I)==S.List[S"a";S"ab"]]]></span><it style="font-style: bold; color:green;">&#187;</it>
+</p><p>
+Precondition: <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[size]]></span><it style="font-style: bold; color:green;">&#187;</it> is not negative
+</p><p>
+Solution: 
+<pre class="l42Big"><![CDATA[
+FilterUpTo = {
+  class method
+  S.List (S.List that, I size) = (
+    X.Pre[size >= 0I]
+    S.List()(for s in that if s.size()<= size \add(s))
+    )
+  }
+]]></pre>
+Again we see yet another way to handle errors; preconditions are appropriate when it is an observed  bug if the user calls it with wrong parameters.
+
+</p><h2> (3/5) Read/Write files </h2> <p>
+
+Write a static method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ReadSelf]]></span><it style="font-style: bold; color:green;">&#187;</it> returning the content of the file where the current source code is located.
+<br/>
+<pre class="l42Big"><![CDATA[
+FileSystem = Load:{reuse [L42.is/FileSystem]}
+
+ReadSelf = {
+  class method
+  S (mut FileSystem that)[FileSystem.Fail] = 
+    that.read(Url"This.L42")
+  }
+Test = {}:Test""(expected=ReadSelf(FileSystem.Real.#$of())
+    actual=S"reuse [L42.is/AdamsTowel]%S.nl()MaxOfList = [###]end")
+//end
+]]></pre>
+
+As you can see, In the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[actual]]></span><it style="font-style: bold; color:green;">&#187;</it> parameter of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Test]]></span><it style="font-style: bold; color:green;">&#187;</it> we can use the symbol
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["[###]"]]></span><it style="font-style: bold; color:green;">&#187;</it> to specify holes in the expected string.
+This is very useful to make more resilient tests.
+
+</p><h2> (4/5) Random mole (and how to divide you code in multiple files) </h2> <p>
+
+Here we show a larger 42 example.
+When writing large programs it is convenient to divide the source in multiple files.
+In 42 this can be obtained with the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[{...}]]></span><it style="font-style: bold; color:green;">&#187;</it> symbol.
+That is, if in a given file we write
+<pre class="l42Big"><![CDATA[
+A = /*..*/{...}/*..*/
+]]></pre>
+42 will search for a file called either <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[A.L42]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[A/This.L42]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Such file have to contain valid 42 code; such code is replaced for the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[...]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+In this way code can be divided
+in multiple files spanning a hierarchy of folders.
+</p><p>
+More precisely, 
+a 42 project must be a folder containing a file called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[This.L42]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Folders can contain other files <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[.L42]]></span><it style="font-style: bold; color:green;">&#187;</it> or folders containing other <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[This.L42]]></span><it style="font-style: bold; color:green;">&#187;</it> and other files.
+<br/>
+The meaning of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[...]]></span><it style="font-style: bold; color:green;">&#187;</it> depend 
+on both the location in the code and 
+of the position of the current file in the file system.
+To evaluate a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[...]]></span><it style="font-style: bold; color:green;">&#187;</it> 42 locates the nearest enclosing nested
+library declaration, and we record its name (<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[A]]></span><it style="font-style: bold; color:green;">&#187;</it> in the example).
+This identifies either a file or a folder.
+If both or neither of these exist, there is an error.
+<br/>
+Note that the found <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[*.L42]]></span><it style="font-style: bold; color:green;">&#187;</it> file can contain more <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[...]]></span><it style="font-style: bold; color:green;">&#187;</it>, which will be
+resolved relative to the file before importing it into the current scope.
+
+</p><p>
+We can now design a longer example, represent a piece of land as a 80*80 bi-dimensional map,
+where every cell can be full of dirt (90%) or rock (10%).
+Then a mole start from the left top corner and attempts to
+digs through dirt randomly.
+After 3000 steps the mole stops.
+Define the opportune classes and write a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[randomDig]]></span><it style="font-style: bold; color:green;">&#187;</it>
+method. 
+</p><p>
+To start, we define some auxiliary classes: 
+<pre class="l42Big"><![CDATA[
+//file This.L42
+Point = Data:{...}
+]]></pre>
+
+<pre class="l42Big"><![CDATA[
+//file Point.L42
+I x, I y
+
+@Cache.Now class method
+Void invariant(I x, I y) = X.Guarded[
+  x>=0I; x<80I;
+  y>=0I; y<80I;
+  ]
+
+method This go(Direction that) = {
+  return that.go(this)
+  catch error X.Guarded _ return this
+  }
+  
+method I index() = 
+  (this.y()*80I)+this.x()
+]]></pre>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> has an invariant ensuring that the coordinates are inside the 80*80 area.
+We use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[X.Guarded]]></span><it style="font-style: bold; color:green;">&#187;</it> instead of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[X]]></span><it style="font-style: bold; color:green;">&#187;</it> since <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[X.Guarded]]></span><it style="font-style: bold; color:green;">&#187;</it> implements <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Guard]]></span><it style="font-style: bold; color:green;">&#187;</it>, thus we can rely on such error to trigger predictably.
+We do this in method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[go(that)]]></span><it style="font-style: bold; color:green;">&#187;</it>, where we capture the invariant failure in case moving the point would push it outside of the boundary; in that case we keep the point in the original coordinates.
+
+<pre class="l42Big"><![CDATA[
+//file This.L42
+Direction = Collection.Enum:{interface
+  method Point go(Point that)
+  Up={[This1] method go(that)=that.with(x=\x-1I)}
+  Down={[This1]method go(that)=that.with(x=\x+1I)}
+  Left={[This1]method go(that)=that.with(y=\y-1I)}
+  Right={[This1]method go(that)=that.with(y=\y+1I)}
+  }
+]]></pre>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Direction]]></span><it style="font-style: bold; color:green;">&#187;</it> is an enumeration, and we leverage on dyanamic dispatch to encode the beaviour of the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[go(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> method.
+Note how in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Direction]]></span><it style="font-style: bold; color:green;">&#187;</it> we explicitly declared the top level <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[interface]]></span><it style="font-style: bold; color:green;">&#187;</it> and
+we implemented the outer level <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[This1]]></span><it style="font-style: bold; color:green;">&#187;</it> explicitly in all the cases.
+Then we could implemented the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[go(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> method without repeating the type signatore.
+
+<pre class="l42Big"><![CDATA[
+//file This.L42
+Cell = Collection.Enum:{
+  method S symbol()
+  Dirt={method S symbol()=S"#"}
+  Rock={method S symbol()=S.percent()}
+  Empty={method S symbol()=S" "}
+  Mole={method S symbol()=S"M"}
+  }
+]]></pre>
+Instead, while declaring <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cell]]></span><it style="font-style: bold; color:green;">&#187;</it> we omit the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[interface]]></span><it style="font-style: bold; color:green;">&#187;</it> keyword and the explicit implementation.
+Then we had to repeat the type signature all the times while implementing the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[symbol()]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Both ways to declare enumerations works and produce the same result.
+
+Should we used separate files for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Direction]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cell]]></span><it style="font-style: bold; color:green;">&#187;</it>?
+Their code is quite short, so we chose not to.
+If in the future we had many more kinds of Cells, we could move that code in its own file later.
+<pre class="l42Big"><![CDATA[
+//file This.L42
+Land = Data:{...}
+]]></pre>
+
+<pre class="l42Big"><![CDATA[
+//file Land.L42
+[HasToS]
+mut Math.Random rand
+mut Cell.List cells
+
+class method
+mut Cell.List #default#cells(mut Math.Random rand) = Cell.List[](
+  for i in Range(80I*80I) (
+    if rand.nextInRange(0I to=10I)==0I \add(Cell.Rock())
+    else \add(Cell.Dirt())
+    )
+  )
+mut method 
+Void set(Point that, Cell val) =
+  this.#cells().set(that.index() val=val)
+
+read method 
+Cell val(Point that) =
+  this.cells().val(that.index())    
+  
+mut method
+Void randomDig() = (
+  var current = Point(x=0I y=0I)
+  for i in Range(3000I) (
+    this.set(current,val=Cell.Empty())
+    d = Direction.Vals().val(this.#rand().nextInRange(0I to=4I))
+    newPoint = current.go(d) //no digging in rock
+    if this.val(newPoint)!=Cell.Rock() ( current:=newPoint )
+    )
+  this.set(current,val=Cell.Mole()) //finally, the mole is where we ends up
+  )
+
+method toS() = (
+  var res=S""
+  for x in Range(80I) (
+    res++=S.nl()//newline
+    for y in Range(80I) res++=this.val(\(x=x,y=y)).symbol()
+    )
+  res++S.nl()
+  )
+//since we define 'toS()' explicitly, Data will leave it alone :)
+]]></pre>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Land]]></span><it style="font-style: bold; color:green;">&#187;</it> has a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Math.Random rand]]></span><it style="font-style: bold; color:green;">&#187;</it> field and a 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Cell.List cells]]></span><it style="font-style: bold; color:green;">&#187;</it> field; a list of cells of size 80*80.
+While we expect the user to provide the random object, we wish to provide a way to initialize the 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[cells]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+In 42, as for most languages, we could provide a default value for a field by writing
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Cell.List cells = Cell.List[](..)]]></span><it style="font-style: bold; color:green;">&#187;</it>, but in this case we need to use the provided random object
+to complete the initialization, thus we use a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Cell.List #default#cells(mut Math.Random rand)]]></span><it style="font-style: bold; color:green;">&#187;</it>
+instead.
+As with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it>,
+we take in input parameters with the same name of the fields we wish to use.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> is going to rely on this method to initialize the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[cells]]></span><it style="font-style: bold; color:green;">&#187;</it> field.
+This is actually a general pattern of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it>, allowing default values for any method.
+<br/>
+The method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[randomDig()]]></span><it style="font-style: bold; color:green;">&#187;</it> is straightforward.
+<br/>
+Note how we override <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[toS()]]></span><it style="font-style: bold; color:green;">&#187;</it> instead of accepting the implementation provided by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+
+To use the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Land]]></span><it style="font-style: bold; color:green;">&#187;</it> class we can use the code below.
+<pre class="l42Big"><![CDATA[
+//file This.L42
+MainMole = (
+  land = Land(rand=\.#$random())
+  land.randomDig()
+  Debug(land)
+  )
+]]></pre>
+
+
+</p><h2> (5/5) Examples summary </h2> <p>
+<ul><li>
+Always think about what can go wrong upfront
+</li><li>
+Many methods can be completed by first checking for 
+errors/issues and then using a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[for]]></span><it style="font-style: bold; color:green;">&#187;</it>, possibly inside a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[reduce()]]></span><it style="font-style: bold; color:green;">&#187;</it> or a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Match]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+</li><li>
+Before heading into a problem,
+spend some time to define your problem domain.
+We dodged a lot of headaches by defining
+points with invariants.
+</li><li>
+Well organized code, properly divided in files and folders is much  easier to navigate and maintain.
+</li></ul>
+<br/>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+</div><div class="inFloat">
+&nbsp; &nbsp; &nbsp; <a href="tutorial_09InputOutput.xhtml"> Previous </a>...<a href="tutorial_11MetaprogrammingIntro.xhtml"> Next </a>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+
+        </p>
+        </div>
+      </div>
+      <div id="footerwrap">
+        <div id="footer">
+          <ul style='padding: 10px;'>
+            <li style='display:inline;'>
+            <a href="mailto:marco.servetto@gmail.com" rel="me">Contact Us</a> |</li>
+            <li style='display:inline;'>
+            <a href= "http://ecs.victoria.ac.nz/mailman/listinfo/team42">Mailing list</a> |</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+	
+  </body>
+</html>
+

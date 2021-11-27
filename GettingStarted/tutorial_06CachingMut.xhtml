@@ -1,0 +1,720 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+ <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" media="all"/>
+    <script src="js/ace.js"></script>
+    <script src="js/utils.js"></script>
+    <link rel="shortcut icon" href="css/favicon.ico"/>
+    <title>42 - Metaprogramming as default</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script src="https://www.googletagmanager.com/gtag/js?id=G-M0E4M0XH2Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-M0E4M0XH2Z');
+    </script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=UA-212820693-1">
+    </script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-212820693-1');
+    </script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=AW-10810288706"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-10810288706');
+    </script>
+<!-- Event snippet for Page view conversion page -->
+<script>
+gtag('event', 'conversion', {'send_to': 'AW-10810288706/U3KJCKekmIUDEMLU36Io'});
+</script>
+  </head>
+  <body onload='doOnLoad();'>
+    <div id="wrapper">
+      <div id="headerwrap">
+        <div id="header">
+          <img style='float:left;'
+            src='css/logoBlue.png' alt='42' width='120' height='120'/>
+          <h3 style='float:left;'>
+            <p style='font-size:150%; color:rgb(250,250,250);'>42 - The definitive answer to design, code and everything</p>
+            <p style='font-size:100%; color:rgb(250,250,250);'> --But you are not going to like it</p>
+          </h3>
+        </div>
+      </div>
+      <div id="contentwrap">
+        <div id="content">
+<p>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+<div class="rotate90"> Index of Content</div>
+</div><div class="inFloat">
+<ol>
+ <li><a href="tutorial_01Basics.xhtml"> Basic concepts </a></li>
+ <li><a href="tutorial_02ModifiersIntro.xhtml"> Introduction to modifiers </a></li>
+ <li><a href="tutorial_03BasicClasses.xhtml"> Basic Classes </a></li>
+ <li><a href="tutorial_04ErrorsAndExceptions.xhtml"> Errors and Exceptions </a></li>
+ <li><a href="tutorial_05Caching.xhtml"> Caching </a></li>
+ <li><a href="tutorial_06CachingMut.xhtml"> Caching on Mutable objects </a></li>
+ <li><a href="tutorial_07InterfacesAndMatching.xhtml"> Interfaces and Matching </a></li>
+ <li><a href="tutorial_08Sequences.xhtml"> Collections and Sequences </a></li>
+ <li><a href="tutorial_09InputOutput.xhtml"> Input Output </a></li>
+ <li><a href="tutorial_10Exercises.xhtml"> Exercises </a></li>
+ <li><a href="tutorial_11MetaprogrammingIntro.xhtml"> Metaprogramming Introduction </a></li>
+ <li><a href="tutorial_12Refactoring.xhtml"> Programmatic Refactoring </a></li> 
+ <li><a href="tutorial_13MoreDecorators.xhtml"> More Decorators </a></li>
+ <li><a href="tutorial_14ExampleOfProgram.xhtml"> Example of a 42 Program </a></li>
+ <li><a href="tutorial_15DeployCode.xhtml"> Deploy code </a></li>
+</ol>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+</div><div class="inFloat">
+&nbsp; &nbsp; &nbsp; <a href="tutorial_05Caching.xhtml"> Previous </a>...<a href="tutorial_07InterfacesAndMatching.xhtml"> Next </a>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+
+ </p><p id="CachingMut"> </p><div style="break-after:page"></div><h1> Caching on Mutable objects </h1> <p>
+</p><h2> (1/5) Cache invalidation </h2> <p>
+The main advantage of caching methods of immutable objects is that the cache stays valid.
+L42 can also cache methods of mutable objects, and discovers on its own when the cache needs to be invalidated.
+Consider this trivial variation of the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> example above where the fields can be updated:
+
+<pre class="l42Big"><![CDATA[
+Point = Data:{
+  var Double x
+  var Double y
+  @Cache.Now class method Double distanceFromOrigin(Double x, Double y) = 
+    ((x*x)+(y*y)).pow(exp=\"0.5")
+  @Cache.Now class method Void invariant(Double x, Double y) = 
+    if x<0Double || y<0Double error X".."
+  }
+]]></pre>
+When a setter for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[x]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[y]]></span><it style="font-style: bold; color:green;">&#187;</it> is invoked, then the two <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> methods are recomputed.
+
+In other programming languages, this behaviour can be encoded by
+making the fields private and customizing the implementations of the setters to recompute the distance when needed. This pattern can grow very complex very fast.
+L42 guarantees that a cached value is always structurally equivalent to the value that would be returned by calling the method again.
+Moreover, for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it>, L42 also guarantees that if the computation was re-run then it would terminate without errors.
+Thus, when <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> is used to emulate invariants, those invariants are guaranteed to hold for all observable objects, that is, all objects where the annotated method could possibly be called.
+
+This is possible thanks to the strong L42 type system, and we believe this property can not be broken.
+That is, we believe this property to hold even in the presence of exceptions, errors, aliasing, input output and non deterministic behaviour.
+It is possible to make L42 work together with Java or even with (possibly broken) native code, and we believe our property will continue to hold.
+
+</p><h2> (2/5) Deeply mutable objects </h2> <p>
+As discussed above, a deeply mutable object is a mutable object with some mutable fields.
+Also deeply mutable objects can support <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it>, 
+but such objects must have <span style="color:#ff1111; font-weight: bold;"> encapsulated </span> state, as we have seen before for the class
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+
+<pre class="l42Big"><![CDATA[
+Animal = Data:{
+  var Point location
+  capsule Points path
+
+  mut method
+  Void move() = (
+    this.location(\path.left())
+    this.removeLeftPath()
+    )
+
+  @Cache.Clear class method
+  Void removeLeftPath(mut Points path) =
+    path.removeLeft()
+  }
+]]></pre>
+
+The field <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule Points path]]></span><it style="font-style: bold; color:green;">&#187;</it> is an encapsulated mutable field.
+It can be accessed as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> by doing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this.path()]]></span><it style="font-style: bold; color:green;">&#187;</it>, but can not be directly accessed as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+However, we can write <span style="color:#ff1111; font-weight: bold;"> capsule mutator </span> methods by using 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Similarly to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it>, a class method can be annotated with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> and can
+take parameters representing the object's fields.
+In addition, more parameters can be present encoding extra arguments.
+To clarify, consider this richer example, where our <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it> has an invariant and another capsule mutator method:
+
+<pre class="l42Big"><![CDATA[
+Point = Data:{ Double x, Double y
+  method Double distance(Point that) = (
+    x = this.x()-that.x()
+    y = this.y()-that.y()
+    (x*x)+(y*y)).pow(exp=\"0.5")
+    )
+  }
+
+Points = Collection.list(Point)
+
+Animal = Data:{
+  var Point location
+  capsule Points path
+
+  mut method
+  Void move() = (
+    this.location(\path.left())
+    this.removeLeftPath()
+    )
+
+  mut method
+  Void trim() = 
+    this.removeFarthest(location=\location, distance=3Double)
+
+  @Cache.Clear class method
+  Void removeLeftPath(mut Points path) =
+    path.removeLeft()
+  
+  @Cache.Clear class method
+  Void removeFarthest(mut Points path, Point location, Double distance) = (
+    var maxD=distance
+    var maxI=I"-1"
+    for p in path, i in Range(path.size()) (
+      currentD = location.distance(p)
+      if currentD>maxD (
+        maxI:=i
+        maxD:=currentD
+        )
+      )
+    if maxI!=I"-1" path.remove(maxI)
+    )
+
+  @Cache.Now class method
+  Void invariant(read Points path, Point location) = 
+    if path.contains(location) error X"..."
+  }
+]]></pre>
+We added a method to remove the farthest away point if it is over a certain distance.
+As you can see, the parameters <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[path]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location]]></span><it style="font-style: bold; color:green;">&#187;</it> corresponds to fields, while
+the parameter <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[distance]]></span><it style="font-style: bold; color:green;">&#187;</it> is extra needed information.
+When we call <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this.removeFarthest(distance=3\)]]></span><it style="font-style: bold; color:green;">&#187;</it> we pass only <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[distance]]></span><it style="font-style: bold; color:green;">&#187;</it>; the other parameters are passed automatically.
+<br/>
+As an invariant, we require that the current location is not in the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[path]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+This code, in the current form, has a bug; can you spot it?
+Look carefully at the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[move()]]></span><it style="font-style: bold; color:green;">&#187;</it>:
+
+<pre class="l42Big"><![CDATA[
+  mut method
+  Void move() = (
+    this.location(\path.left())
+    this.removeLeftPath()
+    )
+]]></pre>
+Here we first set up the location, then we remove it from the path.
+The method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[move()]]></span><it style="font-style: bold; color:green;">&#187;</it> recomputes the invariant twice: one after the field setter 
+and one after the call to the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> method.
+This first check is going to fail, since the leftmost element of the path has not been removed yet.
+In this case we can solve the problem by swapping the lines:
+
+<pre class="l42Big"><![CDATA[
+  mut method
+  Void move() = (
+    left=this.path().left() //store left value
+    this.removeLeftPath()   //before removing it
+    this.location(left)     //set location to left
+    )
+]]></pre>
+
+However, this kind of solution does not scale in the general case. 
+Next, we will see a 
+programming pattern that allows 
+ the invariant checks
+ (and more generally
+    the recomputation of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> methods)
+to be delayed in a controlled way.
+</p><p>
+</p><h2> Cache.Lazy and Cache.LazyRead </h2> <p>
+As we have seen before, 
+we can annotate <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it> methods 
+with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> so that 
+the result will be computed once, the first time that
+the method is called.
+We can also annotate <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> methods in the same way.
+However, the cache is now stored in the actual objects and not in the normalized versions.
+This happens because a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> reference can refer to either mutable or immutable objects, and only immutable objects
+can have normalized versions.
+If anything in the ROG of the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> object is mutated, then the cache is invalidated,
+and the result will be recomputed the next time the method is called.
+Indeed this annotation enables lazy caching on mutable data-structures, where the cache is automatically invalidated and removed when a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> method terminates.
+Finally, since the type system can not track when the ROG from <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> fields is mutated, a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.Lazy read method]]></span><it style="font-style: bold; color:green;">&#187;</it> can only be applied to 
+classes whose fields are all
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it>;
+that is, their instance all have <it style="font-style: italic;">encapsulated state</it>.
+
+</p><p>
+If a class has <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> fields, but those are not actually used to compute the cached value,
+we can apply the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.LazyRead]]></span><it style="font-style: bold; color:green;">&#187;</it> annotation to an opportune <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it> method instead.
+Every method annotated as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> could instead be annotated as 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.LazyRead]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+This annotation is a point in the middle between <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it>; it produces the same behaviour as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> but works similarly to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it>: it is applied to
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it> methods whose parameters represent fields, and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> generates a correspondent no-arg <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> method.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.LazyRead]]></span><it style="font-style: bold; color:green;">&#187;</it> methods all behave as if they where recomputing the result, but with a different performance.
+</p><p>
+Cache invalidation is considered one of the <a href="https://martinfowler.com/bliki/TwoHardThings.html">great challenges</a> in writing correct programs; L42 can handle it correctly and automatically.
+However, there is a cost: you have to encode the algorithm so that the type system accepts your code and so that the caching annotations can be applied.
+
+</p><h2> (3/5) Box patten </h2> <p>
+
+As we have seen, in order to
+write mutable objects with encapsulated state,
+we need to designed them well, using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> to initialize the mutable data, using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> to mutate such state, and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> for the invariant.
+However, we can also program a naive deeply mutable object and box it up as a second step.
+This can require a little more code, but it is more intuitive, and works very well for arbitrarily complex cases.
+Consider the following code:
+
+<pre class="l42Big"><![CDATA[
+Bike = Data:{
+  var mut Wheel front
+  var mut Wheel back
+  var mut Seat seat
+  var mut Chain chain
+  mut method Void nail() = this.#front().addHole()
+  mut method Void rain(Second time) = this.#chain().addRust(time)
+  read method Void invariant() = X[
+    this.front().size()==this.back().size();
+    this.seat().isConfortable();
+    ]    
+  }
+//components can mutate (get damaged)
+//and be updated (replaced with new ones)
+]]></pre>
+As you can see, the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it> is a deeply mutable class, designed with no attention to
+correctness: if the programmer is not carefully, the same <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Weel]]></span><it style="font-style: bold; color:green;">&#187;</it> 
+may end up used for multiple bikes at the same time.
+Also, the method called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[invariant]]></span><it style="font-style: bold; color:green;">&#187;</it> only represents a programmer intention, but it is not enforced in any way, so it could be silently broken.
+
+We can easy create a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[BikeBox]]></span><it style="font-style: bold; color:green;">&#187;</it> class containing and encapsulating, such a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it>:
+<pre class="l42Big"><![CDATA[
+BikeBox = Data:{
+  capsule Bike box
+  
+  @Cache.Now class method
+  Void invariant(read Bike box) = box.invariant()
+  
+  @Cache.Clear class method
+  Void nail(mut Bike box) = box.nail()
+  
+  @Cache.Clear class method
+  Void rain(mut Bike box, Second time) = box.rain(time=time)
+
+  @Cache.Clear class method
+  Void front(mut Bike box, capsule Wheel that) = box.front(that)
+  }
+..
+//user code
+b = BikeBox(box=\(front=\(..) back=\(..) seat=\(..) chain=\(..)))
+b.nail()
+//b.box().nail()/ ill-typed
+Debug(b.box().front())//will display the unfortunate wheel
+b.front(\(..)) //looks just like a normal setter, but acts on the internal object
+]]></pre>
+
+As you can see, no matter how complex some class code is, we can simply wrap it into a box and apply <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it>
+ and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> on top of it.
+In this way we end up with two types:
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it>, that does not offers any guarantee,
+ and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[BikeBox]]></span><it style="font-style: bold; color:green;">&#187;</it>, ensuring the invariant and
+encapsulating the state.
+
+
+
+The methods <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[BikeBox.nail()]]></span><it style="font-style: bold; color:green;">&#187;</it>,
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[BikeBox.rain(time)]]></span><it style="font-style: bold; color:green;">&#187;</it>
+and
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[BikeBox.front(that)]]></span><it style="font-style: bold; color:green;">&#187;</it>
+ will check for the invariant exactly one time, at the end of their execution.
+Following this pattern, we can perform an arbitrarily long computation before the checks are triggered.
+
+When writing other classes, we can chose to use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it>
+or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[BikeBox]]></span><it style="font-style: bold; color:green;">&#187;</it>, depending on the specific details of our code.
+If we chose to use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it> as a field of another class, we can still check 
+the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it> invariant inside the invariant of the composite class:
+<pre class="l42Big"><![CDATA[
+FamilyGarage = Data:{
+  mut Bike daddyBike
+  mut Bike mummyBike
+  mut Trike timmyBike  
+  ..
+  read method Void invariant() = X[
+    this.daddyBike().invariant();
+    this.mummyBike().invariant();
+    this.timmyBike().invariant();
+    ]
+  }
+FamilyGarageBox = Data:{
+  capsule FamiliyGarage box
+
+  @Cache.Now class method
+  Void invariant(read FamilyGarage box) = box.invariant()  
+  }
+]]></pre>
+</p><p>
+As we have seen, with the box pattern we
+can have the flexibility of temporarily open invariants without any of the drawbacks.
+Of course, programmers will need to keep in mind which values are protected by invariants
+and which values are unsupervised by invariants.
+In 42 this is under the control of the type system: a value of type <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it> has no special guarantees, while a value of type 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[BikeBox]]></span><it style="font-style: bold; color:green;">&#187;</it> will ensure the invariant.
+
+</p><h2> (4/5) Controlling the ROG shape </h2> <p>
+
+An attentive reader may have notice that we would allow for fields <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[front]]></span><it style="font-style: bold; color:green;">&#187;</it>
+ and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[back]]></span><it style="font-style: bold; color:green;">&#187;</it> to point to the
+ same <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Wheel]]></span><it style="font-style: bold; color:green;">&#187;</it> object.
+A Java programmer may be tempted to just add 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this.front()!=this.back();]]></span><it style="font-style: bold; color:green;">&#187;</it> in the invariant,
+but this would just use the user defined <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[!=]]></span><it style="font-style: bold; color:green;">&#187;</it> operator, that
+on classes created using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> is likely to check for structural equality instead of pointer equality.
+AdamsTowel offers <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[System.mutReferenceEquality(a and=b)]]></span><it style="font-style: bold; color:green;">&#187;</it> to check for reference equality, but 
+this method only works for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> objects.
+The wheels are indeed <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> objects,
+but the invariant method takes a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> receiver; thus we can only see the wheels as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+In this case, the inability to use pointer equality is actually a good thing, since it does not correspond to what we really wanted to express: what if the two wheels are different objects but they share the same <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Tire]]></span><it style="font-style: bold; color:green;">&#187;</it> object?
+What we want is to check that the mutable objects are not aliased in physically unreasonable ways.
+Generally, what we often want is to ensure the tree shape of the mutable part of the object graph.
+
+In 42, we can create classes where all of the instances are guaranteed to follow this property, by making all fields either <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> types of classes that recursively respect this property
+or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>/<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+However, according to what we have seen up to now, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> fields can only be mutated by defining <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> methods, and those methods will be unable to mutate any other 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> field.
+Consider the following code:
+
+<pre class="l42Big"><![CDATA[
+Tire = Data:{var Num pressure}
+Wheel = Data:{var mut Tire tire}
+Seat = Data:{var S description}
+Chain = Data:{ var Num damage 
+  mut method Void onWheel(lent Wheel that) = (
+    lent Tire t=that.#tire()
+    t.pressure(\pressure-1\)
+    this.damage(\damage+1\)
+    )
+  }
+]]></pre>
+
+Here the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Chain]]></span><it style="font-style: bold; color:green;">&#187;</it> can rub onto the wheel, damaging it.
+The parameter of method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[onWheel]]></span><it style="font-style: bold; color:green;">&#187;</it> is
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[lent]]></span><it style="font-style: bold; color:green;">&#187;</it>. This guarantees that the object graphs of the chain and the wheel will 
+not be mangled together by the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[onWheel]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Can we assemble a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it> while being able to both use 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[onWheel]]></span><it style="font-style: bold; color:green;">&#187;</it> and guaranteeing the tree structure?
+The trick is to declare <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[lent]]></span><it style="font-style: bold; color:green;">&#187;</it> exposers manually:
+<pre class="l42Big"><![CDATA[
+Bike = Data:{
+  var capsule Wheel front
+  var capsule Wheel back
+  lent method lent Wheel #front() //lent exposer
+  lent method lent Wheel #back() //lent exposer
+  var capsule Seat seat
+  var capsule Chain chain
+  lent method lent Chain #chain()//lent exposer
+  mut method Void chainOnWheel() = 
+    this.#chain().onWheel(this.#back())
+    
+  }
+BikeBox = Data:{..}//as before
+]]></pre>
+That is, by declaring lent exposers manually we gain the possibility of writing methods that mutate the capsule fields without using the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> pattern.
+In exchange for this extra flexibility, 
+those fields do not count as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> fields for the sake of 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.LazyRead]]></span><it style="font-style: bold; color:green;">&#187;</it> annotations.
+However, we can still use through the box pattern, as show before.
+
+
+
+</p><h2> (5/5) Summary </h2> <p>
+
+Representation invariants and lazy caching
+can be applied to mutable objects as well as immutable ones.
+
+Proving properties on mutable
+ objects requires us to know and apply various patterns.
+Historically, in software verification, representation invariants where small 
+units of code, mostly focusing on the direct content of the fields and mostly relying on either pointer equality or the binary value of primitive datatypes, where the invariants could be deliberately  broken while the program was still able to observe the broken object.
+None of this is possible in 42; in particular, 42 guarantees that no broken objects can be observed.
+The box pattern allows us to divide the value into two types:
+the one with an enforced invariant and the raw object state.
+This recovers 
+the flexibility of temporarily open invariants
+without any of the drawbacks.
+
+Note that a sound language with normalization and caching/invariants
+can not offer pointer equality tests on immutable objects.
+
+Consider the example of a list whose invariant requires all
+ of its elements to have a distinct pointer values.
+A list with such an invariant may contain two structurally equal but not pointer equal elements.
+Suppose such a list became immutable and was
+normalized.
+Now those two elements
+would be pointer equal, and the invariant would have been broken by normalization.
+</p><p>
+It can be hard to remember the differences between all of the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.***]]></span><it style="font-style: bold; color:green;">&#187;</it> annotations.
+Below, we show a table summarizing them.
+
+<table>
+<tr>
+<th>annotation</th>
+<th>recType</th>
+<th>parameters</th>
+<th>transformedInto</th>
+<th>storage</th>
+<th>timing</th>
+</tr>
+<tr>
+<td>Cache.Lazy</td>
+<td>class</td>
+<td>zero</td>
+<td></td>
+<td>class</td>
+<td>first call</td>
+</tr>
+<tr>
+<td>Cache.Lazy</td>
+<td>imm</td>
+<td>zero</td>
+<td></td>
+<td>norm</td>
+<td>first call</td>
+</tr>
+<tr>
+<td>Cache.Lazy</td>
+<td>read*</td>
+<td>zero</td>
+<td></td>
+<td>instance</td>
+<td>invalidation</td>
+</tr>
+<tr>
+
+<td>Cache.Eager</td>
+<td>imm*</td>
+<td>zero</td>
+<td></td>
+<td>norm</td>
+<td>parallel</td>
+</tr>
+<tr>
+
+<td>Cache.LazyRead</td>
+<td>class</td>
+<td>fields</td>
+<td>read0</td>
+<td>instance</td>
+<td>invalidation</td>
+</tr>
+
+<tr>
+<td>Cache.Now</td>
+<td>class</td>
+<td>fields</td>
+<td>read0</td>
+<td>instance</td>
+<td>invalidation+</td>
+</tr>
+<tr>
+<td>Cache.Clear</td>
+<td>class</td>
+<td>fields+</td>
+<td>mut+</td>
+<td>instance-</td>
+<td>when called</td>
+</tr>
+</table>
+
+</p><p>
+Notes:
+<ul>
+<li>
+imm* = applicable only on classes with all fields <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>/<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it> and not <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+</li>
+<li>
+read* = applicable only on classes with all fields <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>/<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+</li>
+<li>
+fields  = method parameters are field names.
+Capsule fields are seen as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+</li>
+<li>
+fields+ = the first parameter is a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> field, seen as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>. Additional parameters can be <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>,<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+</li>
+<li>
+invalidation = the method is executed on the first call, or the first call after invalidation.
+</li>
+<li>
+invalidation+ = the method is executed during the factory, and immediately after any invalidation.
+</li>
+<li>
+instance- = caches in the instance are invalidated.
+</li>
+<li>
+read0 = a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> method with zero parameters.
+</li>
+<li>
+mut+ = a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> method with the additional parameters as for fields+.
+</li>
+<li>
+parallel = executed in a parallel worker starting after the factory.
+</li>
+</ul>
+
+</p><h2> Digressions / Expansions </h2> <p>
+As have seen, parallel programming can be viewed as a form of caching.
+In some cases, we need parallel programming on mutable data.
+In our experience, this is not very common; the cost of copying data around is much smaller that most programmers assume.
+Let us repeat this very clearly: there are many other ways to optimize software, and they are much easier and much, much more rewarding than avoiding coping the few mutable parts of your data structure a couple of times.
+
+We think that only highly skilled and motivated programmers 
+can discover and hunt down all of those other much more pressing algorithmic issues that
+often spoil performance.
+Only after approaching the performance limits of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Eager]]></span><it style="font-style: bold; color:green;">&#187;</it> with good algorithms,
+it could make sense to adopt parallel programming on mutable data to avoid some
+extra clones.
+
+However, if you are in such a situation,
+you can use the annotation <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.ForkJoin]]></span><it style="font-style: bold; color:green;">&#187;</it> as shown below.
+Again, the 42 type system will ensure that parallelism is not observable.
+</p><p>
+<pre class="l42Big"><![CDATA[
+Example = Data:{
+  @Cache.ForkJoin class method capsule D foo(capsule A a,capsule B b, capsule C c) = (
+    mut A a0=a.op()
+    mut B b0=b.op()
+    mut C c0=c.op()
+    a0.and(b0).and(c0)
+    )
+  }
+]]></pre>
+Like other <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.***]]></span><it style="font-style: bold; color:green;">&#187;</it> annotations, 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.ForkJoin]]></span><it style="font-style: bold; color:green;">&#187;</it> is translated by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> 
+into an actual implementation.
+
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.ForkJoin]]></span><it style="font-style: bold; color:green;">&#187;</it> works only on methods whose body is exactly a round parenthesis block.
+The initialization expressions for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a0]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[b0]]></span><it style="font-style: bold; color:green;">&#187;</it>, and 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[c0]]></span><it style="font-style: bold; color:green;">&#187;</it> are run in parallel, and the final expression is run only when 
+all of the initialization expressions are completed.
+The method itself can take any kind of parameters, and they can all be used in the final expression, but the initialization expressions need to fit one of the following three safe parallel patterns:
+
+</p><h2> Non-Mutable computation </h2> <p>
+In this pattern, none of the initialization expressions can use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[lent]]></span><it style="font-style: bold; color:green;">&#187;</it> parameters.
+In this way nothing can be mutated while the forkjoin is open, thus parallelism is safe.
+This is more expressive than <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Eager]]></span><it style="font-style: bold; color:green;">&#187;</it> since it allows us to run parallel code on <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> references of mutable objects.
+
+</p><h2> Single-Mutable computation </h2> <p>
+In this pattern, a single initialization expression can use any kind of parameter, while the other ones can not 
+use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[lent]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> parameters.
+This pattern allows the initialization expression that can use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> to recursively explore a complex mutable data structure and to command updates to immutable elements arbitrarily nested inside of it.
+Consider for example this code computing in parallel 
+new immutable string values for all of
+the entries in a mutable list:
+
+<pre class="l42Big"><![CDATA[
+UpdateList=Public:Data:{
+  @Public class method S map(S that)=that++that//could be any user defined code
+  @Public class method Void (mut S.List that) = this(current=0I,data=that)  
+  class method Void (I current, mut S.List data) = (
+    if current<data.size() 
+      this(current=current,elem=data.val(current),data=data)
+    )
+  @Cache.ForkJoin class method Void (I current, S elem, mut S.List data) =(
+    S newElem=this.map(elem)
+    this(current=current+1I,data=data)
+    data.set(current,val=newElem)
+    )
+  }
+MainUpdate = (
+  mut S.List data = S.List[S"a";S"b";S"c";S"d";S"e";]
+  Debug(data)
+  UpdateList(data)
+  Debug(data)//["aa"; "bb"; "cc"; "dd"; "ee"]
+  )
+]]></pre>
+As you can see, we do not need to ever copy the whole list. We can update the elements in place one by one.
+If the operation <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[map(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> is complex enough, running it in parallel could be beneficial.
+As you can see, it is trivial to adapt that code to explore other kinds of collections, like for example a binary tree.
+Or, in other words, if you are unsure on how to adapt that code to work on a tree, you should stick with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Eager]]></span><it style="font-style: bold; color:green;">&#187;</it> and accept that you are not (yet) one of the few elite programmers with enough skill to take advantage of the 42 fork join.
+
+AdamsTowel could use metaprogramming features to define code that parallelises user defined operations on lists, maps and other common datastructures. However, we think this is beyond the responsibility of AdamsTowel, and should instead be handled by some user defined library.
+
+</p><h2> This-Mutable computation </h2> <p>
+In this pattern, the 'this' variable is considered specially.
+The method must be declared <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>, and the 
+initialization expressions
+can not
+use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[lent]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> parameters.
+However, the parameter <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this]]></span><it style="font-style: bold; color:green;">&#187;</it> can be used to directly call
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> methods. 
+As we have seen before, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> methods can mutate a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> field; thus different initialization expressions must use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> methods updating different <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> fields.
+
+In this way, we can make parallel computation processing arbitrary complex mutable objects inside well encapsulated data structures .
+Consider the following example, where <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Foo]]></span><it style="font-style: bold; color:green;">&#187;</it>s could be arbitrarily complex; containing complex (possibly circular) graphs of mutable objects.
+<pre class="l42Big"><![CDATA[
+Foo=Data:{.. /*mut method Void op(I a, S b)*/ ..}
+
+Tree={interface [HasToS]    mut method Void op(I a, S b) }
+
+Node = Data:{[Tree] 
+  capsule Tree left, capsule Tree right
+  @Cache.ForkJoin mut method Void op(I a, S b) = (
+    this.leftOp(a=a,b=b)
+    this.rightOp(a=a,b=b)
+    void//this void is needed so that the two lines
+    )    // above are both declarations
+    @Cache.Clear class method Void leftOp(mut Tree left,I a, S b) = left.op(a=a,b=b)
+    @Cache.Clear class method Void rightOp(mut Tree right,I a, S b) = right.op(a=a,b=b)
+    }
+Leaf = Data:{[Tree]
+  capsule Foo label
+  @Cache.Clear class method Void op(mut Foo label,I a, S b) = label.op(a=a,b=b)
+  }
+MainTree = (
+  mut Tree top = Node(
+    left=Node(
+      left=Leaf(label=\(..))
+      right=Leaf(label=\(..))
+      )
+    right=Node(
+      left=Leaf(label=\(..))
+      right=Leaf(label=\(..))
+      )
+    )
+  Debug(top)
+  top.op(a=15I b=S"hello")
+  Debug(top)
+  )
+]]></pre>
+
+This pattern relies on the fact that using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> fields we can define arbitrary complex data structures composed of disjoint mutable object graphs.
+Note that even if <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> aliases to parts of this data structure can be visible outside, we can not access them when the forkjoin is open, since the declarations can not use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> parameters.
+<br/>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+</div><div class="inFloat">
+&nbsp; &nbsp; &nbsp; <a href="tutorial_05Caching.xhtml"> Previous </a>...<a href="tutorial_07InterfacesAndMatching.xhtml"> Next </a>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+
+        </p>
+        </div>
+      </div>
+      <div id="footerwrap">
+        <div id="footer">
+          <ul style='padding: 10px;'>
+            <li style='display:inline;'>
+            <a href="mailto:marco.servetto@gmail.com" rel="me">Contact Us</a> |</li>
+            <li style='display:inline;'>
+            <a href= "http://ecs.victoria.ac.nz/mailman/listinfo/team42">Mailing list</a> |</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+	
+  </body>
+</html>
+

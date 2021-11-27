@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+ <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" media="all"/>
+    <script src="js/ace.js"></script>
+    <script src="js/utils.js"></script>
+    <link rel="shortcut icon" href="css/favicon.ico"/>
+    <title>42 - Metaprogramming as default</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script src="https://www.googletagmanager.com/gtag/js?id=G-M0E4M0XH2Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-M0E4M0XH2Z');
+    </script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=UA-212820693-1">
+    </script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-212820693-1');
+    </script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=AW-10810288706"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-10810288706');
+    </script>
+<!-- Event snippet for Page view conversion page -->
+<script>
+gtag('event', 'conversion', {'send_to': 'AW-10810288706/U3KJCKekmIUDEMLU36Io'});
+</script>
+  </head>
+  <body onload='doOnLoad();'>
+    <div id="wrapper">
+      <div id="headerwrap">
+        <div id="header">
+          <img style='float:left;'
+            src='css/logoBlue.png' alt='42' width='120' height='120'/>
+          <h3 style='float:left;'>
+            <p style='font-size:150%; color:rgb(250,250,250);'>42 - The definitive answer to design, code and everything</p>
+            <p style='font-size:100%; color:rgb(250,250,250);'> --But you are not going to like it</p>
+          </h3>
+        </div>
+      </div>
+      <div id="contentwrap">
+        <div id="content">
+<p>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+<div class="rotate90"> Index of Content</div>
+</div><div class="inFloat">
+<ol>
+ <li><a href="tutorial_01Basics.xhtml"> Basic concepts </a></li>
+ <li><a href="tutorial_02ModifiersIntro.xhtml"> Introduction to modifiers </a></li>
+ <li><a href="tutorial_03BasicClasses.xhtml"> Basic Classes </a></li>
+ <li><a href="tutorial_04ErrorsAndExceptions.xhtml"> Errors and Exceptions </a></li>
+ <li><a href="tutorial_05Caching.xhtml"> Caching </a></li>
+ <li><a href="tutorial_06CachingMut.xhtml"> Caching on Mutable objects </a></li>
+ <li><a href="tutorial_07InterfacesAndMatching.xhtml"> Interfaces and Matching </a></li>
+ <li><a href="tutorial_08Sequences.xhtml"> Collections and Sequences </a></li>
+ <li><a href="tutorial_09InputOutput.xhtml"> Input Output </a></li>
+ <li><a href="tutorial_10Exercises.xhtml"> Exercises </a></li>
+ <li><a href="tutorial_11MetaprogrammingIntro.xhtml"> Metaprogramming Introduction </a></li>
+ <li><a href="tutorial_12Refactoring.xhtml"> Programmatic Refactoring </a></li> 
+ <li><a href="tutorial_13MoreDecorators.xhtml"> More Decorators </a></li>
+ <li><a href="tutorial_14ExampleOfProgram.xhtml"> Example of a 42 Program </a></li>
+ <li><a href="tutorial_15DeployCode.xhtml"> Deploy code </a></li>
+</ol>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+</div><div class="inFloat">
+&nbsp; &nbsp; &nbsp; <a href="tutorial_14ExampleOfProgram.xhtml"> Previous </a>...<a href="tutorial_15DeployCode.xhtml"> Next </a>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+
+ </p><p id="DeployCode"> </p><div style="break-after:page"></div><h1> Deploy 42 </h1> <p>
+In the context of 42 and AdamsTowel, there are three things that can be deployed:
+ Executable programs,  Towels and Modules.
+
+</p><h2> (1/5)Deploy Towels </h2> <p>
+
+A towel is about the most massively useful thing a programmer can have.
+A towel has immense psychological value, and you should always know where your towel is.
+All the classes that we have used up to now without defining them, are defined in AdamsTowel.
+They are all normal classes/libraries.
+<br/>
+You can code without a towel, but this means starting from first principles,
+which could be quite unpleasant; especially since the only
+primitive things that 42 offers are Library literals
+(code as first class entities), the constant <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[void]]></span><it style="font-style: bold; color:green;">&#187;</it>,
+and the types <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Library]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Void]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Any]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+</p><p>
+
+Towels are libraries providing standard
+functionalities and types, such as number, boolean,
+string and various kinds of decorators and system errors.
+
+</p><p>
+However, we do not expect all 42 programs to reuse the same exact towel.
+For hygienic reasons, in real life everyone tends to use their own towel.
+For similar reasons, any sizeable 42 program will use its own towel.
+</p><p>
+
+We expect different programs to use massively different libraries for
+what in other languages is the standard library.
+That is, there is no such thing as 'the 42 standard library'.
+
+</p><h2> Using multiple Towels </h2> <p>
+
+Towels shines when multiple towels are used at the same time.
+
+<pre class="l42Big"><![CDATA[
+reuse [L42.is/AdamsTowel]
+//here you can access to lots of utility classes defined inside the towel
+//including numbers, strings and so on.
+C = {reuse [L42.is/FordTowel]
+  //here you can access a different set of classes.
+  //For example, Num would refer to the number in FordTowel
+  //and to see the number defined in AdamsTowel you have to write This1.N
+  }
+]]></pre>
+
+Different code parts reason about different set of classes;
+including those predefined in other languages.
+That is, by introducing multiple towels in nested scopes,
+the names of the other scopes are <it style="font-style: italic;">masked</it>.
+This is very useful for code that reasons on code; such task is pervasive in 42. 
+
+</p><h2> Staining Towels </h2> <p>
+If you are writing a sizeable program, 
+or many similar programs, it make sense to
+enrich a towel with some pre loaded libraries
+and basic classes.
+
+<pre class="l42Big"><![CDATA[
+reuse [L42.is/AdamsTowel]
+RichTowel = Trait:{
+  reuse [L42.is/AdamsTowel]
+  Unit = Load:{reuse [L42.is/Unit]}
+  Kg = Units.of(Num)
+  Meter = Units.of(Num)
+  }
+Secret = {...}//Be careful to not commit the file 'Secret'
+  //It should contain your passwords/tokens, as in 
+  //class method S #$of()=S"ghp_..."
+GW = Load:{reuse [L42.is/GitWriter]}
+LoadDeploy = Load:{reuse [L42.is/Deploy]}
+DeployGit = LoadDeploy.with(writer=GW)
+DeployRicherTowel = DeployGit.towel(RichTowel()
+  on=Url"github.com/Bob/Modules42/RichTowel.L42"
+  writer=GW.#$of(token=Secret.#$of(),message=S".."))
+]]></pre>
+If you have write access to a github project under <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bob/Modules42]]></span><it style="font-style: bold; color:green;">&#187;</it>, the former code will create your towel and update it
+on your github repository every time you run it.
+If you want to just write on your hard drive, you could just do
+
+<pre class="l42Big"><![CDATA[
+FS = Load:{reuse [L42.is/FileSystem]}
+LoadDeploy = Load:{reuse [L42.is/Deploy]}
+DeployFS = LoadDeploy.with(writer=FS)
+DeployRicherTowel = DeployFS.towel(RichTowel()
+  on=Url"myLocalPath/RichTowel.L42"
+  writer=FS.#$of())
+]]></pre>
+
+We are considering adding more variants, for example to allow writing on your FTP servers, google drives, dropbox and other similar services.
+</p><p>
+A <span style="color:#ff1111; font-weight: bold;"> Stained Towel </span> is a towel that looks like another but it is enriched by adding more things, either at the bottom.
+In our example, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[RichTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> is just a stained variation of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+
+
+</p><h2> (2/5)Module deployment </h2> <p>
+
+If you start writing in 42, you will soon feel the need
+to factorize your project into libraries that can
+be independently tested, deployed and loaded.
+We call those library <it style="font-style: italic;">Modules</it>.
+Very successful modules are used by multiple 
+independent projects and developers; they are what is often called a third party library.
+However, most modules exists just as development tools in 
+order to keep the complexity of big projects under control.
+</p><p>
+In 42 is easy to code with multiple modules, and modules can be much smaller than usual third party libraries and framewors in other languages.
+</p><p>
+In 42 it is possible to employ a programming model where every developer (or every pair of developers in a pair programming style) is the
+only one responsible of one (or more) modules and their maintenance process, while the group leader give specifications and tests to be met by the various module developers and will glue all the code together.
+</p><p>
+
+Modules can be deployed in a way similar to towel deployment;
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Load]]></span><it style="font-style: bold; color:green;">&#187;</it> is used to load libraries,
+but it also contains all the knowledge to deploy
+them.
+<br/>
+The following example code deploys a Module
+using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it>:
+<pre class="l42Big"><![CDATA[
+reuse [L42.is/AdamsTowel]
+//could be L42.is/RichTowel and nothing would change
+//...
+Module = Trait:{
+  reuse [L42.is/RichTowel]
+  //need to be RichTowel in this example,
+  //where AirplaneUnits is using Unit
+  AirplaneUnitsUtilities = {...}
+  AirplaneUnits = {...}
+  }
+DeployAirplaneModule = DeployGit.module(Module()
+  name='AirplaneUnits
+  on=Url"github.com/Bob/Modules42/AirplaneUnits.L42"
+  writer=GW.#$of(token=Secret.#$of(),message=S".."))
+]]></pre>
+
+This code deployes <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Module.AirplaneUnits]]></span><it style="font-style: bold; color:green;">&#187;</it> to an URL as a module.
+and turns private <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AirplaneUnitsUtilities]]></span><it style="font-style: bold; color:green;">&#187;</it> and any other 
+nested class stained on top of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+This includes 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Unit]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Kg]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Meter]]></span><it style="font-style: bold; color:green;">&#187;</it> from <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[RichTowel]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<br/>
+If there was any nested class unreachable from public classes inside
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AirplaneUnitsUtilities]]></span><it style="font-style: bold; color:green;">&#187;</it> it will be pruned away.
+Same for any nested class stained on top of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> and for 
+any private unreachable one in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AirplaneUnits]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+</p><p>
+The deployed library can be imported as usual.
+For example the main
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AirplaneUnits = Load:{reuse [github.com/Bob/Modules42/AirplaneUnits]}]]></span><it style="font-style: bold; color:green;">&#187;</it>
+allows us to see the content of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AirplaneUnits]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+</p><p>
+
+All the deployed code is closed code.
+Towels are closed because they contain all the code to implement strings, numbers and so on.
+Modules are also closed. They have abstract classes/methods
+for each of the original towel concepts (before staining), and they can be rebound
+to a multitude of towels.
+In particular all stained versions of the same towel are compatible.
+Every needed nested library
+that was not present in the original towel, will be made private.
+On the other side, all the classes in the original towel will 
+be made abstract by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[DeployGit.module(..)]]></span><it style="font-style: bold; color:green;">&#187;</it>
+and will be rebound to the current towel by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Load]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+</p><p>
+
+Thus, in our example, 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Unit]]></span><it style="font-style: bold; color:green;">&#187;</it>,
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Kg]]></span><it style="font-style: bold; color:green;">&#187;</it>,
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Meter]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AirplaneUnitsUtilities]]></span><it style="font-style: bold; color:green;">&#187;</it>
+would become a private implementation detail of the exposed library.
+
+
+</p><h2> (3/5)Deploy programs </h2> <p>
+
+We can run our  applications inside 42, but we can also deploy them as  Jars, so that they can be run as a Java application.
+<br/>
+In 42 libraries can be directly manipulated, and
+one possible manipulation is to convert them in 
+another format, like an executable jar or a native program
+and then save the result somewhere, such as on the website where the users can download it.
+<br/>
+For example, we could rework the code of the former chapter as follows:
+
+<pre class="l42Big"><![CDATA[
+reuse [L42.is/AdamsTowel]
+ToJar = Trait:{reuse [L42.is/AdamsTowel]
+  Unit = Load:{reuse [L42.is/Unit]}
+  LoadJ = Load:{reuse [L42.is/JavaServer]}
+  LoadGui = Load:{reuse [L42.is/GuiBuilder]}
+  Query = Load:{reuse [L42.is/Query]}
+  Year = Unit(I)
+  Meter = Unit(Num)
+  Kg = Unit(Num)
+  DBJ = LoadJ(slaveName=S"dbServer{}")
+  DB = Query.sql(connectionString=S"jdbc:derby:PersonsGui;create=true", javaServer=DBJ)
+  Table = DB.#$of().tables()
+  Queries = DB.QueryBox:{...}
+  GuiJ = LoadJ(slaveName=S"miniGuiSlave{}")
+  IQL = Query.iql(javaServer=GuiJ)
+  Dialogs = IQL.QueryBox:{...}
+  Gui = LoadGui(javaServer=GuiJ)  
+  Model = Data:GuiJ.Handler:{...}
+  OpenGui = {...}
+  class method Void #$main() = ( //method #$main instead of 'Main'
+    j=GuiJ.#$of()
+    sql=Queries(DB.#$of())
+    iql=Dialogs(IQL(j))
+    model=Model(j=j,sql=sql,iql=iql)
+    OpenGui(j=j)
+    for e in j(\['Example]) ( e>>model )
+    )
+  }
+//..
+Tast = DeployGit.jar(ToJar()
+  on=Url"github.com/Bob/Modules42/MyApplication.jar"
+  writer=GW.#$of(token=Secret.#$of(),message=S".."))
+]]></pre>
+As you can see,
+we are wrapping the application code into a trait, including
+a second reuse of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+In this way the code of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ToJar]]></span><it style="font-style: bold; color:green;">&#187;</it> is fully self contained, and 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Main]]></span><it style="font-style: bold; color:green;">&#187;</it> in the outer scope can still use all of the towel features by taking them from the outer <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[reuse [AdamsTowel]]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+We then use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[DeployGit.jar(..)]]></span><it style="font-style: bold; color:green;">&#187;</it> to deploy our application onto a jar in a specific location.
+Again, we could just deploy it on our file system or on another kind of service by using another kind of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[writer]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+</p><p>
+When 42 is used to deploy an application as a Jar, you can see the whole 42 execution as a comprehensive compilation framework,
+encompassing all the tools and phases that could possibly be needed into a single cohesive abstraction.
+
+Such jar can be run with the following command
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[java -cp "L42.jar;MyApplication.jar" is.L42.metaGenerated.ExportedMain]]></span><it style="font-style: bold; color:green;">&#187;</it>
+</p><p>
+In this example we reuse AdamsTowel both outside <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ToJar]]></span><it style="font-style: bold; color:green;">&#187;</it>
+and inside of it.
+The two towels do not need to be the same.
+The outermost just has to support the deployment process
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[DeployGit]]></span><it style="font-style: bold; color:green;">&#187;</it>, while the inner one is needed to make
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ToJar]]></span><it style="font-style: bold; color:green;">&#187;</it> a closed library: only libraries that do not refer to external classes can be deployed.
+
+</p><h2> A 42 project testing and deploying </h2> <p>
+
+A common way to use 42 is to have a folder with the name of your project, containing
+a folder <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Main]]></span><it style="font-style: bold; color:green;">&#187;</it> with all the actual code,
+and then various files providing testing and deploying functionalities, as in the following example:
+
+<pre class="l42Big"><![CDATA[
+reuse [L42.is/AdamsTowel]
+Main = Trait:{
+  ...
+  Tests = {
+    TestSuite_1 = {...}
+    /*..*/
+    TestSuite_n = {...}
+    }
+  }
+Secret = {...}
+GW = Load:{reuse [L42.is/GitWriter]}
+LoadDeploy = Load:{reuse [L42.is/Deploy]}
+DeployGit = LoadDeploy.with(writer=GW)
+Tast = DeployGit.jar(Main()
+  on=Url"github.com/Bob/Modules42/MyApplication.jar"
+  writer=GW.#$of(token=Secret.#$of(),message=S".."))
+]]></pre>
+
+In general, for medium size projects is a good idea to keep executing the tests before the deployment; for example
+we can have a test suite after the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[...]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Do not panic, If the test are not reachable from <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Main.#$main()]]></span><it style="font-style: bold; color:green;">&#187;</it>, they are not going to be included in the executable jar.
+</p><p>
+
+
+</p><h2> (4/5)Towel embroidery: Define and deploy our own towel </h2> <p>
+
+
+Towel embroidery it is like adding your initials to your towel.
+</p><p>
+While we can simply add to the end by staining, embroidery is much more powerful.
+</p><p>
+The most common embroidery tool 
+is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Organize]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Together with late casts, we can add methods to any existing class as shown below:
+<pre class="l42Big"><![CDATA[
+Code = Trait:Organize:{reuse [L42.is/AdamsTowel]
+  S$ = {/*..more methods for string here..*/
+    method S reverse() = (/*..*/ (this<:@This1 S).size() /*..*/)
+    }
+  Num$ = {/*..more methods for numbers here..*/}
+  }
+]]></pre>
+
+
+
+The advantage with respect to composing two separated
+libraries is that the scope is the same:
+the implementation of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[reverse()]]></span><it style="font-style: bold; color:green;">&#187;</it> will be able to use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bool]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> and so on.
+
+
+Towel staining is a very minimal personalization, and stained towels are fully compatible with the original one.
+
+By embroidery you can personalize a lot more the content of your towel,
+but when module deployment 
+relies on an embroidered towel, compatibility with the original towel is lost.
+For example, an embroidered version of 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> 
+can <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Load]]></span><it style="font-style: bold; color:green;">&#187;</it> a library developed on the original 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it>, but a library developed on the embroidered version 
+needs to be loaded into a similarly embroidered towel.
+
+One typical reason to embroider a towel is to
+extend the set of classes that are shared between libraries.
+For example, one may want to develop a Towel for scientific use
+where the existence of some units of measure can be shared between all the libraries.
+We could do the following:
+<pre class="l42Big"><![CDATA[
+RawCode = Trait:{reuse [L42.is/AdamsTowel]
+  Unit = Class:Trait({@AbstractTowel{
+    "en.wikipedia.org/wiki/Quantity"}}):
+    Load:{reuse [L42.is/Unit]}
+  SI = Class:Unit.TraitSI['Support=>Num]:{@AbstractTowel{
+    "en.wikipedia.org/wiki/International_System_of_Units"}}
+  Load$={
+    class method Introspection.Nested.List _baseDeps()
+    class method Introspection.Nested.List baseDeps() = this._baseDeps().withAlso(\[
+      Info(Unit);
+      Info(SI);
+      ])      
+    }
+  }
+Secret = {...}
+GW = Load:{reuse [L42.is/GitWriter]}
+LoadDeploy = Load:{reuse [L42.is/Deploy]}
+DeployGit = LoadDeploy.with(writer=GW)
+DeployRicherTowel = DeployGit.towel(
+  Organize:RawCode
+    ['Load.baseDeps()->'Load._baseDeps()]
+    [hide='Load._baseDeps()]
+  on=Url"github.com/Bob/Modules42/SITowel.L42"
+  writer=GW.#$of(token=Secret.#$of(),message=S".."))
+]]></pre>
+Now <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[github.com/Bob/Modules42/SITowel]]></span><it style="font-style: bold; color:green;">&#187;</it> can be used as a towel,
+and can be used to deploy modules that can be loaded by 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[github.com/Bob/Modules42/SITowel]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+</p><p>
+By using semantic URIs as
+ontological nodes, we
+can create a basis for other libraries when trying to infer the meaning of our added types.
+In the example above we used wikipedia links to relevant concepts.
+This may not be the best solution, devising a good solution for this problem would require very intense research in the area of Ontological mapping.
+</p><p>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[SITowel]]></span><it style="font-style: bold; color:green;">&#187;</it> can be used now to deploy and load libraries wrote in
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[SITowel]]></span><it style="font-style: bold; color:green;">&#187;</it>, and libraries deployed and loaded in this way will 
+share a unique definition for certain units of measure.
+Note that libraries originally developed for
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> can still be loaded normally since <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[SITowel]]></span><it style="font-style: bold; color:green;">&#187;</it> is structurally a superset of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+
+</p><h2> (5/5)Deployment: programs, libraries and towels; summary </h2> <p>
+<ul><li>
+42 is a metaprogramming tool.
+It is natural to use 42 either a language (to run a program)
+or as a compiler (to deploy programs, libraries and towels).
+</li><li>
+Indeed we expect all sizeable 42 projects to use 42 as a compiler,
+to produce some reusable artefacts.
+</li><li>
+The distinction between towels (that do not need <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Load]]></span><it style="font-style: bold; color:green;">&#187;</it>)
+and modules is 
+introduced not by 42, but by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it>; radically different towels may provide different meaning for the concepts of deploying and
+loading libraries/towels.
+</li><li>
+Application developers can freely stain and embroider towels;
+in this way they can adapt <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> to serve them better.
+However, library developers need to carefully consider the effect of embroidery.
+</li></ul>
+<br/>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+</div><div class="inFloat">
+&nbsp; &nbsp; &nbsp; <a href="tutorial_14ExampleOfProgram.xhtml"> Previous </a>...<a href="tutorial_15DeployCode.xhtml"> Next </a>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+
+        </p>
+        </div>
+      </div>
+      <div id="footerwrap">
+        <div id="footer">
+          <ul style='padding: 10px;'>
+            <li style='display:inline;'>
+            <a href="mailto:marco.servetto@gmail.com" rel="me">Contact Us</a> |</li>
+            <li style='display:inline;'>
+            <a href= "http://ecs.victoria.ac.nz/mailman/listinfo/team42">Mailing list</a> |</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+	
+  </body>
+</html>
+

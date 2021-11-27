@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+ <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" media="all"/>
+    <script src="js/ace.js"></script>
+    <script src="js/utils.js"></script>
+    <link rel="shortcut icon" href="css/favicon.ico"/>
+    <title>42 - Metaprogramming as default</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script src="https://www.googletagmanager.com/gtag/js?id=G-M0E4M0XH2Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-M0E4M0XH2Z');
+    </script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=UA-212820693-1">
+    </script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-212820693-1');
+    </script>
+    <script src="https://www.googletagmanager.com/gtag/js?id=AW-10810288706"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-10810288706');
+    </script>
+<!-- Event snippet for Page view conversion page -->
+<script>
+gtag('event', 'conversion', {'send_to': 'AW-10810288706/U3KJCKekmIUDEMLU36Io'});
+</script>
+  </head>
+  <body onload='doOnLoad();'>
+    <div id="wrapper">
+      <div id="headerwrap">
+        <div id="header">
+          <img style='float:left;'
+            src='css/logoBlue.png' alt='42' width='120' height='120'/>
+          <h3 style='float:left;'>
+            <p style='font-size:150%; color:rgb(250,250,250);'>42 - The definitive answer to design, code and everything</p>
+            <p style='font-size:100%; color:rgb(250,250,250);'> --But you are not going to like it</p>
+          </h3>
+        </div>
+      </div>
+      <div id="contentwrap">
+        <div id="content">
+<p>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+<div class="rotate90"> Index of Content</div>
+</div><div class="inFloat">
+<ol>
+ <li><a href="tutorial_01Basics.xhtml"> Basic concepts </a></li>
+ <li><a href="tutorial_02ModifiersIntro.xhtml"> Introduction to modifiers </a></li>
+ <li><a href="tutorial_03BasicClasses.xhtml"> Basic Classes </a></li>
+ <li><a href="tutorial_04ErrorsAndExceptions.xhtml"> Errors and Exceptions </a></li>
+ <li><a href="tutorial_05Caching.xhtml"> Caching </a></li>
+ <li><a href="tutorial_06CachingMut.xhtml"> Caching on Mutable objects </a></li>
+ <li><a href="tutorial_07InterfacesAndMatching.xhtml"> Interfaces and Matching </a></li>
+ <li><a href="tutorial_08Sequences.xhtml"> Collections and Sequences </a></li>
+ <li><a href="tutorial_09InputOutput.xhtml"> Input Output </a></li>
+ <li><a href="tutorial_10Exercises.xhtml"> Exercises </a></li>
+ <li><a href="tutorial_11MetaprogrammingIntro.xhtml"> Metaprogramming Introduction </a></li>
+ <li><a href="tutorial_12Refactoring.xhtml"> Programmatic Refactoring </a></li> 
+ <li><a href="tutorial_13MoreDecorators.xhtml"> More Decorators </a></li>
+ <li><a href="tutorial_14ExampleOfProgram.xhtml"> Example of a 42 Program </a></li>
+ <li><a href="tutorial_15DeployCode.xhtml"> Deploy code </a></li>
+</ol>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+</div><div class="inFloat">
+&nbsp; &nbsp; &nbsp; <a href="tutorial_01Basics.xhtml"> Previous </a>...<a href="tutorial_03BasicClasses.xhtml"> Next </a>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+
+ </p><p id="ModifiersIntro"> </p><div style="break-after:page"></div><h1> Keep control:  Modifiers, kinds of references and objects </h1> <p>
+
+</p><h2> (1/5)Kinds of objects </h2> <p>
+In object oriented languages, objects can form complex networks of dependencies by referring to each other using their fields.
+The Reachable Object Graph (ROG) of a given object is the set of all objects reachable from it, including itself.
+</p><p>
+An object is <span style="color:#ff1111; font-weight: bold;"> mutated </span> if a field of an object in its ROG is <span style="color:#ff1111; font-weight: bold;"> updated </span>.
+A <it style="font-style: italic;">mutable object</it> is an object that can be mutated.
+The 42 type system is able to ensure that some objects can not be mutated. We call those <it style="font-style: italic;">immutable objects</it>.
+
+All instances of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> are immutable.
+The ROG of a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> object contains the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> itself and the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> coordinates.
+Fields <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[x]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[y]]></span><it style="font-style: bold; color:green;">&#187;</it> can not be updated and the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> objects are immutable.
+
+Immutable objects are very easy to use but may be inadequate when representing entities whose state can change across time.
+</p><p>
+Let's now define a mutable <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it>, whose location can be updated:
+<pre class="l42Big"><![CDATA[
+Animal = Data:{
+  var Point location //getter: this.location()
+                     //setter: this.location(newVal)
+  mut method
+  Void run() =
+    this.location(\location.add(x=20Num))//update the field with a new point
+    //here \location == this.location()
+  }
+]]></pre>
+There are two new keywords used here: 
+<ul><li>
+The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location]]></span><it style="font-style: bold; color:green;">&#187;</it> field is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+  This is called a <it style="font-style: italic;">variable field</it>: a field that can be <span style="color:#ff1111; font-weight: bold;"> updated </span> by calling a setter.
+  Non-variable fields can not be updated.
+</li><li>
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[run()]]></span><it style="font-style: bold; color:green;">&#187;</it> is a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut method]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<br/>
+  We have seen <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class method]]></span><it style="font-style: bold; color:green;">&#187;</it>s already, and we have seen methods 
+such as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(x)]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(y)]]></span><it style="font-style: bold; color:green;">&#187;</it>
+showing no modifier;
+they implicitly have the default modifier <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Similarly, whenever a typed does not specify a modifier,
+it has the default modifier <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+<br/>
+  <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> methods can mutate the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this]]></span><it style="font-style: bold; color:green;">&#187;</it> object. If you have experience with C++
+  you can see the contrast with const methods.
+  Immutable (default) methods works only on immutable <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this]]></span><it style="font-style: bold; color:green;">&#187;</it> objects.
+  Later, we will see much more about modifiers.
+</li></ul>
+
+</p><p>
+As you see, we are using the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(x)]]></span><it style="font-style: bold; color:green;">&#187;</it> method from before.
+Also notice that we are calling the setter <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> without providing the parameter name.
+While this is usual in other languages, in 42 parameters are selected by name.
+Sometimes writing down all the parameter names can get tedious.
+
+If the first parameter is called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[that]]></span><it style="font-style: bold; color:green;">&#187;</it>, we can omit it:
+Writing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.b(that=c)]]></span><it style="font-style: bold; color:green;">&#187;</it> is equivalent to writing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.b(c)]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+This works also for methods with multiple parameters, if the first one is called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[that]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Writing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.b(that=c, x=d)]]></span><it style="font-style: bold; color:green;">&#187;</it> is equivalent to writing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.b(c, x=d)]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+</p><p>
+We can use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it> by writing, for example: 
+
+<pre class="l42Big"><![CDATA[
+mut Animal dog1 = Animal(location=\(x=0\, y=0\))
+dog2 = Animal(location=\(x=0\, y=0\)) //type 'mut Animal' inferred for dog2
+dog2.run()
+]]></pre>
+
+</p><h2> (2/5)Interaction between mutable and immutable </h2> <p>
+
+We now explore some interaction between mutable and immutable objects.
+<pre class="l42Big"><![CDATA[
+Animal = Data:{
+  var Point location
+  mut Points path
+  mut method
+  Void move() = (
+    this.location(\path.left())
+    this.#path().removeLeft()
+    )
+  }
+]]></pre>
+Here we use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Points path]]></span><it style="font-style: bold; color:green;">&#187;</it> to denote a mutable list of points.
+Note the absence of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it>; this is conceptually similar to a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Points * const path;]]></span><it style="font-style: bold; color:green;">&#187;</it> in C++  or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[final Points path;]]></span><it style="font-style: bold; color:green;">&#187;</it> in Java.
+To contrast, the declaration <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var Point location]]></span><it style="font-style: bold; color:green;">&#187;</it> is similar to
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point const * location;]]></span><it style="font-style: bold; color:green;">&#187;</it> in C++  or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ImmPoint location;]]></span><it style="font-style: bold; color:green;">&#187;</it> in Java, for an opportune <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ImmPoint]]></span><it style="font-style: bold; color:green;">&#187;</it> class.
+
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> references always refer to mutable objects.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> references always refer to immutable objects.
+
+Fields can be declared <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it> independently from their modifier:
+In the code above, you can see that <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var Point location]]></span><it style="font-style: bold; color:green;">&#187;</it> is a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it> field of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> type.
+On the other hand, 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Points path]]></span><it style="font-style: bold; color:green;">&#187;</it>
+is a non-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it> field of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> type.
+
+</p><p>
+The method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[move()]]></span><it style="font-style: bold; color:green;">&#187;</it>
+first uses the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> setter method to update the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location]]></span><it style="font-style: bold; color:green;">&#187;</it> field
+with the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm Point]]></span><it style="font-style: bold; color:green;">&#187;</it> leftmost element of the field <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Points path]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+By the way, collections in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> are primarly designed to store and retrive
+immutable objects; later we will show also how to manipulate mutable ones.
+<br/>
+The method then uses the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#path()]]></span><it style="font-style: bold; color:green;">&#187;</it>
+ <span style="color:#ff1111; font-weight: bold;"> exposer </span> method and 
+the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[removeLeft()]]></span><it style="font-style: bold; color:green;">&#187;</it> method to mutate the list of points.
+Both exposers and getters provide access to the value of a field;
+exposers are used to access the values of mutable fields.
+Exposers should be used with care: 
+long term handling of references 
+to (parts of) a mutable object could cause 
+spooky action at a distance.
+<br/>
+In general, methods starting with # should be used with care.
+</p><p>
+This code models an animal following a path. It can be used like this:
+<pre class="l42Big"><![CDATA[
+zero = Point(x=0\, y=0\)
+ps1  = Points[\(x=12\, y=20\); \(x=1\, y=2\)]
+ps2  = Points[zero; \(x=1\, y=2\)]
+dog1 = Animal(location=zero, path=ps1)
+dog2 = Animal(location=zero, path=ps2)
+dog1.move()
+dog2.move()
+]]></pre>
+
+In this code the first dog goes to 12: 20.
+The second dog goes to 0: 0. 
+
+This code involves a mutable animal with a mutable field. This is often
+a terrible idea, since its behaviour may depend on aliasing:  what happens if two dogs follow the same path?
+<pre class="l42Big"><![CDATA[
+zero = Point(x=0\, y=0\)
+ps   = Points[\(x=12\, y=20\); \(x=1\, y=2\) ]
+dog1 = Animal(location=zero, path=ps)
+dog2 = Animal(location=zero, path=ps)
+dog1.move()
+dog2.move()
+]]></pre>
+The first dog moves and consumes the path for the second one as well.
+That is, the first goes to 12: 20 and the second goes to 1: 2.
+
+This is because <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it> is <span style="color:#ff1111; font-weight: bold;"> deeply mutable </span>: a mutable object with mutable fields. 
+An amazing amount of bugs is caused by deep mutability.
+
+Note that we are using the exposer method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#path()]]></span><it style="font-style: bold; color:green;">&#187;</it>
+in a safe pattern: it is only called over <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this]]></span><it style="font-style: bold; color:green;">&#187;</it>, and the returned reference does not leak out of the method.
+The problem here arises since the object was shared to begin with. 
+
+</p><h2> (3/5)Capsules:  Keep aliasing graphs untangled </h2> <p>
+
+In 42 we can change <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it> to prevent this aliasing issue.
+<pre class="l42Big"><![CDATA[
+Animal = Data:{
+  var Point location
+  capsule Points path
+  mut method
+  Void move() = (
+    this.location(\path.left())
+    this.removeLeftPath()
+    )
+  @Cache.Clear class method
+  Void removeLeftPath(mut Points path) =
+    path.removeLeft()
+  }
+]]></pre>
+Now we use the modifier <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it>; this requires the value of the field to be encapsulated.
+Immutable objects are also encapsulated since
+they do not influence aliasing, so they are free from aliasing limitations.
+The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it>
+ modifier <span style="color:#ff1111; font-weight: bold;"> forces </span> the users to provide <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> values,
+ and <span style="color:#ff1111; font-weight: bold;"> ensures </span>
+ that instances of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it> have <it style="font-style: italic;">encapsulated state</it>;
+ that is, the values of all fields in an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it> are encapsulated.
+<br/>
+A mutable object with encapsulated state can only be mutated by calling one of its methods.
+This allows for the same kind of local reasoning as if all of the fields were immutable.
+</p><p>
+A <span style="color:#ff1111; font-weight: bold;"> capsule mutator </span> is a class method taking in input the value of a capsule field as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>. It is a way to mutate the value of a capsule field without exposing it.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> recognizes only the methods annotated with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> as capsule mutators.
+Those methods can then be safely accessed as instance methods with the same name.
+<br/>
+The annotation is called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> because
+capsule mutators also clear all the object based caches. Automatic caching is one of the coolest features of 42 and we will explore it later in this tutorial.
+</p><p>
+Note that we cannot have <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> exposers (<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#path()]]></span><it style="font-style: bold; color:green;">&#187;</it>) for capsule fields:
+other code could keep those references and then 
+mutate the ROG of the field,
+breaking local reasoning about Animals.
+
+With <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule Points path]]></span><it style="font-style: bold; color:green;">&#187;</it>, we are forced to initialize two animals using different paths:
+<pre class="l42Big"><![CDATA[
+zero = Point(x: 0Num, y: 0Num)
+capsule Points ps = Points[\(x=12\, y=20\);\(x=1\, y= 2\)]
+dog1 = Animal(location=zero, path=ps)
+//dog2= Animal(location=zero, path=ps) Does not compile
+dog2 = Animal(location=zero, path=\[\(x=12\, y=20\); \(x= 1\, y=2\)])
+dog1.move()
+dog2.move()
+]]></pre>
+where the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ps]]></span><it style="font-style: bold; color:green;">&#187;</it> local binding is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it>; 
+it can satisfy the Animal.path requirement, but it can be used only once.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[dog2]]></span><it style="font-style: bold; color:green;">&#187;</it>
+has to use another capsule. It is okay to just write the object creation in place as is done.
+Alternatively, lists offer a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[clone()]]></span><it style="font-style: bold; color:green;">&#187;</it> method,
+so in this case we could write
+
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[dog2= Animal(location: zero, path: dog1.path().clone())]]></span><it style="font-style: bold; color:green;">&#187;</it>
+
+
+</p><h2> (4/5)Handle mutability </h2> <p>
+
+</p><h2> Immutable objects of any class </h2> <p>
+
+How can we get an immutable <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it>?
+When an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it> is created using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal(location=_,path=_)]]></span><it style="font-style: bold; color:green;">&#187;</it> we create a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Animal]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+
+In most cases you can promote such reference to immutable/capsule; just make the type of the local binding explicit.
+ The type system will take care of the rest.
+If a reference can not be safely promoted to immutable/capsule, you may have to clone some data or to refactor your code.
+<pre class="l42Big"><![CDATA[
+mut Animal dog1 = Animal(__) //no promotion here
+Animal dog2 = Animal(__) //promotion mutable->immutable
+dog1.move()
+//dog2.move()  //ill-typed, requires a mut Animal
+]]></pre>
+
+We will not explain in this tutorial the exact rules for promotion, but the main idea is that if the initialization expression uses local bindings in a controlled/safe way, then promotion can be applied.
+For example, a mutable expression using only capsule or immutable references can be promoted to capsule or immutable, as we prefer.
+
+</p><h2> lent and read </h2> <p>
+We have seen immutable, mutable, capsule and class.
+The are still two modifiers: <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[lent]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+They are hygienic references: they can be read but can not be stored in mutable/capsule/immutable fields.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[lent]]></span><it style="font-style: bold; color:green;">&#187;</it> is an hygienic mutable reference, allowing mutation but not long term storage.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> is an hygienic read-only reference.
+</p><p>
+A method with a single mut parameter can still be called using a lent reference in place of it.
+
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> is the common supertype of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it>,<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[lent]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+In general, we can 
+use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> when we not care about the mutability of an object.
+For example, we could add to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it>
+
+<pre class="l42Big"><![CDATA[
+read method
+Bool hasArrived() =
+  this.path().isEmpty()
+]]></pre>
+This method can be called on both mutable and immutable animals: 
+
+<pre class="l42Big"><![CDATA[
+Debug(dog1.hasArrived())
+Debug(dog2.hasArrived())
+]]></pre>
+
+</p><h2> (5/5) Summary </h2> <p>
+  
+</p><h2> Kinds of classes, summary </h2> <p>
+  
+<ul>
+<li>
+immutable classes:  have only immutable fields.
+It is useful to model mathematical concepts.
+It is easy to reason about code using immutable classes,
+but some properties of real objects can be better modelled with state mutation.
+</li><li>
+shallow mutable classes:  have only (variable) fields of immutable or capsule type (or class, as we will see later). 
+Reasoning with shallow mutable classes is near as easy as reasoning with immutable ones, and often more natural.
+</li><li>
+deep mutable classes:  have mutable fields.
+Reasoning with deep mutable classes can be very hard.
+</li></ul>
+  
+</p><h2> Modifiers: summary </h2> <p>
+
+<ul>
+<li>
+immutable:  the default. When you omit the modifier,
+ you mean immutable. 
+An immutable reference points to an object that is never changing. Its whole reachable object graph never changes and is immutable as well.
+
+</li><li>
+mutable:  A mutable reference behaves like a normal reference in Java, C#, C++ , Python and many other languages.
+Mutable references require mutable objects and allow mutating the referred object.
+</li><li>
+capsule:  capsule references are used only once and they guarantee that the whole reachable object graph is reachable only thought that
+capsule reference. 
+Capsule references provide a structured way to reason over deep mutable objects.
+
+Fields can be annotated capsule, the meaning is that they need to be initialized/updated with capsule variables.
+We will discuss more about capsule fields and how they differs from capsule references later.
+ 
+</li><li>
+read:  A readable reference can not be used to mutate the referred object; but other mutable references pointing to the same object can mutate it.
+Read references can point to both mutable and immutable objects.
+It is easy to be confused between read and immutable references.
+As a rule of thumb, if you are in doubt about whether to use an immutable or a readable reference,
+you probably want an immutable reference.
+
+</li><li>
+lent:  a hygienic mutable reference allowing mutation but not storage.
+Lent and read are useful to handle in controlled way the state of deep mutable classes;
+moreover using lent and read on method parameters 
+allows to make explicit what are the method intentions and requirements.
+</li><li>
+
+class:  class references denote the class object,
+  on methods the meaning is the same of static methods in many languages, but it can consistently be used on parameters/local variables/fields
+to encode behaviours similar to dependency injection.
+
+
+</li></ul>
+
+
+
+</p><h2> Keep control, summary </h2> <p>
+
+<ul>
+<li>
+mutable:  mutable objects can be freely aliased and mutated. They allows for a liberal programming style like we can find in Java/C++/C# or Python.
+They can be referred to by capsule, mutable, lent and read references.
+</li><li>
+immutable: immutable objects 
+ can be obtained by promoting instances of mutable classes.
+ They
+can be referred to only by immutable and read references.
+
+</li><li>
+class:  class objects can be accessed from anywhere by using the corresponding class name;
+It is also possible to 
+store them into (class) local binding.
+Some programmers found the fact that class objects are instances of themselves deeply concerning
+or disturbing, while for others it is just a good story to tell to break the ice at parties.
+</li></ul>
+<br/>
+<div class="index"><div class="wrapFloat"><div class="inFloat">
+</div><div class="inFloat">
+&nbsp; &nbsp; &nbsp; <a href="tutorial_01Basics.xhtml"> Previous </a>...<a href="tutorial_03BasicClasses.xhtml"> Next </a>
+</div></div><div class="finishFloat"></div></div>
+<br/>
+
+        </p>
+        </div>
+      </div>
+      <div id="footerwrap">
+        <div id="footer">
+          <ul style='padding: 10px;'>
+            <li style='display:inline;'>
+            <a href="mailto:marco.servetto@gmail.com" rel="me">Contact Us</a> |</li>
+            <li style='display:inline;'>
+            <a href= "http://ecs.victoria.ac.nz/mailman/listinfo/team42">Mailing list</a> |</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+	
+  </body>
+</html>
+

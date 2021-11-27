@@ -1,4 +1,5 @@
 m4_include(`header.h')m4_dnl
+m4_include(`postHeader.h')m4_dnl
 
 WComm WTitle(`First, read in any order those introductions')
 WComm <Button class= 'button' type= 'button' onclick= 'selectDiv("a");'>
@@ -21,7 +22,7 @@ WComm </Button>
 
 
 <Button class= 'button' type= 'button' onclick=
- "location.href = 'tutorial.xhtml';">
+ "location.href = 'tutorial_01Basics.xhtml';">
 See the full Tutorial
 </Button>
 
@@ -85,9 +86,9 @@ parallelism allows doing more things at the same time.
 In other languages, parallelism allows for non deterministic behaviour;
 that is a nightmare to debug, especially when it is unintentional.
 
-In 42 all parallelism deterministic by construction,
+In 42 all parallelism is deterministic by construction,
 thus no bugs can be caused by the quirks of parallel execution.
-This allows to take full advantage of many cores while keeping the simple deterministic and
+This allows us to take full advantage of many cores while keeping the simple deterministic and
 sequential execution model in mind when testing and debugging code.
 </li><li>
 <h5 id="TypedClassDecorators">Typed class decorators</h5>
@@ -101,17 +102,17 @@ on writing the important bits of their code,
 while redundant and repetitive code is automatically generated.
 </li><li>
 <h5 id="AlwaysOnConstraints">Always-on constraints</h5>
-<q>Persons names starts with an upper-case letter</q>,
+<q>Personal names start with an upper-case letter</q>,
 <q>Those two lists have the same size</q>,
 <q>This map contains an entry for all the cities of Japan</q>.
 When writing code, we often assume our input data to satisfy certain expectations.
 In 42 we can encode those expectations as user defined constraints on the data,
 and it is then impossible to observe broken constraints.
-In this way the data we work on can never became ill formed.
+In this way the data we work on can never become ill formed.
 </li><li>
 <h5 id="FineGrainedPermissions">Fine grained permissions</h5>
 A secure program never does the wrong action.
-For example, it never commits to the database ill formed data.
+For example, it never commits ill-formed data to the database.
 In 42 a single localized part of code can clearly specify what those actions are
 and what are the corresponding correctness criteria.
 The rest of the code will be unable to break those criteria, and thus be unable to perform wrong actions.
