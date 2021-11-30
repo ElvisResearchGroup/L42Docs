@@ -179,7 +179,7 @@ WTitle((3/5) Box patten)
 
 As we have seen, in order to
 write mutable objects with encapsulated state,
-we need to designed them well, using Wcode(capsule) to initialize the mutable data, using Wcode(Cache.Clear) to mutate such state, and Wcode(Cache.Now) for the invariant.
+we need to design them well, using Wcode(capsule) to initialize the mutable data, using Wcode(Cache.Clear) to mutate such state, and Wcode(Cache.Now) for the invariant.
 However, we can also program a naive deeply mutable object and box it up as a second step.
 This can require a little more code, but it is more intuitive, and works very well for arbitrarily complex cases.
 Consider the following code:
@@ -194,15 +194,15 @@ Bike = Data:{
   mut method Void rain(Second time) = this.#chain().addRust(time)
   read method Void invariant() = X[
     this.front().size()==this.back().size();
-    this.seat().isConfortable();
+    this.seat().isComfortable();
     ]    
   }
 //components can mutate (get damaged)
 //and be updated (replaced with new ones)
 CCode
 As you can see, the Wcode(Bike) is a deeply mutable class, designed with no attention to
-correctness: if the programmer is not carefully, the same Wcode(Weel) 
-may end up used for multiple bikes at the same time.
+correctness: if the programmer is not careful, the same Wcode(Wheel)
+may end up being used for multiple bikes at the same time.
 Also, the method called Wcode(invariant) only represents a programmer intention, but it is not enforced in any way, so it could be silently broken.
 
 We can easy create a Wcode(BikeBox) class containing and encapsulating, such a Wcode(Bike):
@@ -247,7 +247,7 @@ Wcode(`BikeBox.front(that)')
  will check for the invariant exactly one time, at the end of their execution.
 Following this pattern, we can perform an arbitrarily long computation before the checks are triggered.
 
-When writing other classes, we can chose to use Wcode(Bike)
+When writing other classes, we can choose to use Wcode(Bike)
 or Wcode(BikeBox), depending on the specific details of our code.
 If we chose to use Wcode(Bike) as a field of another class, we can still check 
 the Wcode(Bike) invariant inside the invariant of the composite class:
@@ -376,12 +376,12 @@ Below, we show a table summarizing them.
 
 <table>
 <tr>
-<th>annotation</th>
-<th>recType</th>
-<th>parameters</th>
-<th>transformedInto</th>
-<th>storage</th>
-<th>timing</th>
+<th>&nbsp;&nbsp;annotation&nbsp;&nbsp;</th>
+<th>&nbsp;&nbsp;recType&nbsp;&nbsp;</th>
+<th>&nbsp;&nbsp;parameters&nbsp;&nbsp;</th>
+<th>&nbsp;&nbsp;transformedInto&nbsp;&nbsp;</th>
+<th>&nbsp;&nbsp;storage&nbsp;&nbsp;</th>
+<th>&nbsp;&nbsp;timing&nbsp;&nbsp;</th>
 </tr>
 <tr>
 <td>Cache.Lazy</td>
@@ -481,10 +481,11 @@ parallel = executed in a parallel worker starting after the factory.
 </ul>
 
 WTitle(Digressions / Expansions)
-As have seen, parallel programming can be viewed as a form of caching.
+As we have seen, parallel programming can be viewed as a form of caching.
 In some cases, we need parallel programming on mutable data.
 In our experience, this is not very common; the cost of copying data around is much smaller that most programmers assume.
-Let us repeat this very clearly: there are many other ways to optimize software, and they are much easier and much, much more rewarding than avoiding coping the few mutable parts of your data structure a couple of times.
+Let us repeat this very clearly: there are many other ways to optimize software, and they are much easier and much,
+much more rewarding than avoiding copying the few mutable parts of your data structure a couple of times.
 
 We think that only highly skilled and motivated programmers 
 can discover and hunt down all of those other much more pressing algorithmic issues that

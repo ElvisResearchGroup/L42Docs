@@ -263,7 +263,7 @@ However, there is a cost: you have to encode the algorithm so that the type syst
 
 As we have seen, in order to
 write mutable objects with encapsulated state,
-we need to designed them well, using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> to initialize the mutable data, using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> to mutate such state, and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> for the invariant.
+we need to design them well, using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> to initialize the mutable data, using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> to mutate such state, and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> for the invariant.
 However, we can also program a naive deeply mutable object and box it up as a second step.
 This can require a little more code, but it is more intuitive, and works very well for arbitrarily complex cases.
 Consider the following code:
@@ -278,15 +278,15 @@ Bike = Data:{
   mut method Void rain(Second time) = this.#chain().addRust(time)
   read method Void invariant() = X[
     this.front().size()==this.back().size();
-    this.seat().isConfortable();
+    this.seat().isComfortable();
     ]    
   }
 //components can mutate (get damaged)
 //and be updated (replaced with new ones)
 ]]></pre>
 As you can see, the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it> is a deeply mutable class, designed with no attention to
-correctness: if the programmer is not carefully, the same <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Weel]]></span><it style="font-style: bold; color:green;">&#187;</it> 
-may end up used for multiple bikes at the same time.
+correctness: if the programmer is not careful, the same <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Wheel]]></span><it style="font-style: bold; color:green;">&#187;</it>
+may end up being used for multiple bikes at the same time.
 Also, the method called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[invariant]]></span><it style="font-style: bold; color:green;">&#187;</it> only represents a programmer intention, but it is not enforced in any way, so it could be silently broken.
 
 We can easy create a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[BikeBox]]></span><it style="font-style: bold; color:green;">&#187;</it> class containing and encapsulating, such a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it>:
@@ -331,7 +331,7 @@ and
  will check for the invariant exactly one time, at the end of their execution.
 Following this pattern, we can perform an arbitrarily long computation before the checks are triggered.
 
-When writing other classes, we can chose to use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it>
+When writing other classes, we can choose to use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it>
 or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[BikeBox]]></span><it style="font-style: bold; color:green;">&#187;</it>, depending on the specific details of our code.
 If we chose to use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it> as a field of another class, we can still check 
 the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it> invariant inside the invariant of the composite class:
@@ -460,12 +460,12 @@ Below, we show a table summarizing them.
 
 <table>
 <tr>
-<th>annotation</th>
-<th>recType</th>
-<th>parameters</th>
-<th>transformedInto</th>
-<th>storage</th>
-<th>timing</th>
+<th>&nbsp;&nbsp;annotation&nbsp;&nbsp;</th>
+<th>&nbsp;&nbsp;recType&nbsp;&nbsp;</th>
+<th>&nbsp;&nbsp;parameters&nbsp;&nbsp;</th>
+<th>&nbsp;&nbsp;transformedInto&nbsp;&nbsp;</th>
+<th>&nbsp;&nbsp;storage&nbsp;&nbsp;</th>
+<th>&nbsp;&nbsp;timing&nbsp;&nbsp;</th>
 </tr>
 <tr>
 <td>Cache.Lazy</td>
@@ -565,10 +565,11 @@ parallel = executed in a parallel worker starting after the factory.
 </ul>
 
 </p><h2> Digressions / Expansions </h2> <p>
-As have seen, parallel programming can be viewed as a form of caching.
+As we have seen, parallel programming can be viewed as a form of caching.
 In some cases, we need parallel programming on mutable data.
 In our experience, this is not very common; the cost of copying data around is much smaller that most programmers assume.
-Let us repeat this very clearly: there are many other ways to optimize software, and they are much easier and much, much more rewarding than avoiding coping the few mutable parts of your data structure a couple of times.
+Let us repeat this very clearly: there are many other ways to optimize software, and they are much easier and much,
+much more rewarding than avoiding copying the few mutable parts of your data structure a couple of times.
 
 We think that only highly skilled and motivated programmers 
 can discover and hunt down all of those other much more pressing algorithmic issues that

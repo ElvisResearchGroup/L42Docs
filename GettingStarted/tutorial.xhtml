@@ -246,7 +246,7 @@ There are two different ways to use the backslash:
 as a keyword or immediately followed by a lowercase identifier.
 </p><p>
 As a keyword, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[\]]></span><it style="font-style: bold; color:green;">&#187;</it> represents the expected type of the surrounding expression.
-The slash search outwards on super expressions until it finds a place with an easily guessable type:
+The slash searches outwards on super expressions until it finds a place with an easily guessable type:
 the return type of the method, a method parameter or a local binding with an explicit type.
 For example:
 <pre class="l42Big"><![CDATA[
@@ -411,11 +411,11 @@ The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![
 </li><li>
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[run()]]></span><it style="font-style: bold; color:green;">&#187;</it> is a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut method]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 <br/>
-  We have seen <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class method]]></span><it style="font-style: bold; color:green;">&#187;</it>s already, and we have seen methods 
+We have seen a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class method]]></span><it style="font-style: bold; color:green;">&#187;</it> already, and we have seen methods 
 such as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(x)]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(y)]]></span><it style="font-style: bold; color:green;">&#187;</it>
 showing no modifier;
 they implicitly have the default modifier <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-Similarly, whenever a typed does not specify a modifier,
+Similarly, whenever a type does not specify a modifier,
 it has the default modifier <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 <br/>
   <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> methods can mutate the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this]]></span><it style="font-style: bold; color:green;">&#187;</it> object. If you have experience with C++
@@ -475,7 +475,7 @@ is a non-<it style="font-style: bold; color:green;">&#171;</it><span class="code
 The method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[move()]]></span><it style="font-style: bold; color:green;">&#187;</it>
 first uses the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> setter method to update the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location]]></span><it style="font-style: bold; color:green;">&#187;</it> field
 with the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm Point]]></span><it style="font-style: bold; color:green;">&#187;</it> leftmost element of the field <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Points path]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-By the way, collections in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> are primarly designed to store and retrive
+By the way, collections in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> are primarily designed to store and retrieve
 immutable objects; later we will show also how to manipulate mutable ones.
 <br/>
 The method then uses the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#path()]]></span><it style="font-style: bold; color:green;">&#187;</it>
@@ -553,7 +553,8 @@ The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![
 A mutable object with encapsulated state can only be mutated by calling one of its methods.
 This allows for the same kind of local reasoning as if all of the fields were immutable.
 </p><p>
-A <span style="color:#ff1111; font-weight: bold;"> capsule mutator </span> is a class method taking in input the value of a capsule field as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>. It is a way to mutate the value of a capsule field without exposing it.
+A <span style="color:#ff1111; font-weight: bold;"> capsule mutator </span> is a class method whose first parameter is the capsule field as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+It is a way to mutate the value of a capsule field without exposing it.
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> recognizes only the methods annotated with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> as capsule mutators.
 Those methods can then be safely accessed as instance methods with the same name.
 <br/>
@@ -567,7 +568,7 @@ breaking local reasoning about Animals.
 
 With <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule Points path]]></span><it style="font-style: bold; color:green;">&#187;</it>, we are forced to initialize two animals using different paths:
 <pre class="l42Big"><![CDATA[
-zero = Point(x: 0Num, y: 0Num)
+zero = Point(x=0Num, y=0Num)
 capsule Points ps = Points[\(x=12\, y=20\);\(x=1\, y= 2\)]
 dog1 = Animal(location=zero, path=ps)
 //dog2= Animal(location=zero, path=ps) Does not compile
@@ -616,7 +617,7 @@ A method with a single mut parameter can still be called using a lent reference 
 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> is the common supertype of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it>,<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[lent]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 In general, we can 
-use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> when we not care about the mutability of an object.
+use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> when we do not care about the mutability of an object.
 For example, we could add to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it>
 
 <pre class="l42Big"><![CDATA[
@@ -661,13 +662,12 @@ An immutable reference points to an object that is never changing. Its whole rea
 mutable:  A mutable reference behaves like a normal reference in Java, C#, C++ , Python and many other languages.
 Mutable references require mutable objects and allow mutating the referred object.
 </li><li>
-capsule:  capsule references are used only once and they guarantee that the whole reachable object graph is reachable only thought that
+capsule:  capsule references are used only once and they guarantee that the whole reachable object graph is reachable only through that
 capsule reference. 
 Capsule references provide a structured way to reason over deep mutable objects.
 
 Fields can be annotated capsule, the meaning is that they need to be initialized/updated with capsule variables.
-We will discuss more about capsule fields and how they differs from capsule references later.
- 
+We will discuss more about capsule fields and how they differ from capsule references later.
 </li><li>
 read:  A readable reference can not be used to mutate the referred object; but other mutable references pointing to the same object can mutate it.
 Read references can point to both mutable and immutable objects.
@@ -695,7 +695,7 @@ to encode behaviours similar to dependency injection.
 
 <ul>
 <li>
-mutable:  mutable objects can be freely aliased and mutated. They allows for a liberal programming style like we can find in Java/C++/C# or Python.
+mutable:  mutable objects can be freely aliased and mutated. They allow for a liberal programming style like we can find in Java/C++/C# or Python.
 They can be referred to by capsule, mutable, lent and read references.
 </li><li>
 immutable: immutable objects 
@@ -987,7 +987,7 @@ method Num confirmAnswer(Num answer) (
     error X""
     )
 ]]></pre>
-As you have seen, we have varius ways to check for condition:
+As you have seen, we have various ways to check for condition:
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[answer>0Num;]]></span><it style="font-style: bold; color:green;">&#187;</it> checks a boolean condition,
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[answer<.. msg=S"..";]]></span><it style="font-style: bold; color:green;">&#187;</it> checks the condition and uses a custom error message,
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[actual=answer, expected=42Num;]]></span><it style="font-style: bold; color:green;">&#187;</it> takes two immutable values
@@ -1289,7 +1289,7 @@ It just takes 2 lines, and will make debugging your code so much
 easier.
 </li><li>
 Use errors intensively, but use exceptions sparingly:
- they are needed only in few 
+ they are needed only in a few 
 cases, mostly when designing public libraries.
 </li><li>
 To convert exception into errors, use the convenient short
@@ -1410,7 +1410,7 @@ As you can see, the caching is is completely handled by the language and is not 
 </p><h2> (3/5) Automatic parallelism </h2> <p>
 When decorated by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> caches the results of methods after they have been called the first time.
 However, why wait for the methods to be called?
-Once the receiver object is created, the method could be computed <span style="color:#ff1111; font-weight: bold;"> eagerly </span> in a separed worker, so that when we call the method, we may get the result without waiting at all.
+Once the receiver object is created, the method could be computed <span style="color:#ff1111; font-weight: bold;"> eagerly </span> in a separate worker, so that when we call the method, we may get the result without waiting at all.
 That is, if we use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Eager]]></span><it style="font-style: bold; color:green;">&#187;</it> we can get automatic parallelism: the language will handle a set of parallel workers to execute such method bodies.
 
 </p><p>
@@ -1726,7 +1726,7 @@ However, there is a cost: you have to encode the algorithm so that the type syst
 
 As we have seen, in order to
 write mutable objects with encapsulated state,
-we need to designed them well, using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> to initialize the mutable data, using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> to mutate such state, and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> for the invariant.
+we need to design them well, using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> to initialize the mutable data, using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> to mutate such state, and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Now]]></span><it style="font-style: bold; color:green;">&#187;</it> for the invariant.
 However, we can also program a naive deeply mutable object and box it up as a second step.
 This can require a little more code, but it is more intuitive, and works very well for arbitrarily complex cases.
 Consider the following code:
@@ -1741,15 +1741,15 @@ Bike = Data:{
   mut method Void rain(Second time) = this.#chain().addRust(time)
   read method Void invariant() = X[
     this.front().size()==this.back().size();
-    this.seat().isConfortable();
+    this.seat().isComfortable();
     ]    
   }
 //components can mutate (get damaged)
 //and be updated (replaced with new ones)
 ]]></pre>
 As you can see, the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it> is a deeply mutable class, designed with no attention to
-correctness: if the programmer is not carefully, the same <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Weel]]></span><it style="font-style: bold; color:green;">&#187;</it> 
-may end up used for multiple bikes at the same time.
+correctness: if the programmer is not careful, the same <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Wheel]]></span><it style="font-style: bold; color:green;">&#187;</it>
+may end up being used for multiple bikes at the same time.
 Also, the method called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[invariant]]></span><it style="font-style: bold; color:green;">&#187;</it> only represents a programmer intention, but it is not enforced in any way, so it could be silently broken.
 
 We can easy create a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[BikeBox]]></span><it style="font-style: bold; color:green;">&#187;</it> class containing and encapsulating, such a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it>:
@@ -1794,7 +1794,7 @@ and
  will check for the invariant exactly one time, at the end of their execution.
 Following this pattern, we can perform an arbitrarily long computation before the checks are triggered.
 
-When writing other classes, we can chose to use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it>
+When writing other classes, we can choose to use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it>
 or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[BikeBox]]></span><it style="font-style: bold; color:green;">&#187;</it>, depending on the specific details of our code.
 If we chose to use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it> as a field of another class, we can still check 
 the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bike]]></span><it style="font-style: bold; color:green;">&#187;</it> invariant inside the invariant of the composite class:
@@ -1923,12 +1923,12 @@ Below, we show a table summarizing them.
 
 <table>
 <tr>
-<th>annotation</th>
-<th>recType</th>
-<th>parameters</th>
-<th>transformedInto</th>
-<th>storage</th>
-<th>timing</th>
+<th>&nbsp;&nbsp;annotation&nbsp;&nbsp;</th>
+<th>&nbsp;&nbsp;recType&nbsp;&nbsp;</th>
+<th>&nbsp;&nbsp;parameters&nbsp;&nbsp;</th>
+<th>&nbsp;&nbsp;transformedInto&nbsp;&nbsp;</th>
+<th>&nbsp;&nbsp;storage&nbsp;&nbsp;</th>
+<th>&nbsp;&nbsp;timing&nbsp;&nbsp;</th>
 </tr>
 <tr>
 <td>Cache.Lazy</td>
@@ -2028,10 +2028,11 @@ parallel = executed in a parallel worker starting after the factory.
 </ul>
 
 </p><h2> Digressions / Expansions </h2> <p>
-As have seen, parallel programming can be viewed as a form of caching.
+As we have seen, parallel programming can be viewed as a form of caching.
 In some cases, we need parallel programming on mutable data.
 In our experience, this is not very common; the cost of copying data around is much smaller that most programmers assume.
-Let us repeat this very clearly: there are many other ways to optimize software, and they are much easier and much, much more rewarding than avoiding coping the few mutable parts of your data structure a couple of times.
+Let us repeat this very clearly: there are many other ways to optimize software, and they are much easier and much,
+much more rewarding than avoiding copying the few mutable parts of your data structure a couple of times.
 
 We think that only highly skilled and motivated programmers 
 can discover and hunt down all of those other much more pressing algorithmic issues that
@@ -2304,9 +2305,9 @@ Shape = {interface
 
 </p><h2> (3/5)Subtyping </h2> <p>
 Dynamic dispatch is the most important feature of object oriented languages.
-Subtyping is the main feature supporting dynamic dispach; for example 
+Subtyping is the main feature supporting dynamic dispatch; for example 
 we can iterate over a list of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Shape]]></span><it style="font-style: bold; color:green;">&#187;</it>
-and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[draw]]></span><it style="font-style: bold; color:green;">&#187;</it> them without the need to explicitly handle in the code all the possible kinds of 
+and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[draw()]]></span><it style="font-style: bold; color:green;">&#187;</it> them without the need to explicitly handle in the code all the possible kinds of 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Shape]]></span><it style="font-style: bold; color:green;">&#187;</it> on a case by case basis.
  
 Note that modifiers (<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>,
@@ -2320,7 +2321,7 @@ the providers and users of objects:
 Interfaces allows client code to be implicitly parametric on the behaviour of individual objects.
 The client code can make no assumption on the specific implementation of the interface.
 </li><li>
-Classes allows client code to rely on their invariants.
+Classes allow client code to rely on their invariants.
 The user code is forced to pass only a specific kind of implementation.
 </li></ul>
 
@@ -2385,7 +2386,7 @@ method Point example2(Point left,Point right) = {
 ]]></pre>
 That is: we can match out the result of any no-arg method into a variable with the same name, plus an optional numeric suffix.
 This syntax can also be used inside of the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[if]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-This is often done for fields. Of course it works also to extract a sigle field:
+This is often done for fields. Of course it works also to extract a single field:
 
 <pre class="l42Big"><![CDATA[
 method Square example3(Shapes ss) = {
@@ -2414,7 +2415,7 @@ Java 8 default methods, since the implementation can be generated by examining t
  
 <br/>
 In the right conditions, matching is a useful tool to reduce code size and complexity.
-However, dynamic dispach is still the preferred option in the general case. On the other hand type matching works only on a finite
+However, dynamic dispatch is still the preferred option in the general case. On the other hand type matching works only on a finite
 number of hard-coded cases, making it fragile with respect to code evolution.
  </p><p id="Sequences"> </p><div style="break-after:page"></div><h1> Collection: list, map, set, optional and their operations </h1> <p>
 
@@ -2452,11 +2453,11 @@ myNums= DoIt.getMutableNums() //myNums type is inferred to be mut Nums
 
 Immutable lists can be combined with operators.
 The general idea is that operators 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[+,-]]></span><it style="font-style: bold; color:green;">&#187;</it> works 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[+,-]]></span><it style="font-style: bold; color:green;">&#187;</it> work 
 on one sequences and one element,
 while the corresponding doubled-up operators
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[++,--]]></span><it style="font-style: bold; color:green;">&#187;</it>
-works on two sequences.
+work on two sequences.
 You can see the details of this below.
 <pre class="l42Big"><![CDATA[
 X[
@@ -2472,7 +2473,7 @@ X[
   Nums[a;b;b;c]--Nums[b;c] == Nums[a];
   ]
 ]]></pre>
-In addition of operators, immutable lists also supports a plethora of methods:
+In addition of operators, immutable lists also support a plethora of methods:
 <pre class="l42Big"><![CDATA[
 X[
   //replacement
@@ -2520,12 +2521,12 @@ X[
 
 </p><h2> Mutate sequences </h2> <p>
 
-Mutable sequences can contains mutable objects.
+Mutable sequences can contain mutable objects.
 While this can be useful in special circumstances, it can create aliasing issues similar to the
 ones of the animals example of before.
 To warn against such issues, methods <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[left()]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[right()]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[val(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> return 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> references to mutable objects. In order to obtain 
-a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> reference, the user need to use the methods
+a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> reference, the user needs to use the methods
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#left()]]></span><it style="font-style: bold; color:green;">&#187;</it>,
  <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#right()]]></span><it style="font-style: bold; color:green;">&#187;</it>
  and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#val(that)]]></span><it style="font-style: bold; color:green;">&#187;</it>.
@@ -2576,7 +2577,7 @@ for myElem in vec ( result++=myElem )
 //result==S"foobarbeer"
 ]]></pre>
 
-In 42 foreach allows to iterate on multiple collections at onece, and also to update the collections:
+In 42 foreach allows to iterate on multiple collections at once, and also to update the collections:
 <pre class="l42Big"><![CDATA[
 rs = Nums[1\;2\;3\;]
 as =  Nums[10\;20\;30\;]
@@ -2636,7 +2637,7 @@ MainMore = {
 </p><h2> The power of the \ </h2> <p>
 
 There are various methods taking advantage of the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[\]]></span><it style="font-style: bold; color:green;">&#187;</it> syntactic sugar.
-They provides an expressive power similar to what list comprehensions provides in python and streams in Java, but by just using simple control flow like for/if:
+They provide an expressive power similar to what list-comprehensions provide in python and streams in Java, but by just using simple control flow like for/if:
 
 <pre class="l42Big"><![CDATA[
 as =  Num.List[1\;2\;3\;4\;]
@@ -2687,8 +2688,6 @@ Up to now we focused on lists of <it style="font-style: bold; color:green;">&#17
 all instances of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> are immutable; we now discuss what happens where
 mutable lists contains a mixture of mutable and immutable elements.
 Consider the following code:
-Finally, we conclude discussing iteration on mutable elements:
-Mutable lists can contains
 <pre class="l42Big"><![CDATA[
 Point = Data:{var Num x, var Num y}
 Points = Collection.list(Point)
@@ -2727,7 +2726,7 @@ Points immPs=(
 for p in ps ( Debug(p) ) //works, it would fail without 'immNorm()'
 ]]></pre>
 
-</p><h2> (4/5) Map </h2> <p>
+</p><h2> (4/5) Map, set, opt.. </h2> <p>
 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Collection]]></span><it style="font-style: bold; color:green;">&#187;</it> also support maps, sets, optional and enumerations.
 We will add more kinds of collections in the future.
@@ -2735,7 +2734,7 @@ We will add more kinds of collections in the future.
 </p><h2> Optional </h2> <p>
 In 42 there is no concept of null, and all the values are always intentionally initialized before
 they can be read.
-There are two main reasons programmers relies on nulls: optional values and circular/delayed initialization.
+There are two main reasons programmers rely on nulls: optional values and circular/delayed initialization.
 Circular initialization can be solved with a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[fwd]]></span><it style="font-style: bold; color:green;">&#187;</it> types, an advanced typing feature that we do not discuss here.
 Optional values are a staple of functional programming and are logically equivalent to a collection of zero or one element, or, if you prefer, a box that may or may not contain an element of a certain type.
 Optionals values can be obtained with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Collection.optional(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> as shown below.
@@ -2771,7 +2770,7 @@ Main = (
 At this point in the tutorial, some readers will be confused that we can update the local variable binding 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[p00Box:= OPoint()]]></span><it style="font-style: bold; color:green;">&#187;</it> even if it is immutable.
 Other readers instead will remember that immutability is a property of the reference and not of the binding/field: a local binding and fields declared <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it> can be updated.
-The updated value need to respect the modifier of the field/binding type: if it is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut/imm]]></span><it style="font-style: bold; color:green;">&#187;</it> it needs to be updated with another <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut/imm]]></span><it style="font-style: bold; color:green;">&#187;</it>; if it is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> than it can be updated with either
+The updated value needs to respect the modifier of the field/binding type: if it is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut/imm]]></span><it style="font-style: bold; color:green;">&#187;</it> it needs to be updated with another <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut/imm]]></span><it style="font-style: bold; color:green;">&#187;</it>; if it is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> then it can be updated with either
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 Oh, yes, another reader will realize ... and a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> reference can be assigned to any of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[lent]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 
@@ -2787,7 +2786,7 @@ while the second one is mutable since <it style="font-style: bold; color:green;"
 Thanks to normalization 42 can have very fast and most reliable hash sets and hash maps.
 The values of sets and the keys of maps must be immutable, and are normalized just before being inserted in the collection.
 Then, the value of the normalized pointer is used to check for equality and hashcode.
-This have various positive effects:
+This has various positive effects:
 
 <ul><li>
 The user does not need to write equality and hashing behaviour
@@ -2796,10 +2795,10 @@ There is no risk of mistake in the equality and hashing behaviour
 </li><li>
 The intrinsic invariants of the hashmap/hashset are never violated/corrupted.
 </li><li>
-The equality is a perfect structural equality, but is as fast as a pointer equality; for maps with large keys this can make a massive performance difference.
+The equality is a perfect structural equality, but is as fast as pointer equality; for maps with large keys this can make a massive performance difference.
 </li></ul>
 
-Maps and sets have less methods that lists, but they can still be iterated upon, as shown in the following code:
+Maps and sets have less methods than lists, but they can still be iterated upon, as shown in the following code:
 
 <pre class="l42Big"><![CDATA[
 Point = Data:{var Num x, var Num y}
@@ -2854,19 +2853,20 @@ to extract a
      
 
 </p><h2> Set </h2> <p>
-Sets behaves a lot like maps where the values are irrelevant, and have differently named methods.
+Sets behave a lot like maps where the values are irrelevant, and have differently named methods.
 In particular, in addition to conventional <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[size()]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[isEmpty()]]></span><it style="font-style: bold; color:green;">&#187;</it>,
-sets offers method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[remove(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> to add and remove an element,
+sets offer methods <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[remove(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> to add and remove an element,
 and elements can be extracted in the insertion order by using method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[val(that)]]></span><it style="font-style: bold; color:green;">&#187;</it>
 
-We are considering adding operators <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[+]]></span><it style="font-style: bold; color:green;">&#187;</it> as for lists, and
-support for the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[\]]></span><it style="font-style: bold; color:green;">&#187;</it> like for lists.
+We are considering adding operators <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[+,-,++,--]]></span><it style="font-style: bold; color:green;">&#187;</it> to sets, as supported by lists, and
+support for the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[\]]></span><it style="font-style: bold; color:green;">&#187;</it> as well.
 An operator <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[&&]]></span><it style="font-style: bold; color:green;">&#187;</it> returning the intersection of the two sets.
 On the other side, boolean methods like <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[intersect(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[disjoint(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[containsAll(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> can already be easily emulated with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Match]]></span><it style="font-style: bold; color:green;">&#187;</it> as we shown for lists.
+
 </p><h2> (5/5) Collection summary </h2> <p>
 
 <ul><li>
-There are a tons of methods and operators to know, but since most code works 
+There are tons of methods and operators to know, but since most code works 
 around collections, it is worth the effort to memorize them.
 </li><li>
 Immutable collections are easy to play with, using operators and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[with**]]></span><it style="font-style: bold; color:green;">&#187;</it> methods.
@@ -2884,7 +2884,7 @@ Most methods have a general version that works with an index, and specialized <i
 </li></ul>
 
 </p><h2> Digressions / Expansions </h2> <p>
-Collections supports iteration with the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[for]]></span><it style="font-style: bold; color:green;">&#187;</it> syntax.
+Collections support iteration with the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[for]]></span><it style="font-style: bold; color:green;">&#187;</it> syntax.
 Iteration in 42 is way more flexible than in most other languages, and it is delegated on method calls.
 Iteration in 42 is designed to support two main iteration strategy:
 explicit indexes and iterator objects.
@@ -2915,7 +2915,6 @@ Since <it style="font-style: bold; color:green;">&#171;</it><span class="code"><
 
 <ul>
 <li>
-</li><li>
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#iterator]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[##iterator]]></span><it style="font-style: bold; color:green;">&#187;</it>
 <br/>
 They return an object able to provide the elements of the list. The second variant

@@ -33,11 +33,11 @@ The Wcode(location) field is Wcode(var).
 </li><li>
 Wcode(run()) is a Wcode(mut method).
 WBR
-  We have seen Wcode(class method)s already, and we have seen methods 
+We have seen a Wcode(class method) already, and we have seen methods 
 such as Wcode(add(x)) and Wcode(add(y))
 showing no modifier;
 they implicitly have the default modifier Wcode(imm).
-Similarly, whenever a typed does not specify a modifier,
+Similarly, whenever a type does not specify a modifier,
 it has the default modifier Wcode(imm).
 WBR
   Wcode(mut) methods can mutate the Wcode(this) object. If you have experience with C++
@@ -97,7 +97,7 @@ WP
 The method Wcode(move())
 first uses the Wcode(location(that)) setter method to update the Wcode(location) field
 with the Wcode(imm Point) leftmost element of the field Wcode(mut Points path).
-By the way, collections in Wcode(AdamsTowel) are primarly designed to store and retrive
+By the way, collections in Wcode(AdamsTowel) are primarily designed to store and retrieve
 immutable objects; later we will show also how to manipulate mutable ones.
 WBR
 The method then uses the Wcode(`#path()')
@@ -175,7 +175,8 @@ WBR
 A mutable object with encapsulated state can only be mutated by calling one of its methods.
 This allows for the same kind of local reasoning as if all of the fields were immutable.
 WP
-A WEmph(capsule mutator) is a class method taking in input the value of a capsule field as Wcode(mut). It is a way to mutate the value of a capsule field without exposing it.
+A WEmph(capsule mutator) is a class method whose first parameter is the capsule field as Wcode(mut).
+It is a way to mutate the value of a capsule field without exposing it.
 Wcode(Data) recognizes only the methods annotated with Wcode(@Cache.Clear) as capsule mutators.
 Those methods can then be safely accessed as instance methods with the same name.
 WBR
@@ -189,7 +190,7 @@ breaking local reasoning about Animals.
 
 With Wcode(capsule Points path), we are forced to initialize two animals using different paths:
 OBCode
-zero = Point(x: 0Num, y: 0Num)
+zero = Point(x=0Num, y=0Num)
 capsule Points ps = Points[\(x=12\, y=20\);\(x=1\, y= 2\)]
 dog1 = Animal(location=zero, path=ps)
 //dog2= Animal(location=zero, path=ps) Does not compile
@@ -238,7 +239,7 @@ A method with a single mut parameter can still be called using a lent reference 
 
 Wcode(read) is the common supertype of Wcode(capsule),Wcode(imm), Wcode(mut) and Wcode(lent).
 In general, we can 
-use Wcode(read) when we not care about the mutability of an object.
+use Wcode(read) when we do not care about the mutability of an object.
 For example, we could add to Wcode(Animal)
 
 OBCode
@@ -283,13 +284,12 @@ An immutable reference points to an object that is never changing. Its whole rea
 mutable:  A mutable reference behaves like a normal reference in Java, C#, C++ , Python and many other languages.
 Mutable references require mutable objects and allow mutating the referred object.
 </li><li>
-capsule:  capsule references are used only once and they guarantee that the whole reachable object graph is reachable only thought that
+capsule:  capsule references are used only once and they guarantee that the whole reachable object graph is reachable only through that
 capsule reference. 
 Capsule references provide a structured way to reason over deep mutable objects.
 
 Fields can be annotated capsule, the meaning is that they need to be initialized/updated with capsule variables.
-We will discuss more about capsule fields and how they differs from capsule references later.
- 
+We will discuss more about capsule fields and how they differ from capsule references later.
 </li><li>
 read:  A readable reference can not be used to mutate the referred object; but other mutable references pointing to the same object can mutate it.
 Read references can point to both mutable and immutable objects.
@@ -317,7 +317,7 @@ WTitle(`Keep control, summary')
 
 <ul>
 <li>
-mutable:  mutable objects can be freely aliased and mutated. They allows for a liberal programming style like we can find in Java/C++/C# or Python.
+mutable:  mutable objects can be freely aliased and mutated. They allow for a liberal programming style like we can find in Java/C++/C# or Python.
 They can be referred to by capsule, mutable, lent and read references.
 </li><li>
 immutable: immutable objects 

@@ -187,7 +187,7 @@ As you can see, the caching is is completely handled by the language and is not 
 </p><h2> (3/5) Automatic parallelism </h2> <p>
 When decorated by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Lazy]]></span><it style="font-style: bold; color:green;">&#187;</it> caches the results of methods after they have been called the first time.
 However, why wait for the methods to be called?
-Once the receiver object is created, the method could be computed <span style="color:#ff1111; font-weight: bold;"> eagerly </span> in a separed worker, so that when we call the method, we may get the result without waiting at all.
+Once the receiver object is created, the method could be computed <span style="color:#ff1111; font-weight: bold;"> eagerly </span> in a separate worker, so that when we call the method, we may get the result without waiting at all.
 That is, if we use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.Eager]]></span><it style="font-style: bold; color:green;">&#187;</it> we can get automatic parallelism: the language will handle a set of parallel workers to execute such method bodies.
 
 </p><p>

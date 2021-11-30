@@ -117,11 +117,11 @@ The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![
 </li><li>
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[run()]]></span><it style="font-style: bold; color:green;">&#187;</it> is a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut method]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 <br/>
-  We have seen <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class method]]></span><it style="font-style: bold; color:green;">&#187;</it>s already, and we have seen methods 
+We have seen a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class method]]></span><it style="font-style: bold; color:green;">&#187;</it> already, and we have seen methods 
 such as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(x)]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(y)]]></span><it style="font-style: bold; color:green;">&#187;</it>
 showing no modifier;
 they implicitly have the default modifier <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-Similarly, whenever a typed does not specify a modifier,
+Similarly, whenever a type does not specify a modifier,
 it has the default modifier <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 <br/>
   <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> methods can mutate the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this]]></span><it style="font-style: bold; color:green;">&#187;</it> object. If you have experience with C++
@@ -181,7 +181,7 @@ is a non-<it style="font-style: bold; color:green;">&#171;</it><span class="code
 The method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[move()]]></span><it style="font-style: bold; color:green;">&#187;</it>
 first uses the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> setter method to update the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[location]]></span><it style="font-style: bold; color:green;">&#187;</it> field
 with the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm Point]]></span><it style="font-style: bold; color:green;">&#187;</it> leftmost element of the field <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut Points path]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-By the way, collections in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> are primarly designed to store and retrive
+By the way, collections in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> are primarily designed to store and retrieve
 immutable objects; later we will show also how to manipulate mutable ones.
 <br/>
 The method then uses the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#path()]]></span><it style="font-style: bold; color:green;">&#187;</it>
@@ -259,7 +259,8 @@ The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![
 A mutable object with encapsulated state can only be mutated by calling one of its methods.
 This allows for the same kind of local reasoning as if all of the fields were immutable.
 </p><p>
-A <span style="color:#ff1111; font-weight: bold;"> capsule mutator </span> is a class method taking in input the value of a capsule field as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>. It is a way to mutate the value of a capsule field without exposing it.
+A <span style="color:#ff1111; font-weight: bold;"> capsule mutator </span> is a class method whose first parameter is the capsule field as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+It is a way to mutate the value of a capsule field without exposing it.
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Data]]></span><it style="font-style: bold; color:green;">&#187;</it> recognizes only the methods annotated with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.Clear]]></span><it style="font-style: bold; color:green;">&#187;</it> as capsule mutators.
 Those methods can then be safely accessed as instance methods with the same name.
 <br/>
@@ -273,7 +274,7 @@ breaking local reasoning about Animals.
 
 With <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule Points path]]></span><it style="font-style: bold; color:green;">&#187;</it>, we are forced to initialize two animals using different paths:
 <pre class="l42Big"><![CDATA[
-zero = Point(x: 0Num, y: 0Num)
+zero = Point(x=0Num, y=0Num)
 capsule Points ps = Points[\(x=12\, y=20\);\(x=1\, y= 2\)]
 dog1 = Animal(location=zero, path=ps)
 //dog2= Animal(location=zero, path=ps) Does not compile
@@ -322,7 +323,7 @@ A method with a single mut parameter can still be called using a lent reference 
 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> is the common supertype of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it>,<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[lent]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 In general, we can 
-use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> when we not care about the mutability of an object.
+use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> when we do not care about the mutability of an object.
 For example, we could add to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Animal]]></span><it style="font-style: bold; color:green;">&#187;</it>
 
 <pre class="l42Big"><![CDATA[
@@ -367,13 +368,12 @@ An immutable reference points to an object that is never changing. Its whole rea
 mutable:  A mutable reference behaves like a normal reference in Java, C#, C++ , Python and many other languages.
 Mutable references require mutable objects and allow mutating the referred object.
 </li><li>
-capsule:  capsule references are used only once and they guarantee that the whole reachable object graph is reachable only thought that
+capsule:  capsule references are used only once and they guarantee that the whole reachable object graph is reachable only through that
 capsule reference. 
 Capsule references provide a structured way to reason over deep mutable objects.
 
 Fields can be annotated capsule, the meaning is that they need to be initialized/updated with capsule variables.
-We will discuss more about capsule fields and how they differs from capsule references later.
- 
+We will discuss more about capsule fields and how they differ from capsule references later.
 </li><li>
 read:  A readable reference can not be used to mutate the referred object; but other mutable references pointing to the same object can mutate it.
 Read references can point to both mutable and immutable objects.
@@ -401,7 +401,7 @@ to encode behaviours similar to dependency injection.
 
 <ul>
 <li>
-mutable:  mutable objects can be freely aliased and mutated. They allows for a liberal programming style like we can find in Java/C++/C# or Python.
+mutable:  mutable objects can be freely aliased and mutated. They allow for a liberal programming style like we can find in Java/C++/C# or Python.
 They can be referred to by capsule, mutable, lent and read references.
 </li><li>
 immutable: immutable objects 

@@ -44,7 +44,7 @@ method Num confirmAnswer(Num answer) (
     error X""
     )
 CCode
-As you have seen, we have varius ways to check for condition:
+As you have seen, we have various ways to check for condition:
 Wcode(`answer>0Num;') checks a boolean condition,
 Wcode(`answer<.. msg=S"..";') checks the condition and uses a custom error message,
 Wcode(`actual=answer, expected=42Num;') takes two immutable values
@@ -346,7 +346,7 @@ It just takes 2 lines, and will make debugging your code so much
 easier.
 </li><li>
 Use errors intensively, but use exceptions sparingly:
- they are needed only in few 
+ they are needed only in a few 
 cases, mostly when designing public libraries.
 </li><li>
 To convert exception into errors, use the convenient short

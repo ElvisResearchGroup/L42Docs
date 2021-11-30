@@ -103,7 +103,7 @@ As you can see, the caching is is completely handled by the language and is not 
 WTitle((3/5) Automatic parallelism)
 When decorated by Wcode(Data), Wcode(Cache.Lazy) caches the results of methods after they have been called the first time.
 However, why wait for the methods to be called?
-Once the receiver object is created, the method could be computed WEmph(eagerly) in a separed worker, so that when we call the method, we may get the result without waiting at all.
+Once the receiver object is created, the method could be computed WEmph(eagerly) in a separate worker, so that when we call the method, we may get the result without waiting at all.
 That is, if we use Wcode(Cache.Eager) we can get automatic parallelism: the language will handle a set of parallel workers to execute such method bodies.
 
 WP

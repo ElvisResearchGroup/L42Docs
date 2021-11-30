@@ -34,11 +34,11 @@ CCode
 
 Immutable lists can be combined with operators.
 The general idea is that operators 
-Wcode(`+,-') works 
+Wcode(`+,-') work 
 on one sequences and one element,
 while the corresponding doubled-up operators
 Wcode(`++,--')
-works on two sequences.
+work on two sequences.
 You can see the details of this below.
 OBCode
 X[
@@ -54,7 +54,7 @@ X[
   Nums[a;b;b;c]--Nums[b;c] == Nums[a];
   ]
 CCode
-In addition of operators, immutable lists also supports a plethora of methods:
+In addition of operators, immutable lists also support a plethora of methods:
 OBCode
 X[
   //replacement
@@ -102,12 +102,12 @@ CCode
 
 WTitle(`Mutate sequences')
 
-Mutable sequences can contains mutable objects.
+Mutable sequences can contain mutable objects.
 While this can be useful in special circumstances, it can create aliasing issues similar to the
 ones of the animals example of before.
 To warn against such issues, methods Wcode(left()), Wcode(right()) and Wcode(val(that)) return 
 Wcode(read) references to mutable objects. In order to obtain 
-a Wcode(mut) reference, the user need to use the methods
+a Wcode(mut) reference, the user needs to use the methods
 Wcode(`#left()'),
  Wcode(`#right()')
  and Wcode(`#val(that)').
@@ -158,7 +158,7 @@ for myElem in vec ( result++=myElem )
 //result==S"foobarbeer"
 CCode
 
-In 42 foreach allows to iterate on multiple collections at onece, and also to update the collections:
+In 42 foreach allows to iterate on multiple collections at once, and also to update the collections:
 OBCode
 rs = Nums[1\;2\;3\;]
 as =  Nums[10\;20\;30\;]
@@ -218,7 +218,7 @@ CCode
 WTitle(`The power of the \')
 
 There are various methods taking advantage of the Wcode(\) syntactic sugar.
-They provides an expressive power similar to what list comprehensions provides in python and streams in Java, but by just using simple control flow like for/if:
+They provide an expressive power similar to what list-comprehensions provide in python and streams in Java, but by just using simple control flow like for/if:
 
 OBCode
 as =  Num.List[1\;2\;3\;4\;]
@@ -269,8 +269,6 @@ Up to now we focused on lists of Wcode(Num), but
 all instances of Wcode(Num) are immutable; we now discuss what happens where
 mutable lists contains a mixture of mutable and immutable elements.
 Consider the following code:
-Finally, we conclude discussing iteration on mutable elements:
-Mutable lists can contains
 OBCode
 Point = Data:{var Num x, var Num y}
 Points = Collection.list(Point)
@@ -309,7 +307,7 @@ Points immPs=(
 for p in ps ( Debug(p) ) //works, it would fail without 'immNorm()'
 CCode
 
-WTitle((4/5) Map, set, opt..)
+WTitle(`(4/5) Map, set, opt..')
 
 Wcode(Collection) also support maps, sets, optional and enumerations.
 We will add more kinds of collections in the future.
@@ -317,7 +315,7 @@ We will add more kinds of collections in the future.
 WTitle(`Optional')
 In 42 there is no concept of null, and all the values are always intentionally initialized before
 they can be read.
-There are two main reasons programmers relies on nulls: optional values and circular/delayed initialization.
+There are two main reasons programmers rely on nulls: optional values and circular/delayed initialization.
 Circular initialization can be solved with a Wcode(fwd) types, an advanced typing feature that we do not discuss here.
 Optional values are a staple of functional programming and are logically equivalent to a collection of zero or one element, or, if you prefer, a box that may or may not contain an element of a certain type.
 Optionals values can be obtained with Wcode(Collection.optional(that)) as shown below.
@@ -353,7 +351,7 @@ CCode
 At this point in the tutorial, some readers will be confused that we can update the local variable binding 
 Wcode(p00Box:= OPoint()) even if it is immutable.
 Other readers instead will remember that immutability is a property of the reference and not of the binding/field: a local binding and fields declared Wcode(var) can be updated.
-The updated value need to respect the modifier of the field/binding type: if it is Wcode(mut/imm) it needs to be updated with another Wcode(mut/imm); if it is Wcode(read) than it can be updated with either
+The updated value needs to respect the modifier of the field/binding type: if it is Wcode(mut/imm) it needs to be updated with another Wcode(mut/imm); if it is Wcode(read) then it can be updated with either
 Wcode(mut), Wcode(imm) or Wcode(read).
 Oh, yes, another reader will realize ... and a Wcode(capsule) reference can be assigned to any of Wcode(mut), Wcode(imm), Wcode(lent) or Wcode(read).
 
@@ -369,7 +367,7 @@ WTitle(`Map')
 Thanks to normalization 42 can have very fast and most reliable hash sets and hash maps.
 The values of sets and the keys of maps must be immutable, and are normalized just before being inserted in the collection.
 Then, the value of the normalized pointer is used to check for equality and hashcode.
-This have various positive effects:
+This has various positive effects:
 
 <ul><li>
 The user does not need to write equality and hashing behaviour
@@ -378,10 +376,10 @@ There is no risk of mistake in the equality and hashing behaviour
 </li><li>
 The intrinsic invariants of the hashmap/hashset are never violated/corrupted.
 </li><li>
-The equality is a perfect structural equality, but is as fast as a pointer equality; for maps with large keys this can make a massive performance difference.
+The equality is a perfect structural equality, but is as fast as pointer equality; for maps with large keys this can make a massive performance difference.
 </li></ul>
 
-Maps and sets have less methods that lists, but they can still be iterated upon, as shown in the following code:
+Maps and sets have less methods than lists, but they can still be iterated upon, as shown in the following code:
 
 OBCode
 Point = Data:{var Num x, var Num y}
@@ -436,19 +434,20 @@ Wcode(imm), Wcode(mut) or a Wcode(read) (not optional) reference to the value, r
      
 
 WTitle(`Set')
-Sets behaves a lot like maps where the values are irrelevant, and have differently named methods.
+Sets behave a lot like maps where the values are irrelevant, and have differently named methods.
 In particular, in addition to conventional Wcode(size()) and Wcode(isEmpty()),
-sets offers method Wcode(add(that)) and Wcode(remove(that)) to add and remove an element,
+sets offer methods Wcode(add(that)) and Wcode(remove(that)) to add and remove an element,
 and elements can be extracted in the insertion order by using method Wcode(val(that))
 
-We are considering adding operators Wcode(+,-,++,--) as for lists, and
-support for the Wcode(\) like for lists.
+We are considering adding operators Wcode(`+,-,++,--') to sets, as supported by lists, and
+support for the Wcode(\) as well.
 An operator Wcode(&&) returning the intersection of the two sets.
 On the other side, boolean methods like Wcode(intersect(that)) Wcode(disjoint(that)) and Wcode(containsAll(that)) can already be easily emulated with Wcode(Match) as we shown for lists.
+
 WTitle(`(5/5) Collection summary')
 
 <ul><li>
-There are a tons of methods and operators to know, but since most code works 
+There are tons of methods and operators to know, but since most code works 
 around collections, it is worth the effort to memorize them.
 </li><li>
 Immutable collections are easy to play with, using operators and Wcode(with**) methods.
@@ -466,7 +465,7 @@ Wcode(for) statement plus a little pre and post processing around it.
 </li></ul>
 
 WTitle(Digressions / Expansions)
-Collections supports iteration with the Wcode(for) syntax.
+Collections support iteration with the Wcode(for) syntax.
 Iteration in 42 is way more flexible than in most other languages, and it is delegated on method calls.
 Iteration in 42 is designed to support two main iteration strategy:
 explicit indexes and iterator objects.
@@ -493,11 +492,10 @@ Since Wcode(a) is declared Wcode(read), Wcode(#elem#read) is used instead of Wco
 Since Wcode(b) is declared Wcode(var) Wcode(.##iterator) is used instead of Wcode(.#iterator).
 
 
-WTitle(Iteration methods in detail)
+WTitle(`Iteration methods in detail')
 
 <ul>
 <li>
-</li><li>
 Wcode(#iterator) and Wcode(##iterator)
 WBR
 They return an object able to provide the elements of the list. The second variant

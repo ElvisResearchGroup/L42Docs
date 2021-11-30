@@ -118,11 +118,11 @@ myNums= DoIt.getMutableNums() //myNums type is inferred to be mut Nums
 
 Immutable lists can be combined with operators.
 The general idea is that operators 
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[+,-]]></span><it style="font-style: bold; color:green;">&#187;</it> works 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[+,-]]></span><it style="font-style: bold; color:green;">&#187;</it> work 
 on one sequences and one element,
 while the corresponding doubled-up operators
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[++,--]]></span><it style="font-style: bold; color:green;">&#187;</it>
-works on two sequences.
+work on two sequences.
 You can see the details of this below.
 <pre class="l42Big"><![CDATA[
 X[
@@ -138,7 +138,7 @@ X[
   Nums[a;b;b;c]--Nums[b;c] == Nums[a];
   ]
 ]]></pre>
-In addition of operators, immutable lists also supports a plethora of methods:
+In addition of operators, immutable lists also support a plethora of methods:
 <pre class="l42Big"><![CDATA[
 X[
   //replacement
@@ -186,12 +186,12 @@ X[
 
 </p><h2> Mutate sequences </h2> <p>
 
-Mutable sequences can contains mutable objects.
+Mutable sequences can contain mutable objects.
 While this can be useful in special circumstances, it can create aliasing issues similar to the
 ones of the animals example of before.
 To warn against such issues, methods <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[left()]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[right()]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[val(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> return 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> references to mutable objects. In order to obtain 
-a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> reference, the user need to use the methods
+a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> reference, the user needs to use the methods
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#left()]]></span><it style="font-style: bold; color:green;">&#187;</it>,
  <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#right()]]></span><it style="font-style: bold; color:green;">&#187;</it>
  and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#val(that)]]></span><it style="font-style: bold; color:green;">&#187;</it>.
@@ -242,7 +242,7 @@ for myElem in vec ( result++=myElem )
 //result==S"foobarbeer"
 ]]></pre>
 
-In 42 foreach allows to iterate on multiple collections at onece, and also to update the collections:
+In 42 foreach allows to iterate on multiple collections at once, and also to update the collections:
 <pre class="l42Big"><![CDATA[
 rs = Nums[1\;2\;3\;]
 as =  Nums[10\;20\;30\;]
@@ -302,7 +302,7 @@ MainMore = {
 </p><h2> The power of the \ </h2> <p>
 
 There are various methods taking advantage of the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[\]]></span><it style="font-style: bold; color:green;">&#187;</it> syntactic sugar.
-They provides an expressive power similar to what list comprehensions provides in python and streams in Java, but by just using simple control flow like for/if:
+They provide an expressive power similar to what list-comprehensions provide in python and streams in Java, but by just using simple control flow like for/if:
 
 <pre class="l42Big"><![CDATA[
 as =  Num.List[1\;2\;3\;4\;]
@@ -353,8 +353,6 @@ Up to now we focused on lists of <it style="font-style: bold; color:green;">&#17
 all instances of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> are immutable; we now discuss what happens where
 mutable lists contains a mixture of mutable and immutable elements.
 Consider the following code:
-Finally, we conclude discussing iteration on mutable elements:
-Mutable lists can contains
 <pre class="l42Big"><![CDATA[
 Point = Data:{var Num x, var Num y}
 Points = Collection.list(Point)
@@ -393,7 +391,7 @@ Points immPs=(
 for p in ps ( Debug(p) ) //works, it would fail without 'immNorm()'
 ]]></pre>
 
-</p><h2> (4/5) Map </h2> <p>
+</p><h2> (4/5) Map, set, opt.. </h2> <p>
 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Collection]]></span><it style="font-style: bold; color:green;">&#187;</it> also support maps, sets, optional and enumerations.
 We will add more kinds of collections in the future.
@@ -401,7 +399,7 @@ We will add more kinds of collections in the future.
 </p><h2> Optional </h2> <p>
 In 42 there is no concept of null, and all the values are always intentionally initialized before
 they can be read.
-There are two main reasons programmers relies on nulls: optional values and circular/delayed initialization.
+There are two main reasons programmers rely on nulls: optional values and circular/delayed initialization.
 Circular initialization can be solved with a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[fwd]]></span><it style="font-style: bold; color:green;">&#187;</it> types, an advanced typing feature that we do not discuss here.
 Optional values are a staple of functional programming and are logically equivalent to a collection of zero or one element, or, if you prefer, a box that may or may not contain an element of a certain type.
 Optionals values can be obtained with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Collection.optional(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> as shown below.
@@ -437,7 +435,7 @@ Main = (
 At this point in the tutorial, some readers will be confused that we can update the local variable binding 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[p00Box:= OPoint()]]></span><it style="font-style: bold; color:green;">&#187;</it> even if it is immutable.
 Other readers instead will remember that immutability is a property of the reference and not of the binding/field: a local binding and fields declared <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[var]]></span><it style="font-style: bold; color:green;">&#187;</it> can be updated.
-The updated value need to respect the modifier of the field/binding type: if it is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut/imm]]></span><it style="font-style: bold; color:green;">&#187;</it> it needs to be updated with another <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut/imm]]></span><it style="font-style: bold; color:green;">&#187;</it>; if it is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> than it can be updated with either
+The updated value needs to respect the modifier of the field/binding type: if it is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut/imm]]></span><it style="font-style: bold; color:green;">&#187;</it> it needs to be updated with another <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut/imm]]></span><it style="font-style: bold; color:green;">&#187;</it>; if it is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> then it can be updated with either
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 Oh, yes, another reader will realize ... and a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> reference can be assigned to any of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[lent]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 
@@ -453,7 +451,7 @@ while the second one is mutable since <it style="font-style: bold; color:green;"
 Thanks to normalization 42 can have very fast and most reliable hash sets and hash maps.
 The values of sets and the keys of maps must be immutable, and are normalized just before being inserted in the collection.
 Then, the value of the normalized pointer is used to check for equality and hashcode.
-This have various positive effects:
+This has various positive effects:
 
 <ul><li>
 The user does not need to write equality and hashing behaviour
@@ -462,10 +460,10 @@ There is no risk of mistake in the equality and hashing behaviour
 </li><li>
 The intrinsic invariants of the hashmap/hashset are never violated/corrupted.
 </li><li>
-The equality is a perfect structural equality, but is as fast as a pointer equality; for maps with large keys this can make a massive performance difference.
+The equality is a perfect structural equality, but is as fast as pointer equality; for maps with large keys this can make a massive performance difference.
 </li></ul>
 
-Maps and sets have less methods that lists, but they can still be iterated upon, as shown in the following code:
+Maps and sets have less methods than lists, but they can still be iterated upon, as shown in the following code:
 
 <pre class="l42Big"><![CDATA[
 Point = Data:{var Num x, var Num y}
@@ -520,19 +518,20 @@ to extract a
      
 
 </p><h2> Set </h2> <p>
-Sets behaves a lot like maps where the values are irrelevant, and have differently named methods.
+Sets behave a lot like maps where the values are irrelevant, and have differently named methods.
 In particular, in addition to conventional <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[size()]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[isEmpty()]]></span><it style="font-style: bold; color:green;">&#187;</it>,
-sets offers method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[remove(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> to add and remove an element,
+sets offer methods <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[remove(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> to add and remove an element,
 and elements can be extracted in the insertion order by using method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[val(that)]]></span><it style="font-style: bold; color:green;">&#187;</it>
 
-We are considering adding operators <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[+]]></span><it style="font-style: bold; color:green;">&#187;</it> as for lists, and
-support for the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[\]]></span><it style="font-style: bold; color:green;">&#187;</it> like for lists.
+We are considering adding operators <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[+,-,++,--]]></span><it style="font-style: bold; color:green;">&#187;</it> to sets, as supported by lists, and
+support for the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[\]]></span><it style="font-style: bold; color:green;">&#187;</it> as well.
 An operator <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[&&]]></span><it style="font-style: bold; color:green;">&#187;</it> returning the intersection of the two sets.
 On the other side, boolean methods like <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[intersect(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[disjoint(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[containsAll(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> can already be easily emulated with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Match]]></span><it style="font-style: bold; color:green;">&#187;</it> as we shown for lists.
+
 </p><h2> (5/5) Collection summary </h2> <p>
 
 <ul><li>
-There are a tons of methods and operators to know, but since most code works 
+There are tons of methods and operators to know, but since most code works 
 around collections, it is worth the effort to memorize them.
 </li><li>
 Immutable collections are easy to play with, using operators and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[with**]]></span><it style="font-style: bold; color:green;">&#187;</it> methods.
@@ -550,7 +549,7 @@ Most methods have a general version that works with an index, and specialized <i
 </li></ul>
 
 </p><h2> Digressions / Expansions </h2> <p>
-Collections supports iteration with the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[for]]></span><it style="font-style: bold; color:green;">&#187;</it> syntax.
+Collections support iteration with the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[for]]></span><it style="font-style: bold; color:green;">&#187;</it> syntax.
 Iteration in 42 is way more flexible than in most other languages, and it is delegated on method calls.
 Iteration in 42 is designed to support two main iteration strategy:
 explicit indexes and iterator objects.
@@ -581,7 +580,6 @@ Since <it style="font-style: bold; color:green;">&#171;</it><span class="code"><
 
 <ul>
 <li>
-</li><li>
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#iterator]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[##iterator]]></span><it style="font-style: bold; color:green;">&#187;</it>
 <br/>
 They return an object able to provide the elements of the list. The second variant

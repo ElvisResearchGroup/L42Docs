@@ -178,7 +178,7 @@ There are two different ways to use the backslash:
 as a keyword or immediately followed by a lowercase identifier.
 WP
 As a keyword, Wcode(\) represents the expected type of the surrounding expression.
-The slash search outwards on super expressions until it finds a place with an easily guessable type:
+The slash searches outwards on super expressions until it finds a place with an easily guessable type:
 the return type of the method, a method parameter or a local binding with an explicit type.
 For example:
 OBCode
