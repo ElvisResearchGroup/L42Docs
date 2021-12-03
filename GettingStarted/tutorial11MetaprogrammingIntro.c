@@ -7,7 +7,7 @@ WP
 
 The main idea of 42 metaprogramming is that only library literals can
 be manipulated.
-Metaprogramming is evaluated top down nested-most first.
+Metaprogramming is evaluated top down, most-nested first.
 Once a library literal has a name, it can not be independently metaprogrammed; but only influenced
 by metaprogramming over the library that contains it.
 
@@ -37,7 +37,7 @@ CCode
 In this code we show that Wcode(ClassPrintMsg) contains all the code of both Wcode(TraitPrint) and Wcode(TraitMsg).
 Note how the abstract Wcode(class method S msg()) in Wcode(TraitPrint) is merged with the corresponding implemented method in Wcode(TraitMsg).
 
-Traits allows to merge code from different sources, as it happens with multiple inheritance.
+Traits allow us to merge code from different sources, as it happens with multiple inheritance.
 However, traits are flattened: The code is actually copied in the result.
 
 Traits are boxes containing the code and offering methods to manipulate such code.
@@ -48,7 +48,7 @@ For traits there is no difference in behaviour between Wcode(`:') and Wcode(`+')
 
 WP
 
-Simply composing traits allows to emulate a large chunk of the expressive power of conventional inheritance.
+Simply composing traits allows us to emulate a large chunk of the expressive power of conventional inheritance.
 For example, in Java we may have an abstract class offering some implemented and some abstract methods.
 Then multiple heir classes can extend such abstract class implementing those abstract methods.
 The same scenario can be replicated with traits: a trait can offer some implemented and some abstract methods. Then multiple classes can be obtained composing that trait with some other code implementing those abstract methods.
@@ -113,23 +113,23 @@ Geometry1 = Class:TraitGeometryPoint //declaring class Geometry1
   imm p = Geometry1.Point(x=3\, y=4\)
   p2 = p.double()//example usage
 CCode
-That is, any Wcode(read), Wcode(imm) or Wcode(mut) no-arg abstract method can play the role of a getter for a correspondly named field, and any abstract Wcode(class) method can play the role of a factory, where the parameters are used to initialize the fields.
+That is, any Wcode(read), Wcode(imm) or Wcode(mut) no-arg abstract method can play the role of a getter for a correspondingly named field, and any abstract Wcode(class) method can play the role of a factory, where the parameters are used to initialize the fields.
 Finally, Wcode(mut) methods with one argument called Wcode(that) can play the role of a setter.
 Candidate getters and setters are connected with the parameters of candidate factories by name.
 To allow for more then one getter/setter for each parameter, getters/setters names can also start with any number of Wcode(#).
 WBR
 We call those abstract methods WEmph(Abstract State Operations).
-In Java and many other languages a class is abstract if it has any abstract methods.
+In Java and many other languages, a class is abstract if it has any abstract methods.
 In 42, a class is coherent if its set of abstract state operations ensure 
 that all the callable methods have a defined behaviour; this includes the initialization of all the usable getters. 
 WBR
-More in the detail, a class is coherent if:
+In more detail, a class is coherent if:
 <ul><li>
-All candidate factories provide a value for all candidate getters, and the all types of those values
-agrees with the return type of the corresponding getters.
+All candidate factories provide a value for all candidate getters, and all the types of those values
+agree with the return type of the corresponding getters.
 The parameter type of all candidate setters agrees with the return type of the corresponding getters.
 </li><li>
-Additionally, any non-class method can be abstract if none of the candidate factory return a value whose modifier allows to call such a method.
+Additionally, any non-class method can be abstract if none of the candidate factories return a value whose modifier allows to call such a method.
 </li></ul>
 In particular, this implies that if a class has no candidate factories, 
 any non class method may be abstract, as shown below:
@@ -181,7 +181,8 @@ and a lot of other utility methods.
 
 WTitle((3/5)Nested Trait composition: a great expressive power.)
 
-Composing traits with nested classes allows to merge arbitrarily complex units of code, and solve in a natural way problems that in other languages requires complex patterns like dependency injection, as shown below:
+Composing traits with nested classes allows us to merge arbitrarily complex units of code.
+In other languages this kind of flexibility requires complex patterns like dependency injection, as shown below:
 
 OBCode
 TraitGeometryPoint = Trait:{/*Same as before*/}
@@ -203,7 +204,7 @@ Geometry2 = Class:TraitGeometryPoint:TraitGeometryRectangle
 CCode
 As you can see, we can define more code using Wcode(Point) while only repeating the needed dependencies.
 We will use this idea in the following, more elaborated scenario:
-Bob and Alice are doing a video game. In particular, Alice is doing the code related to loading the game map from a file.
+Bob and Alice are making a video game. In particular, Alice is doing the code related to loading the game map from a file.
 
 OBCode
 Game = { //example game code, NOT MODULARISED
@@ -334,11 +335,11 @@ CCode
 
 WTitle((4/5)Typing considerations)
 
-Object oriented programs often contains entangled and circular type definitions.
+Object oriented programs often contain entangled and circular type definitions.
 For example, strings Wcode(S) have methods Wcode(I size()) and Wcode(Bool isEmpty()), while
 both Wcode(I) and Wcode(Bool) offer a Wcode(S toS()) method.
-That is, while circular values are a double edge sword (useful but dangerous), circular/recursive types are unavoidable even in simple programs.
-So, how does recursive types interact with metaprogramming?
+That is, while circular values are a double edged sword (useful but dangerous), circular/recursive types are unavoidable even in simple programs.
+So, how do recursive types interact with metaprogramming?
 Path names can only be used in execution when the corresponding nested class is fully typed,
 thus the following example code would not work:
 OBCode
@@ -364,7 +365,7 @@ Dog = Data:{S name, Person owner}
 CCode
 Wcode(TraitPerson) can not be used before Wcode(Dog) is defined.
 WP
-This also allows to avoid defining many redundant abstract methods.
+This also allows us to avoid defining many redundant abstract methods.
 Consider the following working code:
 OBCode
 TraitPrintName = Trait:{
@@ -380,12 +381,12 @@ Bob = TraitPrintName:{
   }
 Main = Bob.printTwice() //prints "Bob" twice
 CCode
-This code is allowed even if Wcode(Bob) does not contains an abstract definition for Wcode(printName()).
+This code is allowed even if Wcode(Bob) does not contain an abstract definition for Wcode(printName()).
 This feature is often used by 42 programmers without even recognizing it, but it is brittle:
 when method calls are chained (as in Wcode(a.b().c())) or when binary operators or type inference are involved, the system needs to be able to guess the return type of those missing methods.
 
 WTitle((5/5)Metaprogramming summary)
-Here we introduced the way 42 handle metaprogramming and code reuse.
+Here we have introduced the way that 42 handles metaprogramming and code reuse.
 We focused on Wcode(Class) and Wcode(Trait).
 Composing code with Wcode(:) or Wcode(+) we can partition our code-base in any way we need,
 enabling simple and natural testing and code reuse patterns.

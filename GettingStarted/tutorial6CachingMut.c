@@ -607,5 +607,6 @@ MainTree = (
   )
 CCode
 
-This pattern relies on the fact that using Wcode(capsule) fields we can define arbitrary complex data structures composed of disjoint mutable object graphs.
-Note that even if Wcode(read) aliases to parts of this data structure can be visible outside, we can not access them when the forkjoin is open, since the declarations can not use Wcode(read) parameters.
+This pattern relies on the fact that using Wcode(capsule) fields we can define arbitrary complex data structures composed of disjointed mutable object graphs.
+Note that Wcode(read) aliases to parts of the data structure can be visible outside.
+This is accepted since we can not access them when the forkjoin is open. The declarations can not use Wcode(read) parameters.

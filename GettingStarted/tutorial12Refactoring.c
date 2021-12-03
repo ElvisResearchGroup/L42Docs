@@ -2,7 +2,7 @@ WBigTitle(`Traits and rename')
 
 WTitle((1/5)An introduction to Programmatic Refactoring)
 
-Traits allows to programmatically rename methods and nested classes to other names.
+Traits allow us to programmatically rename methods and nested classes to other names.
 Consider the following example code, defining trait Wcode(Code1), containing many nested classes:
 the interface Wcode(A), the class Wcode(B) implementing Wcode(A),
 the class Wcode(C), that is similar to Wcode(B) but does not implements Wcode(A)
@@ -55,18 +55,18 @@ Main3 = Debug(Concrete3.C().callBoth()) //still prints "Hi World"
 CCode
 Note how the call Wcode(B()) is now replaced with Wcode(B.of()).
 Wcode(#apply()) is the extended name for the method with the empty name.
-Also binary operators methods can be renamed by using their extended name;
+Also binary operator methods can be renamed by using their extended name;
 The complete list of extended names for binary operators is discussed later, but you can also just use the overview feature to see them in any compiled class.
 The Wcode(') sign is a syntactic sugar similar to the Wcode(\);
 indeed Wcode('Foo.bar(x)) is equivalent to
-Wcode(\"Foo.bar(x)"); where the text after the Wcode(') have strict syntactic restrictions, requiring it to be either a valid path (as Wcode(Beer.Foo) or Wcode(This), for example), a valid method selector, or 
+Wcode(\"Foo.bar(x)"); where the text after the Wcode(') has strict syntactic restrictions, requiring it to be either a valid path (as Wcode(Beer.Foo) or Wcode(This), for example), a valid method selector, or 
 a path followed by a method selector.
 A method selector can also be followed by an argument name, as in Wcode('Foo.bar(x).x)
-In 42 programmatic refactoring and other tasks requiring to express paths and method selectors are very common, and writing Wcode(myTrait['A=>'B]) is so much more convenient that writing Wcode(myTrait[Name"A"=>Name"B"]).
+In 42 programmatic refactoring and other tasks requiring us to express paths and method selectors are very common, and writing Wcode(myTrait['A=>'B]) is so much more convenient that writing Wcode(myTrait[Name"A"=>Name"B"]).
 
 WTitle((2/5) Programmatic Refactoring: all kinds of operations)
 WTitle(Single)
-Programmatic refactoring of nested classes is transitive on default.
+Programmatic refactoring of nested classes is transitive by default.
 All the nested classes are going to be renamed together with the renamed root.
 The code below shows how to specify a single rename instead:
 OBCode
@@ -97,8 +97,8 @@ MultiConcrete = {//equivalent to just writing the following directly:
   }
 Main4 = MultiConcrete.K.print() //still prints "hi world"
 CCode
-As you can see, we did a single rename Wcode('C=>'D) and a transitive rename Wcode('A=>'D.H).
-Since there where nested classes inside of Wcode(C), the single rename have left a shell of
+As you can see, we did a single rename Wcode('C=>'K) and a transitive rename Wcode('A=>'D.H).
+Since there were nested classes inside of Wcode(C), the single rename has left a shell of
 Wcode(C) in place so that the nested Wcode(C.D) could stay in position.
 WP
 
@@ -111,7 +111,7 @@ Res=Class:Trait({
   })[single='This=>'OriginalTop;single='NewTop=>'This]
 CCode
 WP
-On the other side, self rename, for example Wcode('C=>'C) is usually an error, and thus it will raise an exception. However, we can silent such error and turn self rename into a no-op by using
+On the other side, self rename, for example Wcode('C=>'C) is usually an error, and thus it will raise an exception. However, we can silence such errors and turn self rename into a no-op by using
 Wcode(myCode[ignoreSelfRename='C=>'C]) or Wcode(myCode[ignoreSelfRenameSingle='C=>'C]).
 
 WTitle(Hide)
@@ -132,12 +132,12 @@ Main5 = MultiConcrete2.C.print() //still prints "hi world"
 CCode
 
 Private members in 42 are obtained by relying on unique unguessable numbers:
-Those names does not show up in the outline and can not be invoked by user code; moreover those numbers are automatically renamed to avoid clashing during code composition; overall, those numbers are completely invisible for the user of the code.
+These names do not show up in the outline and can not be invoked by user code; moreover those numbers are automatically renamed to avoid clashing during code composition; overall, those numbers are completely invisible for the user of the code.
 While it is possible to manually use unique numbers, it is so much more convenient to write open code and then seal it later.
 
 WTitle(Clear)
 Hidden code is still part of the result, but it is no more accessible.
-Symmetrically, cleared code is not part of the result, but its entry point is still accessible, but abstract; clearing code allows to override already defined behaviour, as shown below:
+Symmetrically, cleared code is not part of the result, but its entry point is still accessible, but abstract; clearing code allows us to override already defined behaviour, as shown below:
 
 OBCode
 MultiConcrete3 = Class:MultiLevel[ clear='A ]:{
@@ -153,7 +153,7 @@ Of course, Wcode(clearSingle='A) would clear only the nested class Wcode(A) and 
 
 
 WTitle(Soft rename)
-Clearing code allows to override code by removing code.
+Clearing code allows us to override code by removing code.
 This is different with respect to what happens with overriding in most languages, where the former code still exists and can be invoked, for example with Wcode(super).
 
 In 42 we can easily emulate super by using Wcode(->) instead of Wcode(clear); the code below shows how Wcode(->) can be used on both methods and nested classes:
@@ -183,7 +183,7 @@ We will soon show a way to avoid redeclaring them, but our experience programmin
 
 
 WTitle(Redirect)
-Finally, programmatic refractory allows us to rename a nested class into an externally declared class. We call this kind of rename Wterm(redirect).
+Finally, programmatic refactoring allows us to rename a nested class into an externally declared class. We call this kind of rename Wterm(redirect).
 This also provides a simple encoding for generics.
 Consider the following code:
 OBCode
@@ -200,8 +200,10 @@ Main = (
   )
 CCode
 Note how we wrote Wcode(BoxTrait['T=>Num]) and not Wcode(BoxTrait['T=>'Num]):
-We are using Wcode(Num) as the numeric class defined outside, we are not referring to a 
-class nested inside Wcode(BoxTrait) and called Wcode(Num).
+In Wcode('T=>Num), Wcode(Num) is the numeric class defined outside.
+If we instead wrote Wcode('T=>'Num),
+Wcode('Num) would be the class nested inside Wcode(BoxTrait) and called Wcode(Num).
+
 Generics classes are straightforward to implement with redirect, and indeed
 Wcode(Collection) uses the redirect operator internally.
 WP
@@ -262,7 +264,7 @@ CCode
 Note how we can also require class methods on the redirect nested classes.
 Overall, the whole philosophy of generic programming is different in 42:
 instead of raising the level of abstraction and designing classes with type parameters,
-we just design normal classes with nested classes, that just so happen to be fully abstract.
+we just design normal classes with nested classes, that just so happens to be fully abstract.
 Those classes will represent external dependencies.
 Then we can redirect those nested classes onto others.
 
@@ -318,7 +320,7 @@ There are a few corner cases where this inner sum will fail; they involve detail
 
 
 WTitle((4/5) Introspection and Info)
-It is also possible to programmatically query the code structure and take decisions about it.
+It is also possible to programmatically query the code structure and make decisions about it.
 For example
 OBCode
 Larger = {class method Trait (Trait t1, Trait t2)={
@@ -336,26 +338,27 @@ classes representing other kinds of code elements:
 Wcode(Method), Wcode(Type) and Wcode(Doc).
 WBR
 Wcode(Info) contains a lot of useful methods.
-Some of those methods queries informations about the class and how it is used in its code unit: for example the method Wcode(watched()) return the list of types whose private members are used.
+Some of those methods query information about the class and how it is used in its code unit: for example the method Wcode(watched()) returns the list of types whose private members are used.
 WBR
-A class that is watched can not be cleared. Indeed, all the possible errors of programmatic refactoring can be predicted by relying on method of Wcode(Info).
+A class that is watched can not be cleared. Indeed, all the possible errors of programmatic refactoring can be predicted by relying on the methods of Wcode(Info).
 WBR
-While Wcode(Trait({..}).info()) provides an Wcode(Info) for a library literal and
-Wcode(Info(..)) provides an Wcode(Info) for a Wcode(class Any);
-thus, for example, while Wcode(Trait({ method S foo()}).info()) can be used to know about this Wcode(foo()) method, 
+Wcode(Trait({..}).info()) provides an Wcode(Info) for a library literal and
+Wcode(Info(..)) provides an Wcode(Info) for a Wcode(class Any).
+For example, while 
+Wcode(Trait({ method S foo()}).info()) can be used to know about this Wcode(foo()) method, 
 Wcode(Info(S)) can be used to get information about the Wcode(S.size()) method.
 
 
-WTitle((5/5)Programmatic refactory summary)
+WTitle((5/5)Programmatic refactoring summary)
 <ul><li>
 Many kinds of operations can be performed on code
 </li><li>
 Rename, as for Wcode('A=>'B) or Wcode('A.foo()=>'A.bar()),
-is used to rename all the occurrences of a member into another name.
+is used to rename all the occurrences of a member into another name or
 form, for the sake of the final user.
 </li><li>
 Soft Rename, as for Wcode('A->'B) or Wcode('A.foo()->'A.bar()),
-only moves the declaration. It leaves in places all the usages and an abstract version of the original signature.
+only moves the declaration. It leaves in place all the usages and an abstract version of the original signature.
 </li><li>
 Clear, as for Wcode(clear='A) or Wcode(clear='A.foo()),
 removes the implementation and all the private details of a member. It leaves in places all the usages and an abstract version of the original signature.
@@ -368,5 +371,5 @@ Redirect, as for Wcode('A=>Num),
 redirects all the usages of a nested class into an externally declared one.
 The internal declaration is simply trashed.
 </li></ul>
-Finally, Wcode(Info) allows to explore the shape of code as metadata.
+Finally, Wcode(Info) allow us to explore the shape of code as metadata.
 

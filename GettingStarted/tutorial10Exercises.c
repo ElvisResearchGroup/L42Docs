@@ -6,7 +6,7 @@ basic classes, collections
 and simple Data classes.
 
 Let's see some exercises and solutions 
-to understand better how 42 code looks like
+to better understand what 42 code looks like.
 
 WTitle((1/5) Max method)
 Write a static method Wcode(MaxOfList) returning the max from a list of numbers
@@ -50,7 +50,8 @@ Defining your own error may still produce more readable errors, so feel free to 
 
 
 WTitle((2/5) Merging and filtering)
-Write a static method Wcode(MapText) producing a string from to lists of strings of the same length.
+Write a static method Wcode(MapText) producing a string from two lists of strings of the same length.
+
  For example
 Wcode(`MapText(keys=S.List[S"a";S"b";S"c"] vals=S.List[S"z";S"y";S"z"])')
 should produce Wcode(`S"[a->z, b->y, c->z]"')
@@ -126,7 +127,7 @@ OBCode
 A = /*..*/{...}/*..*/
 CCode
 42 will search for a file called either Wcode(A.L42) or Wcode(A/This.L42).
-Such file have to contain valid 42 code; such code is replaced for the Wcode(...).
+Such file has to contain valid 42 code; such code is replaced for the Wcode(...).
 In this way code can be divided
 in multiple files spanning a hierarchy of folders.
 WP
@@ -192,10 +193,10 @@ Direction = Collection.Enum:{interface
   Right={[This1]method go(that)=that.with(y=\y+1I)}
   }
 CCode
-Wcode(Direction) is an enumeration, and we leverage on dyanamic dispatch to encode the beaviour of the Wcode(go(that)) method.
+Wcode(Direction) is an enumeration, and we leverage on dynamic dispatch to encode the behaviour of the Wcode(go(that)) method.
 Note how in Wcode(Direction) we explicitly declared the top level Wcode(interface) and
 we implemented the outer level Wcode(This1) explicitly in all the cases.
-Then we could implemented the Wcode(go(that)) method without repeating the type signatore.
+Then we could implemented the Wcode(go(that)) method without repeating the type signature.
 
 OBCode
 //file This.L42
@@ -208,8 +209,8 @@ Cell = Collection.Enum:{
   }
 CCode
 Instead, while declaring Wcode(Cell) we omit the Wcode(interface) keyword and the explicit implementation.
-Then we had to repeat the type signature all the times while implementing the method Wcode(symbol()).
-Both ways to declare enumerations works and produce the same result.
+Then we had to repeat the type signature each time while implementing the method Wcode(symbol()).
+Both ways to declare enumerations work and produce the same result.
 
 Should we used separate files for Wcode(Direction) and Wcode(Cell)?
 Their code is quite short, so we chose not to.

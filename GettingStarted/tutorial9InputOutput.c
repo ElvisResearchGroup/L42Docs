@@ -5,8 +5,9 @@ in pure functional languages like Haskell they are kept in check by monads.
 
 In 42 we have type modifiers to keep mutation and aliasing under control.
 With only the features shown up to now, 42 is a deterministic language, thus
-every expression that takes in input only immutable objects
-can be called multiple times with the same arguments and will produce the same result.
+every expression that only takes immutable objects
+can be called multiple times with the same values and will produce the same result.
+
 WBR
 The whole caching system relies on this property to work.
 WBR
@@ -31,10 +32,10 @@ We can now use our file system:
 OBCode
 Main1 = (
   mut Fs f = Fs.Real.#$of()
-  f.write(on=Url"data.txt",content=S"SomeContent0") //non determistic operation
-  S s=f.read(Url"data.txt") //non determistic operation
+  f.write(on=Url"data.txt",content=S"SomeContent0") //non deterministic operation
+  S s=f.read(Url"data.txt") //non deterministic operation
   //the result depends on the current file content
-  f.write(on=Url"data.txt",content=S"SomeContent") //non determistic operation
+  f.write(on=Url"data.txt",content=S"SomeContent") //non deterministic operation
   //the operation could go in error if there is not enough space to write the content on disk.
   Debug(s)
   )
@@ -141,15 +142,15 @@ Capability objects are a useful abstraction and can be designed and implemented 
 We have just shown that new object capabilities can easy be defined by simple wrapping over existing capability objects.
 
 WBR
-Since inner is of type Wcode(Fs), this programming patterns allows to layer many levels of security / restrictions on top of a capability object, as shown below:
+Since inner is of type Wcode(Fs), this programming patterns allows us to layer many levels of security / restrictions on top of a capability object, as shown below:
 OBCode
 fs = OnlyTxt(inner=OnlySmallFiles(inner=Fs.Real.#$of()))
 CCode
 
 
 WTitle((4/5) Connection with other languages)
-In general, all the  non determinism in 42 is obtained by comunicating with other languages.
-42 allows to connect with Java, and Java allows to connect with C/assembly.
+In general, all the  non determinism in 42 is obtained by communicating with other languages.
+42 allows us to connect with Java, and Java allows us to connect with C/assembly.
 The best way to connect with java is to use the library Wcode(JavaServer) as shown below:
 OBCode
 reuse [L42.is/AdamsTowel]
@@ -162,14 +163,14 @@ There is one master process where the 42 computation is actually running and man
 Such slave processes have their own name: in this case Wcode(mySlave).
 Slaves also have a set of options, that can be specified between the Wcode({}).
 We do not describe the details of those options here.
-The class Wcode(J) can now be used to comunicate with the Java slave as shown below:
+The class Wcode(J) can now be used to communicate with the Java slave as shown below:
 OBCode
 MainAsk = (
   j = J.#$of()
   j.loadCode(fullName=S"foo.Bar1",code=S"""
     |package foo;
     |import is.L42.platformSpecific.javaEvents.Event;
-    |public record Bar1(Event event){//class Bar1 will be instanstiated by 42
+    |public record Bar1(Event event){//class Bar1 will be instantiated by 42
     |  public Bar1{                  //and the Event parameter is provided
     |    event.registerAskEvent("BarAsk",(k,id,msg)->
     |      "any string computed in Java using "+id+" and "+msg);
@@ -184,13 +185,13 @@ MainAsk = (
 CCode
 This code asks the event Wcode("anId", "aMsg") on the channel Wcode("BarAsk").
 The Java code registers the capacity of answering to the channel Wcode("BarAsk") and
-computes an answer parametrized over Wcode(id) and Wcode(msg).
-The method Wcode(askEvent) is syncronus: it will wait for java to provide an answer as an optional string; optional since Java can return Wcode(null) as a result.
+computes an answer parameterized over Wcode(id) and Wcode(msg).
+The method Wcode(askEvent) is synchronous: it will wait for Java to provide an answer as an optional string; optional since Java can return Wcode(null) as a result.
 
 As you can see, you can embed arbitrary Java code in 42 and communicate back and forth serializing data and instructions as strings.
 
-Syncronus comunication is sometimes undesirable. 
-For example, to use Java to open a GUI it would be better to have asyncronus comunication and a queue of events.
+Synchronous communication is sometimes undesirable. 
+For example, to use Java to open a GUI it would be better to have asynchronous communication and a queue of events.
 You can do this with Wcode(J.Handler), as shown below:
 OBCode
 Model = Data:J.Handler:{
@@ -242,7 +243,7 @@ up to 40 times, and kills the slave JVM after that.
 
 In Wcode(MainPingPong) we initialize the slave JVM to respond to two channels:
 Wcode("BarIn") and Wcode("Kill").
-In our example Java will submit an asyncronus event to 42 as a response to
+In our example Java will submit an asynchronous event to 42 as a response to
 the Wcode("BarIn":"ping") event and will terminate the slave on any Wcode("Kill") event.
 The slave should always terminate its JVM when receiving a kill, but can do any kind of clean-up before that.
 After a JVM is terminated, it can be restarted by simply calling Wcode(J.loadCode(fullName,code)) again.
@@ -251,16 +252,16 @@ Finally, we set up the event loop:
 An event loop will collect events from a list of Wcode(keys) and dispatch them
 to a map of Wcode(models), mapping every key to a specific Wcode(model).
 Note that both Wcode(keys) and Wcode(models) are mutable objects. In this way we can dynamically
-register and unregistered keys/models by mutating Wcode(keys) and Wcode(models).
+register and unregister keys/models by mutating Wcode(keys) and Wcode(models).
 If the JVM is killed or the list of keys becomes empty, the event loop Wcode(for e in j(keys)) will terminate.
 The operation Wcode(e>>models) dispatches the event to the model.
 WBR
 We need to use two different channels (Wcode("BarIn") and Wcode("BarOut")) to distinguish if an event is should be handled by 42 or by Java.
 
 
-WTitle((5/5) Object capabilities summuary)
+WTitle((5/5) Object capabilities summary)
 <ul><li>
-While most languages run in a single process, 42 runs in a cluster of processes; this is needed so that the master process is procted from any slave process going into undefined behaviour.
+While most languages run in a single process, 42 runs in a cluster of processes; this is needed so that the master process is protected from any slave process going into undefined behaviour.
 This is the final piece of the puzzle allowing the correctness properties of 42 to be ensured in any circumstance.
 </li><li>
 To enable non deterministic behaviour we need to call those specially named Wcode(#$) methods.
@@ -274,7 +275,7 @@ WTitle(Digressions / Expansions)
 WTitle(Non deterministic errors)
 
 When discussing errors, we did not mention how to handle errors happening in a non deterministic way; for example, how to recover when the execution run out of memory space.
-In 42 this is modelled by non deterministic errors. They can only be catched in a main, in another capability method or in a Wcode(mut) method of a capability object. 
+In 42 this is modelled by non deterministic errors. They can only be caught in a main, in another capability method or in a Wcode(mut) method of a capability object. 
 AdamsTowel offers a single non deterministic error: Wcode(System.NonDeterministicError). When a non deterministic error happens, we can recover it by catching an Wcode(error System.NonDeterministicError).
 
 The code below shows how to cause a stack overflow and to recover from it.
@@ -294,12 +295,12 @@ CCode
 
 That is, to recover from a non deterministic error we need to satisfy both the requirements of Wcode('#$') non determinism and of strong error safety.
 
-WTitle(Aborting wastefull cache eagers)
+WTitle(Aborting wasteful cache eagers)
 Wcode(@Cache.Eager) methods may return a cached result; such result is guaranteed to be the same that would be computed if we were to directly execute the method.
-How those this work if the method is non terminating or simply outragiously slow?
-Those eager cache methods will eagerly spend precious machine resource. If the results of those computations are ever needed by a main, the whole 42 process will get stuck waiting, as it would indeed happen if we were to directly execute the method. All good: in this case 42 correctly lifted the behavioural bug into caching.
+How does this work if the method is non terminating or simply outrageously slow?
+Those eager cache methods will eagerly spend precious machine resources. If the results of those computations are ever needed by a main, the whole 42 process will get stuck waiting, as it would indeed happen if we were to directly execute the method. All good: in this case 42 correctly lifted the behavioural bug into caching.
 However, if the result is never needed by a main, it would be nice to be able to stop those runaway pointless computations.
 We can obtain this by calling Wcode(Cache.#$stopCacheEager()).
-WB
+WBR
 This works no matter if they are in loop, simply slow, or stuck waiting on another cache being slowly computed.
-In some cases, we can even have multiple computations stuck waiting on each other in a circular fascion.
+In some cases, we can even have multiple computations stuck waiting on each other in a circular fashion.

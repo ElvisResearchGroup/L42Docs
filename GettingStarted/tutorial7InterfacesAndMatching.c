@@ -120,7 +120,7 @@ CCode
 
 The pattern in the code above encodes the abstract factory 
 pattern in a much simpler way: 
-the binding Wcode(kindOfShape) serve the role of
+the binding Wcode(kindOfShape) serves the role of
 an instance of an abstract factory, and can create instances of
 a specific kind of shape.
 WP
