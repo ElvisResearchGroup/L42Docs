@@ -86,7 +86,7 @@ gtag('event', 'conversion', {'send_to': 'AW-10810288706/U3KJCKekmIUDEMLU36Io'});
 
 </p><h2> (1/5)An introduction to Programmatic Refactoring </h2> <p>
 
-Traits allows to programmatically rename methods and nested classes to other names.
+Traits allow us to programmatically rename methods and nested classes to other names.
 Consider the following example code, defining trait <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Code1]]></span><it style="font-style: bold; color:green;">&#187;</it>, containing many nested classes:
 the interface <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[A]]></span><it style="font-style: bold; color:green;">&#187;</it>, the class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[B]]></span><it style="font-style: bold; color:green;">&#187;</it> implementing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[A]]></span><it style="font-style: bold; color:green;">&#187;</it>,
 the class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[C]]></span><it style="font-style: bold; color:green;">&#187;</it>, that is similar to <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[B]]></span><it style="font-style: bold; color:green;">&#187;</it> but does not implements <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[A]]></span><it style="font-style: bold; color:green;">&#187;</it>
@@ -139,18 +139,18 @@ Main3 = Debug(Concrete3.C().callBoth()) //still prints "Hi World"
 ]]></pre>
 Note how the call <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[B()]]></span><it style="font-style: bold; color:green;">&#187;</it> is now replaced with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[B.of()]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#apply()]]></span><it style="font-style: bold; color:green;">&#187;</it> is the extended name for the method with the empty name.
-Also binary operators methods can be renamed by using their extended name;
+Also binary operator methods can be renamed by using their extended name;
 The complete list of extended names for binary operators is discussed later, but you can also just use the overview feature to see them in any compiled class.
 The <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[']]></span><it style="font-style: bold; color:green;">&#187;</it> sign is a syntactic sugar similar to the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[\]]></span><it style="font-style: bold; color:green;">&#187;</it>;
 indeed <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA['Foo.bar(x)]]></span><it style="font-style: bold; color:green;">&#187;</it> is equivalent to
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[\"Foo.bar(x)"]]></span><it style="font-style: bold; color:green;">&#187;</it>; where the text after the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[']]></span><it style="font-style: bold; color:green;">&#187;</it> have strict syntactic restrictions, requiring it to be either a valid path (as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Beer.Foo]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[This]]></span><it style="font-style: bold; color:green;">&#187;</it>, for example), a valid method selector, or 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[\"Foo.bar(x)"]]></span><it style="font-style: bold; color:green;">&#187;</it>; where the text after the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[']]></span><it style="font-style: bold; color:green;">&#187;</it> has strict syntactic restrictions, requiring it to be either a valid path (as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Beer.Foo]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[This]]></span><it style="font-style: bold; color:green;">&#187;</it>, for example), a valid method selector, or 
 a path followed by a method selector.
 A method selector can also be followed by an argument name, as in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA['Foo.bar(x).x]]></span><it style="font-style: bold; color:green;">&#187;</it>
-In 42 programmatic refactoring and other tasks requiring to express paths and method selectors are very common, and writing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[myTrait['A=>'B]]]></span><it style="font-style: bold; color:green;">&#187;</it> is so much more convenient that writing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[myTrait[Name"A"=>Name"B"]]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+In 42 programmatic refactoring and other tasks requiring us to express paths and method selectors are very common, and writing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[myTrait['A=>'B]]]></span><it style="font-style: bold; color:green;">&#187;</it> is so much more convenient that writing <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[myTrait[Name"A"=>Name"B"]]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 
 </p><h2> (2/5) Programmatic Refactoring: all kinds of operations </h2> <p>
 </p><h2> Single </h2> <p>
-Programmatic refactoring of nested classes is transitive on default.
+Programmatic refactoring of nested classes is transitive by default.
 All the nested classes are going to be renamed together with the renamed root.
 The code below shows how to specify a single rename instead:
 <pre class="l42Big"><![CDATA[
@@ -181,8 +181,8 @@ MultiConcrete = {//equivalent to just writing the following directly:
   }
 Main4 = MultiConcrete.K.print() //still prints "hi world"
 ]]></pre>
-As you can see, we did a single rename <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA['C=>'D]]></span><it style="font-style: bold; color:green;">&#187;</it> and a transitive rename <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA['A=>'D.H]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-Since there where nested classes inside of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[C]]></span><it style="font-style: bold; color:green;">&#187;</it>, the single rename have left a shell of
+As you can see, we did a single rename <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA['C=>'K]]></span><it style="font-style: bold; color:green;">&#187;</it> and a transitive rename <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA['A=>'D.H]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Since there were nested classes inside of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[C]]></span><it style="font-style: bold; color:green;">&#187;</it>, the single rename has left a shell of
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[C]]></span><it style="font-style: bold; color:green;">&#187;</it> in place so that the nested <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[C.D]]></span><it style="font-style: bold; color:green;">&#187;</it> could stay in position.
 </p><p>
 
@@ -195,7 +195,7 @@ Res=Class:Trait({
   })[single='This=>'OriginalTop;single='NewTop=>'This]
 ]]></pre>
 </p><p>
-On the other side, self rename, for example <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA['C=>'C]]></span><it style="font-style: bold; color:green;">&#187;</it> is usually an error, and thus it will raise an exception. However, we can silent such error and turn self rename into a no-op by using
+On the other side, self rename, for example <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA['C=>'C]]></span><it style="font-style: bold; color:green;">&#187;</it> is usually an error, and thus it will raise an exception. However, we can silence such errors and turn self rename into a no-op by using
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[myCode[ignoreSelfRename='C=>'C]]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[myCode[ignoreSelfRenameSingle='C=>'C]]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 
 </p><h2> Hide </h2> <p>
@@ -216,12 +216,12 @@ Main5 = MultiConcrete2.C.print() //still prints "hi world"
 ]]></pre>
 
 Private members in 42 are obtained by relying on unique unguessable numbers:
-Those names does not show up in the outline and can not be invoked by user code; moreover those numbers are automatically renamed to avoid clashing during code composition; overall, those numbers are completely invisible for the user of the code.
+These names do not show up in the outline and can not be invoked by user code; moreover those numbers are automatically renamed to avoid clashing during code composition; overall, those numbers are completely invisible for the user of the code.
 While it is possible to manually use unique numbers, it is so much more convenient to write open code and then seal it later.
 
 </p><h2> Clear </h2> <p>
 Hidden code is still part of the result, but it is no more accessible.
-Symmetrically, cleared code is not part of the result, but its entry point is still accessible, but abstract; clearing code allows to override already defined behaviour, as shown below:
+Symmetrically, cleared code is not part of the result, but its entry point is still accessible, but abstract; clearing code allows us to override already defined behaviour, as shown below:
 
 <pre class="l42Big"><![CDATA[
 MultiConcrete3 = Class:MultiLevel[ clear='A ]:{
@@ -237,7 +237,7 @@ Of course, <it style="font-style: bold; color:green;">&#171;</it><span class="co
 
 
 </p><h2> Soft rename </h2> <p>
-Clearing code allows to override code by removing code.
+Clearing code allows us to override code by removing code.
 This is different with respect to what happens with overriding in most languages, where the former code still exists and can be invoked, for example with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[super]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 
 In 42 we can easily emulate super by using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[->]]></span><it style="font-style: bold; color:green;">&#187;</it> instead of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[clear]]></span><it style="font-style: bold; color:green;">&#187;</it>; the code below shows how <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[->]]></span><it style="font-style: bold; color:green;">&#187;</it> can be used on both methods and nested classes:
@@ -267,7 +267,7 @@ We will soon show a way to avoid redeclaring them, but our experience programmin
 
 
 </p><h2> Redirect </h2> <p>
-Finally, programmatic refractory allows us to rename a nested class into an externally declared class. We call this kind of rename Wterm(redirect).
+Finally, programmatic refactoring allows us to rename a nested class into an externally declared class. We call this kind of rename Wterm(redirect).
 This also provides a simple encoding for generics.
 Consider the following code:
 <pre class="l42Big"><![CDATA[
@@ -284,8 +284,10 @@ Main = (
   )
 ]]></pre>
 Note how we wrote <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[BoxTrait['T=>Num]]]></span><it style="font-style: bold; color:green;">&#187;</it> and not <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[BoxTrait['T=>'Num]]]></span><it style="font-style: bold; color:green;">&#187;</it>:
-We are using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> as the numeric class defined outside, we are not referring to a 
-class nested inside <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[BoxTrait]]></span><it style="font-style: bold; color:green;">&#187;</it> and called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+In <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA['T=>Num]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> is the numeric class defined outside.
+If we instead wrote <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA['T=>'Num]]></span><it style="font-style: bold; color:green;">&#187;</it>,
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA['Num]]></span><it style="font-style: bold; color:green;">&#187;</it> would be the class nested inside <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[BoxTrait]]></span><it style="font-style: bold; color:green;">&#187;</it> and called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+
 Generics classes are straightforward to implement with redirect, and indeed
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Collection]]></span><it style="font-style: bold; color:green;">&#187;</it> uses the redirect operator internally.
 </p><p>
@@ -346,7 +348,7 @@ GeometryOperation = Trait:{
 Note how we can also require class methods on the redirect nested classes.
 Overall, the whole philosophy of generic programming is different in 42:
 instead of raising the level of abstraction and designing classes with type parameters,
-we just design normal classes with nested classes, that just so happen to be fully abstract.
+we just design normal classes with nested classes, that just so happens to be fully abstract.
 Those classes will represent external dependencies.
 Then we can redirect those nested classes onto others.
 
@@ -402,7 +404,7 @@ There are a few corner cases where this inner sum will fail; they involve detail
 
 
 </p><h2> (4/5) Introspection and Info </h2> <p>
-It is also possible to programmatically query the code structure and take decisions about it.
+It is also possible to programmatically query the code structure and make decisions about it.
 For example
 <pre class="l42Big"><![CDATA[
 Larger = {class method Trait (Trait t1, Trait t2)={
@@ -420,26 +422,27 @@ classes representing other kinds of code elements:
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Method]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Type]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Doc]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 <br/>
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Info]]></span><it style="font-style: bold; color:green;">&#187;</it> contains a lot of useful methods.
-Some of those methods queries informations about the class and how it is used in its code unit: for example the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[watched()]]></span><it style="font-style: bold; color:green;">&#187;</it> return the list of types whose private members are used.
+Some of those methods query information about the class and how it is used in its code unit: for example the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[watched()]]></span><it style="font-style: bold; color:green;">&#187;</it> returns the list of types whose private members are used.
 <br/>
-A class that is watched can not be cleared. Indeed, all the possible errors of programmatic refactoring can be predicted by relying on method of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Info]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+A class that is watched can not be cleared. Indeed, all the possible errors of programmatic refactoring can be predicted by relying on the methods of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Info]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 <br/>
-While <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Trait({..}).info()]]></span><it style="font-style: bold; color:green;">&#187;</it> provides an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Info]]></span><it style="font-style: bold; color:green;">&#187;</it> for a library literal and
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Info(..)]]></span><it style="font-style: bold; color:green;">&#187;</it> provides an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Info]]></span><it style="font-style: bold; color:green;">&#187;</it> for a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class Any]]></span><it style="font-style: bold; color:green;">&#187;</it>;
-thus, for example, while <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Trait({ method S foo()}).info()]]></span><it style="font-style: bold; color:green;">&#187;</it> can be used to know about this <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[foo()]]></span><it style="font-style: bold; color:green;">&#187;</it> method, 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Trait({..}).info()]]></span><it style="font-style: bold; color:green;">&#187;</it> provides an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Info]]></span><it style="font-style: bold; color:green;">&#187;</it> for a library literal and
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Info(..)]]></span><it style="font-style: bold; color:green;">&#187;</it> provides an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Info]]></span><it style="font-style: bold; color:green;">&#187;</it> for a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class Any]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+For example, while 
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Trait({ method S foo()}).info()]]></span><it style="font-style: bold; color:green;">&#187;</it> can be used to know about this <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[foo()]]></span><it style="font-style: bold; color:green;">&#187;</it> method, 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Info(S)]]></span><it style="font-style: bold; color:green;">&#187;</it> can be used to get information about the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S.size()]]></span><it style="font-style: bold; color:green;">&#187;</it> method.
 
 
-</p><h2> (5/5)Programmatic refactory summary </h2> <p>
+</p><h2> (5/5)Programmatic refactoring summary </h2> <p>
 <ul><li>
 Many kinds of operations can be performed on code
 </li><li>
 Rename, as for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA['A=>'B]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA['A.foo()=>'A.bar()]]></span><it style="font-style: bold; color:green;">&#187;</it>,
-is used to rename all the occurrences of a member into another name.
+is used to rename all the occurrences of a member into another name or
 form, for the sake of the final user.
 </li><li>
 Soft Rename, as for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA['A->'B]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA['A.foo()->'A.bar()]]></span><it style="font-style: bold; color:green;">&#187;</it>,
-only moves the declaration. It leaves in places all the usages and an abstract version of the original signature.
+only moves the declaration. It leaves in place all the usages and an abstract version of the original signature.
 </li><li>
 Clear, as for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[clear='A]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[clear='A.foo()]]></span><it style="font-style: bold; color:green;">&#187;</it>,
 removes the implementation and all the private details of a member. It leaves in places all the usages and an abstract version of the original signature.
@@ -452,7 +455,7 @@ Redirect, as for <it style="font-style: bold; color:green;">&#171;</it><span cla
 redirects all the usages of a nested class into an externally declared one.
 The internal declaration is simply trashed.
 </li></ul>
-Finally, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Info]]></span><it style="font-style: bold; color:green;">&#187;</it> allows to explore the shape of code as metadata.
+Finally, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Info]]></span><it style="font-style: bold; color:green;">&#187;</it> allow us to explore the shape of code as metadata.
 
 
 <br/>

@@ -89,8 +89,9 @@ in pure functional languages like Haskell they are kept in check by monads.
 
 In 42 we have type modifiers to keep mutation and aliasing under control.
 With only the features shown up to now, 42 is a deterministic language, thus
-every expression that takes in input only immutable objects
-can be called multiple times with the same arguments and will produce the same result.
+every expression that only takes immutable objects
+can be called multiple times with the same values and will produce the same result.
+
 <br/>
 The whole caching system relies on this property to work.
 <br/>
@@ -115,10 +116,10 @@ We can now use our file system:
 <pre class="l42Big"><![CDATA[
 Main1 = (
   mut Fs f = Fs.Real.#$of()
-  f.write(on=Url"data.txt",content=S"SomeContent0") //non determistic operation
-  S s=f.read(Url"data.txt") //non determistic operation
+  f.write(on=Url"data.txt",content=S"SomeContent0") //non deterministic operation
+  S s=f.read(Url"data.txt") //non deterministic operation
   //the result depends on the current file content
-  f.write(on=Url"data.txt",content=S"SomeContent") //non determistic operation
+  f.write(on=Url"data.txt",content=S"SomeContent") //non deterministic operation
   //the operation could go in error if there is not enough space to write the content on disk.
   Debug(s)
   )
@@ -225,15 +226,15 @@ Capability objects are a useful abstraction and can be designed and implemented 
 We have just shown that new object capabilities can easy be defined by simple wrapping over existing capability objects.
 
 <br/>
-Since inner is of type <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Fs]]></span><it style="font-style: bold; color:green;">&#187;</it>, this programming patterns allows to layer many levels of security / restrictions on top of a capability object, as shown below:
+Since inner is of type <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Fs]]></span><it style="font-style: bold; color:green;">&#187;</it>, this programming patterns allows us to layer many levels of security / restrictions on top of a capability object, as shown below:
 <pre class="l42Big"><![CDATA[
 fs = OnlyTxt(inner=OnlySmallFiles(inner=Fs.Real.#$of()))
 ]]></pre>
 
 
 </p><h2> (4/5) Connection with other languages </h2> <p>
-In general, all the  non determinism in 42 is obtained by comunicating with other languages.
-42 allows to connect with Java, and Java allows to connect with C/assembly.
+In general, all the  non determinism in 42 is obtained by communicating with other languages.
+42 allows us to connect with Java, and Java allows us to connect with C/assembly.
 The best way to connect with java is to use the library <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[JavaServer]]></span><it style="font-style: bold; color:green;">&#187;</it> as shown below:
 <pre class="l42Big"><![CDATA[
 reuse [L42.is/AdamsTowel]
@@ -246,14 +247,14 @@ There is one master process where the 42 computation is actually running and man
 Such slave processes have their own name: in this case <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mySlave]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 Slaves also have a set of options, that can be specified between the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[{}]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 We do not describe the details of those options here.
-The class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[J]]></span><it style="font-style: bold; color:green;">&#187;</it> can now be used to comunicate with the Java slave as shown below:
+The class <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[J]]></span><it style="font-style: bold; color:green;">&#187;</it> can now be used to communicate with the Java slave as shown below:
 <pre class="l42Big"><![CDATA[
 MainAsk = (
   j = J.#$of()
   j.loadCode(fullName=S"foo.Bar1",code=S"""
     |package foo;
     |import is.L42.platformSpecific.javaEvents.Event;
-    |public record Bar1(Event event){//class Bar1 will be instanstiated by 42
+    |public record Bar1(Event event){//class Bar1 will be instantiated by 42
     |  public Bar1{                  //and the Event parameter is provided
     |    event.registerAskEvent("BarAsk",(k,id,msg)->
     |      "any string computed in Java using "+id+" and "+msg);
@@ -268,13 +269,13 @@ MainAsk = (
 ]]></pre>
 This code asks the event <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["anId"]]></span><it style="font-style: bold; color:green;">&#187;</it> on the channel <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarAsk"]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 The Java code registers the capacity of answering to the channel <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarAsk"]]></span><it style="font-style: bold; color:green;">&#187;</it> and
-computes an answer parametrized over <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[id]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[msg]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-The method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[askEvent]]></span><it style="font-style: bold; color:green;">&#187;</it> is syncronus: it will wait for java to provide an answer as an optional string; optional since Java can return <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[null]]></span><it style="font-style: bold; color:green;">&#187;</it> as a result.
+computes an answer parameterized over <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[id]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[msg]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+The method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[askEvent]]></span><it style="font-style: bold; color:green;">&#187;</it> is synchronous: it will wait for Java to provide an answer as an optional string; optional since Java can return <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[null]]></span><it style="font-style: bold; color:green;">&#187;</it> as a result.
 
 As you can see, you can embed arbitrary Java code in 42 and communicate back and forth serializing data and instructions as strings.
 
-Syncronus comunication is sometimes undesirable. 
-For example, to use Java to open a GUI it would be better to have asyncronus comunication and a queue of events.
+Synchronous communication is sometimes undesirable. 
+For example, to use Java to open a GUI it would be better to have asynchronous communication and a queue of events.
 You can do this with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[J.Handler]]></span><it style="font-style: bold; color:green;">&#187;</it>, as shown below:
 <pre class="l42Big"><![CDATA[
 Model = Data:J.Handler:{
@@ -326,7 +327,7 @@ up to 40 times, and kills the slave JVM after that.
 
 In <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MainPingPong]]></span><it style="font-style: bold; color:green;">&#187;</it> we initialize the slave JVM to respond to two channels:
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarIn"]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["Kill"]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-In our example Java will submit an asyncronus event to 42 as a response to
+In our example Java will submit an asynchronous event to 42 as a response to
 the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarIn":"ping"]]></span><it style="font-style: bold; color:green;">&#187;</it> event and will terminate the slave on any <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["Kill"]]></span><it style="font-style: bold; color:green;">&#187;</it> event.
 The slave should always terminate its JVM when receiving a kill, but can do any kind of clean-up before that.
 After a JVM is terminated, it can be restarted by simply calling <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[J.loadCode(fullName,code)]]></span><it style="font-style: bold; color:green;">&#187;</it> again.
@@ -335,16 +336,16 @@ Finally, we set up the event loop:
 An event loop will collect events from a list of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[keys]]></span><it style="font-style: bold; color:green;">&#187;</it> and dispatch them
 to a map of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[models]]></span><it style="font-style: bold; color:green;">&#187;</it>, mapping every key to a specific <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[model]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 Note that both <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[keys]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[models]]></span><it style="font-style: bold; color:green;">&#187;</it> are mutable objects. In this way we can dynamically
-register and unregistered keys/models by mutating <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[keys]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[models]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+register and unregister keys/models by mutating <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[keys]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[models]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 If the JVM is killed or the list of keys becomes empty, the event loop <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[for e in j(keys)]]></span><it style="font-style: bold; color:green;">&#187;</it> will terminate.
 The operation <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[e>>models]]></span><it style="font-style: bold; color:green;">&#187;</it> dispatches the event to the model.
 <br/>
 We need to use two different channels (<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarIn"]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA["BarOut"]]></span><it style="font-style: bold; color:green;">&#187;</it>) to distinguish if an event is should be handled by 42 or by Java.
 
 
-</p><h2> (5/5) Object capabilities summuary </h2> <p>
+</p><h2> (5/5) Object capabilities summary </h2> <p>
 <ul><li>
-While most languages run in a single process, 42 runs in a cluster of processes; this is needed so that the master process is procted from any slave process going into undefined behaviour.
+While most languages run in a single process, 42 runs in a cluster of processes; this is needed so that the master process is protected from any slave process going into undefined behaviour.
 This is the final piece of the puzzle allowing the correctness properties of 42 to be ensured in any circumstance.
 </li><li>
 To enable non deterministic behaviour we need to call those specially named <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#$]]></span><it style="font-style: bold; color:green;">&#187;</it> methods.
@@ -358,7 +359,7 @@ Capability objects are a very convenient centralized point of control to inject 
 </p><h2> Non deterministic errors </h2> <p>
 
 When discussing errors, we did not mention how to handle errors happening in a non deterministic way; for example, how to recover when the execution run out of memory space.
-In 42 this is modelled by non deterministic errors. They can only be catched in a main, in another capability method or in a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> method of a capability object. 
+In 42 this is modelled by non deterministic errors. They can only be caught in a main, in another capability method or in a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> method of a capability object. 
 AdamsTowel offers a single non deterministic error: <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[System.NonDeterministicError]]></span><it style="font-style: bold; color:green;">&#187;</it>. When a non deterministic error happens, we can recover it by catching an <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[error System.NonDeterministicError]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 
 The code below shows how to cause a stack overflow and to recover from it.
@@ -378,15 +379,15 @@ Main1=Looping.#$loopStop()
 
 That is, to recover from a non deterministic error we need to satisfy both the requirements of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA['#$']]></span><it style="font-style: bold; color:green;">&#187;</it> non determinism and of strong error safety.
 
-</p><h2> Aborting wastefull cache eagers </h2> <p>
+</p><h2> Aborting wasteful cache eagers </h2> <p>
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@Cache.Eager]]></span><it style="font-style: bold; color:green;">&#187;</it> methods may return a cached result; such result is guaranteed to be the same that would be computed if we were to directly execute the method.
-How those this work if the method is non terminating or simply outragiously slow?
-Those eager cache methods will eagerly spend precious machine resource. If the results of those computations are ever needed by a main, the whole 42 process will get stuck waiting, as it would indeed happen if we were to directly execute the method. All good: in this case 42 correctly lifted the behavioural bug into caching.
+How does this work if the method is non terminating or simply outrageously slow?
+Those eager cache methods will eagerly spend precious machine resources. If the results of those computations are ever needed by a main, the whole 42 process will get stuck waiting, as it would indeed happen if we were to directly execute the method. All good: in this case 42 correctly lifted the behavioural bug into caching.
 However, if the result is never needed by a main, it would be nice to be able to stop those runaway pointless computations.
 We can obtain this by calling <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cache.#$stopCacheEager()]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-WB
+<br/>
 This works no matter if they are in loop, simply slow, or stuck waiting on another cache being slowly computed.
-In some cases, we can even have multiple computations stuck waiting on each other in a circular fascion.
+In some cases, we can even have multiple computations stuck waiting on each other in a circular fashion.
 <br/>
 <div class="index"><div class="wrapFloat"><div class="inFloat">
 </div><div class="inFloat">

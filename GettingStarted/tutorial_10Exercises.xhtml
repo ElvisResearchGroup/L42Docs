@@ -90,7 +90,7 @@ basic classes, collections
 and simple Data classes.
 
 Let's see some exercises and solutions 
-to understand better how 42 code looks like
+to better understand what 42 code looks like.
 
 </p><h2> (1/5) Max method </h2> <p>
 Write a static method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MaxOfList]]></span><it style="font-style: bold; color:green;">&#187;</it> returning the max from a list of numbers
@@ -134,7 +134,8 @@ Defining your own error may still produce more readable errors, so feel free to 
 
 
 </p><h2> (2/5) Merging and filtering </h2> <p>
-Write a static method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MapText]]></span><it style="font-style: bold; color:green;">&#187;</it> producing a string from to lists of strings of the same length.
+Write a static method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MapText]]></span><it style="font-style: bold; color:green;">&#187;</it> producing a string from two lists of strings of the same length.
+
  For example
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[MapText(keys=S.List[S"a";S"b";S"c"] vals=S.List[S"z";S"y";S"z"])]]></span><it style="font-style: bold; color:green;">&#187;</it>
 should produce <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S"[a->z, b->y, c->z]"]]></span><it style="font-style: bold; color:green;">&#187;</it>
@@ -210,7 +211,7 @@ That is, if in a given file we write
 A = /*..*/{...}/*..*/
 ]]></pre>
 42 will search for a file called either <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[A.L42]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[A/This.L42]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-Such file have to contain valid 42 code; such code is replaced for the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[...]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Such file has to contain valid 42 code; such code is replaced for the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[...]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 In this way code can be divided
 in multiple files spanning a hierarchy of folders.
 </p><p>
@@ -276,10 +277,10 @@ Direction = Collection.Enum:{interface
   Right={[This1]method go(that)=that.with(y=\y+1I)}
   }
 ]]></pre>
-<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Direction]]></span><it style="font-style: bold; color:green;">&#187;</it> is an enumeration, and we leverage on dyanamic dispatch to encode the beaviour of the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[go(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> method.
+<it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Direction]]></span><it style="font-style: bold; color:green;">&#187;</it> is an enumeration, and we leverage on dynamic dispatch to encode the behaviour of the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[go(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> method.
 Note how in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Direction]]></span><it style="font-style: bold; color:green;">&#187;</it> we explicitly declared the top level <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[interface]]></span><it style="font-style: bold; color:green;">&#187;</it> and
 we implemented the outer level <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[This1]]></span><it style="font-style: bold; color:green;">&#187;</it> explicitly in all the cases.
-Then we could implemented the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[go(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> method without repeating the type signatore.
+Then we could implemented the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[go(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> method without repeating the type signature.
 
 <pre class="l42Big"><![CDATA[
 //file This.L42
@@ -292,8 +293,8 @@ Cell = Collection.Enum:{
   }
 ]]></pre>
 Instead, while declaring <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cell]]></span><it style="font-style: bold; color:green;">&#187;</it> we omit the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[interface]]></span><it style="font-style: bold; color:green;">&#187;</it> keyword and the explicit implementation.
-Then we had to repeat the type signature all the times while implementing the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[symbol()]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-Both ways to declare enumerations works and produce the same result.
+Then we had to repeat the type signature each time while implementing the method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[symbol()]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Both ways to declare enumerations work and produce the same result.
 
 Should we used separate files for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Direction]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Cell]]></span><it style="font-style: bold; color:green;">&#187;</it>?
 Their code is quite short, so we chose not to.

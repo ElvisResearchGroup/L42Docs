@@ -691,8 +691,9 @@ MainTree = (
   )
 ]]></pre>
 
-This pattern relies on the fact that using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> fields we can define arbitrary complex data structures composed of disjoint mutable object graphs.
-Note that even if <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> aliases to parts of this data structure can be visible outside, we can not access them when the forkjoin is open, since the declarations can not use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> parameters.
+This pattern relies on the fact that using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[capsule]]></span><it style="font-style: bold; color:green;">&#187;</it> fields we can define arbitrary complex data structures composed of disjointed mutable object graphs.
+Note that <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> aliases to parts of the data structure can be visible outside.
+This is accepted since we can not access them when the forkjoin is open. The declarations can not use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it> parameters.
 <br/>
 <div class="index"><div class="wrapFloat"><div class="inFloat">
 </div><div class="inFloat">

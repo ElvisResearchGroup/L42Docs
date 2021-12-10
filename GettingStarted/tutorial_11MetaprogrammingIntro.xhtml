@@ -91,7 +91,7 @@ which shows that 42 offers a good balance of freedom and safety.
 
 The main idea of 42 metaprogramming is that only library literals can
 be manipulated.
-Metaprogramming is evaluated top down nested-most first.
+Metaprogramming is evaluated top down, most-nested first.
 Once a library literal has a name, it can not be independently metaprogrammed; but only influenced
 by metaprogramming over the library that contains it.
 
@@ -121,7 +121,7 @@ Main0 = ClassPrintMsg.printMsg() //prints Hello world
 In this code we show that <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[ClassPrintMsg]]></span><it style="font-style: bold; color:green;">&#187;</it> contains all the code of both <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[TraitPrint]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[TraitMsg]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 Note how the abstract <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class method S msg()]]></span><it style="font-style: bold; color:green;">&#187;</it> in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[TraitPrint]]></span><it style="font-style: bold; color:green;">&#187;</it> is merged with the corresponding implemented method in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[TraitMsg]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 
-Traits allows to merge code from different sources, as it happens with multiple inheritance.
+Traits allow us to merge code from different sources, as it happens with multiple inheritance.
 However, traits are flattened: The code is actually copied in the result.
 
 Traits are boxes containing the code and offering methods to manipulate such code.
@@ -132,7 +132,7 @@ For traits there is no difference in behaviour between <it style="font-style: bo
 
 </p><p>
 
-Simply composing traits allows to emulate a large chunk of the expressive power of conventional inheritance.
+Simply composing traits allows us to emulate a large chunk of the expressive power of conventional inheritance.
 For example, in Java we may have an abstract class offering some implemented and some abstract methods.
 Then multiple heir classes can extend such abstract class implementing those abstract methods.
 The same scenario can be replicated with traits: a trait can offer some implemented and some abstract methods. Then multiple classes can be obtained composing that trait with some other code implementing those abstract methods.
@@ -197,23 +197,23 @@ Geometry1 = Class:TraitGeometryPoint //declaring class Geometry1
   imm p = Geometry1.Point(x=3\, y=4\)
   p2 = p.double()//example usage
 ]]></pre>
-That is, any <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> no-arg abstract method can play the role of a getter for a correspondly named field, and any abstract <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it> method can play the role of a factory, where the parameters are used to initialize the fields.
+That is, any <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[read]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> no-arg abstract method can play the role of a getter for a correspondingly named field, and any abstract <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[class]]></span><it style="font-style: bold; color:green;">&#187;</it> method can play the role of a factory, where the parameters are used to initialize the fields.
 Finally, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it> methods with one argument called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[that]]></span><it style="font-style: bold; color:green;">&#187;</it> can play the role of a setter.
 Candidate getters and setters are connected with the parameters of candidate factories by name.
 To allow for more then one getter/setter for each parameter, getters/setters names can also start with any number of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[#]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 <br/>
 We call those abstract methods <span style="color:#ff1111; font-weight: bold;"> Abstract State Operations </span>.
-In Java and many other languages a class is abstract if it has any abstract methods.
+In Java and many other languages, a class is abstract if it has any abstract methods.
 In 42, a class is coherent if its set of abstract state operations ensure 
 that all the callable methods have a defined behaviour; this includes the initialization of all the usable getters. 
 <br/>
-More in the detail, a class is coherent if:
+In more detail, a class is coherent if:
 <ul><li>
-All candidate factories provide a value for all candidate getters, and the all types of those values
-agrees with the return type of the corresponding getters.
+All candidate factories provide a value for all candidate getters, and all the types of those values
+agree with the return type of the corresponding getters.
 The parameter type of all candidate setters agrees with the return type of the corresponding getters.
 </li><li>
-Additionally, any non-class method can be abstract if none of the candidate factory return a value whose modifier allows to call such a method.
+Additionally, any non-class method can be abstract if none of the candidate factories return a value whose modifier allows to call such a method.
 </li></ul>
 In particular, this implies that if a class has no candidate factories, 
 any non class method may be abstract, as shown below:
@@ -265,7 +265,8 @@ and a lot of other utility methods.
 
 </p><h2> (3/5)Nested Trait composition: a great expressive power. </h2> <p>
 
-Composing traits with nested classes allows to merge arbitrarily complex units of code, and solve in a natural way problems that in other languages requires complex patterns like dependency injection, as shown below:
+Composing traits with nested classes allows us to merge arbitrarily complex units of code.
+In other languages this kind of flexibility requires complex patterns like dependency injection, as shown below:
 
 <pre class="l42Big"><![CDATA[
 TraitGeometryPoint = Trait:{/*Same as before*/}
@@ -287,7 +288,7 @@ Geometry2 = Class:TraitGeometryPoint:TraitGeometryRectangle
 ]]></pre>
 As you can see, we can define more code using <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Point]]></span><it style="font-style: bold; color:green;">&#187;</it> while only repeating the needed dependencies.
 We will use this idea in the following, more elaborated scenario:
-Bob and Alice are doing a video game. In particular, Alice is doing the code related to loading the game map from a file.
+Bob and Alice are making a video game. In particular, Alice is doing the code related to loading the game map from a file.
 
 <pre class="l42Big"><![CDATA[
 Game = { //example game code, NOT MODULARISED
@@ -418,11 +419,11 @@ TestAlice = (
 
 </p><h2> (4/5)Typing considerations </h2> <p>
 
-Object oriented programs often contains entangled and circular type definitions.
+Object oriented programs often contain entangled and circular type definitions.
 For example, strings <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S]]></span><it style="font-style: bold; color:green;">&#187;</it> have methods <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[I size()]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bool isEmpty()]]></span><it style="font-style: bold; color:green;">&#187;</it>, while
 both <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[I]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bool]]></span><it style="font-style: bold; color:green;">&#187;</it> offer a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S toS()]]></span><it style="font-style: bold; color:green;">&#187;</it> method.
-That is, while circular values are a double edge sword (useful but dangerous), circular/recursive types are unavoidable even in simple programs.
-So, how does recursive types interact with metaprogramming?
+That is, while circular values are a double edged sword (useful but dangerous), circular/recursive types are unavoidable even in simple programs.
+So, how do recursive types interact with metaprogramming?
 Path names can only be used in execution when the corresponding nested class is fully typed,
 thus the following example code would not work:
 <pre class="l42Big"><![CDATA[
@@ -448,7 +449,7 @@ Dog = Data:{S name, Person owner}
 ]]></pre>
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[TraitPerson]]></span><it style="font-style: bold; color:green;">&#187;</it> can not be used before <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Dog]]></span><it style="font-style: bold; color:green;">&#187;</it> is defined.
 </p><p>
-This also allows to avoid defining many redundant abstract methods.
+This also allows us to avoid defining many redundant abstract methods.
 Consider the following working code:
 <pre class="l42Big"><![CDATA[
 TraitPrintName = Trait:{
@@ -464,12 +465,12 @@ Bob = TraitPrintName:{
   }
 Main = Bob.printTwice() //prints "Bob" twice
 ]]></pre>
-This code is allowed even if <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bob]]></span><it style="font-style: bold; color:green;">&#187;</it> does not contains an abstract definition for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[printName()]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+This code is allowed even if <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Bob]]></span><it style="font-style: bold; color:green;">&#187;</it> does not contain an abstract definition for <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[printName()]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 This feature is often used by 42 programmers without even recognizing it, but it is brittle:
 when method calls are chained (as in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[a.b().c()]]></span><it style="font-style: bold; color:green;">&#187;</it>) or when binary operators or type inference are involved, the system needs to be able to guess the return type of those missing methods.
 
 </p><h2> (5/5)Metaprogramming summary </h2> <p>
-Here we introduced the way 42 handle metaprogramming and code reuse.
+Here we have introduced the way that 42 handles metaprogramming and code reuse.
 We focused on <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Class]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Trait]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 Composing code with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[:]]></span><it style="font-style: bold; color:green;">&#187;</it> or <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[+]]></span><it style="font-style: bold; color:green;">&#187;</it> we can partition our code-base in any way we need,
 enabling simple and natural testing and code reuse patterns.
