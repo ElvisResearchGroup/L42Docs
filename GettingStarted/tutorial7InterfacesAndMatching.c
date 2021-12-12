@@ -107,15 +107,15 @@ Square = {[Shape]
   Color color
   method numberOfSides() = //class method implemented
     4Num
-  method newShape(that) //class method implemented
+  method newShape(that) = //class method implemented
     This(color=that)
   method draw(that) = //immutable method implemented
     /*..*/
   }
 /*..*/
-class Shape kindOfShape= Square
-kindOfShape.numberOfSides()==4Num //holds
-Shape s= kindOfShape.newShape(Color.red())
+class Shape kindOfShape = Square
+X[kindOfShape.numberOfSides()==4Num] //holds
+Shape s = kindOfShape.newShape(Color.red())
 CCode
 
 The pattern in the code above encodes the abstract factory 

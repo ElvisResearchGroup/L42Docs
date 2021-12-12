@@ -49,7 +49,7 @@ X[
   //sequence concatenation
   Nums[a;b]++Nums[c;d] == Nums[a;b;c;d];
   //element removal
-  Nums[a;b;b;c]-b == Nums[a;c]; //how to tell two elements apart?
+  Nums[a;b;b;c]-b == Nums[a;c];
   //sequence subtraction (like removeAll / set minus)
   Nums[a;b;b;c]--Nums[b;c] == Nums[a];
   ]
@@ -59,19 +59,19 @@ OBCode
 X[
   //replacement
   Nums[a;b;c;d].with(2I,val=e) == Nums[a;b;e;d];
-  Nums[a;b;c;d].withLeft(e) == Nums[e;b;c;d];//==Nums[..].with(0I val=e)
-  Nums[a;b;c;d].withRight(e) == Nums[a;b;c;e];//==Nums[..].with(\size-1I val=e)
+  Nums[a;b;c;d].with(left=e) == Nums[e;b;c;d];//equivalent to Nums[..].with(0I val=e)
+  Nums[a;b;c;d].with(right=e) == Nums[a;b;c;e];//equivalent to Nums[..].with(\size-1I val=e)
   //insertion
   Nums[a;b;c;d].withAlso(2I,val=e) == Nums[a;b;e;c;d];
-  Nums[a;b;c;d].withAlsoLeft(e) == Nums[e;a;b;c;d];//==Nums[..].withAlso(0I val=e)
-  Nums[a;b;c;d].withAlsoRight(e) == Nums[a;b;c;d;e];//==Nums[..].withAlso(0I val=e)
+  Nums[a;b;c;d].withAlso(left=e) == Nums[e;a;b;c;d];
+  Nums[a;b;c;d].withAlso(right=e) == Nums[a;b;c;d;e];
   //skipping/filtering
-  Nums[a;b;c;d].without(index=2I) == Nums[a;b;d];
-  Nums[a;b;c;d].withoutLeft() == Nums[b;c;d];//==Nums[..].without(0I)
-  Nums[a;b;c;d].withoutRight() == Nums[a;b;c];//==Nums[..].without(\size-1I)
+  Nums[a;b;c;d].without(2I) == Nums[a;b;d];
+  Nums[a;b;c;d].withoutLeft() == Nums[b;c;d];
+  Nums[a;b;c;d].withoutRight() == Nums[a;b;c];
   Nums[a;b;c;b;d].withoutAll(val=b) == Nums[a;c;d];
-  Nums[a;b;c;b;d].withoutLeft(val: b) == Nums[a;c;b;d]; //filter out the leftmost b
-  Nums[a;b;c;b;d].withoutRight(val: b) == Nums[a;b;c;d]; //filter out the rightmost b
+  Nums[a;b;c;b;d].without(left=b) == Nums[a;c;b;d]; //filters out the leftmost b
+  Nums[a;b;c;b;d].without(right=b) == Nums[a;b;c;d]; //filter out the rightmost b
   ]
 CCode
 As you notice, there are different kind of actions: 
@@ -80,8 +80,8 @@ insert an element (Wcode(withAlso))
 and skipping/filtering elements out (Wcode(without)).
 Then, elements can be specified by index, by being
 the leftmost or the rightmost.
-To filter elements
-out, you can also just provide the element.
+To filter elements out,
+you can also just provide the element.
 
 WP
 
@@ -142,8 +142,8 @@ foo.removeRight() //foo == Nums[a;b;c]
 
 //removal
 foo.removeAll(val=b) //foo == Nums[a;c;d]
-foo.removeLeft(val=b) //remove the leftmost b
-foo.removeRight(val=b) //remove the rightmost b
+foo.remove(left=b) //remove the leftmost b
+foo.remove(right=b) //remove the rightmost b
 CCode
 
 
@@ -223,13 +223,13 @@ They provide an expressive power similar to what list-comprehensions provide in 
 OBCode
 as =  Num.List[1\;2\;3\;4\;]
 //mapping
-bs0 = Num.List[](for a in as \add(a*10Num))
+bs0 = Num.List()(for a in as \add(a*10Num))
 //bs0==Num.List[10\;20\;30\;40\]
 //filtering
-bs1 = Num.List[](for a in as if a>2Num \add(a))
+bs1 = Num.List()(for a in as if a>2Num \add(a))
 //bs1==Num.List[3\;4\]
 //flatmapping
-bs2 = Num.List[](for a in as for b in bs0 \add(a+b))
+bs2 = Num.List()(for a in as for b in bs0 \add(a+b))
 //bs0==Num.List[11\;21\;31\;41\;12\;22\;32\;42\;13\;23\;33\;43\;14\;24\;34\;44\;]
 //reduce to string
 str0 = S"the content is: ".builder()(for a in as \add(a))
@@ -238,6 +238,7 @@ str1 = (if ns.isEmpty() S"[]"
     else S"[%ns.left()".builder()(for n in ns.vals(1I) \add(S", %n"))++S"]")
 //str1 = S"[1, 2, 3, 4]"
 acc  = (var x = 0Num for a in as ( x+=a ) x) //reduce/fold
+acc  = 0Num.acc()(for a in as \add(a))
 //acc == 10Num
 
 //checks a property; great in an if or an X[]
@@ -248,6 +249,7 @@ ok1 = Match.All()(for a in as \add(a>3Num))
 ok2 = Match.None()(for a in as \add(a>3Num))
 //ok2==false
 ok3 = Match.Count()(for a in as \add(a>3Num))
+ok3 = 0I.acc()(for a in as \addIf(a>3Num))
 //ok3==2I
 asContainsAllBs = Match.All()(for b in bs \add(b in as))
 asIntersectBs = Match.Some()(for b in bs \add(b in as))
