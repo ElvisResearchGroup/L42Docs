@@ -1,4 +1,5 @@
 m4 -P index.c > index.xhtml
+m4 -P indexLib.c > indexLib.xhtml
 m4 -P tutorial.c > tutorial.xhtml
 m4 -P tutorial_01Basics.c > tutorial_01Basics.xhtml
 m4 -P tutorial_02ModifiersIntro.c > tutorial_02ModifiersIntro.xhtml
