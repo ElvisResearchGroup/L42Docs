@@ -37,6 +37,11 @@ Git Repository
 </Button>
 
 <Button class= 'button' type= 'button' onclick=
+ "location.href = 'indexLib.xhtml';">
+Libraries index
+</Button>
+
+<Button class= 'button' type= 'button' onclick=
  "location.href = 'https://ecs.wgtn.ac.nz/mailman/listinfo/team42';">
 Mailing List
 </Button>
