@@ -45,8 +45,7 @@ C = {reuse [L42.is/FordTowel]
   }
 CCode
 
-Different code parts reason about different set of classes;
-including those predefined in other languages.
+Different code parts build upon different set of classes.
 That is, by introducing multiple towels in nested scopes,
 the names of the other scopes are WTerm(masked).
 This is very useful for code that reasons on code; such task is pervasive in 42. 
@@ -105,10 +104,10 @@ independent projects and developers; they are what is often called a third party
 However, most modules exists just as development tools in 
 order to keep the complexity of big projects under control.
 WP
-In 42 is easy to code with multiple modules, and modules can be much smaller than usual third party libraries and framewors in other languages.
+In 42 it is easy to code with multiple modules, and modules can be much smaller than usual third party libraries and frameworks in other languages.
 WP
 In 42 it is possible to employ a programming model where every developer (or every pair of developers in a pair programming style) is the
-only one responsible of one (or more) modules and their maintenance process, while the group leader give specifications and tests to be met by the various module developers and will glue all the code together.
+only one responsible of one (or more) modules and their maintenance process, while the group leader gives specifications and tests to be met by the various module developers and will glue all the code together.
 WP
 
 Modules can be deployed in a way similar to towel deployment;
@@ -135,13 +134,13 @@ DeployAirplaneModule = DeployGit.module(Module()
   writer=GW.#$of(token=Secret.#$of(),message=S".."))
 CCode
 
-This code deployes Wcode(Module.AirplaneUnits) to an URL as a module.
-and turns private Wcode(AirplaneUnitsUtilities) and any other 
-nested class stained on top of Wcode(AdamsTowel).
+This code deploys Wcode(Module.AirplaneUnits) to an URL as a module,
+and turns Wcode(AirplaneUnitsUtilities) and any other 
+nested classes stained on top of Wcode(AdamsTowel) private.
 This includes 
 Wcode(Unit), Wcode(Kg) and Wcode(Meter) from Wcode(RichTowel).
 WBR
-If there was any nested class unreachable from public classes inside
+If there were any nested classes unreachable from public classes inside
 Wcode(AirplaneUnitsUtilities) it will be pruned away.
 Same for any nested class stained on top of Wcode(AdamsTowel) and for 
 any private unreachable one in Wcode(AirplaneUnits).
@@ -297,7 +296,7 @@ the implementation of Wcode(reverse()) will be able to use Wcode(Bool), Wcode(Nu
 
 Towel staining is a very minimal personalization, and stained towels are fully compatible with the original one.
 
-By embroidery you can personalize a lot more the content of your towel,
+With embroidery you can personalize the content of your towel a lot more,
 but when module deployment 
 relies on an embroidered towel, compatibility with the original towel is lost.
 For example, an embroidered version of 
@@ -356,7 +355,7 @@ Wcode(AdamsTowel) can still be loaded normally since Wcode(SITowel) is structura
 WTitle(`(5/5)Deployment: programs, libraries and towels; summary')
 <ul><li>
 42 is a metaprogramming tool.
-It is natural to use 42 either a language (to run a program)
+It is natural to use 42 either as a language (to run a program)
 or as a compiler (to deploy programs, libraries and towels).
 </li><li>
 Indeed we expect all sizeable 42 projects to use 42 as a compiler,

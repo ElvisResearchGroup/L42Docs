@@ -17,7 +17,7 @@ in unpredictable ways during library evolutions, and can be enabled or disabled.
 Since program logic can depend on guards being thrown,
 guards need to be consistent across library evolution.
 
-Assertions are a convenient tool to prevent the code from proceding
+Assertions are a convenient tool to prevent the code from proceeding
 out of our designed state space. The assertion class called Wcode(X) 
 looks like a road sign
 and
@@ -96,7 +96,7 @@ WTitle(Capturing errors and exceptions)
 
 In 42 there is no explicit Wcode(try) statement,
 but any block of code delimited by round or curly brackets can contain Wcode(catch).
-In the code example below, lines 2 and 3 are conceptually inside the implict Wcode(try) statement.
+In the code example below, lines 2 and 3 are conceptually inside the implicit Wcode(try) statement.
 If nothing is thrown then lines 6, 7 and 8 are executed.
 Note that Wcode(b3) and Wcode(b4) can see Wcode(b1) and Wcode(b2); this would not naturally happen in a language with explicit Wcode(try) statements; Wcode(b1) and Wcode(b2) would become local bindings inside the Wcode(try) statement.
 OBCode
@@ -186,7 +186,7 @@ Without strong error safety, we could simply catch the error and keep observing 
 
 WTitle(`(3/5) Exceptions and errors')
 
-Exceptions are like checked exceptions in java.
+Exceptions are like checked exceptions in Java.
 As with errors, every immutable object can be thrown as an exception.
 You can just write Wcode(exception) instead of Wcode(error) while throwing or catching. When catching, Wcode(exception) is the default, so you can write Wcode(catch Foo x)
 instead of Wcode(catch exception Foo x).

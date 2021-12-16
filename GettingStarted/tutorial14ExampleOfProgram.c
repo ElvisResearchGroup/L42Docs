@@ -1,8 +1,8 @@
 WBigTitle(Example of a 42 program)
 
-In this chapter, we will see how to develop a GUI connected with a Data Base.
-For simplicity we consider to have a database with a single table Wcode(Person) that contains a fiew fields.
-We want to make a GUI that displays the data and allows to edit it.
+In this chapter, we will see how to develop a GUI connected with a DataBase.
+For simplicity, consider that we have a database with a single table Wcode(Person) that contains a few fields.
+We want to make a GUI that displays the data and allows us to edit it.
 
 WTitle((1/5) Query boxes)
 First we load the libraries we need:
@@ -15,7 +15,7 @@ LoadJ = Load:{reuse [L42.is/JavaServer]}
 LoadGui = Load:{reuse [L42.is/GuiBuilder]}
 Query = Load:{reuse [L42.is/Query]}
 CCode
-We then declare some useful units. Persons have ages expressed in years,
+We then declare some useful units. Wcode(Person) objects have ages expressed in years,
 heights expressed in meters and weights expressed in Kgs.
 OBCode
 Year = Unit(I)
@@ -23,9 +23,9 @@ Meter = Unit(Num)
 Kg = Unit(Num)
 CCode
 WP
-We then ask Wcode(Query.sql) to generate a class to support SQL queries using a java slave and a connection string.
+We then ask Wcode(Query.sql) to generate a class to support SQL queries using a Java slave and a connection string.
 As an example, we are using a derby DB.
-For now, we consider the DB to be altready populated. In the end we discuss how to initialize the DB itself.
+For now, we consider the DB to be already populated. In the end we discuss how to initialize the DB itself.
 OBCode
 DBJ = LoadJ(slaveName=S"dbServer{}") //slave for the DB connection
 DB = Query.sql(//instantiate Query for SQL queries
@@ -61,7 +61,7 @@ Insert = DB.query[Void;S;Year;Meter;Kg]"""
 DeleteId = DB.query[Void;I]"DELETE FROM Person WHERE id=@id"
 DeleteName = DB.query[Void;S]"DELETE FROM Person WHERE name=@name"
 CCode
-The symbol Wcode(@) identifies parameter in the queries, while the types
+The symbol Wcode(@) identifies parameters in the queries, while the types
 in Wcode([..]) are the query result type followed by any parameters.
 Queries return lists of objects. Those objects are constructed by calling a (factory) method whose arguments have the same name as the query fields.
 WP
@@ -81,7 +81,7 @@ Key = Data:Data.AddList:{I id}
 PName = Data:Data.AddList:{S name}
 Person = Data:Data.AddList:{S name, Year age, Meter height, Kg weight}
 CCode
-In the same way, if a query returns a signle row, we will have it served as the only element of a lenght 1 list.
+In the same way, if a query returns a single row, we will have it served as the only element of a length 1 list.
 WP
 We can now make the set of all user queries with another Wcode(QueryBox):
 
@@ -132,7 +132,7 @@ mut Dialogs iql
 @GuiJ.Handler mut method Void removeByName(S msg)=(/*..*/)
 CCode
 Methods annotated with Wcode(GuiJ.Handler) will respond to the corresponding event from the view.
-Those methods must all take a single Wcode(S) parameter, used by the view to comunicate extra informations. This parameter is often unused.
+Those methods must all take a single Wcode(S) parameter, used by the view to communicate extra information. This parameter is often unused.
 Those methods are defined as follows:
 OBCode
 @GuiJ.Handler mut method Void printAll(S msg)=(
@@ -151,7 +151,7 @@ Wcode(this.#sql()) is the Wcode(QueryBox) offering access to all the individual 
 Wcode(this.#sql().all()) is the field access for the query object doing the Wcode(DB.query[Table.Person.List]"SELECT * FROM Person") query.
 Finally, since this query takes no parameters, we just use Wcode(`()') to call it. Calling the query returns a Wcode(Table.Person.List) object,
 that is iterated with the Wcode(for). We map the fields of Wcode(Person) onto local variables Wcode((id,name,age,height,weight)) for easy access in the Wcode(for) body.
-For each Wcode(Person), the body asks the view to add a line into the table. Information have to be encoded as a string to be passed to the view. String interpolation Wcode(%) make this easy, and Wcode(Num) values are converted as Wcode(Double) to print them with decimal points instead of printing them as a fraction.
+For each Wcode(Person), the body asks the view to add a line into the table. Information has to be encoded as a string to be passed to the view. String interpolation Wcode(%) make this easy, and Wcode(Num) values are converted as Wcode(Double) to print them with decimal points instead of printing them as a fraction.
 Finally, we Wcode(whoops) exceptions to assert that we do not expect them to be leaked.
 WBR
 This is quite a mouthful.
@@ -196,9 +196,9 @@ Then, the data of each Wcode(Person) is inserted in the database.
 Note how the parameters of the query Wcode(.insert()) are provided using the names of the query declaration
 Wcode(".. Values (@name,@age,@height,@weight)"):
 Wcode(@name) in the query string was used to create the Wcode(name) parameter; and so on for the others. Thanks to metaprogramming
-the query method is syntetized out of the query string.
+the query method is synthesized out of the query string.
 WBR
-After insterting all the new data in the database, we refresh the displayed table by manually calling Wcode(.printAll(msg)).
+After inserting all the new data in the database, we refresh the displayed table by manually calling Wcode(.printAll(msg)).
 
 WP
 OBCode
@@ -237,8 +237,8 @@ It is also interesting to consider what happens if the database schema changes.
 If the person table is removed, or the person fields are renamed,
 then we will get an error while typing the model.
 WBR
-In some sense we are turning into understandable compile time errors events that would have caused a runtime exception in most other languages.
-
+In some sense we are turning events that would have caused a runtime exception into
+understandable compile time errors.
 
 
 WTitle((3/5) View)
@@ -283,7 +283,7 @@ class method Void (mut GuiJ j)[_] = (
   )
 CCode
 
-Where Wcode(gui.addButton(..)) is a covenient way to generate a button raising 42 events.
+Where Wcode(gui.addButton(..)) is a convenient way to generate a button raising 42 events.
 When such 42 code will run, the following Java code will be generated:
 OJCode
 package miniGui; //generated and compiled code, it is not saved on any file
@@ -341,18 +341,18 @@ and in the java main Wcode(new Example(eventCapability))
 will be called.
 As you can see, the code provided by the user is simply injected into
 the body of a Wcode(JFrame) class.
-From that contex we can declare fields and methods, and we can declare initialization actions using (non-static) java initialization blocks.
+From that context we can declare fields and methods, and we can declare initialization actions using (non-static) java initialization blocks.
 
-This code would lok trivial if you a Java Swing expert, and very obscure otherwise.
+This code would look trivial if you are a Java Swing expert, and very obscure otherwise.
 
 Note how we use Wcode(tModel.addRow(msg.split(",")))
 to add the row to the table: in java Wcode(addRow) wants an array
 and Wcode(msg.split(",")) will produce an array from a string whose parts are separated by Wcode(',').
 We made in this way for the sake of a simple example, but
-we are unsatistied by this brittle solution: it only works since names or numbers should not have the Wcode(',') inside.
+we are unsatisfied by this brittle solution: it only works since names or numbers should not have the Wcode(',') inside.
 
 WTitle((4/5) Putting all together)
-Finally, a Wcode(Main) puts all together
+Finally, a Wcode(Main) puts this all together
 OBCode
 reuse [L42.is/AdamsTowel]
 Unit = Load:{reuse [L42.is/Unit]}
@@ -418,8 +418,8 @@ Wcode(GuiBuilder) and
 Wcode(Query).
 Those are all normal 42 libraries that 42 programmers could write themselves, and indeed studying the implementation of those libraries is currently the best way to become a Magrathean.
 WP
-In particular, Wcode(Query) allows 
-to take queries written in another language (for now, just SQL and IQL, but the concept is expandible)
+In particular, Wcode(Query) allows us 
+to take queries written in another language (for now, just SQL and IQL, but the concept is expandable)
 and converts them into a simple 42 well typed API that can be used
 to build programs in an compact and elegant way.
 Concepts like the Wcode(QueryBox) can be used to control what part of an application is allowed to do important operations, adding a great deal of security.

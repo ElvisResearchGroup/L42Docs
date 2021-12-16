@@ -60,14 +60,14 @@ Those are all operations requiring to scan the whole ROG of the object, so the c
 WTitle((2/5) Lazy Caching)
 
 Some methods may take a long time to compute, but they are deterministic, and thus we could cache the result and reuse it many times.
-A typical example is fibonacci:
+A typical example is Fibonacci:
 OBCode
 class method Num slowFibo(Num n) = {
   if n==0Num || n==1Num (return n)
   return This.slowFibo(n=n-1Num)+This.slowFibo(n=n-2Num)
   }
 CCode
-This fibonacci implementation would take a very long time to run, since it would require recomputing the same
+This Fibonacci implementation would take a very long time to run, since it would require recomputing the same
 results an exponential amount of times.
 
 This tweaked implementation relying on caching is much faster.
@@ -93,9 +93,9 @@ Decorating the surrounding library with Wcode(Data) translates Wcode(Cache.Lazy)
 an actual implementation.
 
 Wcode(ComputeFibo fibo1) is a WEmph(computation object): an imm object whose only goal is to support one (or more) computationally intense methods.
-Thanks to normalization, the cache of computation objects is centrally stored, and thus recursive calls computing fibonacci will be able to reuse the cache from other objects.
+Thanks to normalization, the cache of computation objects is centrally stored, and thus recursive calls computing Fibonacci will be able to reuse the cache from other objects.
 That is, the method result is cached on the normalized version of the receiver. In this way, 
-all the redundant fibonacci calls are avoided.
+all the redundant Fibonacci calls are avoided.
 
 WP
 As you can see, the caching is is completely handled by the language and is not connected with the specific algorithm. This pattern is general enough to support any method from immutable data to an immutable result.

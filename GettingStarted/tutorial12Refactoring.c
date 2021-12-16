@@ -183,7 +183,7 @@ We will soon show a way to avoid redeclaring them, but our experience programmin
 
 
 WTitle(Redirect)
-Finally, programmatic refactoring allows us to rename a nested class into an externally declared class. We call this kind of rename Wterm(redirect).
+Finally, programmatic refactoring allows us to rename a nested class into an externally declared class. We call this kind of rename WTerm(redirect).
 This also provides a simple encoding for generics.
 Consider the following code:
 OBCode
@@ -371,5 +371,5 @@ Redirect, as for Wcode('A=>Num),
 redirects all the usages of a nested class into an externally declared one.
 The internal declaration is simply trashed.
 </li></ul>
-Finally, Wcode(Info) allow us to explore the shape of code as metadata.
+Finally, Wcode(Info) allows us to explore the shape of code as metadata.
 

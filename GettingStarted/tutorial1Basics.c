@@ -33,7 +33,7 @@ Java program.
 </li>
 <li>
   Run Wcode(L42 ProjectName)
-  WComm with Wcode(java --enable-preview -jar L42.jar ProjectName)
+  WComm with Wcode(Java --enable-preview -jar L42.jar ProjectName)
   to run the 42 program inside of the folder Wcode(ProjectName) from the command line.
 </li>
 </ul>

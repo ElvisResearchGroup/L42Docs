@@ -21,7 +21,7 @@ It corresponds to sizes and indexes in sequences.
 Wcode(I)s are returned by Wcode(size()) methods
 and are expected as parameter by indexing methods.
 Wcode(I) represent 32 bit integers with the usual 
-but triky modulo arithmetic.
+but tricky modulo arithmetic.
 
 WTitle(Other numeric types)
 
@@ -60,7 +60,7 @@ Wcode(3Year+2Year == 5Year) and Wcode(3Year *2I == 6Year) would hold, but Wcode(
 
 Units could be used to manually define 
 all of the units of the SI system.
-Prebuild reusable code for the SI system is already provided in the library; we simply need to specify the desired support, as shown in the code below:
+Prebuilt reusable code for the SI system is already provided in the library; we simply need to specify the desired support, as shown in the code below:
 
 OBCode
 SI = Class:Unit.TraitSI['Support=>Num]
