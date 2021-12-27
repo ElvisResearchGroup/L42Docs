@@ -27,9 +27,9 @@ WBR
 For example: 
 
 OBCode
-Nums myNums= DoIt.getMutableNums() //ok promotions happens, myNums is immutable
+imm myNums = DoIt.getMutableNums() //ok promotions happens, myNums is immutable
 
-myNums= DoIt.getMutableNums() //myNums type is inferred to be mut Nums
+myNums = DoIt.getMutableNums() //myNums type is inferred to be mut Nums
 CCode
 
 Immutable lists can be combined with operators.
@@ -50,7 +50,7 @@ X[
   Nums[a;b]++Nums[c;d] == Nums[a;b;c;d];
   //element removal
   Nums[a;b;b;c]-b == Nums[a;c];
-  //sequence subtraction (like removeAll / set minus)
+  //sequence subtraction
   Nums[a;b;b;c]--Nums[b;c] == Nums[a];
   ]
 CCode
@@ -69,7 +69,7 @@ X[
   Nums[a;b;c;d].without(2I) == Nums[a;b;d];
   Nums[a;b;c;d].withoutLeft() == Nums[b;c;d];
   Nums[a;b;c;d].withoutRight() == Nums[a;b;c];
-  Nums[a;b;c;b;d].withoutAll(val=b) == Nums[a;c;d];
+  Nums[a;b;c;b;d].withoutAll(val=b) == Nums[a;c;d]; // like '--'
   Nums[a;b;c;b;d].without(left=b) == Nums[a;c;b;d]; //filters out the leftmost b
   Nums[a;b;c;b;d].without(right=b) == Nums[a;b;c;d]; //filter out the rightmost b
   ]
@@ -154,17 +154,21 @@ First some usual foreach:
 OBCode
 vec = S.List[S"foo"; S"bar"; S"beer"]
 var S result = S""
-for myElem in vec ( result++=myElem ) 
-//result==S"foobarbeer"
+var I max = 0I
+for myElem in vec (
+  result++=myElem 
+  max:=max.max(myElem.size())
+  )
+X[result==S"foobarbeer";max==4]
 CCode
 
 In 42 foreach allows to iterate on multiple collections at once, and also to update the collections:
 OBCode
-rs = Nums[1\;2\;3\;]
-as =  Nums[10\;20\;30\;]
-bs =  Nums[100\;200\;300\;]
+rs = Nums[  1\;  2\;  3\]
+as = Nums[ 10\; 20\; 30\]
+bs = Nums[100\;200\;300\]
 for a in as, b in bs, var r in rs ( r:= r+a+b )
-//now rs==Nums[111\;222\;333\;]
+X[ rs==Nums[111\;222\;333\] ]
 CCode
 
 In the example above, a dynamic error would be raised if 
@@ -175,7 +179,7 @@ We believe this is the right default behaviour.
 To allow, for example, Wcode(bs) to be longer then Wcode(as) and Wcode(rs),the programmer can 
 use some variants of Wcode(vals(that,to)); a method producing an iterator on a subsequence of the original sequence.
 The following variants are available: Wcode(vals(that,to)), Wcode(vals(that)), Wcode(vals(to)), Wcode(#vals(that,to)), Wcode(#vals(that)) and Wcode(#vals(to)).
-In concrete example below we use them control iteration:
+In concrete example below we use them to control iteration:
 OBCode
 for a in as, b in bs.vals(to=as.size()), var r in rs ( r:= r+a+b )
 //will give error if bs.size()<as.size() or as.size()!=rs.size()
@@ -223,37 +227,35 @@ They provide an expressive power similar to what list-comprehensions provide in 
 OBCode
 as =  Num.List[1\;2\;3\;4\;]
 //mapping
-bs0 = Num.List()(for a in as \add(a*10Num))
-//bs0==Num.List[10\;20\;30\;40\]
+bs0 = Num.List()( for a in as \add(a*10Num) )
+X[ bs0==Num.List[10\;20\;30\;40\] ]
 //filtering
-bs1 = Num.List()(for a in as if a>2Num \add(a))
-//bs1==Num.List[3\;4\]
+bs1 = Num.List()( for a in as if a>2Num \add(a) )
+X[ bs1==Num.List[3\;4\] ]
 //flatmapping
-bs2 = Num.List()(for a in as for b in bs0 \add(a+b))
-//bs0==Num.List[11\;21\;31\;41\;12\;22\;32\;42\;13\;23\;33\;43\;14\;24\;34\;44\;]
+bs2 = Num.List()( for a in as for b in bs0 \add(a+b) )
+X[ bs0==Num.List[11\;21\;31\;41\;12\;22\;32\;42\;13\;23\;33\;43\;14\;24\;34\;44\;] ]
 //reduce to string
 str0 = S"the content is: ".builder()(for a in as \add(a))
-//str0 = S"the content is: 1234"
-str1 = (if ns.isEmpty() S"[]" 
-    else S"[%ns.left()".builder()(for n in ns.vals(1I) \add(S", %n"))++S"]")
-//str1 = S"[1, 2, 3, 4]"
-acc  = (var x = 0Num for a in as ( x+=a ) x) //reduce/fold
-acc  = 0Num.acc()(for a in as \add(a))
-//acc == 10Num
+X[ str0 == S"the content is: 1234" ]
+str1 = S"[%as.left()".builder()( for n in as.vals(1I) \add(S", %n") )++S"]"
+X[ str1 == S"[1, 2, 3, 4]" ]
+acc  = ( var x = 0Num, for a in as ( x+=a ), x ) //reduce/fold
+acc  = 0Num.acc()( for a in as \add(a) )
+X[ acc == 10Num ]
 
 //checks a property; great in an if or an X[]
-ok0 = Match.Some()(for a in as \add(a>3Num))
-//ok0==true
+ok0 = Match.Some()( for a in as \add(a>3Num) )
+X[ ok0 ]
 ok1 = Match.All()(for a in as \add(a>3Num))
-//ok1==false
+X[ !ok1 ]
 ok2 = Match.None()(for a in as \add(a>3Num))
-//ok2==false
-ok3 = Match.Count()(for a in as \add(a>3Num))
+X[ !ok2 ]
 ok3 = 0I.acc()(for a in as \addIf(a>3Num))
-//ok3==2I
-asContainsAllBs = Match.All()(for b in bs \add(b in as))
-asIntersectBs = Match.Some()(for b in bs \add(b in as))
-asDisjointBs = Match.None()(for b in bs \add(b in as))
+X[ ok3==2I ]
+asContainsAllBs = Match.All()( for b in bs \add(b in as) )
+asIntersectBs = Match.Some()( for b in bs \add(b in as) )
+asDisjointBs = Match.None()( for b in bs \add(b in as) )
 //Note: b in as == as.contains(b)
 
 CCode
@@ -272,19 +274,19 @@ all instances of Wcode(Num) are immutable; we now discuss what happens where
 mutable lists contains a mixture of mutable and immutable elements.
 Consider the following code:
 OBCode
-Point = Data:{var Num x, var Num y}
+Point  = Data:{var Num x, var Num y}
 Points = Collection.list(Point)
 ..
-imm p0=Point(x=0\,y=0\) //an imm point
-p1=Point(x=1\,y=1\) //a mut point
-ps=Points[p0;mutVal=p1] //a mut list with both points
+imm p0 = Point(x=0\,y=0\) //an imm point
+p1 = Point(x=1\,y=1\) //a mut point
+ps = Points[p0;mutVal=p1] //a mut list with both points
 X[
-  p0==ps.val(0\);
+  p0==ps.val(0I);
   p0==ps.left();
-  p1.readEquality(ps.#val(1\)); //== only works on imms,
-  p1.readEquality(ps.#right()); //readEquality checks for structural equality
-  p0.readEquality(ps.readVal(0\)); // .readVal generalizes over imm/mut values
-  p1.readEquality(ps.readVal(1\));
+  p1.readEquality(ps.#val(1I)); // '==' only works on imms, and check on norms
+  p1.readEquality(ps.#right()); // readEquality checks for structural equality
+  p0.readEquality(ps.readVal(0I)); // .readVal generalizes over imm/mut values
+  p1.readEquality(ps.readVal(1I));
   ]
 for read p in ps ( Debug(p) )
 CCode
@@ -294,8 +296,7 @@ take the point out we have to add the Wcode(`#') to the method.
 When iterating on a list, if we expect a mixture of Wcode(mut) and Wcode(imm) values we must add Wcode(read)
 to avoid a runtime error.
 If we expect all values to be Wcode(mut), we can write Wcode(mut) instead.
-When a Wcode(mut) collection is promoted to Wcode(imm), it still remembers what values were originally inserted as
- Wcode(mut).
+When a Wcode(mut) collection is promoted to Wcode(imm), it still remembers what values were originally inserted as Wcode(mut).
 To make it so that all values can be read as Wcode(imm), we can use the method
 Wcode(.immNorm()). In addition of normalizing the collection, it also marks all values
 accessible as Wcode(imm), as shown in the code below:
