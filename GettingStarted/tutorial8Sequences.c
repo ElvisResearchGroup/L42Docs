@@ -102,18 +102,6 @@ CCode
 
 WTitle(`Mutate sequences')
 
-Mutable sequences can contain mutable objects.
-While this can be useful in special circumstances, it can create aliasing issues similar to the
-ones of the animals example of before.
-To warn against such issues, methods Wcode(left()), Wcode(right()) and Wcode(val(that)) return 
-Wcode(read) references to mutable objects. In order to obtain 
-a Wcode(mut) reference, the user needs to use the methods
-Wcode(`#left()'),
- Wcode(`#right()')
- and Wcode(`#val(that)').
-
-WP
-
 Mutable sequences can be more efficient that 
 immutable ones, and are more general, since they 
 can store mutable objects.
@@ -153,13 +141,13 @@ We now show various pattens to iterate on lists.
 First some usual foreach:
 OBCode
 vec = S.List[S"foo"; S"bar"; S"beer"]
-var S result = S""
-var I max = 0I
+var result = S""
+var max = 0I
 for myElem in vec (
   result++=myElem 
   max:=max.max(myElem.size())
   )
-X[result==S"foobarbeer";max==4]
+X[result==S"foobarbeer";max==4I]
 CCode
 
 In 42 foreach allows to iterate on multiple collections at once, and also to update the collections:
@@ -179,7 +167,7 @@ We believe this is the right default behaviour.
 To allow, for example, Wcode(bs) to be longer then Wcode(as) and Wcode(rs),the programmer can 
 use some variants of Wcode(vals(that,to)); a method producing an iterator on a subsequence of the original sequence.
 The following variants are available: Wcode(vals(that,to)), Wcode(vals(that)), Wcode(vals(to)), Wcode(#vals(that,to)), Wcode(#vals(that)) and Wcode(#vals(to)).
-In concrete example below we use them to control iteration:
+In the example below we use them to control iteration:
 OBCode
 for a in as, b in bs.vals(to=as.size()), var r in rs ( r:= r+a+b )
 //will give error if bs.size()<as.size() or as.size()!=rs.size()
@@ -226,38 +214,46 @@ They provide an expressive power similar to what list-comprehensions provide in 
 
 OBCode
 as =  Num.List[1\;2\;3\;4\;]
+
 //mapping
 bs0 = Num.List()( for a in as \add(a*10Num) )
 X[ bs0==Num.List[10\;20\;30\;40\] ]
+
 //filtering
 bs1 = Num.List()( for a in as if a>2Num \add(a) )
 X[ bs1==Num.List[3\;4\] ]
+
 //flatmapping
 bs2 = Num.List()( for a in as for b in bs0 \add(a+b) )
 X[ bs0==Num.List[11\;21\;31\;41\;12\;22\;32\;42\;13\;23\;33\;43\;14\;24\;34\;44\;] ]
+
 //reduce to string
-str0 = S"the content is: ".builder()(for a in as \add(a))
+str0 = S"the content is: ".builder()( for a in as \add(a) )
 X[ str0 == S"the content is: 1234" ]
 str1 = S"[%as.left()".builder()( for n in as.vals(1I) \add(S", %n") )++S"]"
 X[ str1 == S"[1, 2, 3, 4]" ]
-acc  = ( var x = 0Num, for a in as ( x+=a ), x ) //reduce/fold
-acc  = 0Num.acc()( for a in as \add(a) )
-X[ acc == 10Num ]
+
+//reduce/fold
+acc  = ( var x = 0Num, for a in as ( x+=a ), x )
+acc1  = 0Num.acc()( for a in as \add(a) ) //also \addIf, \times, \val ..
+X[ acc==acc1; acc1 == 10Num ]
 
 //checks a property; great in an if or an X[]
 ok0 = Match.Some()( for a in as \add(a>3Num) )
 X[ ok0 ]
-ok1 = Match.All()(for a in as \add(a>3Num))
-X[ !ok1 ]
-ok2 = Match.None()(for a in as \add(a>3Num))
-X[ !ok2 ]
-ok3 = 0I.acc()(for a in as \addIf(a>3Num))
-X[ ok3==2I ]
+
+X[ !Match.All()( for a in as \add(a>3Num) ) ]
+
+X[ !Match.None()( for a in as \add(a>3Num) ) ]
+
+X[ 0I.acc()( for a in as \addIf(a>3Num) )==2I ]
+
 asContainsAllBs = Match.All()( for b in bs \add(b in as) )
+
 asIntersectBs = Match.Some()( for b in bs \add(b in as) )
+
 asDisjointBs = Match.None()( for b in bs \add(b in as) )
 //Note: b in as == as.contains(b)
-
 CCode
 The language 42 is expression based. Expressions that look like statements are just expressions with the
 Wcode(Void) return type.
@@ -268,6 +264,18 @@ Wcode(Match.**) examples short circuit when appropriate, so that the for can ter
 
 
 WTitle((3/5) `Lists with mutable and immutable elements')
+
+Mutable sequences can contain mutable objects.
+While this can be useful in special circumstances, it can create aliasing issues similar to the
+ones of the animals example of before.
+To warn against such issues, methods Wcode(left()), Wcode(right()) and Wcode(val(that)) return 
+Wcode(read) references to mutable objects. In order to obtain 
+a Wcode(mut) reference, the user needs to use the methods
+Wcode(`#left()'),
+ Wcode(`#right()')
+ and Wcode(`#val(that)').
+
+WP
 
 Up to now we focused on lists of Wcode(Num), but 
 all instances of Wcode(Num) are immutable; we now discuss what happens where

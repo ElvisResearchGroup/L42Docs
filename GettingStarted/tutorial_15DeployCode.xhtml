@@ -129,8 +129,7 @@ C = {reuse [L42.is/FordTowel]
   }
 ]]></pre>
 
-Different code parts reason about different set of classes;
-including those predefined in other languages.
+Different code parts build upon different set of classes.
 That is, by introducing multiple towels in nested scopes,
 the names of the other scopes are <it style="font-style: italic;">masked</it>.
 This is very useful for code that reasons on code; such task is pervasive in 42. 
@@ -189,10 +188,10 @@ independent projects and developers; they are what is often called a third party
 However, most modules exists just as development tools in 
 order to keep the complexity of big projects under control.
 </p><p>
-In 42 is easy to code with multiple modules, and modules can be much smaller than usual third party libraries and framewors in other languages.
+In 42 it is easy to code with multiple modules, and modules can be much smaller than usual third party libraries and frameworks in other languages.
 </p><p>
 In 42 it is possible to employ a programming model where every developer (or every pair of developers in a pair programming style) is the
-only one responsible of one (or more) modules and their maintenance process, while the group leader give specifications and tests to be met by the various module developers and will glue all the code together.
+only one responsible of one (or more) modules and their maintenance process, while the group leader gives specifications and tests to be met by the various module developers and will glue all the code together.
 </p><p>
 
 Modules can be deployed in a way similar to towel deployment;
@@ -219,13 +218,13 @@ DeployAirplaneModule = DeployGit.module(Module()
   writer=GW.#$of(token=Secret.#$of(),message=S".."))
 ]]></pre>
 
-This code deployes <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Module.AirplaneUnits]]></span><it style="font-style: bold; color:green;">&#187;</it> to an URL as a module.
-and turns private <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AirplaneUnitsUtilities]]></span><it style="font-style: bold; color:green;">&#187;</it> and any other 
-nested class stained on top of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+This code deploys <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Module.AirplaneUnits]]></span><it style="font-style: bold; color:green;">&#187;</it> to an URL as a module,
+and turns <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AirplaneUnitsUtilities]]></span><it style="font-style: bold; color:green;">&#187;</it> and any other 
+nested classes stained on top of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> private.
 This includes 
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Unit]]></span><it style="font-style: bold; color:green;">&#187;</it>, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Kg]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Meter]]></span><it style="font-style: bold; color:green;">&#187;</it> from <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[RichTowel]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 <br/>
-If there was any nested class unreachable from public classes inside
+If there were any nested classes unreachable from public classes inside
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AirplaneUnitsUtilities]]></span><it style="font-style: bold; color:green;">&#187;</it> it will be pruned away.
 Same for any nested class stained on top of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AdamsTowel]]></span><it style="font-style: bold; color:green;">&#187;</it> and for 
 any private unreachable one in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[AirplaneUnits]]></span><it style="font-style: bold; color:green;">&#187;</it>.
@@ -381,7 +380,7 @@ the implementation of <it style="font-style: bold; color:green;">&#171;</it><spa
 
 Towel staining is a very minimal personalization, and stained towels are fully compatible with the original one.
 
-By embroidery you can personalize a lot more the content of your towel,
+With embroidery you can personalize the content of your towel a lot more,
 but when module deployment 
 relies on an embroidered towel, compatibility with the original towel is lost.
 For example, an embroidered version of 
@@ -440,7 +439,7 @@ Note that libraries originally developed for
 </p><h2> (5/5)Deployment: programs, libraries and towels; summary </h2> <p>
 <ul><li>
 42 is a metaprogramming tool.
-It is natural to use 42 either a language (to run a program)
+It is natural to use 42 either as a language (to run a program)
 or as a compiler (to deploy programs, libraries and towels).
 </li><li>
 Indeed we expect all sizeable 42 projects to use 42 as a compiler,

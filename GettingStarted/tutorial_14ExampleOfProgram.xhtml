@@ -84,9 +84,9 @@ gtag('event', 'conversion', {'send_to': 'AW-10810288706/U3KJCKekmIUDEMLU36Io'});
 
  </p><p id="ExampleOfProgram"> </p><div style="break-after:page"></div><h1> Example of a 42 program </h1> <p>
 
-In this chapter, we will see how to develop a GUI connected with a Data Base.
-For simplicity we consider to have a database with a single table <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person]]></span><it style="font-style: bold; color:green;">&#187;</it> that contains a fiew fields.
-We want to make a GUI that displays the data and allows to edit it.
+In this chapter, we will see how to develop a GUI connected with a DataBase.
+For simplicity, consider that we have a database with a single table <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person]]></span><it style="font-style: bold; color:green;">&#187;</it> that contains a few fields.
+We want to make a GUI that displays the data and allows us to edit it.
 
 </p><h2> (1/5) Query boxes </h2> <p>
 First we load the libraries we need:
@@ -99,7 +99,7 @@ LoadJ = Load:{reuse [L42.is/JavaServer]}
 LoadGui = Load:{reuse [L42.is/GuiBuilder]}
 Query = Load:{reuse [L42.is/Query]}
 ]]></pre>
-We then declare some useful units. Persons have ages expressed in years,
+We then declare some useful units. <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person]]></span><it style="font-style: bold; color:green;">&#187;</it> objects have ages expressed in years,
 heights expressed in meters and weights expressed in Kgs.
 <pre class="l42Big"><![CDATA[
 Year = Unit(I)
@@ -107,9 +107,9 @@ Meter = Unit(Num)
 Kg = Unit(Num)
 ]]></pre>
 </p><p>
-We then ask <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Query.sql]]></span><it style="font-style: bold; color:green;">&#187;</it> to generate a class to support SQL queries using a java slave and a connection string.
+We then ask <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Query.sql]]></span><it style="font-style: bold; color:green;">&#187;</it> to generate a class to support SQL queries using a Java slave and a connection string.
 As an example, we are using a derby DB.
-For now, we consider the DB to be altready populated. In the end we discuss how to initialize the DB itself.
+For now, we consider the DB to be already populated. In the end we discuss how to initialize the DB itself.
 <pre class="l42Big"><![CDATA[
 DBJ = LoadJ(slaveName=S"dbServer{}") //slave for the DB connection
 DB = Query.sql(//instantiate Query for SQL queries
@@ -145,7 +145,7 @@ Insert = DB.query[Void;S;Year;Meter;Kg]"""
 DeleteId = DB.query[Void;I]"DELETE FROM Person WHERE id=@id"
 DeleteName = DB.query[Void;S]"DELETE FROM Person WHERE name=@name"
 ]]></pre>
-The symbol <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@]]></span><it style="font-style: bold; color:green;">&#187;</it> identifies parameter in the queries, while the types
+The symbol <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@]]></span><it style="font-style: bold; color:green;">&#187;</it> identifies parameters in the queries, while the types
 in <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[[..]]]></span><it style="font-style: bold; color:green;">&#187;</it> are the query result type followed by any parameters.
 Queries return lists of objects. Those objects are constructed by calling a (factory) method whose arguments have the same name as the query fields.
 </p><p>
@@ -165,7 +165,7 @@ Key = Data:Data.AddList:{I id}
 PName = Data:Data.AddList:{S name}
 Person = Data:Data.AddList:{S name, Year age, Meter height, Kg weight}
 ]]></pre>
-In the same way, if a query returns a signle row, we will have it served as the only element of a lenght 1 list.
+In the same way, if a query returns a single row, we will have it served as the only element of a length 1 list.
 </p><p>
 We can now make the set of all user queries with another <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[QueryBox]]></span><it style="font-style: bold; color:green;">&#187;</it>:
 
@@ -216,7 +216,7 @@ mut Dialogs iql
 @GuiJ.Handler mut method Void removeByName(S msg)=(/*..*/)
 ]]></pre>
 Methods annotated with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[GuiJ.Handler]]></span><it style="font-style: bold; color:green;">&#187;</it> will respond to the corresponding event from the view.
-Those methods must all take a single <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S]]></span><it style="font-style: bold; color:green;">&#187;</it> parameter, used by the view to comunicate extra informations. This parameter is often unused.
+Those methods must all take a single <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[S]]></span><it style="font-style: bold; color:green;">&#187;</it> parameter, used by the view to communicate extra information. This parameter is often unused.
 Those methods are defined as follows:
 <pre class="l42Big"><![CDATA[
 @GuiJ.Handler mut method Void printAll(S msg)=(
@@ -235,7 +235,7 @@ That is:
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[this.#sql().all()]]></span><it style="font-style: bold; color:green;">&#187;</it> is the field access for the query object doing the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[DB.query[Table.Person.List]"SELECT * FROM Person"]]></span><it style="font-style: bold; color:green;">&#187;</it> query.
 Finally, since this query takes no parameters, we just use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[()]]></span><it style="font-style: bold; color:green;">&#187;</it> to call it. Calling the query returns a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Table.Person.List]]></span><it style="font-style: bold; color:green;">&#187;</it> object,
 that is iterated with the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[for]]></span><it style="font-style: bold; color:green;">&#187;</it>. We map the fields of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person]]></span><it style="font-style: bold; color:green;">&#187;</it> onto local variables <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[(id,name,age,height,weight)]]></span><it style="font-style: bold; color:green;">&#187;</it> for easy access in the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[for]]></span><it style="font-style: bold; color:green;">&#187;</it> body.
-For each <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person]]></span><it style="font-style: bold; color:green;">&#187;</it>, the body asks the view to add a line into the table. Information have to be encoded as a string to be passed to the view. String interpolation <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[%]]></span><it style="font-style: bold; color:green;">&#187;</it> make this easy, and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> values are converted as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Double]]></span><it style="font-style: bold; color:green;">&#187;</it> to print them with decimal points instead of printing them as a fraction.
+For each <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Person]]></span><it style="font-style: bold; color:green;">&#187;</it>, the body asks the view to add a line into the table. Information has to be encoded as a string to be passed to the view. String interpolation <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[%]]></span><it style="font-style: bold; color:green;">&#187;</it> make this easy, and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Num]]></span><it style="font-style: bold; color:green;">&#187;</it> values are converted as <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Double]]></span><it style="font-style: bold; color:green;">&#187;</it> to print them with decimal points instead of printing them as a fraction.
 Finally, we <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[whoops]]></span><it style="font-style: bold; color:green;">&#187;</it> exceptions to assert that we do not expect them to be leaked.
 <br/>
 This is quite a mouthful.
@@ -280,9 +280,9 @@ Then, the data of each <it style="font-style: bold; color:green;">&#171;</it><sp
 Note how the parameters of the query <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[.insert()]]></span><it style="font-style: bold; color:green;">&#187;</it> are provided using the names of the query declaration
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[".. Values (@name,@age,@height,@weight)"]]></span><it style="font-style: bold; color:green;">&#187;</it>:
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[@name]]></span><it style="font-style: bold; color:green;">&#187;</it> in the query string was used to create the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[name]]></span><it style="font-style: bold; color:green;">&#187;</it> parameter; and so on for the others. Thanks to metaprogramming
-the query method is syntetized out of the query string.
+the query method is synthesized out of the query string.
 <br/>
-After insterting all the new data in the database, we refresh the displayed table by manually calling <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[.printAll(msg)]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+After inserting all the new data in the database, we refresh the displayed table by manually calling <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[.printAll(msg)]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 
 </p><p>
 <pre class="l42Big"><![CDATA[
@@ -321,8 +321,8 @@ It is also interesting to consider what happens if the database schema changes.
 If the person table is removed, or the person fields are renamed,
 then we will get an error while typing the model.
 <br/>
-In some sense we are turning into understandable compile time errors events that would have caused a runtime exception in most other languages.
-
+In some sense we are turning events that would have caused a runtime exception into
+understandable compile time errors.
 
 
 </p><h2> (3/5) View </h2> <p>
@@ -367,7 +367,7 @@ class method Void (mut GuiJ j)[_] = (
   )
 ]]></pre>
 
-Where <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[gui.addButton(..)]]></span><it style="font-style: bold; color:green;">&#187;</it> is a covenient way to generate a button raising 42 events.
+Where <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[gui.addButton(..)]]></span><it style="font-style: bold; color:green;">&#187;</it> is a convenient way to generate a button raising 42 events.
 When such 42 code will run, the following Java code will be generated:
 <pre class="java"><![CDATA[
 package miniGui; //generated and compiled code, it is not saved on any file
@@ -425,18 +425,18 @@ and in the java main <it style="font-style: bold; color:green;">&#171;</it><span
 will be called.
 As you can see, the code provided by the user is simply injected into
 the body of a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[JFrame]]></span><it style="font-style: bold; color:green;">&#187;</it> class.
-From that contex we can declare fields and methods, and we can declare initialization actions using (non-static) java initialization blocks.
+From that context we can declare fields and methods, and we can declare initialization actions using (non-static) java initialization blocks.
 
-This code would lok trivial if you a Java Swing expert, and very obscure otherwise.
+This code would look trivial if you are a Java Swing expert, and very obscure otherwise.
 
 Note how we use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[tModel.addRow(msg.split(","))]]></span><it style="font-style: bold; color:green;">&#187;</it>
 to add the row to the table: in java <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[addRow]]></span><it style="font-style: bold; color:green;">&#187;</it> wants an array
 and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[msg.split(",")]]></span><it style="font-style: bold; color:green;">&#187;</it> will produce an array from a string whose parts are separated by <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[']]></span><it style="font-style: bold; color:green;">&#187;</it>.
 We made in this way for the sake of a simple example, but
-we are unsatistied by this brittle solution: it only works since names or numbers should not have the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[']]></span><it style="font-style: bold; color:green;">&#187;</it> inside.
+we are unsatisfied by this brittle solution: it only works since names or numbers should not have the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[']]></span><it style="font-style: bold; color:green;">&#187;</it> inside.
 
 </p><h2> (4/5) Putting all together </h2> <p>
-Finally, a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Main]]></span><it style="font-style: bold; color:green;">&#187;</it> puts all together
+Finally, a <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Main]]></span><it style="font-style: bold; color:green;">&#187;</it> puts this all together
 <pre class="l42Big"><![CDATA[
 reuse [L42.is/AdamsTowel]
 Unit = Load:{reuse [L42.is/Unit]}
@@ -502,8 +502,8 @@ in this application we used
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Query]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 Those are all normal 42 libraries that 42 programmers could write themselves, and indeed studying the implementation of those libraries is currently the best way to become a Magrathean.
 </p><p>
-In particular, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Query]]></span><it style="font-style: bold; color:green;">&#187;</it> allows 
-to take queries written in another language (for now, just SQL and IQL, but the concept is expandible)
+In particular, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Query]]></span><it style="font-style: bold; color:green;">&#187;</it> allows us 
+to take queries written in another language (for now, just SQL and IQL, but the concept is expandable)
 and converts them into a simple 42 well typed API that can be used
 to build programs in an compact and elegant way.
 Concepts like the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[QueryBox]]></span><it style="font-style: bold; color:green;">&#187;</it> can be used to control what part of an application is allowed to do important operations, adding a great deal of security.

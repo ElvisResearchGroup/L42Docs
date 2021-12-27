@@ -101,7 +101,7 @@ in unpredictable ways during library evolutions, and can be enabled or disabled.
 Since program logic can depend on guards being thrown,
 guards need to be consistent across library evolution.
 
-Assertions are a convenient tool to prevent the code from proceding
+Assertions are a convenient tool to prevent the code from proceeding
 out of our designed state space. The assertion class called <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[X]]></span><it style="font-style: bold; color:green;">&#187;</it> 
 looks like a road sign
 and
@@ -180,7 +180,7 @@ It is very common for an interface to be usable as a decorator, creating new cod
 
 In 42 there is no explicit <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[try]]></span><it style="font-style: bold; color:green;">&#187;</it> statement,
 but any block of code delimited by round or curly brackets can contain <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[catch]]></span><it style="font-style: bold; color:green;">&#187;</it>.
-In the code example below, lines 2 and 3 are conceptually inside the implict <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[try]]></span><it style="font-style: bold; color:green;">&#187;</it> statement.
+In the code example below, lines 2 and 3 are conceptually inside the implicit <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[try]]></span><it style="font-style: bold; color:green;">&#187;</it> statement.
 If nothing is thrown then lines 6, 7 and 8 are executed.
 Note that <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[b3]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[b4]]></span><it style="font-style: bold; color:green;">&#187;</it> can see <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[b1]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[b2]]></span><it style="font-style: bold; color:green;">&#187;</it>; this would not naturally happen in a language with explicit <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[try]]></span><it style="font-style: bold; color:green;">&#187;</it> statements; <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[b1]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[b2]]></span><it style="font-style: bold; color:green;">&#187;</it> would become local bindings inside the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[try]]></span><it style="font-style: bold; color:green;">&#187;</it> statement.
 <pre class="l42Big"><![CDATA[
@@ -270,7 +270,7 @@ Without strong error safety, we could simply catch the error and keep observing 
 
 </p><h2> (3/5) Exceptions and errors </h2> <p>
 
-Exceptions are like checked exceptions in java.
+Exceptions are like checked exceptions in Java.
 As with errors, every immutable object can be thrown as an exception.
 You can just write <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[exception]]></span><it style="font-style: bold; color:green;">&#187;</it> instead of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[error]]></span><it style="font-style: bold; color:green;">&#187;</it> while throwing or catching. When catching, <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[exception]]></span><it style="font-style: bold; color:green;">&#187;</it> is the default, so you can write <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[catch Foo x]]></span><it style="font-style: bold; color:green;">&#187;</it>
 instead of <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[catch exception Foo x]]></span><it style="font-style: bold; color:green;">&#187;</it>.
