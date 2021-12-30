@@ -11,7 +11,7 @@ WComm Pure OO
 WComm </Button>
 
 <Button class= 'button' type= 'button' onclick=
- "location.href = 'tutorial.xhtml#Download';">
+ "location.href = 'download.xhtml';">
 Download
 </Button>
 
@@ -232,11 +232,9 @@ WComm </li>
 WP
 All those statements looks unbelievable given current programming wisdom.
 <ul><li>
-In the Wlink(tutorial,guide), we explain the language, and we explain those statements and how they work.
+In the Wlink(tutorial_01Basics,guide), we explain the language, and we explain those statements and how they work.
 </li><li>
-You can also 
-<a href="tutorial.xhtml#Download">download 42</a>
-and try it yourself.
+You can also Wlink(download,`download 42') and try it yourself.
 </li><li>
 You can also engage with the open source GitHub <a href="https://github.com/ElvisResearchGroup/L42">repository</a>.
 </li>
@@ -334,7 +332,7 @@ m4_include(`syntaxCompare.h')m4_dnl
 
 WComm WTitle(`Now, dig into the tutorial!')
 
-WComm Wlink(tutorial,Let's board the Vogon ship)
+WComm Wlink(tutorial_01Basics,Let's board the Vogon ship)
 
 
 m4_include(`footer.h')m4_dnl
