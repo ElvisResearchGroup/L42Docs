@@ -336,8 +336,8 @@ OBCode
 Point = Data:{ var Num x, var Num y }
 OPoint = Collection.optional(Point)
 Main = (
-  imm p00=Point(x=0\ y=0\)//an imm Point in 00
-  mut p01=Point(x=0\ y=1\)//a mut Point originally in 01
+  imm p00 = Point(x=0\ y=0\)//an imm Point in 00
+  mut p01 = Point(x=0\ y=1\)//a mut Point originally in 01
   var imm p00Box = OPoint(p00) //immutable Optional Point
   var mut p01Box = OPoint(p01) //mutable Optional Point
   X[
@@ -352,11 +352,11 @@ Main = (
   p00Box:= OPoint()//updates the local variables with empty boxes
   p01Box:= OPoint()
   if !p00Box ( Debug(S"printing %p00Box") )//printing []
-    X[
+  X[
     !(p00 in p00Box);
     !p00Box;//using isPresent() or not is just a matter of style
     !p00Box.isPresent();
-    ]
+    ]  
   )
 CCode
 At this point in the tutorial, some readers will be confused that we can update the local variable binding 
@@ -373,6 +373,29 @@ On the other side, consider
 Wcode(OPoint(p00)) and Wcode(OPoint(p01)): the first one is immutable since Wcode(p00) is Wcode(imm),
 while the second one is mutable since Wcode(p01) is Wcode(mut).
 
+WP
+Optionals can be combined with the short circuting operators Wcode(`&&') and Wcode(`||').
+Many interesting patterns emerge from this:
+OBCode
+S.Opt o1 = ..
+S.Opt o2 = ..
+
+if o1 && o2 (/*executed only if both are present*/)
+
+o3 = o1 || o2 //o3==o1 if o1 is present, otherwise o3==o2; thus
+//o3 is empty only if they are both empty. Very useful pattern
+
+o4 = o1 && o2 //o4==o2 if also o1 is present, otherwise o4 is empty
+
+Bool b = !!o1 //hacky but effective conversion to bool :-P
+
+s1 = o1.val() //dynamic error if o1 is empty
+s2 = o1.val(orElse=S"default") //with a default value if o1 is empty.
+
+//what if computing the default value is a slow operation?
+(val) = o1 || S.Opt(MakeDefault.lotsOfTime())
+//This pattern computes the default value only if o1 is empty
+CCode
 
 WTitle(`Map')
 Thanks to normalization 42 can have very fast and most reliable hash sets and hash maps.
@@ -396,7 +419,7 @@ OBCode
 Point = Data:{var Num x, var Num y}
 Points = Collection.list(Point)
 PointToString = Collection.map(key=Point, val=S)
-Roads = Collection.map(key=Point, val=Point)
+Roads = Collection.map(key=S, val=Point)
 Main = (
   map = PointToString[
     key=\(x=3\ y=4\), val=S"MyBase";
@@ -407,19 +430,20 @@ Main = (
   //we can use (..) to extract the key/val fields from PointToString.Entry
   //this iteration is straightforward since all values are imm
   roads = Roads[
-    key=\(x=3\ y=4\), val=\(x=0\ y=0\); //immutable to immutable
-    key=\(x=0\ y=0\), mutVal=\(x=0\ y=0\);//immutable to mutable
-    key=\(x=5\ y=8\), mutVal=\(x=0\ y=0\);//immutable to mutable
+    key=S"Kelburn Parade", val=\(x=0\ y=0\); //immutable to immutable
+    key=S"The Terrace", mutVal=\(x=0\ y=0\);//immutable to mutable
+    key=S"Cuba Street", mutVal=\(x=0\ y=0\);//immutable to mutable
     ]
   for read (key, val) in roads ( Debug(S"%key->%val") )
   //we add 'read' in front to be able to read mixed imm/mut values
   //if all the values were mutable, we could just add 'mut' in front
   )
-  mut Roads.Opt?? optPoint = roads.#val(key=\(x=0\ y=0\)))
-  optPoint.#val().x(50\)//update the field of the objectv inside the map
+  mut Roads.OVal optPoint = roads.#val(key=S"Cuba Street"))
+  optPoint.#val().x(50\)//update the field of the object inside the map
   CCode
 
 As you can see, when objects are retried from the map, we obtain an optional value; this is because statically we can not know if a key is mapped to a value or not.
+We can use Wcode(val(orElse)) or the Wcode(||) pattern to provide a default value if the key is not contained in the map.
 WBR
 In addition to conventional Wcode(size()) and Wcode(isEmpty()),
 maps offers the following methods:
@@ -450,9 +474,7 @@ In particular, in addition to conventional Wcode(size()) and Wcode(isEmpty()),
 sets offer methods Wcode(add(that)) and Wcode(remove(that)) to add and remove an element,
 and elements can be extracted in the insertion order by using method Wcode(val(that))
 
-We are considering adding operators Wcode(`+,-,++,--') to sets, as supported by lists, and
-support for the Wcode(\) as well.
-An operator Wcode(&&) returning the intersection of the two sets.
+We are considering adding operators Wcode(`+,-,++,--') to sets, as supported by lists.
 On the other side, boolean methods like Wcode(intersect(that)) Wcode(disjoint(that)) and Wcode(containsAll(that)) can already be easily emulated with Wcode(Match) as we shown for lists.
 
 WTitle(`(5/5) Collection summary')
@@ -463,8 +485,7 @@ around collections, it is worth the effort to memorize them.
 </li><li>
 Immutable collections are easy to play with, using operators and Wcode(with**) methods.
 </li><li>
-Mutable collections can be more efficient and flexible, but they come with additional
-difficulties.
+Mutable collections can be more efficient and flexible, but they come with additional difficulties.
 </li><li>
 Most methods have a general version that works with an index, and specialized Wcode(left) and
 Wcode(right) variants.

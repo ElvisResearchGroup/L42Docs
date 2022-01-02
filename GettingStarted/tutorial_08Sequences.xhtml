@@ -420,8 +420,8 @@ Optionals are also optimized so that they do not require the creation of any new
 Point = Data:{ var Num x, var Num y }
 OPoint = Collection.optional(Point)
 Main = (
-  imm p00=Point(x=0\ y=0\)//an imm Point in 00
-  mut p01=Point(x=0\ y=1\)//a mut Point originally in 01
+  imm p00 = Point(x=0\ y=0\)//an imm Point in 00
+  mut p01 = Point(x=0\ y=1\)//a mut Point originally in 01
   var imm p00Box = OPoint(p00) //immutable Optional Point
   var mut p01Box = OPoint(p01) //mutable Optional Point
   X[
@@ -436,11 +436,11 @@ Main = (
   p00Box:= OPoint()//updates the local variables with empty boxes
   p01Box:= OPoint()
   if !p00Box ( Debug(S"printing %p00Box") )//printing []
-    X[
+  X[
     !(p00 in p00Box);
     !p00Box;//using isPresent() or not is just a matter of style
     !p00Box.isPresent();
-    ]
+    ]  
   )
 ]]></pre>
 At this point in the tutorial, some readers will be confused that we can update the local variable binding 
@@ -457,6 +457,29 @@ On the other side, consider
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[OPoint(p00)]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[OPoint(p01)]]></span><it style="font-style: bold; color:green;">&#187;</it>: the first one is immutable since <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[p00]]></span><it style="font-style: bold; color:green;">&#187;</it> is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[imm]]></span><it style="font-style: bold; color:green;">&#187;</it>,
 while the second one is mutable since <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[p01]]></span><it style="font-style: bold; color:green;">&#187;</it> is <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[mut]]></span><it style="font-style: bold; color:green;">&#187;</it>.
 
+</p><p>
+Optionals can be combined with the short circuting operators <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[&&]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[||]]></span><it style="font-style: bold; color:green;">&#187;</it>.
+Many interesting patterns emerge from this:
+<pre class="l42Big"><![CDATA[
+S.Opt o1 = ..
+S.Opt o2 = ..
+
+if o1 && o2 (/*executed only if both are present*/)
+
+o3 = o1 || o2 //o3==o1 if o1 is present, otherwise o3==o2; thus
+//o3 is empty only if they are both empty. Very useful pattern
+
+o4 = o1 && o2 //o4==o2 if also o1 is present, otherwise o4 is empty
+
+Bool b = !!o1 //hacky but effective conversion to bool :-P
+
+s1 = o1.val() //dynamic error if o1 is empty
+s2 = o1.val(orElse=S"default") //with a default value if o1 is empty.
+
+//what if computing the default value is a slow operation?
+(val) = o1 || S.Opt(MakeDefault.lotsOfTime())
+//This pattern computes the default value only if o1 is empty
+]]></pre>
 
 </p><h2> Map </h2> <p>
 Thanks to normalization 42 can have very fast and most reliable hash sets and hash maps.
@@ -480,7 +503,7 @@ Maps and sets have less methods than lists, but they can still be iterated upon,
 Point = Data:{var Num x, var Num y}
 Points = Collection.list(Point)
 PointToString = Collection.map(key=Point, val=S)
-Roads = Collection.map(key=Point, val=Point)
+Roads = Collection.map(key=S, val=Point)
 Main = (
   map = PointToString[
     key=\(x=3\ y=4\), val=S"MyBase";
@@ -491,19 +514,20 @@ Main = (
   //we can use (..) to extract the key/val fields from PointToString.Entry
   //this iteration is straightforward since all values are imm
   roads = Roads[
-    key=\(x=3\ y=4\), val=\(x=0\ y=0\); //immutable to immutable
-    key=\(x=0\ y=0\), mutVal=\(x=0\ y=0\);//immutable to mutable
-    key=\(x=5\ y=8\), mutVal=\(x=0\ y=0\);//immutable to mutable
+    key=S"Kelburn Parade", val=\(x=0\ y=0\); //immutable to immutable
+    key=S"The Terrace", mutVal=\(x=0\ y=0\);//immutable to mutable
+    key=S"Cuba Street", mutVal=\(x=0\ y=0\);//immutable to mutable
     ]
   for read (key, val) in roads ( Debug(S"%key->%val") )
   //we add 'read' in front to be able to read mixed imm/mut values
   //if all the values were mutable, we could just add 'mut' in front
   )
-  mut Roads.Opt?? optPoint = roads.#val(key=\(x=0\ y=0\)))
-  optPoint.#val().x(50\)//update the field of the objectv inside the map
+  mut Roads.OVal optPoint = roads.#val(key=S"Cuba Street"))
+  optPoint.#val().x(50\)//update the field of the object inside the map
   ]]></pre>
 
 As you can see, when objects are retried from the map, we obtain an optional value; this is because statically we can not know if a key is mapped to a value or not.
+We can use <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[val(orElse)]]></span><it style="font-style: bold; color:green;">&#187;</it> or the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[||]]></span><it style="font-style: bold; color:green;">&#187;</it> pattern to provide a default value if the key is not contained in the map.
 <br/>
 In addition to conventional <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[size()]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[isEmpty()]]></span><it style="font-style: bold; color:green;">&#187;</it>,
 maps offers the following methods:
@@ -534,9 +558,7 @@ In particular, in addition to conventional <it style="font-style: bold; color:gr
 sets offer methods <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[add(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[remove(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> to add and remove an element,
 and elements can be extracted in the insertion order by using method <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[val(that)]]></span><it style="font-style: bold; color:green;">&#187;</it>
 
-We are considering adding operators <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[+,-,++,--]]></span><it style="font-style: bold; color:green;">&#187;</it> to sets, as supported by lists, and
-support for the <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[\]]></span><it style="font-style: bold; color:green;">&#187;</it> as well.
-An operator <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[&&]]></span><it style="font-style: bold; color:green;">&#187;</it> returning the intersection of the two sets.
+We are considering adding operators <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[+,-,++,--]]></span><it style="font-style: bold; color:green;">&#187;</it> to sets, as supported by lists.
 On the other side, boolean methods like <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[intersect(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[disjoint(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[containsAll(that)]]></span><it style="font-style: bold; color:green;">&#187;</it> can already be easily emulated with <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[Match]]></span><it style="font-style: bold; color:green;">&#187;</it> as we shown for lists.
 
 </p><h2> (5/5) Collection summary </h2> <p>
@@ -547,8 +569,7 @@ around collections, it is worth the effort to memorize them.
 </li><li>
 Immutable collections are easy to play with, using operators and <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[with**]]></span><it style="font-style: bold; color:green;">&#187;</it> methods.
 </li><li>
-Mutable collections can be more efficient and flexible, but they come with additional
-difficulties.
+Mutable collections can be more efficient and flexible, but they come with additional difficulties.
 </li><li>
 Most methods have a general version that works with an index, and specialized <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[left]]></span><it style="font-style: bold; color:green;">&#187;</it> and
 <it style="font-style: bold; color:green;">&#171;</it><span class="code"><![CDATA[right]]></span><it style="font-style: bold; color:green;">&#187;</it> variants.
