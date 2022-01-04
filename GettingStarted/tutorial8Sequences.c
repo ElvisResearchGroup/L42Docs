@@ -345,13 +345,13 @@ Main = (
     p00Box.val()==p00; //Data defines == only for imm references
     p01Box.val().readEquality(p01);//here .val() gives us a read reference
     ]
-  if p00Box ( Debug(S"printing %p00Box") )//printing [Point(x=0, y=0)]
+  if p00Box ( Debug(S"printing %p00Box") )//printing <Point(x=0, y=0)>
   //we can just check if a box is not empty as if it was a boolean
   p01Box.#val().x(50\)//updates the x value of the point
   Debug(S"printing %p01")//printing Point(x=50, y=1)
   p00Box:= OPoint()//updates the local variables with empty boxes
   p01Box:= OPoint()
-  if !p00Box ( Debug(S"printing %p00Box") )//printing []
+  if !p00Box ( Debug(S"printing %p00Box") )//printing <>
   X[
     !(p00 in p00Box);
     !p00Box;//using isPresent() or not is just a matter of style

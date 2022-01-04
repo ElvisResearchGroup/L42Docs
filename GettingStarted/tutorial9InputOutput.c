@@ -12,6 +12,7 @@ WBR
 The whole caching system relies on this property to work.
 WBR
 Thus input output, random numbers and any other kind of observable non determinism must preserve this property.
+WBR
 Introducing object capabilities:
 WBR
 An WTerm(object capability) is a mutable object whose methods can do some non deterministic, or otherwise privileged operation.
@@ -95,13 +96,13 @@ CCode
 WTitle((3/5) Object capabilities programming patterns)
 
 The advantage of the division of the file system in an interface and a Wcode(Real) implementation are not limited to testing.
-For example, the user could embed some security and on some restrictions in an alternative implementation of a file system.
+For example, the user could embed some security and some restrictions in an alternative implementation of a file system.
 Consider the following code:
 
 OBCode
 OnlyTxt = Public:{[Fs]
   mut Fs inner
-  
+
   read method Void checkTxt(Url that) = X.Guarded[
     that.toS().endsWith(S".txt")
     ]
@@ -130,7 +131,7 @@ SaferMain = (
   Debug(S"done")
   )
 CCode
-Any code that would take in input a Wcode(mut OnlyTxt) would have a limited access to the file system; only able to read and write onWcode(`*.txt') files.
+Any code that would take in input a Wcode(mut OnlyTxt) would have a limited access to the file system; only able to read and write on Wcode(`*.txt') files.
 Here we see for the first time the decorator Wcode(Public).
 Wcode(Public) explores all the nested classes of the decorated code, and if there is at least a Wcode(@Public) annotation, all the other members of such nested class will become private.
 Methods implemented from interfaces are left untouched.
@@ -172,14 +173,14 @@ MainAsk = (
     |import is.L42.platformSpecific.javaEvents.Event;
     |public record Bar1(Event event){//class Bar1 will be instantiated by 42
     |  public Bar1{                  //and the Event parameter is provided
-    |    event.registerAskEvent("BarAsk",(k,id,msg)->
+    |    event.registerAskEvent("BarAsk",(id,msg)->
     |      "any string computed in Java using "+id+" and "+msg);
     |    }
     |  }
     """)
   S.Opt text = j.askEvent(key=S"BarAsk", id=S"anId",msg=S"aMsg")
   {}:Test"OptOk"(actual=text, expected=S"""
-    |["any string computed in Java using anId and aMsg"]
+    |<"any string computed in Java using anId and aMsg">
     """.trim())
   )
 CCode
@@ -213,11 +214,11 @@ MainPingPong = (
     |import is.L42.platformSpecific.javaEvents.Event;
     |public record Bar2(Event event){
     | public Bar2{
-    |    event.registerEvent("BarIn","ping"(k,id,msg)->{
-    |      System.out.println("Ping Event received "+id+" "+msg);
+    |    event.registerEvent("BarIn","ping",(msg)->{
+    |      System.out.println("Ping Event received ping "+msg);
     |      event.submitEvent("BarOut","fromJavaToL42","pong");
     |      });
-    |    event.registerEvent("Kill",(k,id,msg)->{
+    |    event.registerEvent("Kill",(id,msg)->{
     |      System.out.println("Doing cleanup before slave JVM is killed");
     |      System.exit(0);
     |      });
