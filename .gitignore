@@ -125,3 +125,4 @@ sympy-plots-for-*.tex/
 *.bak
 *.sav
 /aplasReposnse.txt
+*.tmp
