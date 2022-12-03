@@ -1,0 +1,230 @@
+Chap2:
+
+At the top of the Ivory tower
+Mortis:
+Pupon, I've heard that you have becomed a laughing stock
+for the first year class.
+
+Pupon:
+Professor Mortis,
+Yes, a student found an error in my explanation,
+and I was too absorbed in my own assumptions
+to see it clearly.
+
+Mortis:
+This is not the kind of behaviour
+that a UPU Professor should have.
+
+Pupon:
+Yes, sorry for tainting the name of UPU.
+
+Mortis:
+Do not worry, it just means that 
+the students this year are very good.
+//This one student, may be particularly so.
+-------
+Pupon:
+As every year, I just discussed how to swap
+two variables using a third one.
+
+Mortis:
+And a student figured out the "b+=a-(a=b)" one-liner?
+
+
+Pupon:
+That can not be right, 
+only the Python "a,b = b,a" allows the swap in one line!
+
+Mortis:
+--------
+
+Mortis:
+Thus, we can raise the difficoulty.
+
+Pupon:
+Are you talking about...
+
+Mortis:
+Yes, the "equals switcheroo".
+
+Pupon:
+The "equals switcheroo" will teach them.
+
+Pupon:
+"I will have revenge agains this student"
+
+-----
+Meanwhile, at freshman campus
+
+Ricky:
+Why Dany, why you did that!
+
+Dany: 
+Yes, now Pupon is going to hunt me down
+
+Ricky:
+Naah, we are in a prestigius university
+He will show professionality and ignore it
+
+Dany:
+It is a prestigious university indeed,
+Usually only the best high school students
+are allowed in.
+
+Ricky:
+Yes, but our teacher... well...
+
+We see Dany in High school where his drunk teacher was just screaming
+"And you get an A+", "And you get an A+ too"
+
+Dany:
+Usually only very brilliant students are allowed at UPU,
+but our computer science teacher was often drunk,
+and just gave everyone maximum marks while teaching nothing!
+
+Ricky:
+Yea, we loved the idea of learning to make videogames,
+so we enrolled here!
+
+Dany:
+yea... yea...
+
+-----
+In class again
+Conditional:
+We can use ifs to chose between options
+  
+  int input = 5;
+  int res   = 0;
+  if( input>3 ){ res = 10; }
+  assert res ==10;
+
+but
+
+  int input = 2;
+  int res   = 0;
+  if( input>3 ){ res = 10; }
+  assert res == 0;
+
+We can also use equals inside expressions.
+For example 
+  int input = 2;
+  int res   = 0;
+  int value = 0;
+  if( (value=input*10)>40 ){ res = 10; }
+  assert res == 0;
+  assert value==20
+
+Pupon:
+  this is useful to save the result of partial computations.
+
+Pupon:
+So, you, come here,
+Student: me?
+Pupon: what is the result here?
+
+  int input = 5;
+  int res   = 0;
+  if( input>res ){ res = 10; }
+  assert res == ??;
+
+Pupon: very good, now, you up there, come!
+Dany: Me?
+Pupon: yes, you! come down
+So, what is this doing?
+
+  int res = 0;
+  if( (res=5) == res ){ res = 10; }
+  assert res == ??;
+
+Dany:
+res, res, res?
+
+res is 5 and is equal to itself? yes?
+so we update it and res ==10
+
+Pupon:
+Cool, and what happens in this case instead?
+
+  int res = 0;
+  if( res == (res=5) ){ res = 10; }
+  assert res == ??;
+
+Dany:
+It looks like is the same, I mean, == is clearly a commutative operation.
+Wait a minute, would he even ask the question if it was the same?
+There must be a difference then!
+Or.. is he thinking that I will think this, and it is thus the same??
+
+Ok slow, down.. step by step...
+
+  int res = 0;
+  res == (res=5)
+
+  int res = 0;
+  0 == (res=5)
+
+  int res = 5;
+  0 == (5)
+
+  int res = 5;
+  false
+
+So the if is not executed.
+So, is the answer zero?
+No, we updated the variable,
+so the answer is 5!
+
+
+Dany: 5, this time res = 5!
+
+The class looked confused, as if he said something absurd,..
+
+Pupon has a sad face:
+But.. how.. yes, it is correct.
+
+Dany then goes back to his seat.
+
+The lecture is over, Dany goes back to his dormitory room.
+When he hopens the door, he finds a page, with
+this single 
+line of code on a page: "b = a+(a=b)-b;"
+
+The allucinations starts again, and 
+he sees
+  int a = x;
+  int b = y;
+  b = a+(a=b)-b;
+
+  int a = x;
+  int b = y;
+  b = x+(a=y)-b;
+
+  int a = y;
+  int b = y;
+  b = x+(y)-b;
+
+  int a = y;
+  int b = y;
+  b = x+(y)-y;
+
+  int a = y;
+  int b = y;
+  b = x;
+
+  int a = y;
+  int b = x;
+
+That is, a one liner to swap two variables.
+One not on the other side of the page:
+  Works in Java, but it is undefined behaviour in C.
+
+So, different languages are different indeed;
+even if they may look superficially similar.
+---
+While going back to his seat, Dany noticed that
+the smart student of the other day wrote this single 
+line of code on a page: "b = a+(a=b)-b;"
+
+Dany faints realizing what he just read.
+

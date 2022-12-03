@@ -1,0 +1,195 @@
+Marco and Paul are working together to write a comic book about a student trapped into a dystopian programming university.
+Marco is an expert programmer but does not know about story telling.
+Paul is expert at story telling and gives Marco very useful advice on how to improve the story and make it more engaging.
+
+Paul: please, can we discuss the world building before we get into the actual story?
+Marco:
+Sure, here is a little bit of world building, that we can use as a foundation for the story:
+
+Marco: Eugene Mortis had proof that climate change will destroy us and it’s a non-constructive existence proof, basically a zero-information proof showing that it is sufficient to build a pillar in the right place with a strong magnetic field to, overtime, divert the currents of air and flush a large amount of CO2 and methane in the brine of the poles.
+Even with all his brain power, Eugene was not able to calculate the location for such a pillar.
+So, supported by a secret branch of the United Nations, he received permissions to build a fantastic Computer Science university with the goal of forging the most powerful programmer that ever existed, someone that would surpass him and discover the coordinates to save the world.
+This whole process is kept secret, in order to both avoid setting the word into panic and to hide the incredibly harsh conditions and challenges those students will be experiencing.
+
+The university is called  Ultimate Programming University (UPU).
+Founded by Eugine Mortis 10 years ago, on the facade it is a public university, but it is secretly under the control of the United Nations.
+The university campus is located in New Zealand near Wellington. Specifically in Sorrento Bay and in the nearby Somes Island, where the Ivory tower is.
+Students apply to enter, but they need very high marks in their high school Computer Science programs.
+UPU only teaches programming.
+The living contions and the food on the island are great; but there are strange filters on the internet access.
+Lecturers are selected from the best programmers, while the other employers are students unable to graduate.
+If an employer break their contract or get fired, they may get into a secret prison.
+
+The university main campus is in a literal ivory tower in a city on an island near the coast.
+
+Year 1: Freshman city
+The great die off year, where most students fail and simply leave the university.
+The freshmen live in a little city near the island, where the freshmen’s university campus is located.
+They can see the looming ivory tower but they cannot enter in it.
+Lectures travel between the island and the mainland on various kinds of fantastic transport (boats/helicopters, etc).
+
+Year 2: Students gain access to the ivory tower.
+They however cannot leave any more: they are all prisoner of the island.
+Students can repeat the second/third year many, many, times, but if it is eventually made clear that they cannot keep up with the insane tests they are offered to work on the island, making food, cleaning and serving in bars.
+Many small activities are available there.
+The local winery, which students are advised to avoid, actually serves some experimental and dangerous brain-enhancing drugs mixed up with the wine.
+The fact that students are prisoners is actually kept a secret to the students there, and the 'employers' have to keep the secret. (How? Are they blackmailed or threatened with physical arm? Will they be armed/killed if they not comply? This point should be clarified) 
+Those employers were are all great programmers once upon a time, but now they only know about older styles of SW developments, and so they cannot handle the newer tests.
+So everyone on the island is an ex-student (or a lecturer?)
+
+I'm not sure what to do for Year 3. They may be doing their final projects or even actually getting publications.
+If they attend a conference for their pubblications, they could attend an important programming conference like POPL.
+
+The lecturers in this University are all obeying Mortis because of fear of losing their privileges  (Alternatively,  would they be killed/brainwashed/tortured if they don’t comply? Could the drugs or some superpower be used on them to make them loose their powers/mental brilliance?) and they are actually quite regretful that they have to make those poor students suffer so much, but they are too scared to act, for one reason or another, they all have too much to lose.
+
+All of the world set up is a secret, but any chapter that could be some programming puzzles where the solution can point to the nature of the University.
+
+It would be nice if at the start of the course every student was to receive an identical new shiny colorful backpack looking a little like a super hero gadget.
+
+Students usually do not try to escape since they are blocked on an island.
+
+
+Paul: Ok, do we have any plan for the actual story?
+
+Marco: The hero of our story may be called Dany, Daniel or Simon, and he is a coward and weak boy, who has no clue that going to this university will actually be like falling into an eternal trap.
+His friend Rick from the high school is enrolling with him.
+Dany soon develops a super power. Super powers in this world are all about 'powers of the mind' and their existence cannot be really proved by experiments.
+Dany power lets him have fantastic hallucinations that work as great explanations/visualizations for the atrociously hard task of learning programming.
+Other students may be able to 'stop time' to think longer on problems, see other people auras, see other people skills, some light form of premonition, the power to focus deeply but for short times, the power to make other people deeply self-aware and sharper but at the cost of their mental stability, great intuition on how things are designed internally,making accurate guesses on physics phenomena (Fermi estimations), sealing people capacities, having lucid dreams where you can design plans and simulate outcomes, just screaming very hard to get temporarily smarter.
+
+Freshmen city: In the first lecture, the lecturer says that a problem is impossible, and with his first hallucination Dany discover that this isn’t true, and shows the lecturer the solution.
+The lecturer does not believe Dany and publicly mocks him. Dany shows him that he is right and the class claps while the lecturer has to run away in shame.
+From that day on, Dany is often subjected to surprise interrogations and has to challenge many difficult questions with his success on the line.
+One day he makes a 'guide' on how to solve a kind of problem for a coming assignment, and the lecturer (another one?) confirms that this 'guide' is correct. He gives the guide to the class, but in fact there was an error in the guide and so the whole class failed.
+Dany then had to regain the trust of the whole class, student by student, by working as a tutor for them and giving them personalized explanations for many concepts.
+There is a moment where Rick is so pissed with how the lecturers are treating Dany that he breaks/vandalizes the car of the bad lecturer, and is given some kind of detention.
+Somehow Dany manage to free him using a challenge about coding (BETTER: Dany has to teach him coding so that he can pass the challenge himself?)
+Usually, the freshman year have a 80% failure rate and thus in the past 80% of all the students had to leave, while the 20% came to the island.
+Finally, thanks to Dany most of the class pass the first year for the first time in forever.
+Sadly, this means that they are all going to be secretly trapped in the Island, and unfortunately, they are not as good as the as the usual students that pass, they were simply able to learn better because of Dany great explanations...
+One of the lecturers gets fired because they were unable to fail enough students.
+One of the lecturers (a woman) is redeemed/ inspired to become a good person and helps the students in the final exam, but she is a first-year lecturer and so she end up staying on the city and will not be seen any more.
+
+In the second year, they discover a lot about the Island:
+in one arc we could explore the 'experimental' wine and the consequences (can work as plot devise to cover a few episodes) maybe Rick was a wine taster and so discovers that something is wrong. (this could give them a way in and can add character drama: maybe Dany was against Rick getting involved with the wine believing to be risky and advised him not to?)
+
+in one arc an 'employer/cleaner' may give suspiciously good coding advice
+in one arc they may discover about the 'prison' nature of the island and some student may try to escape
+In the third year, Dany get to 'fight' directly against Eugene Mortis, with some initial success, but eventually Eugene wins and by discussing the real reasons for the existence of the university makes Dany into an obedient Pawn.
+
+
+
+Final ark(s)? Still to finalize
+There is a conference many of the students manage to travel to, and this could be a great occasion to escape.
+Dany however manages to block them so that they are forced back, so that they can study more and grow better.
+One of the students that really looked forward to escape will suffer some harm because of being unable to escape at the conference: -they may suicide, do some lesser self-harm, die of 'overstress' on the fly black, or being heavily harmed by trying a more dangerous escape. 
+Something that ‘indirectly’ caused the student to be hurt and that Dany can blame hiself.
+This event shock Dany and bring him back on the 'good side', but he will forever lose his self-confidence. May be the best friend could have a role in Dany recovering its self confidence?
+Do we want a happy/tragic/bitter ending?
+If we decide for a happy ending, we could make that during the conference instead the power to see the future goes into play, and Dany somehow gets a realistic hallucination about the future impact of his actions, and he change his mind, letting the other students free instead. We can then remind the audience that if they stayed instead, they could have been the ones saving the world. (How many students manage to escape? If they are too many, what happens in this end, when Dany doesn’t get the other students help? Does he confront the professor alone? Does he stays with him to find the solution and sacrifices himself, condemning himself to be the only student that remained trapped? What about Rick, does he stay with him or he abandons him as well?)
+Finally, we could have a conclusion where Dany tells everyone about the real purpose of the university and the plans of Eugene, and all the students confront Eugene in some philosophical battle, when eventually Eugene offers them to become professors and to teach at his university, but they refuse.
+They decide instead to keep studying and to fight to save the world, at the condition that Eugene abandons his role as headmaster and becomes a student again too.
+
+
+Paul: So, how do you think we could start the actual story?
+Marco:
+Image 1: We see a bird eye view of Sorrento Bay / Freshman city and the nearby island with the tower.
+An helicopter flies around and a few boats are in the sea.
+It is a sunny day.
+The text says:  Sorrento Bay; Freshman city; Ultimate Programming University (UPU) campus.
+
+Image 2: The main campus building in Freshman city.
+Image 3: Dany at the first day in the university.
+He is coming out of a toilet after suffering a sever panic attack.
+He looks like a coward and a weak boy.
+Dany has black hairs, angry eyebrows on an otherwise very child-looking face. Large glasses sits very low on the nose. The two upper teethes are visible out of his smirk, somewhere between happy and pissed. He is very thin, with no muscles at all.
+Text: After just a couple of lectures, Dany is already in panic.
+
+Image 4: Riky comes to support Dany.
+Riky is quite fat and have a very friendly round face.
+Text: Riky was doing the high school together with Dany and they are now at the first year at UPU. 
+Riky: Hey Dany, how are you doing?
+Dany: I'm not sure, the lectures are so hard and I don't understand anything. I feel like I'm in over my head.
+
+Image 5: They both look at the Ivory tower in the distance.
+Riky: It looks so imposing. I can't believe we are actually here.
+Dany: Yeah, I know. It's just, I don't know if I can do this.
+
+Image 6: Dany speak in the corner, but most of the image is from the memories of Dany, where we see Dany in High school where his drunk teacher was just screaming "And you get an A+", "And you get an A+ too"
+Dany:  Usually only very brilliant students are allowed at UPU, but their high school computer science lecturer was often drunk and just gave everyone maximum marks while teaching nothing.
+
+Image 7: An old women professor approaches Riky and Dany,
+Miss Pumpkin: How is it going little boy (looking at Dany), are you lost? (She is mistaking him for a 12 year old kid or something like that)
+Image 8:  Miss Pumpkin: (wisper) this place is not good for you, you should leave while you can!
+
+Image 9: She pat Dany on the head and Dany accidentally gets an electric static shock. (may be we can see him with the iconic lighting and the skeleton).
+Image 10: Miss Pumpkin looks confused: May be you do have what it takes to survive this place.
+
+Image 11: Dany has an happy/proud look on his face.
+Dany: Wow, I think that's the first time someone said that to me.
+
+Image 12:  Miss Pumpkin leaves.
+Riky: Who was that?
+Dany: I don't know, but I think we should find out more about this place.
+
+Image 13: The next lecture starts.
+Lecture room is very crowded, and full of unkown and sort of scary guys... Dany seams to be easely scared. 
+
+Image14:
+Some student with a very large chin that gives him a half-moon/crescent shape on the face wispers: Oh, well, here we are again, for the tenth time I'm a first years student.. :-(
+
+Image 15:
+Another student, looking like a monk, has a big notebook and he it taking notes with a smug expression.
+
+Image 16:
+Dany sits in the back near Ricky, and take up his notebook
+
+Image17:
+The univerisity room has a massive glass ceiling and glass top of the walls;  and from the glass we can see an imposing literal Ivory tower on the island near freshmen city.
+
+Image 18:
+An elicopter arrives from the tower and hovers on top of the glass ceiling
+
+Image 19: the glass ceiling opens with a sliding motion 
+
+Image20: this allows the Professor,  Elricho Pupon, to enter in the class room while holding to a rope.
+
+Image 21:
+The ceiling then closes and the elicoper flies away, while
+Elricho Pupon start writing stuff on the blackboard.
+
+Image 22:
+His tone is severe, his head is egg shaped and fully lucid with no hairs, no eybrows nothing.
+Text: [Course: Programming Introduction]
+
+
+
+
+
+
+
+
+
+------
+
+Dany: (to himself) What the hell was that?
+
+Image 10: Dany is back at home, in his room, trying to study.
+He has a lot of books around him, but he looks lost and confused.
+Text: Dany is trying to study at home, but he is finding it very hard to follow the lectures.
+
+Image 11: Dany is sitting in front of his computer, trying to code.
+Text: Dany is trying to code, but he can't seem to make any progress.
+
+Image 12: Dany is lying in bed, awake, looking at the ceiling.
+Text: Dany is finding it hard to sleep, as he is constantly worrying about the lectures.
+
+Image 13: Dany is sitting in front of his computer, trying to code.
+He is banging his head against the keyboard in frustration.
+Text: Dany is getting frustrated with his lack of progress.
+
+Image 14: Dany is lying in bed, awake, looking at the ceiling.
+He has tears in his eyes.
+Text: Dany is getting desperate as he is falling behind in his studies.
+
+Image 15
