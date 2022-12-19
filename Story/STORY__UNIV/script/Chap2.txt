@@ -1,9 +1,3 @@
-title: Panic? 
-title slide for 1:
-Never trust metaphores
-01: Invalid Metaphors
--also, some missing yellow
-
 https://cdn.discordapp.com/attachments/1045925473328320522/1048524014089412618/DanyHappy.png {anime cover}::4, {blue hoodie}, {university student}, {blue glasses}, {young}, {male}, {energetic}, {tower}::2
 Chap2:
 
@@ -29,7 +23,7 @@ Mortis:
 Do not worry, it just means that 
 the students this year are very good.
 //This one student, may be particularly so.
--------
+-------//Optional?
 Pupon:
 As every year, I just discussed how to swap
 two variables using a third one.
@@ -42,9 +36,9 @@ Pupon:
 That can not be right, 
 only the Python "a,b = b,a" allows the swap in one line!
 
-Mortis:
+Mortis: ...//to continue here?
 --------
-
+//Alternative, may be better?
 Mortis:
 Thus, we can raise the difficoulty.
 
@@ -59,6 +53,7 @@ The "equals switcheroo" will teach them.
 
 Pupon:
 "I will have revenge agains this student"
+//May be this paints him too much as a villan?
 
 -----
 Meanwhile, at freshman campus
@@ -79,7 +74,7 @@ Usually only the best high school students
 are allowed in.
 
 Ricky:
-Yes, but our teacher... well...
+Yes, but our highy school teacher... well...
 
 We see Dany in High school where his drunk teacher was just screaming
 "And you get an A+", "And you get an A+ too"
@@ -115,7 +110,7 @@ We can use ifs to chose between options
   int input = 5;
   int res   = 0;
   if( input>3 ){ res = 10; }
-  assert res ==10;
+  assert res == 10;
 
 but
 
@@ -159,7 +154,7 @@ Dany:
 res, res, res?
 
 res is 5 and is equal to itself? yes?
-so we update it and res ==10
+so we update it and res == 10
 
 Pupon:
 Cool, and what happens in this case instead?
@@ -175,6 +170,7 @@ There must be a difference then!
 Or.. is he thinking that I will think this, and it is thus the same??
 
 Ok slow, down.. step by step...
+//this should start some hallucination here? or earlier?
 
   int res = 0;
   res == (res=5)
@@ -234,18 +230,20 @@ he sees
   int b = x;
 
 That is, a one liner to swap two variables.
-One not on the other side of the page:
+One note on the other side of the page:
   Works in Java, but it is undefined behaviour in C.
 
 So, different languages are different indeed;
 even if they may look superficially similar.
----
+
+---//Alternative
 While going back to his seat, Dany noticed that
 the smart student of the other day wrote this single 
 line of code on a page: "b = a+(a=b)-b;"
 
 Dany faints realizing what he just read.
 
+----Conclusion, and title slide
 Is there a limit to improvement? or is the sky just infinite?
 Title slide: The sky is infinite //beginning image
 --------------
