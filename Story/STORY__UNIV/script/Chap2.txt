@@ -1,3 +1,8 @@
+title: Panic? 
+title slide for 1:
+Never trust metaphores
+01: Invalid Metaphors
+-also, some missing yellow
 
 https://cdn.discordapp.com/attachments/1045925473328320522/1048524014089412618/DanyHappy.png {anime cover}::4, {blue hoodie}, {university student}, {blue glasses}, {young}, {male}, {energetic}, {tower}::2
 Chap2:
@@ -241,3 +246,14 @@ line of code on a page: "b = a+(a=b)-b;"
 
 Dany faints realizing what he just read.
 
+Is there a limit to improvement? or is the sky just infinite?
+Title slide: The sky is infinite //beginning image
+--------------
+
+Eugene Mortis may win the 'I in ICUP (or ICOOP)'
+ICOOP= international conference on object oriented programming
+ICUP=international conference on Ultimate Programming.
+
+For his work on monomorphic monadic monads/monoaization.
+The "I" may have his fingerprint on the dot,
+the students may have to steal it to get the fingerprint and open some secret door
